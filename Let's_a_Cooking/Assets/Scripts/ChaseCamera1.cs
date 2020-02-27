@@ -3,15 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Cinemachine;
+
 
 namespace Game
 {
-    public class ChaseCamera : MonoBehaviour
+    public class ChaseCamera1 : MonoBehaviour
     {
+
+        //VerticalCameraの制御
+        public CinemachineVirtualCamera vcamera;
+
+        public GameObject vCamSearch = null;
+        public GameObject vCamShotFront = null;
+        public GameObject vCamShotSide = null;
+        public GameObject vCamShotHigh = null;
+
+        //ボタンを取得
+        public GameObject toShotFront = null;
+        public GameObject toShotSide = null;
+        public GameObject toSearch = null;
+        public GameObject toShot = null;
+
         //高さのベクトルを決めるオブジェクトを取得
         GameObject shotAngleObj;
         //高さのベクトルを決めるオブジェクトのtransformを定義
         Transform shotAngleTransform;
+        Transform foofTra;
 
         //パワー調整時の加減に使うスイッチ
         bool powerUp = true;
@@ -46,12 +64,24 @@ namespace Game
 
         bool predictShootFlag = false;
 
+        Rigidbody foodrb;
+
+        bool canShot = true;
+
+        int cameraMode = 0;
+
         float destroyTimeCounter;
 
         int a = 0;
         // Start is called before the first frame update
         void Start()
         {
+            vcamera = GameObject.Find("vcam").GetComponent<CinemachineVirtualCamera>();
+
+            vcamera.Priority = 30;
+
+            toSearch.SetActive(false);
+
             Debug.Log(a);
             a = 1;
             //食材を取得
@@ -63,17 +93,52 @@ namespace Game
             shotAngleObj = GameObject.Find("ShotAngleObject");
             //角度を決めるオブジェクトのtransformを取得
             shotAngleTransform = shotAngleObj.GetComponent<Transform>();
+
+            foofTra = food.GetComponent<Transform>();
+
+            foodrb = food.GetComponent<Rigidbody>();
+            
+
         }
 
         // Update is called once per frame
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.A))
+            foofTra = food.GetComponent<Transform>();
+            //Search
+            if (cameraMode == 0)
             {
-                var sceneName = SceneManager.GetActiveScene().name;
-                SceneManager.LoadScene(sceneName);
+                toShot.SetActive(true);
+                toSearch.SetActive(false);
+                toShotFront.SetActive(false);
+                toShotSide.SetActive(false);
             }
-            Debug.Log(a);
+            //shotFront
+            if (cameraMode == 1)
+            {
+                toShot.SetActive(false);
+                toSearch.SetActive(true);
+                toShotFront.SetActive(false);
+                toShotSide.SetActive(true);
+            }
+            //shotSide
+            if(cameraMode == 2)
+            {
+                toShot.SetActive(false);
+                toSearch.SetActive(true);
+                toShotFront.SetActive(true);
+                toShotSide.SetActive(false);
+            }
+
+            if(foodrb.velocity.magnitude == 0 && !canShot)
+            {
+                this.gameObject.transform.position = foofTra.position;
+                vCamShotFront.SetActive(true);
+                vCamShotSide.SetActive(true);
+                shotPower = 0;
+                canShot = true;
+            }
+
             //左右キーのInput判定
             Y_Rot = Input.GetAxis("Horizontal");
             X_Rot = Input.GetAxis("Vertical");
@@ -130,18 +195,32 @@ namespace Game
             //shotPowerをゲージに反映
             powerGage.value = shotPower;
 
-            //左クリック中に呼び出される
-            if (Input.GetMouseButton(0))
+            if(vcamera.Priority == 27 || vcamera.Priority == 26 || canShot)
             {
-                if (powerUp)
+                //左クリック中に呼び出される
+                if (Input.GetMouseButton(1))
                 {
-                    shotPower += 30 * Time.deltaTime / Time.timeScale;
+                    if (powerUp)
+                    {
+                        shotPower += 30 * Time.deltaTime / Time.timeScale;
+                    }
+                    else if (!powerUp)
+                    {
+                        shotPower -= 30 * Time.deltaTime / Time.timeScale;
+                    }
                 }
-                else if (!powerUp)
+
+                //左クリックされた時に呼び出される
+                if (Input.GetMouseButtonUp(1))
                 {
-                    shotPower -= 30 * Time.deltaTime / Time.timeScale;
+                    Time.timeScale = 1;
+                    //食材に力を加える処理
+                    rb.AddForce(shotAngleTransform.transform.forward * shotPower, ForceMode.Impulse);
+
+                    canShot = false;
                 }
             }
+            
 
             eulerX = shotAngleTransform.transform.rotation.eulerAngles.x;
 
@@ -157,12 +236,12 @@ namespace Game
 
             shotAngleTransform.transform.eulerAngles = new Vector3(eulerX, shotAngleTransform.transform.rotation.eulerAngles.y, shotAngleTransform.transform.rotation.eulerAngles.z);
 
-            //左クリックされた時に呼び出される
-            if (Input.GetMouseButtonUp(0))
+            if(foofTra.position.y >= 5)
             {
-                Time.timeScale = 1;
-                //食材に力を加える処理
-                rb.AddForce(shotAngleTransform.transform.forward * shotPower, ForceMode.Impulse);
+                
+                vCamSearch.SetActive(false);
+                vCamShotFront.SetActive(false);
+                vCamShotSide.SetActive(false);
             }
 
         }
@@ -187,6 +266,27 @@ namespace Game
         void FixedUpdate()
         {
 
+        }
+
+        public void OnChangeToShotFront()
+        {
+            vCamSearch.SetActive(false);
+            vCamShotFront.SetActive(true);
+            cameraMode = 1;
+        }
+
+        public void OnChangeToSearch()
+        {
+            vCamSearch.SetActive(true);
+            cameraMode = 0;
+        }
+
+        public void OnChangeToShotSide()
+        {
+            vCamSearch.SetActive(false);
+            vCamShotFront.SetActive(false);
+            vCamShotSide.SetActive(true);
+            cameraMode = 2;
         }
     }
 }
