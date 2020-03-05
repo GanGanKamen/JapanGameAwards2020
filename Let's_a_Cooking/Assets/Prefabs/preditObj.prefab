@@ -111,6 +111,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82658042e66ebe94caadbc11151223a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  predictObjInterval: 0
+  initialSpeedVector: {x: 0, y: 0, z: 0}
 --- !u!96 &9040555445031436298
 TrailRenderer:
   serializedVersion: 2
@@ -119,7 +121,7 @@ TrailRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8472514614226650703}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
