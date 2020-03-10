@@ -7,7 +7,7 @@ namespace Cooking.Stage
     /// <summary>
     /// このスクリプトの想定する主な役割：食材の種類に応じて、調味料などに触れたときの見た目を変更します。
     /// </summary>
-	public class Food : MonoBehaviour
+	public class FoodGraphic : MonoBehaviour
 	{
 
 		// Start is called before the first frame update
