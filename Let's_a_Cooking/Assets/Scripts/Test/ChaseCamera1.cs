@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 using Cinemachine;
 
 
-namespace Cooking.Stage
+namespace Cooking.Test
 {
     public class ChaseCamera1 : MonoBehaviour
     {

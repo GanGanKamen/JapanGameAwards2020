@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Cooking.Stage
+namespace Cooking
 {
-	public class PredictLine : MonoBehaviour
+    /// <summary>
+    /// ゲームを終了した際にも保存されるデータを管理します。
+    /// </summary>
+	public class DataManager : MonoBehaviour
 	{
 		// Start is called before the first frame update
 		void Start()
@@ -18,5 +21,6 @@ namespace Cooking.Stage
 
 		}
 	}
+
 
 }

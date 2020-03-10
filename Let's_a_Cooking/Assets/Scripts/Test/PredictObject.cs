@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Cooking.Stage
+namespace Cooking.Test
 {
 	public class PredictObject : MonoBehaviour
 	{

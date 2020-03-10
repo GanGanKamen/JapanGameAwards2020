@@ -9,6 +9,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Developments/SugawaraPlayScene.unity
     guid: 9bd9d74c281504542b39f11b40b7dd52
   - enabled: 0
-    path: Assets/Scenes/Developments/PlayScene.unity
+    path: Assets/Scenes/Developments/PlaySceneArchive/PlayScene0305.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   m_configObjects: {}
