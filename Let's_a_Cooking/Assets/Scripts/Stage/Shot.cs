@@ -63,15 +63,14 @@ namespace Cooking.Stage
         {
             if (!isShot)
             {
-                Debug.Log(transform.eulerAngles);
                 //左右キーのInput判定
                 //Y_Rot = Input.GetAxis("Horizontal");
                 //X_Rot = Input.GetAxis("Vertical");
                 horizontalRot = Input.mousePosition.x - lastMousePosition.x;
                 verticalRot = lastMousePosition.y - Input.mousePosition.y;
                 //発射方向の角度の制御に使う変数の定義
-                var eulerX = transform.eulerAngles.x + verticalRot / 25;
-                var eulerY = transform.eulerAngles.y + horizontalRot / 25;
+                var eulerX = transform.eulerAngles.x + verticalRot / verticalMouseSensitivity;
+                var eulerY = transform.eulerAngles.y + horizontalRot / horizontallMouseSensitivity;
                 //発射方向の角度の制御
                 if (eulerX > 0 && eulerX <= 30)
                 {
