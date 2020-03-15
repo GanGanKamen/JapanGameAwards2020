@@ -29,7 +29,7 @@ namespace Cooking.Test
         //発射方向の角度の制御に使う変数の定義
         float eulerX = 0;
         /// <summary>
-        /// 予測線表示用のオブジェクトです。
+        /// 予測線表示用のオブジェクト 。
         /// </summary>
         [SerializeField] GameObject predictObj;
         PredictObject predictObjectType;
@@ -168,15 +168,15 @@ namespace Cooking.Test
                 isShot = true;
             }
             //rigidbody.AddForce(initialSpeedVector, ForceMode.Impulse);
-            //距離(座標) = v0(初速度ベクトル) * 時間 + 1/2 * 重力加速度 * (時間)^2 //物体の大きさの分だけわずかにずれます 現在0.5fから発射
+            //距離(座標) = v0(初速度ベクトル) * 時間 + 1/2 * 重力加速度 * (時間)^2 //物体の大きさの分だけわずかにずれ  現在0.5fから発射
             // 0 = initialSpeedVector.y * t -1/2 *  9.81f * gravityScale * t * t
             // t ≠ 0 より tで割ると
             //1/2 * 9.81f * gravityScale * t  =  initialSpeedVector.y
             //t  =  initialSpeedVector.y /9.81f * gravityScale
-            //滞空時間を算出します。座標 y = 0 に戻ってくるまでにかかる時間です。
+            //滞空時間を算出し 。座標 y = 0 に戻ってくるまでにかかる時間 。
             float t = initialSpeedVector.y / (0.5f * 9.81f * gravityScale);
             Debug.Log(t);
-            //その時間ぶんだけxz平面上で初速のxzベクトル方向に等速直線運動させて、その運動が終わった地点を落下予測地点とします。ただし、落下地点は高さ0とします。
+            //その時間ぶんだけxz平面上で初速のxzベクトル方向に等速直線運動させて、その運動が終わった地点を落下予測地点とし 。ただし、落下地点は高さ0とし 。
             Vector3 fallPoint = new Vector3(initialSpeedVector.x, 0, initialSpeedVector.z) * t;
             point.transform.position = fallPoint;
         }

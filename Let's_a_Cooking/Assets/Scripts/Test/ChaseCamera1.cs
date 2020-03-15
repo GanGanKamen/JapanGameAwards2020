@@ -54,7 +54,7 @@ namespace Cooking.Test
         //発射方向の角度の制御に使う変数の定義
         float eulerX = 0;
         /// <summary>
-        /// 予測線表示用のオブジェクトです。
+        /// 予測線表示用のオブジェクト 。
         /// </summary>
         [SerializeField] GameObject predictObj;
 
@@ -98,7 +98,6 @@ namespace Cooking.Test
 
             foodrb = food.GetComponent<Rigidbody>();
             
-
         }
 
         // Update is called once per frame
@@ -248,8 +247,8 @@ namespace Cooking.Test
 
         private void PredictObjStop()
         {
-            rigidbody.velocity = Vector3.zero;
-            rigidbody.isKinematic = true;
+            //rigidbody.velocity = Vector3.zero;
+            //rigidbody.isKinematic = true;
         }
 
         private void PredictStart()
@@ -257,9 +256,9 @@ namespace Cooking.Test
             var obj = Instantiate(predictObj);
             tempPredictObj.Add(obj);
             tempPredictObj[tempPredictObj.Count - 1].transform.position = food.transform.position; //+ new Vector3(0, 0, 0);
-            rigidbody = tempPredictObj[tempPredictObj.Count - 1].GetComponent<Rigidbody>();
+            //rigidbody = tempPredictObj[tempPredictObj.Count - 1].GetComponent<Rigidbody>();
             predictObjectType = tempPredictObj[tempPredictObj.Count - 1].GetComponent<PredictObject>();
-            rigidbody.AddForce(shotAngleTransform.transform.forward * 20, ForceMode.Impulse);
+            //rigidbody.AddForce(shotAngleTransform.transform.forward * 20, ForceMode.Impulse);
             Time.timeScale = 1;
         }
 

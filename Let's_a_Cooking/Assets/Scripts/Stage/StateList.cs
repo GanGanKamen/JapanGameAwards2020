@@ -1,0 +1,36 @@
+﻿namespace Cooking.Stage
+{
+    /// <summary>
+    /// ステージシーンの中でのゲーム全体の進行状態 主にSceneManager用
+    /// </summary>
+    public enum StageGameState
+    {
+        ChooseFood,
+        Play,
+        Finish
+    }
+    /// <summary>
+    /// 画面状態を定義 主にUIManager用
+    /// </summary>
+    public enum ScreenState
+    {
+        ChooseFood,
+        Start,
+        AngleMode,
+        LookDown,
+        PowerMeterMode,
+        Shotting,
+        Finish,
+        Pause
+    }
+    /// <summary>
+    /// ショットの状態を表すクラス 主にShotManager用
+    /// </summary>
+    public enum ShotState
+    {
+        WaitMode,/// 待機中
+        AngleMode,/// 角度の決定中
+        PowerMeterMode,/// ショットパワー決定中
+        Shotting/// ショット中
+    }
+}
