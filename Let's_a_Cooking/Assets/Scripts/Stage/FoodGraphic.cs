@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Cooking.Stage
 {
     /// <summary>
-    /// このスクリプトの想定する主な役割：食材の種類に応じて、調味料などに触れたときの見た目を変更します。
+    /// このスクリプトの想定する主な役割：食材の種類に応じて、調味料などに触れたときの見た目を変更する。
     /// </summary>
 	public class FoodGraphic : MonoBehaviour
 	{

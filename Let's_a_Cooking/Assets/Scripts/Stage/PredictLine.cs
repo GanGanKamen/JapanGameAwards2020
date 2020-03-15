@@ -5,37 +5,28 @@ using UnityEngine;
 namespace Cooking.Stage
 {
     /// <summary>
-    /// 予測線の動きを制御します。
+    /// 予測線の動きを制御し 。
     /// </summary>
     public class PredictLine : MonoBehaviour
     {
-        //予測オブジェクトが消えるまでのカウンター
-        float desteoyCounter = 0;
-        //高さのベクトルを決めるオブジェクトを取得
-        GameObject shotAngleObj;
-        //高さのベクトルを決めるオブジェクトのtransformを定義
-        Transform shotAngleTransform;
         /// <summary>
-        /// PredictLineControllerに制御されます。pria
+        /// PredictLineControllerに制御される。
         /// </summary>
         public Rigidbody predictLineRigidbody
         {
-            get { return rigidbody; }
-            ///大きすぎる値が入らないように制御可能です。
+            get { return _rigidbody; }
+            ///大きすぎる値が入らないように制御可能 。
             set
             {
-                rigidbody = value;
+                _rigidbody = value;
             }
         }
-        private new Rigidbody rigidbody;
-
-        public Vector3 initialSpeedVector;
-        Vector3 velocity;
+        private Rigidbody _rigidbody;
         public float destroyTimeCounter = 0;
         // Start is called before the first frame update
         void OnEnable()
         {
-            rigidbody = GetComponent<Rigidbody>();
+            _rigidbody = GetComponent<Rigidbody>();
             //rigidbody.velocity = initialSpeedVector;
         }
 

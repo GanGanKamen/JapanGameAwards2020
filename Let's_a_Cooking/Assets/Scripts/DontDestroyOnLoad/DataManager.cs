@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Cooking
 {
     /// <summary>
-    /// ゲームを終了した際にも保存されるデータを管理します。
+    /// ゲームを終了した際にも保存されるデータを管理
     /// </summary>
 	public class DataManager : MonoBehaviour
 	{

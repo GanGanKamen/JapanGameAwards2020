@@ -5,25 +5,18 @@ using UnityEngine;
 namespace Cooking.Stage
 {
     /// <summary>
-    /// ターン開始時にアクティブなプレイヤーの情報を取得し、そのプレイヤーを追従します。
+    /// ターン開始時にアクティブなプレイヤーの情報を取得し、そのプレイヤーを追従する。
     /// </summary>
     public class CameraManager : MonoBehaviour
     {
         /// <summary>
-        /// ショット前のカメラの回転は、ショットの向きを決めるオブジェクトのRotationのyを参照します(左右)。x(高さ方向の回転)は参照しません。
-        /// ショット前のカメラ動作はmainカメラで行います。
-        /// ショットオブジェクトは一つのみで、各プレイヤーで使いまわします。
+        ///ショット前のカメラの動きで用いる、カメラの回転の中心の座標情報。メインカメラの親オブジェクトが持つ。食材の中心を軸にカメラを回転させる。
         /// </summary>
-        Shot shotObject;
-        /// <summary>
-        ///ショット前のカメラの動きで用いる、カメラの回転の中心の座標情報です。メインカメラの親オブジェクトが持っています。食材の中心を軸にカメラを回転させるので、食材の座標です。
-        /// </summary>
-        Transform cameraRotateCenter;
+        Transform _cameraRotateCenter;
         // Start is called before the first frame update
         void Start()
         {
-            shotObject = FindObjectOfType<Shot>();
-            cameraRotateCenter = Camera.main.transform.parent;
+            _cameraRotateCenter = Camera.main.transform.parent;
         }
 
         // Update is called once per frame
@@ -33,22 +26,24 @@ namespace Cooking.Stage
         }
 
         /// <summary>
-        ///ショット前のカメラの動きです。食材の中心を軸にカメラを回転させます。
+        /// ショット前のカメラの動く。食材の中心を軸にカメラを回転させる。
+        /// ショット前のカメラの回転は、ショットの向きを決めるオブジェクトのRotationのyを参照し (左右)。x(高さ方向の回転)は参照しない。
+        /// ショット前のカメラ動作はmainカメラで行う。
         /// </summary>
         private void BeforeShotCameraRotate()
         {
-            var tempShotRotation = shotObject.transform.eulerAngles;
-            var tempRortation = cameraRotateCenter.eulerAngles;
+            var tempShotRotation = ShotManager.Instance.transform.eulerAngles;
+            var tempRortation = _cameraRotateCenter.eulerAngles;
             tempRortation.y = tempShotRotation.y;
-            cameraRotateCenter.eulerAngles = tempRortation;
+            _cameraRotateCenter.eulerAngles = tempRortation;
         }
         /// <summary>
-        /// TurnControllerによって呼ばれます。指定された場所にメインカメラを配置します。
+        /// TurnControllerによって呼ばれる。指定された場所にメインカメラを配置する。
         /// </summary>
         /// <param name="transform"></param>
         public void CameraPositionResetOnTurnReset(Transform transform)
         {
-            cameraRotateCenter.position = transform.position;
+            _cameraRotateCenter.position = transform.position;
         }
     }
 }

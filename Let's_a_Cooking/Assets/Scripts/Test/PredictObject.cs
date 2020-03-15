@@ -9,7 +9,7 @@ namespace Cooking.Test
 		//予測オブジェクトが消えるまでのカウンター
 		float desteoyCounter = 0;
 		/// <summary>
-		/// 予測線表示時間間隔です。
+		/// 予測線表示時間間隔 。
 		/// </summary>
 		public float predictObjInterval;
 		//高さのベクトルを決めるオブジェクトを取得
@@ -49,7 +49,7 @@ namespace Cooking.Test
 		void FixedUpdate()
 		{
 			velocity = rigidbody.velocity;
-			//shotAngleTransform.transform.forward  = direction: xyzの方向ベクトル。オブジェクト生成時に決まります。   20 : 初速度　あとはy成分の加速度 減速するのはy方向のみ -9.81(重力加速度) * m(質量 仮に1 係数として調整)
+			//shotAngleTransform.transform.forward  = direction: xyzの方向ベクトル。オブジェクト生成時に決まり 。   20 : 初速度　あとはy成分の加速度 減速するのはy方向のみ -9.81(重力加速度) * m(質量 仮に1 係数として調整)
 			//velocity = direction * 20;
 			velocity.y -= 9.81f * gravityScale * Time.deltaTime;
 			rigidbody.velocity = velocity;
