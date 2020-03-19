@@ -68,7 +68,7 @@ namespace Cooking.Stage
                     break;
                 case ScreenState.PowerMeterMode:
                     //shotPowerをゲージに反映
-                    _powerGage.value = ShotManager.Instance.shotPower;
+                    _powerGage.value = ShotManager.Instance.ShotPower;
                     break;
                 case ScreenState.Shotting:
                     break;
