@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Cooking.Stage
 {
     /// <summary>
-    /// 予測線の動きを制御し 。
+    /// 予測線の動きを制御
     /// </summary>
     public class PredictLine : MonoBehaviour
     {
