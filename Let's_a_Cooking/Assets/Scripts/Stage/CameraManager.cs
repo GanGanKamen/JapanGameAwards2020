@@ -16,8 +16,7 @@ namespace Cooking.Stage
         Transform _cameraRotateCenter;
 
         /// <summary> 0 == top, 1 == front, 2 == side </summary>
-        [SerializeField]
-        int camNo = 0;
+        public int camNo = 0;
 
         [SerializeField]
         private CinemachineVirtualCamera topCam;
@@ -34,7 +33,24 @@ namespace Cooking.Stage
         private Vector3 newSideCameraPos;   //sideカメラの座標を定義
         [SerializeField]
         private float wheelScroll;  //マウスホイールのスクロール数を定義
+        #region インスタンスへのstaticなアクセスポイント
+        /// <summary>
+        /// このクラスのインスタンスを取得。
+        /// </summary>
+        public static CameraManager Instance
+        {
+            get { return _instance; }
+        }
+        static CameraManager _instance = null;
 
+        /// <summary>
+        /// Start()より先に実行。
+        /// </summary>
+        private void Awake()
+        {
+            _instance = this;
+        }
+        #endregion
         // Start is called before the first frame update
         void Start()
         {
@@ -54,13 +70,13 @@ namespace Cooking.Stage
                 sideCam.Priority = 0;
 
                 //左クリックされた瞬間で呼び出される
-                if(Input.GetMouseButtonDown(1))
+                if(Input.GetMouseButtonDown(0))
                 {
                     newTopCameraPos = topCam.transform.position;  //現在のカメラの座標を代入
                     clickPos = Input.mousePosition;     //クリックされたマウスの座標を代入
                 }
                 //左クリックされている間呼び出される
-                else if(Input.GetMouseButton(1))
+                else if(Input.GetMouseButton(0))
                 {
                     newTopCameraPos.x += (clickPos.x - Input.mousePosition.x) / 100;   //x座標のマウスの移動量を計算
                     newTopCameraPos.z += (clickPos.y - Input.mousePosition.y) / 100;   //y座標のマウスの移動量を計算
@@ -94,13 +110,13 @@ namespace Cooking.Stage
                 sideCam.Priority = 1;
 
                 //左クリックされた瞬間で呼び出される
-                if (Input.GetMouseButtonDown(1))
+                if (Input.GetMouseButtonDown(0))
                 {
                     newSideCameraPos = sideCam.transform.position;  //現在のカメラの座標を代入
                     clickPos = Input.mousePosition;     //クリックされたマウスの座標を代入
                 }
                 //左クリックされている間呼び出される
-                else if (Input.GetMouseButton(1))
+                else if (Input.GetMouseButton(0))
                 {
                     sideCam.transform.position += transform.forward * (clickPos.x - Input.mousePosition.x) / 100;   //マウスの移動量/100をカメラの左右方向に代入
                     sideCam.transform.position += transform.up * (clickPos.y - Input.mousePosition.y) / 100;   //マウスの移動量/100をカメラの上下方向に代入
@@ -137,23 +153,20 @@ namespace Cooking.Stage
         {
             _cameraRotateCenter.position = transform.position;
         }
-
         public void OnTop()
         {
-//           newTopCameraPos = topCam.transform.position;  //現在のtopカメラの座標を代入
+            //           newTopCameraPos = topCam.transform.position;  //現在のtopカメラの座標を代入
             //Topカメラに切り替える
             camNo = 0;
         }
-
         public void OnFront()
         {
             //Frontカメラに切り替える
             camNo = 1;
         }
-
         public void OnSide()
         {
-//            newSideCameraPos = sideCam.transform.position;  //現在のsiideカメラの座標を代入
+            //            newSideCameraPos = sideCam.transform.position;  //現在のsiideカメラの座標を代入
             //Sideカメラに切り替える
             camNo = 2;
         }

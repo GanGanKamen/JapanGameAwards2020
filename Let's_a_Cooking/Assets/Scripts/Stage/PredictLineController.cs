@@ -50,16 +50,71 @@ namespace Cooking.Stage
         /// 削除するオブジェクトの番号。古いものから順に削除。
         /// </summary>
         private int _destroyIndex = 0;
+
+        #region インスタンスへのstaticなアクセスポイント
+        /// <summary>
+        /// このクラスのインスタンスを取得。
+        /// </summary>
+        public static PredictLineController Instance
+        {
+            get { return _instance; }
+        }
+        static PredictLineController _instance = null;
+
+        /// <summary>
+        /// Start()より先に実行
+        /// </summary>
+        private void Awake()
+        {
+            _instance = this;
+        }
+        #endregion
+
         // Start is called before the first frame update
         void Start()
         {
             _predictShotPoint = Instantiate(_predictShotPointPrefab);
             //割り切れる数字である想定。
             _displayCountOfpredictLines = Mathf.RoundToInt(_destroyTime / _predictTimeInterval);
-            Debug.Log(_displayCountOfpredictLines);
         }
 
         void FixedUpdate()
+        {
+            ///予測線の挙動を計算します。
+            switch (UIManager.Instance.MainUIStateProperty)
+            {
+                case ScreenState.ChooseFood:
+                    break;
+                case ScreenState.Start:
+                    PredictPhysicsManage();
+                    break;
+                case ScreenState.AngleMode:
+                    PredictPhysicsManage();
+                    break;
+                case ScreenState.SideMode:
+                    PredictPhysicsManage();
+                    break;
+                case ScreenState.LookDownMode:
+                    PredictPhysicsManage();
+                    break;
+                case ScreenState.PowerMeterMode:
+                    PredictPhysicsManage();
+                    break;
+                case ScreenState.ShottingMode:
+                    break;
+                case ScreenState.Finish:
+                    break;
+                case ScreenState.Pause:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /// <summary>
+        ///予測線の挙動を計算します。
+        /// </summary>
+        private void PredictPhysicsManage()
         {
             for (int i = 0; i < _predictLines.Count; i++)
             {
@@ -70,39 +125,66 @@ namespace Cooking.Stage
                 predictRb.velocity = velocity;
             }
         }
+
         // Update is called once per frame
         void Update()
         {
-            //予測線を飛ばす方向を取得。
-            _predictLines_SpeedVector = ShotManager.Instance.transform.forward * 20;
-
             //予測線を管理。
-            if (ShotManager.Instance.ShotModeProperty == ShotState.AngleMode || ShotManager.Instance.ShotModeProperty == ShotState.PowerMeterMode)
-                PredictLineManage();
-
-            #region 予測落下地点を計算。
+            switch (UIManager.Instance.MainUIStateProperty)
+            {
+                case ScreenState.ChooseFood:
+                    break;
+                case ScreenState.Start:
+                    PredictLineManage();
+                    break;
+                case ScreenState.AngleMode:
+                    PredictLineManage();
+                    break;
+                case ScreenState.SideMode:
+                    PredictLineManage();
+                    break;
+                case ScreenState.LookDownMode:
+                    PredictLineManage();
+                    break;
+                case ScreenState.PowerMeterMode:
+                    PredictLineManage();
+                    break;
+                case ScreenState.ShottingMode:
+                    break;
+                case ScreenState.Finish:
+                    break;
+                case ScreenState.Pause:
+                    break;
+                default:
+                    break;
+            }
+        }
+        /// <summary>
+        /// 予測落下地点を計算
+        /// </summary>
+        private void PredictFallPoint()
+        {
+            #region 予測落下地点計算方法説明
             //距離(座標) = v0(初速度ベクトル) * 時間 + 1/2 * 重力加速度 * (時間)^2 //物体の大きさの分だけわずかにずれ  現在0.5fから発射
             // 0 = initialSpeedVector.y * t -1/2 *  9.81f * gravityScale * t * t
             // t ≠ 0 より tで割ると
             //1/2 * 9.81f * gravityScale * t  =  initialSpeedVector.y
             //t  =  initialSpeedVector.y /9.81f * gravityScale
             //滞空時間を算出。座標 y = 0 に戻ってくるまでにかかる時間。
+            #endregion
             float t = _predictLines_SpeedVector.y / (0.5f * 9.81f * GameManager.Instance.gravityScale);
             //Debug.Log(t);
             //その時間ぶんだけxz平面上で初速のxzベクトル方向に等速直線運動させて、その運動が終わった地点を落下予測地点とする。ただし、落下地点は高さ0とする。
             Vector3 fallPoint = new Vector3(_predictLines_SpeedVector.x, 0, _predictLines_SpeedVector.z) * t;
             _predictShotPoint.transform.position = fallPoint;
-            #endregion
-
-            //落下地点の変更を予測線にも伝える。
-            ChangePredictFallPointOnXZ();
         }
-
         /// <summary>
         /// 予測線を管理
         /// </summary>
         private void PredictLineManage()
         {
+            //予測線を飛ばす方向を取得。
+            _predictLines_SpeedVector = ShotManager.Instance.transform.forward * 20;
             if (_predictTimeCount >= _predictTimeInterval)
             {
                 _predictTimeCount = 0;
@@ -116,6 +198,9 @@ namespace Cooking.Stage
             {
                 _predictLines[i].destroyTimeCounter += Time.deltaTime;
             }
+            PredictFallPoint();
+            //落下地点の変更を予測線にも伝える。
+            ChangePredictFallPointOnXZ();
         }
         /// <summary>
         /// 予測線の動的配列を管理。予測線の削除も行う。
@@ -170,6 +255,16 @@ namespace Cooking.Stage
                 velocity.x = _predictLines_SpeedVector.x;
                 velocity.z = _predictLines_SpeedVector.z;
                 predictRb.velocity = velocity;
+            }
+        }
+        /// <summary>
+        /// 現在シーン上の予測線を削除。ショット時に呼ばれる。
+        /// </summary>
+        public void DestroyPredictLine()
+        {
+            foreach (var predictLine in _predictLines)
+            {
+                Destroy(predictLine.gameObject);
             }
         }
     }

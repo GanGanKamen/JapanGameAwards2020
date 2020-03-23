@@ -17,10 +17,6 @@ namespace Cooking.Stage
 		public ShotState ShotModeProperty
 		{
 			get { return _shotMode; }
-			set
-			{
-				_shotMode = value;
-			}
 		}
 		private ShotState _shotMode = ShotState.WaitMode;
 		/// <summary>
@@ -78,11 +74,12 @@ namespace Cooking.Stage
 			}
 		}
 		private float _limitVerticalAngle = 60;
-		#region インスタンスへのstaticなアクセスポイント
-		/// <summary>
-		/// このクラスのインスタンスを取得。
-		/// </summary>
-		public static ShotManager Instance
+
+        #region インスタンスへのstaticなアクセスポイント
+        /// <summary>
+        /// このクラスのインスタンスを取得。
+        /// </summary>
+        public static ShotManager Instance
 		{
 			get { return _instance; }
 		}
@@ -109,7 +106,7 @@ namespace Cooking.Stage
 			switch (_shotMode)
 			{
 				case ShotState.WaitMode:
-					break;
+                    break;
 				case ShotState.AngleMode:
 					{
 						///スマホ対応は途中 上下回転がうまくいかなかった
@@ -131,7 +128,7 @@ namespace Cooking.Stage
 						//左クリックされた時に呼び出される
 						if (!MouseInputPrevention.Instance.ShotInvalid && TouchInput.GetTouchPhase() == TouchInfo.Down)
 						{
-							_shotMode = ShotState.Shotting;
+							ChangeShotState(ShotState.ShottingMode);
 							//食材に力を加える処理
 							var initialSpeedVector = transform.forward * ShotPower;
 							_shotRigidbody.velocity = initialSpeedVector;
@@ -140,15 +137,15 @@ namespace Cooking.Stage
 						///
 						if (Input.GetKeyDown(KeyCode.Space))
 						{
-							_shotMode = ShotState.Shotting;
-							var initialSpeedVector = transform.forward * 20;
+                            ChangeShotState(ShotState.ShottingMode);
+                            var initialSpeedVector = transform.forward * 20;
 							_shotRigidbody.velocity = initialSpeedVector;
 							//isShot = true;
 						}
 						#endregion
 					}
 					break;
-				case ShotState.Shotting:
+				case ShotState.ShottingMode:
 					break;
 				default:
 					break;
@@ -187,31 +184,28 @@ namespace Cooking.Stage
 		/// <returns></returns>
 		private Vector2 DecisionAngle()
 		{
-			/// ショットの向きを決める際、入力を格納するための変数 。
+			/// ショットの向きを決める際、入力を格納するための変数
 			var horizontalRot = Input.mousePosition.x - _lastMouseLeftButtonDownPosition.x;
 			var verticalRot = _lastMouseLeftButtonDownPosition.y - Input.mousePosition.y;
 			//発射方向の角度の制御に使う変数の定義
 			var eulerX = transform.eulerAngles.x;
-
 			///上下回転速度に上限を与え 。
 			if (verticalRot / _verticalMouseSensitivity > 10)
 			{
 				eulerX = transform.eulerAngles.x + 10;
 			}
-			///左右のみを移動したい時を考慮して、左右の移動量が一定より少ないとき上下回転はしないものとし 。
+			///左右のみを移動したい時を考慮して、左右の移動量が一定より少ないとき上下回転はしない
 			if (Mathf.Abs(verticalRot) > 15)
 			{
 				eulerX = transform.eulerAngles.x + verticalRot / _verticalMouseSensitivity;
 			}
-
 			var eulerY = transform.eulerAngles.y;
-			///上下のみを移動したい時を考慮して、左右の移動量が一定より少ないとき左右回転はしないものとし 。
+			///上下のみを移動したい時を考慮して、左右の移動量が一定より少ないとき左右回転はしない
 			if (Mathf.Abs(horizontalRot) > 20)
 			{
 				eulerY = transform.eulerAngles.y + horizontalRot / _horizontallMouseSensitivity;
 			}
-
-			//発射方向の角度の制御 水平面から+y方向へ制限し 。
+			//発射方向の角度の制御 水平面から+y方向へ制限
 			if (eulerX > 0 && eulerX <= 20)
 			{
 				eulerX = 0;
@@ -222,6 +216,28 @@ namespace Cooking.Stage
 			}
 			return new Vector2(eulerX, eulerY);
 		}
+        /// <summary>
+        /// ショット状態を変更します。
+        /// </summary>
+        /// <param name="shotState"></param>
+        public void ChangeShotState(ShotState shotState)
+        {
+            _shotMode = shotState;
+            switch (shotState)
+            {
+                case ShotState.WaitMode:
+                    break;
+                case ShotState.AngleMode:
+                    break;
+                case ShotState.PowerMeterMode:
+                    break;
+                case ShotState.ShottingMode:
+                    UIManager.Instance.ChangeUI("ShottingMode");
+                    PredictLineController.Instance.DestroyPredictLine();
+                    break;
+                default:
+                    break;
+            }
+        }
 	}
-
 }

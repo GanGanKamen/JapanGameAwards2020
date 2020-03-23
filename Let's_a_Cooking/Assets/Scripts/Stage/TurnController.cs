@@ -72,8 +72,6 @@ namespace Cooking.Stage
                 playerNumber++;
             }
             ShotManager.Instance.ShotRigidbody = foodStatuses[0].Rigidbody;
-            ShotManager.Instance.ShotModeProperty = ShotState.AngleMode;
-            UIManager.Instance.MainUIStateProperty = ScreenState.Shotting;
         }
 
         // Update is called once per frame

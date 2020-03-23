@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,17 +12,13 @@ namespace Cooking.Stage
         /// <summary>
         /// メインとなるUIの状態の数だけUIを用意
         /// </summary>
-        [SerializeField] GameObject[] _stageSceneMainUIs = new GameObject[(int)ScreenState.Finish + 1];
+        [SerializeField] GameObject[] _stageSceneMainUIs = new GameObject[Enum.GetValues(typeof(ScreenState)).Length];
         /// <summary>
         /// UIの状態が入る
         /// </summary>
         public ScreenState MainUIStateProperty
         {
             get { return _mainUIState; }
-            set
-            {
-                _mainUIState = value;
-            }
         }
         private ScreenState _mainUIState = ScreenState.ChooseFood;
         /// <summary>
@@ -29,6 +26,9 @@ namespace Cooking.Stage
         /// </summary>
         [SerializeField]private Slider _powerGage;
         public RectTransform returnButton;
+        float _startTimeCounter;
+        float _startTime = 1;
+
         #region インスタンスへのstaticなアクセスポイント
         /// <summary>
         /// このクラスのインスタンスを取得
@@ -51,6 +51,7 @@ namespace Cooking.Stage
         // Start is called before the first frame update
         void Start()
 		{
+
         }
 
         // Update is called once per frame
@@ -64,13 +65,15 @@ namespace Cooking.Stage
                     break;
                 case ScreenState.AngleMode:
                     break;
-                case ScreenState.LookDown:
+                case ScreenState.SideMode:
+                    break;
+                case ScreenState.LookDownMode:
                     break;
                 case ScreenState.PowerMeterMode:
                     //shotPowerをゲージに反映
                     _powerGage.value = ShotManager.Instance.ShotPower;
                     break;
-                case ScreenState.Shotting:
+                case ScreenState.ShottingMode:
                     break;
                 case ScreenState.Finish:
                     break;
@@ -79,8 +82,8 @@ namespace Cooking.Stage
                 default:
                     break;
             }
+            Debug.Log(_mainUIState);
         }
-
         /// <summary>
         /// 食材を選ぶ際のマウスクリックで呼ばれる
         /// </summary>
@@ -98,44 +101,62 @@ namespace Cooking.Stage
         /// </summary>
         public void StartPowerMeterMode()
         {
-            _stageSceneMainUIs[(int)ScreenState.AngleMode].SetActive(false);
-            _stageSceneMainUIs[(int)ScreenState.PowerMeterMode].SetActive(true);
-            ShotManager.Instance.ShotModeProperty = ShotState.PowerMeterMode;
-            _mainUIState = ScreenState.PowerMeterMode;
+            ChangeUI("PowerMeterMode");
         }
         /// <summary>
         /// ショット先を決めるモードに戻る。スタート状態・ターン終了状態からも呼び出される、リセットの役割を持つ。
         /// </summary>
         public void ResetUIMode()
         {
-            foreach (var uIState in _stageSceneMainUIs)
-            {
-                uIState.SetActive(false);
-            }
-            _stageSceneMainUIs[(int)ScreenState.AngleMode].SetActive(true);
-            ShotManager.Instance.ShotModeProperty = ShotState.AngleMode;
-            _mainUIState = ScreenState.AngleMode;
+            ChangeUI("AngleMode");
         }
         /// <summary>
-        /// UIの遷移を一つのメソッドにまとめる予定
+        /// ボタンによるUIの切り替えを行うメソッド→ボタンのテキストで判別できるようにしたい、継承も利用していきたい publicボタン privateUI切り替えしっかりと分けたい
         /// </summary>
-        /// <param name="beforeScreenState"></param>
-        /// <param name="afterScreenState"></param>
-        private void ChangeUI(ScreenState beforeScreenState, ScreenState afterScreenState)
+        /// <param name="afterScreenStateString"></param>文字列で変更後のUIの状態を指定
+        public void ChangeUI(string afterScreenStateString)
         {
-
+            _stageSceneMainUIs[(int)_mainUIState].SetActive(false);
+            ///enum型へ変換 + 変換失敗時に警告
+            Debug.AssertFormat(Enum.TryParse(afterScreenStateString, out _mainUIState), "不適切な値:{0}が入力されました。", afterScreenStateString);
+            /// ショットの状態を変更→ShotManagerへ
+            switch (_mainUIState)
+            {
+                case ScreenState.ChooseFood:
+                    break;
+                case ScreenState.Start:
+                    break;
+                case ScreenState.AngleMode:
+                    ShotManager.Instance.ChangeShotState(ShotState.AngleMode);
+                    CameraManager.Instance.OnFront();
+                    break;
+                case ScreenState.SideMode:
+                    ShotManager.Instance.ChangeShotState(ShotState.WaitMode);
+                    CameraManager.Instance.OnSide();
+                    break;
+                case ScreenState.LookDownMode:
+                    ShotManager.Instance.ChangeShotState(ShotState.WaitMode);
+                    CameraManager.Instance.OnTop();
+                    break;
+                case ScreenState.PowerMeterMode:
+                    ShotManager.Instance.ChangeShotState(ShotState.PowerMeterMode);
+                    break;
+                case ScreenState.ShottingMode:
+                    break;
+                case ScreenState.Finish:
+                    break;
+                case ScreenState.Pause:
+                    break;
+                default:
+                    break;
+            }
+            _stageSceneMainUIs[(int)_mainUIState].SetActive(true);
         }
         IEnumerator StartGameUI()
         {
-            ///ChangeUIメソッドで一つにまとめる予定
-            _stageSceneMainUIs[(int)ScreenState.ChooseFood].SetActive(false);
-            _stageSceneMainUIs[(int)ScreenState.Start].SetActive(true);
-            _mainUIState = ScreenState.Start;
+            ChangeUI("Start");
             yield return new WaitForSeconds(1f);
-            _stageSceneMainUIs[(int)ScreenState.Start].SetActive(false);
-            _stageSceneMainUIs[(int)ScreenState.AngleMode].SetActive(true);
-            _mainUIState = ScreenState.AngleMode;
+            ChangeUI("LookDownMode");
         }
     }
-
 }
