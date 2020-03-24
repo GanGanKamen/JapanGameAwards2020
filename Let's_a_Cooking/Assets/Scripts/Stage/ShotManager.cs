@@ -43,14 +43,9 @@ namespace Cooking.Stage
 		/// </summary>
 		public float _maxPower = 20, _minPower = 5;
 		/// <summary>
-		/// ショット時に力を加えるためのもの。
+		/// ショット時に力を加えるため用 アクティブな食材の持つRigidbody
 		/// </summary>
-		public Rigidbody ShotRigidbody
-		{
-			get { return _shotRigidbody; }
-			set { _shotRigidbody = value; }
-		}
-		private Rigidbody _shotRigidbody;
+        private Rigidbody _shotRigidbody;
 		/// <summary>
 		/// 垂直方向回転の限界角度。15から90度の間を想定。プロパティを通すことで値をチェック。
 		/// </summary>
@@ -105,6 +100,7 @@ namespace Cooking.Stage
 		{
 			switch (_shotMode)
 			{
+                ///スタート時・見下ろしカメラ時・ゲーム終了時を想定
 				case ShotState.WaitMode:
                     break;
 				case ShotState.AngleMode:
@@ -116,6 +112,7 @@ namespace Cooking.Stage
 						}
 						else if (TouchInput.GetTouchPhase() == TouchInfo.Moved)
 						{
+                            ///角度の決定
 							var eulerAngle = DecisionAngle();
 							transform.eulerAngles = new Vector3(eulerAngle.x, eulerAngle.y, 0);
 							_lastMouseLeftButtonDownPosition = Input.mousePosition;
@@ -129,9 +126,6 @@ namespace Cooking.Stage
 						if (!MouseInputPrevention.Instance.ShotInvalid && TouchInput.GetTouchPhase() == TouchInfo.Down)
 						{
 							ChangeShotState(ShotState.ShottingMode);
-							//食材に力を加える処理
-							var initialSpeedVector = transform.forward * ShotPower;
-							_shotRigidbody.velocity = initialSpeedVector;
 						}
 						#region デバッグコード スペースを押すと最大パワーで飛ぶ
 						///
@@ -146,8 +140,18 @@ namespace Cooking.Stage
 					}
 					break;
 				case ShotState.ShottingMode:
-					break;
-				default:
+                    {
+                        ///食材が止まったらショット終了
+                        if (_shotRigidbody.velocity.magnitude < 0.0001f)
+                            ChangeShotState(ShotState.ShotEndMode);
+                    }
+                    break;
+                case ShotState.ShotEndMode:
+                    {
+                        ChangeShotState(ShotState.WaitMode);
+                    }
+                    break;
+                default:
 					break;
 			}
 		}
@@ -217,13 +221,13 @@ namespace Cooking.Stage
 			return new Vector2(eulerX, eulerY);
 		}
         /// <summary>
-        /// ショット状態を変更します。
+        /// ショット状態を変更時に呼ばれる 状態が変わった時の処理
         /// </summary>
         /// <param name="shotState"></param>
         public void ChangeShotState(ShotState shotState)
         {
             _shotMode = shotState;
-            switch (shotState)
+            switch (_shotMode)
             {
                 case ShotState.WaitMode:
                     break;
@@ -232,12 +236,28 @@ namespace Cooking.Stage
                 case ShotState.PowerMeterMode:
                     break;
                 case ShotState.ShottingMode:
-                    UIManager.Instance.ChangeUI("ShottingMode");
-                    PredictLineController.Instance.DestroyPredictLine();
+                    {
+                        //食材に力を加える処理
+                        var initialSpeedVector = transform.forward * ShotPower;
+                        _shotRigidbody.velocity = initialSpeedVector;
+                        UIManager.Instance.ChangeUI("ShottingMode");
+                        PredictLineController.Instance.DestroyPredictLine();
+                    }
+                    break;
+                case ShotState.ShotEndMode:
+                    _shotRigidbody.velocity = Vector3.zero;
                     break;
                 default:
                     break;
             }
         }
-	}
+        /// <summary>
+        /// 次のプレイヤーに対してショットの対象をセット
+        /// </summary>
+        public void SetShotManager(Rigidbody nextRigidbody)
+        {
+            _shotRigidbody = nextRigidbody;
+            transform.eulerAngles = Vector3.zero;
+        }
+    }
 }

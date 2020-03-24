@@ -9,6 +9,14 @@ namespace Cooking.Stage
     /// </summary>
     public class TurnController : MonoBehaviour
     {
+        /// <summary>
+        /// 現在のターン数を表します。
+        /// </summary>
+        public int TurnNumber
+        {
+            get { return _turnNumber; }
+        }
+        private int _turnNumber = 0;
         [SerializeField] GameObject _playerPrefab;
         /// <summary>
         /// プレイヤーの合計人数。
@@ -22,8 +30,14 @@ namespace Cooking.Stage
             get { return _activePlayerIndex; }
         }
         private int _activePlayerIndex = 0;
+        /// <summary>
+        /// プレイヤーの情報
+        /// </summary>
         public FoodStatus[] foodStatuses;
-
+        /// <summary>
+        /// ゲーム開始時の座標を示すオブジェクト
+        /// </summary>
+        [SerializeField]Transform _startPositionObject;
         #region インスタンスへのstaticなアクセスポイント
         /// <summary>
         /// このクラスのインスタンスを取得。
@@ -56,7 +70,8 @@ namespace Cooking.Stage
             int playerNumber = 0;
             playerSumNumber = GameManager.Instance.playerNumber + GameManager.Instance.computerNumber;
             foodStatuses = new FoodStatus[playerSumNumber];
-            ///プレイヤーを生成
+            var startPoint = _startPositionObject.position;
+            ///プレイヤーを生成 プレイヤー番号が小さいのがプレイしている人で大きいのがAI
             for (int i = 0; i < GameManager.Instance.playerNumber; i++)
             {
                 foodStatuses[playerNumber] = Instantiate(_playerPrefab).GetComponent<FoodStatus>();
@@ -71,20 +86,79 @@ namespace Cooking.Stage
                 foodStatuses[playerNumber].isAI = true;
                 playerNumber++;
             }
-            ShotManager.Instance.ShotRigidbody = foodStatuses[0].Rigidbody;
+            ///各プレイヤーを初期位置に配置
+            for (int i = 0; i < playerSumNumber; i++)
+            {
+                foodStatuses[i].transform.position = startPoint;
+                startPoint.x++;
+            }
+            ShotManager.Instance.SetShotManager(foodStatuses[_activePlayerIndex].Rigidbody);
+            CameraManager.Instance.SetCameraMoveCenter(foodStatuses[_activePlayerIndex].transform.position);
+            PredictLineController.Instance.SetPredictLineInstantiatePosition(foodStatuses[_activePlayerIndex].transform.position);
+            SetObjectsPositionForNextPlayer(_activePlayerIndex);
+            ///ターンを1にセットしてゲーム開始
+            _turnNumber = 1;
         }
 
         // Update is called once per frame
         void Update()
         {
-
+            switch (UIManager.Instance.MainUIStateProperty)
+            {
+                case ScreenState.ChooseFood:
+                    break;
+                case ScreenState.Start:
+                    break;
+                case ScreenState.AngleMode:
+                    PredictLineController.Instance.SetPredictLineInstantiatePosition(foodStatuses[ActivePlayerIndex].transform.position);
+                    break;
+                case ScreenState.SideMode:
+                    PredictLineController.Instance.SetPredictLineInstantiatePosition(foodStatuses[ActivePlayerIndex].transform.position);
+                    break;
+                case ScreenState.LookDownMode:
+                    PredictLineController.Instance.SetPredictLineInstantiatePosition(foodStatuses[ActivePlayerIndex].transform.position);
+                    break;
+                case ScreenState.PowerMeterMode:
+                    PredictLineController.Instance.SetPredictLineInstantiatePosition(foodStatuses[ActivePlayerIndex].transform.position);
+                    break;
+                case ScreenState.ShottingMode:
+                    break;
+                case ScreenState.Finish:
+                    break;
+                case ScreenState.Pause:
+                    break;
+                default:
+                    break;
+            }
+            if (ShotManager.Instance.ShotModeProperty == ShotState.ShotEndMode)
+            {
+                ChangeTurn();
+            }
         }
         /// <summary>
-        /// アクティブプレイヤーを入れ替えて、次に人のターンに切り替え。
+        /// アクティブプレイヤーを入れ替えて、次の人のターンに切り替え
         /// </summary>
-        void ChangeActivePlayer()
+        private void ChangeTurn()
         {
             _activePlayerIndex++;
+            ///次のターン数へ
+            if (_activePlayerIndex == playerSumNumber)
+            {
+                _activePlayerIndex = 0;
+                _turnNumber++;
+            }
+            UIManager.Instance.ResetUIMode();
+            SetObjectsPositionForNextPlayer(_activePlayerIndex);
+        }
+        /// <summary>
+        /// 次のターンのプレイヤーのためにオブジェクトの場所をリセット
+        /// </summary>
+        /// <param name="activePlayerIndex"></param>
+        private void SetObjectsPositionForNextPlayer(int activePlayerIndex)
+        {
+            ShotManager.Instance.SetShotManager(foodStatuses[activePlayerIndex].Rigidbody);
+            CameraManager.Instance.SetCameraMoveCenter(foodStatuses[activePlayerIndex].transform.position);
+            PredictLineController.Instance.SetPredictLineInstantiatePosition(foodStatuses[activePlayerIndex].transform.position);
         }
     }
 

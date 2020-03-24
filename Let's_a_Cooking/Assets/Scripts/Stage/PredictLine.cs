@@ -32,7 +32,12 @@ namespace Cooking.Stage
 
         private void Update()
         {
-            //Debug.Log(destroyTimeCounter);
+            var velocity = _rigidbody.velocity;
+            ////予測線を飛ばす方向を取得。
+            //var _predictLines_SpeedVector = ShotManager.Instance.transform.forward * 20;
+            //velocity.x = _predictLines_SpeedVector.x;
+            //velocity.z = _predictLines_SpeedVector.z;
+            //_rigidbody.velocity = velocity;
         }
 
     }

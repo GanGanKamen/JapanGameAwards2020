@@ -28,6 +28,9 @@ namespace Cooking.Stage
         public RectTransform returnButton;
         float _startTimeCounter;
         float _startTime = 1;
+        [SerializeField] private Text _turnNumber;
+        [SerializeField] private Text _playerNumber;
+        [SerializeField] private Text _point;
 
         #region インスタンスへのstaticなアクセスポイント
         /// <summary>
@@ -57,6 +60,11 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
 		{
+            #region デフォルトUIの更新(スコア・プレイヤー番号・ターン数)
+            _turnNumber.text = TurnController.Instance.TurnNumber.ToString();
+            _playerNumber.text = (TurnController.Instance.ActivePlayerIndex + 1).ToString();
+            //_point.text = .ToString();
+            #endregion
             switch (_mainUIState)
             {
                 case ScreenState.ChooseFood:
@@ -82,7 +90,7 @@ namespace Cooking.Stage
                 default:
                     break;
             }
-            Debug.Log(_mainUIState);
+            //Debug.Log(_mainUIState);
         }
         /// <summary>
         /// 食材を選ぶ際のマウスクリックで呼ばれる
@@ -108,7 +116,7 @@ namespace Cooking.Stage
         /// </summary>
         public void ResetUIMode()
         {
-            ChangeUI("AngleMode");
+            ChangeUI("LookDownMode");
         }
         /// <summary>
         /// ボタンによるUIの切り替えを行うメソッド→ボタンのテキストで判別できるようにしたい、継承も利用していきたい publicボタン privateUI切り替えしっかりと分けたい
@@ -152,6 +160,7 @@ namespace Cooking.Stage
             }
             _stageSceneMainUIs[(int)_mainUIState].SetActive(true);
         }
+
         IEnumerator StartGameUI()
         {
             ChangeUI("Start");
