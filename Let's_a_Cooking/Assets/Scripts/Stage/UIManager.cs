@@ -126,7 +126,7 @@ namespace Cooking.Stage
                 case ScreenState.SideMode:
                     ChangeUI("SideMode");
                     break;
-                default:
+                case ScreenState.ShottingMode:
                     ChangeUI("LookDownMode");
                     break;
             }
@@ -163,6 +163,7 @@ namespace Cooking.Stage
                     ShotManager.Instance.ChangeShotState(ShotState.PowerMeterMode);
                     break;
                 case ScreenState.ShottingMode:
+                    _beforeShotScreenState = ScreenState.ShottingMode;
                     break;
                 case ScreenState.Finish:
                     break;
