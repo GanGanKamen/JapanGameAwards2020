@@ -31,6 +31,7 @@ namespace Cooking.Stage
         [SerializeField] private Text _turnNumber;
         [SerializeField] private Text _playerNumber;
         [SerializeField] private Text _point;
+        private ScreenState _beforeShotScreenState;
 
         #region インスタンスへのstaticなアクセスポイント
         /// <summary>
@@ -109,6 +110,7 @@ namespace Cooking.Stage
         /// </summary>
         public void StartPowerMeterMode()
         {
+            _beforeShotScreenState = _mainUIState;
             ChangeUI("PowerMeterMode");
         }
         /// <summary>
@@ -116,7 +118,18 @@ namespace Cooking.Stage
         /// </summary>
         public void ResetUIMode()
         {
-            ChangeUI("LookDownMode");
+            switch (_beforeShotScreenState)
+            {
+                case ScreenState.AngleMode:
+                    ChangeUI("AngleMode");
+                    break;
+                case ScreenState.SideMode:
+                    ChangeUI("SideMode");
+                    break;
+                default:
+                    ChangeUI("LookDownMode");
+                    break;
+            }
         }
         /// <summary>
         /// ボタンによるUIの切り替えを行うメソッド→ボタンのテキストで判別できるようにしたい、継承も利用していきたい publicボタン privateUI切り替えしっかりと分けたい
