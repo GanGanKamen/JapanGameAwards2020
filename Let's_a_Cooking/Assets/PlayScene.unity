@@ -381,11 +381,15 @@ MonoBehaviour:
   - {fileID: 587742417}
   - {fileID: 514601721}
   - {fileID: 551164140}
+  _orderGage: {fileID: 0}
   _powerGage: {fileID: 895745811}
   returnButton: {fileID: 607945098}
   _turnNumber: {fileID: 1832513323}
   _playerNumber: {fileID: 804567840}
   _point: {fileID: 890528377}
+  _orderMin: 5
+  _orderMax: 20
+  _orderMeterSpeed: 50
 --- !u!1 &55672306
 GameObject:
   m_ObjectHideFlags: 0
@@ -1945,7 +1949,7 @@ GameObject:
   - component: {fileID: 491908387}
   m_Layer: 0
   m_Name: ground
-  m_TagString: Ground
+  m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3199,7 +3203,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: NaN, z: 6.9e-43, w: 4.1070035e-30}
+  m_BoundingSphereOverride: {x: 6.7130534e+22, y: 2.8404043e+29, z: 2874587.8, w: 1.7442496e+28}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -5272,8 +5276,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _verticalMouseSensitivity: 25
   _horizontallMouseSensitivity: 25
-  _maxPower: 20
-  _minPower: 5
+  _maxShotPower: 20
+  _minShotPower: 5
   _serializedLimitVerticalAngle: 60
 --- !u!114 &1335392428
 MonoBehaviour:
