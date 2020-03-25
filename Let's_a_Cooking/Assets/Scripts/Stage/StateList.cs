@@ -15,6 +15,7 @@
     public enum ScreenState
     {
         ChooseFood,
+        DecideOrder,
         Start,
         AngleMode,
         SideMode,

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Touches;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Cooking.Stage
 {
 
-    public class UIManager : MonoBehaviour
+    public class UIManager : ChangePowerMeter
 	{
         /// <summary>
         /// メインとなるUIの状態の数だけUIを用意
@@ -22,6 +23,10 @@ namespace Cooking.Stage
         }
         private ScreenState _mainUIState = ScreenState.ChooseFood;
         /// <summary>
+        /// 順番決め用ゲージを取得
+        /// </summary>
+        [SerializeField] private Slider _orderGage;
+        /// <summary>
         /// shotPowerゲージを取得
         /// </summary>
         [SerializeField]private Slider _powerGage;
@@ -32,7 +37,11 @@ namespace Cooking.Stage
         [SerializeField] private Text _playerNumber;
         [SerializeField] private Text _point;
         private ScreenState _beforeShotScreenState;
-
+        /// <summary>
+        /// 順番決め用最大/最小値
+        /// </summary>
+        [SerializeField] float _orderMin = 5, _orderMax = 20;
+        [SerializeField] float _orderMeterSpeed = 50;
         #region インスタンスへのstaticなアクセスポイント
         /// <summary>
         /// このクラスのインスタンスを取得
@@ -70,6 +79,14 @@ namespace Cooking.Stage
             {
                 case ScreenState.ChooseFood:
                     break;
+                case ScreenState.DecideOrder:
+                    if (TouchInput.GetTouchPhase() == TouchInfo.Down)
+                    {
+                        ChangeUI("Start");
+                    }
+                    ChangeShotPower(_orderMin,_orderMax, _orderMeterSpeed);
+                    _orderGage.value = Power;
+                    break;
                 case ScreenState.Start:
                     break;
                 case ScreenState.AngleMode:
@@ -80,7 +97,7 @@ namespace Cooking.Stage
                     break;
                 case ScreenState.PowerMeterMode:
                     //shotPowerをゲージに反映
-                    _powerGage.value = ShotManager.Instance.ShotPower;
+                    _powerGage.value = ShotManager.Instance.Power;
                     break;
                 case ScreenState.ShottingMode:
                     break;
@@ -102,8 +119,7 @@ namespace Cooking.Stage
             ///作成中
             ///選ばれた食材に応じてプレイヤーを生成する。現在TurnControllerに生成の役割がある。
 
-
-            StartCoroutine(StartGameUI());
+            ChangeUI("DecideOrder");
         }
         /// <summary>
         /// パワーメーターモードに変更。ショット先を決めるモード以外から変更されることは想定していない。
@@ -145,7 +161,10 @@ namespace Cooking.Stage
             {
                 case ScreenState.ChooseFood:
                     break;
+                case ScreenState.DecideOrder:
+                    break;
                 case ScreenState.Start:
+                    StartCoroutine(StartGameUI());
                     break;
                 case ScreenState.AngleMode:
                     ShotManager.Instance.ChangeShotState(ShotState.AngleMode);
@@ -177,7 +196,6 @@ namespace Cooking.Stage
 
         IEnumerator StartGameUI()
         {
-            ChangeUI("Start");
             yield return new WaitForSeconds(1f);
             ChangeUI("LookDownMode");
         }

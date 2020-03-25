@@ -9,8 +9,8 @@ namespace Cooking.Stage
 	/// ショットの方向や大きさを決めるオブジェクトにつけるクラス。
 	/// ショットオブジェクトは一つのみで、各プレイヤーで使いまわす。
 	/// </summary>
-	public class ShotManager : MonoBehaviour
-	{
+	public class ShotManager : ChangePowerMeter
+    {
 		/// <summary>
 		/// ショットの状態を表す。
 		/// </summary>
@@ -28,20 +28,9 @@ namespace Cooking.Stage
 		/// </summary>
 		[SerializeField] float _verticalMouseSensitivity = 25, _horizontallMouseSensitivity = 25;
 		/// <summary>
-		/// 食材を打つ力を定義。
-		/// </summary>
-		public float ShotPower {
-			get { return _shotPower; }
-		}
-		private float _shotPower;
-		/// <summary>
-		/// パワー調整時の加減に使うスイッチ。
-		/// </summary>
-		private bool _powerUp = true;
-		/// <summary>
 		/// ショットの最大パワーと最小パワー
 		/// </summary>
-		public float _maxPower = 20, _minPower = 5;
+		[SerializeField] float _maxShotPower = 20, _minShotPower = 5;
 		/// <summary>
 		/// ショット時に力を加えるため用 アクティブな食材の持つRigidbody
 		/// </summary>
@@ -121,7 +110,7 @@ namespace Cooking.Stage
 					break;
 				case ShotState.PowerMeterMode:
 					{
-						ChangeShotPower();
+						ChangeShotPower(_minShotPower,_maxShotPower,30);
 						//左クリックされた時に呼び出される
 						if (!MouseInputPrevention.Instance.ShotInvalid && TouchInput.GetTouchPhase() == TouchInfo.Down)
 						{
@@ -158,31 +147,8 @@ namespace Cooking.Stage
 		/// <summary>
 		/// ショットのパワーが変動する
 		/// </summary>
-		private void ChangeShotPower()
-		{
-			if (ShotPower < _minPower)
-			{
-				_powerUp = true;
-				_shotPower = _minPower;
-			}
-			else if (ShotPower > _maxPower)
-			{
-				_powerUp = false;
-				_shotPower = _maxPower;
-			}
-			else
-			{
-				if (_powerUp)
-				{
-					_shotPower += 30 * Time.deltaTime;
-				}
-				else if (!_powerUp)
-				{
-					_shotPower -= 30 * Time.deltaTime;
-				}
-			}
-		}
-		/// <summary>
+
+        /// <summary>
 		/// ショットの角度を決める
 		/// </summary>
 		/// <returns></returns>
@@ -238,7 +204,7 @@ namespace Cooking.Stage
                 case ShotState.ShottingMode:
                     {
                         //食材に力を加える処理
-                        var initialSpeedVector = transform.forward * ShotPower;
+                        var initialSpeedVector = transform.forward * Power;
                         _shotRigidbody.velocity = initialSpeedVector;
                         UIManager.Instance.ChangeUI("ShottingMode");
                         PredictLineController.Instance.DestroyPredictLine();

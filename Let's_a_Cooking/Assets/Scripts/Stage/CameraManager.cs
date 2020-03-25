@@ -66,76 +66,98 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
-            //Topカメラの処理
-            if(camNo == 0)
+            switch (UIManager.Instance.MainUIStateProperty)
             {
-                topCam.Priority = 1;
-                frontCam.Priority = 0;
-                sideCam.Priority = 0;
+                case ScreenState.ChooseFood:
+                    break;
+                case ScreenState.DecideOrder:
+                    break;
+                case ScreenState.Start:
+                    break;
+                case ScreenState.AngleMode:
+                    //Frntカメラの処理
+                    if (camNo == 1)
+                    {
+                        topCam.Priority = 0;
+                        frontCam.Priority = 1;
+                        sideCam.Priority = 0;
+                    }
+                    break;
+                case ScreenState.SideMode:
+                    //Sideカメラの処理
+                    if (camNo == 2)
+                    {
+                        topCam.Priority = 0;
+                        frontCam.Priority = 0;
+                        sideCam.Priority = 1;
 
-                //左クリックされた瞬間で呼び出される
-                if(Input.GetMouseButtonDown(0))
-                {
-                    newTopCameraPos = topCam.transform.position;  //現在のカメラの座標を代入
-                    clickPos = Input.mousePosition;     //クリックされたマウスの座標を代入
-                }
-                //左クリックされている間呼び出される
-                else if(Input.GetMouseButton(0))
-                {
-                    newTopCameraPos.x += (clickPos.x - Input.mousePosition.x) / 100;   //x座標のマウスの移動量を計算
-                    newTopCameraPos.z += (clickPos.y - Input.mousePosition.y) / 100;   //y座標のマウスの移動量を計算
+                        //左クリックされた瞬間で呼び出される
+                        if (Input.GetMouseButtonDown(0))
+                        {
+                            newSideCameraPos = sideCam.transform.position;  //現在のカメラの座標を代入
+                            clickPos = Input.mousePosition;     //クリックされたマウスの座標を代入
+                        }
+                        //左クリックされている間呼び出される
+                        else if (Input.GetMouseButton(0))
+                        {
+                            sideCam.transform.position += transform.forward * (clickPos.x - Input.mousePosition.x) / 100;   //マウスの移動量/100をカメラの左右方向に代入
+                            sideCam.transform.position += transform.up * (clickPos.y - Input.mousePosition.y) / 100;   //マウスの移動量/100をカメラの上下方向に代入
 
-                    topCam.transform.position = newTopCameraPos;   //マウスの移動量/100を代入
-                    clickPos = Input.mousePosition;     //移動後の座標で初期化
-                }
+                            clickPos = Input.mousePosition;     //移動後の座標で初期化
+                        }
 
-                wheelScroll = Input.GetAxis("Mouse ScrollWheel");   //マウスホイールの回転量を格納
-                //マウスホイールが入力されたら
-                //if (wheelScroll != 0)
-                //{
-                    //newTopCameraPos.y = topCam.transform.position.y + wheelScroll * -8;
-                    //topCam.transform.position = newTopCameraPos;       //カメラの座標に代入
-                //}
+                        wheelScroll = Input.GetAxis("Mouse ScrollWheel");   //マウスホイールの回転量を格納
+                                                                            //マウスホイールが入力されたら
+                        if (wheelScroll != 0)
+                        {
+                            sideCam.transform.position += transform.right * wheelScroll * -4;       //マウスホイールの回転をカメラの前後方向に代入
+                        }
+                    }
+                    break;
+                case ScreenState.LookDownMode:
+                    //Topカメラの処理
+                    if (camNo == 0)
+                    {
+                        topCam.Priority = 1;
+                        frontCam.Priority = 0;
+                        sideCam.Priority = 0;
+
+                        //左クリックされた瞬間で呼び出される
+                        if (Input.GetMouseButtonDown(0))
+                        {
+                            newTopCameraPos = topCam.transform.position;  //現在のカメラの座標を代入
+                            clickPos = Input.mousePosition;     //クリックされたマウスの座標を代入
+                        }
+                        //左クリックされている間呼び出される
+                        else if (Input.GetMouseButton(0))
+                        {
+                            newTopCameraPos.x += (clickPos.x - Input.mousePosition.x) / 100;   //x座標のマウスの移動量を計算
+                            newTopCameraPos.z += (clickPos.y - Input.mousePosition.y) / 100;   //y座標のマウスの移動量を計算
+
+                            topCam.transform.position = newTopCameraPos;   //マウスの移動量/100を代入
+                            clickPos = Input.mousePosition;     //移動後の座標で初期化
+                        }
+
+                        wheelScroll = Input.GetAxis("Mouse ScrollWheel");   //マウスホイールの回転量を格納
+                                                                            //マウスホイールが入力されたら
+                                                                            //if (wheelScroll != 0)
+                                                                            //{
+                                                                            //newTopCameraPos.y = topCam.transform.position.y + wheelScroll * -8;
+                                                                            //topCam.transform.position = newTopCameraPos;       //カメラの座標に代入
+                                                                            //}
+                    }
+                    break;
+                case ScreenState.PowerMeterMode:
+                    break;
+                case ScreenState.ShottingMode:
+                    break;
+                case ScreenState.Finish:
+                    break;
+                case ScreenState.Pause:
+                    break;
+                default:
+                    break;
             }
-
-            //Frntカメラの処理
-            if(camNo == 1)
-            {
-                topCam.Priority = 0;
-                frontCam.Priority = 1;
-                sideCam.Priority = 0;
-            }
-
-            //Sideカメラの処理
-            if(camNo == 2)
-            {
-                topCam.Priority = 0;
-                frontCam.Priority = 0;
-                sideCam.Priority = 1;
-
-                //左クリックされた瞬間で呼び出される
-                if (Input.GetMouseButtonDown(0))
-                {
-                    newSideCameraPos = sideCam.transform.position;  //現在のカメラの座標を代入
-                    clickPos = Input.mousePosition;     //クリックされたマウスの座標を代入
-                }
-                //左クリックされている間呼び出される
-                else if (Input.GetMouseButton(0))
-                {
-                    sideCam.transform.position += transform.forward * (clickPos.x - Input.mousePosition.x) / 100;   //マウスの移動量/100をカメラの左右方向に代入
-                    sideCam.transform.position += transform.up * (clickPos.y - Input.mousePosition.y) / 100;   //マウスの移動量/100をカメラの上下方向に代入
-
-                    clickPos = Input.mousePosition;     //移動後の座標で初期化
-                }
-
-                wheelScroll = Input.GetAxis("Mouse ScrollWheel");   //マウスホイールの回転量を格納
-                //マウスホイールが入力されたら
-                if (wheelScroll != 0)
-                {
-                    sideCam.transform.position += transform.right * wheelScroll * -4;       //マウスホイールの回転をカメラの前後方向に代入
-                }
-            }
-
             switch (ShotManager.Instance.ShotModeProperty)
             {
                 case ShotState.WaitMode:
@@ -207,7 +229,7 @@ namespace Cooking.Stage
         /// ターン開始時にカメラの動きの中心をセット player中心
         /// </summary>
         /// <param name="cameraSetPositon"></param>
-        public void SetCameraMoveCenter(Vector3 cameraSetPositon)
+        public void SetCameraMoveCenterPosition(Vector3 cameraSetPositon)
         {
             _cameraMoveCenter.position = cameraSetPositon;
             SetCameraLocalPosition();

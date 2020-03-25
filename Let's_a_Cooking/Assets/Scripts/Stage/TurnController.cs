@@ -93,9 +93,8 @@ namespace Cooking.Stage
                 startPoint.x++;
             }
             ShotManager.Instance.SetShotManager(foodStatuses[_activePlayerIndex].Rigidbody);
-            CameraManager.Instance.SetCameraMoveCenter(foodStatuses[_activePlayerIndex].transform.position);
+            CameraManager.Instance.SetCameraMoveCenterPosition(foodStatuses[_activePlayerIndex].transform.position);
             PredictLineController.Instance.SetPredictLineInstantiatePosition(foodStatuses[_activePlayerIndex].transform.position);
-            SetObjectsPositionForNextPlayer(_activePlayerIndex);
             ///ターンを1にセットしてゲーム開始
             _turnNumber = 1;
         }
@@ -157,7 +156,7 @@ namespace Cooking.Stage
         private void SetObjectsPositionForNextPlayer(int activePlayerIndex)
         {
             ShotManager.Instance.SetShotManager(foodStatuses[activePlayerIndex].Rigidbody);
-            CameraManager.Instance.SetCameraMoveCenter(foodStatuses[activePlayerIndex].transform.position);
+            CameraManager.Instance.SetCameraMoveCenterPosition(foodStatuses[activePlayerIndex].transform.position);
             PredictLineController.Instance.SetPredictLineInstantiatePosition(foodStatuses[activePlayerIndex].transform.position);
         }
     }
