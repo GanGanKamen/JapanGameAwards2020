@@ -144,10 +144,6 @@ namespace Cooking.Stage
 					break;
 			}
 		}
-		/// <summary>
-		/// ショットのパワーが変動する
-		/// </summary>
-
         /// <summary>
 		/// ショットの角度を決める
 		/// </summary>

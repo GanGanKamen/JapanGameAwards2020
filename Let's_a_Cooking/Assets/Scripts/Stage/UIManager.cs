@@ -70,6 +70,7 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
 		{
+
             #region デフォルトUIの更新(スコア・プレイヤー番号・ターン数)
             _turnNumber.text = TurnController.Instance.TurnNumber.ToString();
             _playerNumber.text = (TurnController.Instance.ActivePlayerIndex + 1).ToString();
@@ -90,16 +91,20 @@ namespace Cooking.Stage
                 case ScreenState.Start:
                     break;
                 case ScreenState.AngleMode:
+                    UpdatePointText();
                     break;
                 case ScreenState.SideMode:
+                    UpdatePointText();
                     break;
                 case ScreenState.LookDownMode:
+                    UpdatePointText();
                     break;
                 case ScreenState.PowerMeterMode:
                     //shotPowerをゲージに反映
                     _powerGage.value = ShotManager.Instance.Power;
                     break;
                 case ScreenState.ShottingMode:
+                    UpdatePointText();
                     break;
                 case ScreenState.Finish:
                     break;
@@ -108,8 +113,13 @@ namespace Cooking.Stage
                 default:
                     break;
             }
-            //Debug.Log(_mainUIState);
         }
+
+        private void UpdatePointText()
+        {
+            _point.text = TurnController.Instance.foodStatuses[TurnController.Instance.ActivePlayerIndex].playerPoint.Point.ToString();
+        }
+
         /// <summary>
         /// 食材を選ぶ際のマウスクリックで呼ばれる
         /// </summary>

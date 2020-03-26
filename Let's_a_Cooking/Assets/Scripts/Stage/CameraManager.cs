@@ -17,7 +17,10 @@ namespace Cooking.Stage
         private float _changeTopCameraTimeCounter;
        [SerializeField] private float _changeTopCameraTime = 0.3f;
         Vector3[] _cameraLocalPositions = new Vector3[3];
-
+        /// <summary>
+        /// ゲーム開始前のUIにて、ドラッグした状態 = タッチしていた状態でゲームが始まると、ドラッグ量が座標に代入されてバグるのを防ぐ
+        /// </summary>
+        bool _isTouchOnGamePlay;
         /// <summary> 0 == top, 1 == front, 2 == side </summary>
         public int camNo = 0;
 
@@ -127,9 +130,10 @@ namespace Cooking.Stage
                         {
                             newTopCameraPos = topCam.transform.position;  //現在のカメラの座標を代入
                             clickPos = Input.mousePosition;     //クリックされたマウスの座標を代入
+                            _isTouchOnGamePlay = true;
                         }
                         //左クリックされている間呼び出される
-                        else if (Input.GetMouseButton(0))
+                        else if (Input.GetMouseButton(0) && _isTouchOnGamePlay)
                         {
                             newTopCameraPos.x += (clickPos.x - Input.mousePosition.x) / 100;   //x座標のマウスの移動量を計算
                             newTopCameraPos.z += (clickPos.y - Input.mousePosition.y) / 100;   //y座標のマウスの移動量を計算

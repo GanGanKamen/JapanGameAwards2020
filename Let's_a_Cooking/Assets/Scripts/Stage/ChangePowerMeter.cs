@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Cooking.Stage
 {
     /// <summary>
-    /// パワーメーターの実装
+    /// パワーメーター実装用クラス//もう少し改善予定
     /// </summary>
     public class ChangePowerMeter : MonoBehaviour
     {

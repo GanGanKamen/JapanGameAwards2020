@@ -42,11 +42,46 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
-            ///メソッド化予定
-            if (_gameState == StageGameState.ChooseFood && UIManager.Instance.MainUIStateProperty == ScreenState.Start)
+            switch (_gameState)
             {
-                _gameState = StageGameState.Play;
-                TurnController.Instance.CreatePlayers();
+                case StageGameState.ChooseFood:
+                    ///メソッド化予定
+                    if (UIManager.Instance.MainUIStateProperty == ScreenState.Start)
+                    {
+                        _gameState = StageGameState.Play;
+                        TurnController.Instance.CreatePlayers();
+                    }
+                    break;
+                case StageGameState.Play:
+                    break;
+                case StageGameState.Finish:
+                    break;
+                default:
+                    break;
+            }
+        }
+        /// <summary>
+        /// 落下後(物理挙動)に実行するために使用 trueの検出を1フレーム残す
+        /// </summary>
+        private void FixedUpdate()
+        {
+            switch (_gameState)
+            {
+                case StageGameState.ChooseFood:
+                    break;
+                case StageGameState.Play:
+                    {
+                        var turnController = TurnController.Instance;
+                        if (turnController.foodStatuses[turnController.ActivePlayerIndex].IsFall)
+                        {
+                            turnController.ReSetPlayerOnStartPoint();
+                        }
+                    }
+                    break;
+                case StageGameState.Finish:
+                    break;
+                default:
+                    break;
             }
         }
         private void ChangeGameState(StageGameState stageGameState)

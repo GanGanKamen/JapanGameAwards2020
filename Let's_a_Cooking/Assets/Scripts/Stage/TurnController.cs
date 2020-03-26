@@ -131,6 +131,10 @@ namespace Cooking.Stage
             }
             if (ShotManager.Instance.ShotModeProperty == ShotState.ShotEndMode)
             {
+                if (foodStatuses[_activePlayerIndex].IsGoal)
+                {
+                    Debug.Log("Goal");
+                }
                 ChangeTurn();
             }
         }
@@ -158,6 +162,15 @@ namespace Cooking.Stage
             ShotManager.Instance.SetShotManager(foodStatuses[activePlayerIndex].Rigidbody);
             CameraManager.Instance.SetCameraMoveCenterPosition(foodStatuses[activePlayerIndex].transform.position);
             PredictLineController.Instance.SetPredictLineInstantiatePosition(foodStatuses[activePlayerIndex].transform.position);
+        }
+        /// <summary>
+        /// プレイヤー落下時にscenecontrollerに呼ばれる
+        /// </summary>
+        public void ReSetPlayerOnStartPoint()
+        {
+            foodStatuses[_activePlayerIndex].ReStart(_startPositionObject.position);
+            foodStatuses[_activePlayerIndex].Rigidbody.velocity = Vector3.zero;
+            foodStatuses[_activePlayerIndex].transform.eulerAngles = Vector3.zero;
         }
     }
 

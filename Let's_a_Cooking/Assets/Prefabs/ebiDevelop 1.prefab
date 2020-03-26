@@ -346,8 +346,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7477970619316943029}
-  - component: {fileID: 7704542855696372374}
   - component: {fileID: 4166958715689829355}
+  - component: {fileID: 6733690043586323492}
   - component: {fileID: 1135881986129717472}
   - component: {fileID: 7704542855696372375}
   m_Layer: 0
@@ -375,18 +375,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7704542855696372374
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7704542855696372369}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3b7e5c6a43aa22458eba52e317ca26a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &4166958715689829355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -399,10 +387,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b2f24c6e7ef524409c06c1026695495, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _skinnedMeshRenderer: {fileID: 1030755335375822266}
+  _ebiBlack: {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
+  _ebi: {fileID: 2100000, guid: e4e6277cc55c3ae4bb46a09b8f5547a8, type: 2}
+  playerPoint: {fileID: 0}
   isAI: 0
   playerNumber: 0
   foodType: 0
   shotPoint: {fileID: 0}
+--- !u!114 &6733690043586323492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7704542855696372369}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fddffe32cc8cd842a7d93d9c72ba06b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!54 &1135881986129717472
 Rigidbody:
   m_ObjectHideFlags: 0
