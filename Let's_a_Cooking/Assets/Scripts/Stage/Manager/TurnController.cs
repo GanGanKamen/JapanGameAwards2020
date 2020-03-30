@@ -160,13 +160,13 @@ namespace Cooking.Stage
                 foodStatuses[i].transform.position = startPoint;
                 startPoint.x += 0.5f;
             }
+            ///値を元にFoodStatusesを並び替える
+            PlayerInOrder();
             ShotManager.Instance.SetShotManager(foodStatuses[_activePlayerIndex].Rigidbody);
             CameraManager.Instance.SetCameraMoveCenterPosition(foodStatuses[_activePlayerIndex].transform.position);
             PredictLineController.Instance.SetPredictLineInstantiatePosition(foodStatuses[_activePlayerIndex].transform.position);
             ///ターンを1にセットしてゲーム開始
             _turnNumber = 1;
-            ///値を元にFoodStatusesを並び替える
-            PlayerInOrder();
         }
 
         // Update is called once per frame
