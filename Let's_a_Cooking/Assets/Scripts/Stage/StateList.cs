@@ -5,7 +5,7 @@
     /// </summary>
     public enum StageGameState
     {
-        ChooseFood,
+        Preparation,
         Play,
         Finish
     }

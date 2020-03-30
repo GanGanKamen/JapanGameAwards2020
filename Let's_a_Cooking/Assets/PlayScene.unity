@@ -250,6 +250,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 93220}
   m_CullTransparentMesh: 0
+--- !u!1 &3784768 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6062105684223170923, guid: ebe0e6ae43e09a64d9ccb8adcde750cd,
+    type: 3}
+  m_PrefabInstance: {fileID: 1739532571}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &6367952
 GameObject:
   m_ObjectHideFlags: 0
@@ -3098,6 +3104,7 @@ MonoBehaviour:
   playerSumNumber: 2
   foodStatuses: []
   _startPositionObject: {fileID: 242541612}
+  _goal: {fileID: 3784768}
 --- !u!114 &638578997
 MonoBehaviour:
   m_ObjectHideFlags: 0

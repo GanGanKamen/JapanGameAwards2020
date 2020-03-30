@@ -4,19 +4,12 @@ using UnityEngine;
 
 namespace Cooking.Stage
 {
-    public class AI : MonoBehaviour
+    public class AI : FoodStatus
     {
         /// <summary>
         /// 射出するオブジェクト
         /// </summary>
-        [SerializeField]
-        private GameObject ThrowingObject;
-
-        /// <summary>
-        /// 標的のオブジェクト
-        /// </summary>
-        [SerializeField]
-        private GameObject TargetObject;
+        public GameObject ThrowingObject;
 
         /// <summary>
         /// 射出角度
@@ -30,26 +23,28 @@ namespace Cooking.Stage
 
         private void Start()
         {
-            StartCoroutine("Shooting");
+            //実験用コード
+            //StartCoroutine(Shooting(GameObject.FindGameObjectWithTag("Finish")));
         }
 
         private void Update()
         {
-
         }
 
         /// <summary>
         /// ボールを射出する
         /// </summary>
-        private void ThrowingBall()
+        private void ThrowingBall(GameObject targetObject)
         {
             // 標的の座標
-            if (TargetObject == null)
-            {
-                targetPosition = TargetObject.transform.position;
-            }
-
-
+            //if (targetObject == null)
+            //{
+            //    targetPosition = targetObject.transform.position;
+            //}
+            targetPosition = targetObject.transform.position;
+            //ランダム要素
+            //seedId = Random.Range(0, 33 - rate);
+            
             // 射出角度
             float angle = ThrowingAngle;
 
@@ -85,17 +80,21 @@ namespace Cooking.Stage
             }
         }
 
-        private void TurnAI()
+        public void TurnAI(GameObject targetObject)
         {
-            StartCoroutine("Shooting");
+            StartCoroutine(Shooting(targetObject));
         }
 
-
-        IEnumerator Shooting()
+        /// <summary>
+        /// 標的のオブジェクトに向かってショット
+        /// </summary>
+        /// <param name="targetObject"></param>
+        /// <returns></returns>
+        IEnumerator Shooting(GameObject targetObject)
         {
-            this.transform.LookAt(TargetObject.transform);
+            //this.transform.LookAt(targetObject.transform);
             yield return new WaitForSeconds(1);
-            ThrowingBall();
+            ThrowingBall(targetObject);
             yield return new WaitForSeconds(5);
         }
     }

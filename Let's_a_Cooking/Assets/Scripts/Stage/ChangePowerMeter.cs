@@ -5,49 +5,47 @@ using UnityEngine;
 namespace Cooking.Stage
 {
     /// <summary>
-    /// パワーメーター実装用クラス//もう少し改善予定
+    /// パワーメーター実装用クラス
     /// </summary>
     public class ChangePowerMeter : MonoBehaviour
     {
         /// <summary>
         /// パワー調整時の加減に使うスイッチ。
         /// </summary>
-        protected bool _powerUp = true;
+        private bool _powerUp = true;
         /// <summary>
-        /// メーターで変動させる値
-        /// </summary>
-        public float Power
-        {
-            get { return _power; }
-        }
-        private float _power;
-        /// <summary>
-        /// メーターで値変動 float min 最小値,float max 最大値,float メーター変動率 30ショット時,大きいほど速い
+        /// valueが変動 float min 最小値,float max 最大値,float メーター変動率 30ショット時,大きいほど速い
         /// </summary>
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <param name="meterChangeRate"></param>
-        protected void ChangeShotPower(float min,float max,float meterChangeRate)
+        protected float ChangeShotPower(float min,float max,float meterChangeRate,float value)
         {
-            if (_power < min)
+            if (_powerUp)
             {
-                _powerUp = true;
-                _power = min;
+                value += meterChangeRate * Time.deltaTime;
+                if (value > max)
+                {
+                    _powerUp = false;
+                    return max;
+                }
+                else
+                {
+                    return value;
+                }
             }
-            else if (_power > max)
-            {
-                _powerUp = false;
-                _power = max;
-            }
+            ///下降中
             else
             {
-                if (_powerUp)
+                value -= meterChangeRate * Time.deltaTime;
+                if (value < min)
                 {
-                    _power += meterChangeRate * Time.deltaTime;
+                    _powerUp = true;
+                    return min;
                 }
-                else if (!_powerUp)
+                else
                 {
-                    _power -= meterChangeRate * Time.deltaTime;
+                    return value;
                 }
             }
         }
