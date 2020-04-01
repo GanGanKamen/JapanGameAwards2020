@@ -351,7 +351,7 @@ GameObject:
   - component: {fileID: 382828628839790765}
   - component: {fileID: 6953393799243547354}
   m_Layer: 0
-  m_Name: AI
+  m_Name: AI Sample
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -407,7 +407,7 @@ MonoBehaviour:
   foodType: 0
   shotPoint: {fileID: 0}
   ThrowingObject: {fileID: 6953393799243547356}
-  ThrowingAngle: 45
+  ThrowingAngle: 26
 --- !u!54 &382828628839790765
 Rigidbody:
   m_ObjectHideFlags: 0

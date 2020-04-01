@@ -21,10 +21,18 @@ namespace Cooking.Stage
 
         Vector3 targetPosition;
 
+        Rigidbody rid;
+        /// <summary>
+        /// 一定半径範囲内に調味料があるかどうかで行動を決める
+        /// </summary>
+        float _searchArea = 20;
+
         private void Start()
         {
             //実験用コード
             //StartCoroutine(Shooting(GameObject.FindGameObjectWithTag("Finish")));
+            // 射出
+            rid = ThrowingObject.GetComponent<Rigidbody>();
         }
 
         private void Update()
@@ -36,11 +44,6 @@ namespace Cooking.Stage
         /// </summary>
         private void ThrowingBall(GameObject targetObject)
         {
-            // 標的の座標
-            //if (targetObject == null)
-            //{
-            //    targetPosition = targetObject.transform.position;
-            //}
             targetPosition = targetObject.transform.position;
             //ランダム要素
             //seedId = Random.Range(0, 33 - rate);
@@ -51,9 +54,7 @@ namespace Cooking.Stage
             // 射出速度を算出
             Vector3 velocity = CalculateVelocity(this.transform.position, targetPosition, angle);
 
-            // 射出
-            Rigidbody rid = ThrowingObject.GetComponent<Rigidbody>();
-            rid.AddForce(velocity * rid.mass, ForceMode.Impulse);
+            ShotManager.Instance.AIShot(velocity * rid.mass);
         }
 
         private Vector3 CalculateVelocity(Vector3 pointA, Vector3 pointB, float angle)
@@ -61,11 +62,8 @@ namespace Cooking.Stage
             // 射出角をラジアンに変換
             rad = angle * Mathf.PI / 180;
 
-            // 水平方向の距離x
-            x = Vector2.Distance(new Vector2(pointA.x, pointA.z), new Vector2(pointB.x, pointB.z));
-
-            // 垂直方向の距離y
-            y = pointA.y - pointB.y;
+            x = CalculateDistance(pointA, pointB).x;
+            y = CalculateDistance(pointA, pointB).y;
 
             speed = Mathf.Sqrt(-Physics.gravity.y * Mathf.Pow(x, 2) / (2 * Mathf.Pow(Mathf.Cos(rad), 2) * (x * Mathf.Tan(rad) + y)));
 
@@ -80,9 +78,37 @@ namespace Cooking.Stage
             }
         }
 
-        public void TurnAI(GameObject targetObject)
+        private Vector2 CalculateDistance(Vector3 pointA, Vector3 pointB)
         {
-            StartCoroutine(Shooting(targetObject));
+            // 水平方向の距離x
+            var x = Vector2.Distance(new Vector2(pointA.x, pointA.z), new Vector2(pointB.x, pointB.z));
+
+            // 垂直方向の距離y
+            var y = pointA.y - pointB.y;
+
+            return new Vector2(x, y);
+        }
+
+        public void TurnAI()
+        {
+            StartCoroutine(Shooting(DecideTarget()));
+        }
+
+        private GameObject DecideTarget()
+        {
+            foreach (var seasoning in GimmickManager.Instance.Seasonings)
+            {
+                if (seasoning != null)
+                {
+                    var distance = CalculateDistance(this.transform.position, seasoning.transform.position);
+                    if (Mathf.Pow(distance.x, 2) + Mathf.Pow(distance.y, 2) <= Mathf.Pow(_searchArea, 2))
+                    {
+                        return seasoning;
+                    }
+                }
+            }
+
+            return StageSceneManager.Instance.goal;
         }
 
         /// <summary>
@@ -93,9 +119,17 @@ namespace Cooking.Stage
         IEnumerator Shooting(GameObject targetObject)
         {
             //this.transform.LookAt(targetObject.transform);
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(2f);
             ThrowingBall(targetObject);
-            yield return new WaitForSeconds(5);
+            ///止まるまでAIのターン
+            while (true)
+            {
+                if (ShotManager.Instance.ShotModeProperty == ShotState.ShotEndMode)
+                {
+                    break;
+                }
+                yield return null;
+            }
         }
     }
 

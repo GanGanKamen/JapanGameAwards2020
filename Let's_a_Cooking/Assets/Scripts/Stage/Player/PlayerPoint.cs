@@ -1,12 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// アクティブプレイヤーのプレイヤーポイント取得のため、ターンコントローラーを経由してポイント取得
+/// </summary>
 public class PlayerPoint : MonoBehaviour
 {
-    /// <summary>
-    /// スコアの獲得はPlayerPointのみで行う予定
-    /// </summary>
     public int Point
     {
         get { return _point; }

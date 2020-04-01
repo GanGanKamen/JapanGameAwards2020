@@ -77,7 +77,7 @@ namespace Cooking.Stage
                     break;
                 case ScreenState.Start:
                     break;
-                case ScreenState.AngleMode:
+                case ScreenState.FrontMode:
                     //Frntカメラの処理
                     if (camNo == 1)
                     {
@@ -176,7 +176,7 @@ namespace Cooking.Stage
                         if (_changeTopCameraTimeCounter > _changeTopCameraTime)
                         {
                             camNo = 0;
-                            topCam.LookAt = TurnController.Instance.foodStatuses[TurnController.Instance.ActivePlayerIndex].transform;
+                            topCam.LookAt = TurnController.Instance.FoodStatuses[TurnController.Instance.ActivePlayerIndex].transform;
                             _changeTopCameraTimeCounter = 0;
                         }
                         else

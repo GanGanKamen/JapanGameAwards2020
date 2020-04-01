@@ -16,14 +16,21 @@ namespace Cooking
 		// Update is called once per frame
 		void Update()
 		{
-			if (Input.GetKeyDown(KeyCode.A))
-			{
-				var sceneName = SceneManager.GetActiveScene().name;
-				SceneManager.LoadScene(sceneName);
-			}
+            ///デバッグ用
+#if UNITY_EDITOR
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                LoadActiveScene();
+            }
+#endif
+        }
 
-		}
-	}
+        public static void LoadActiveScene()
+        {
+            var sceneName = SceneManager.GetActiveScene().name;
+            SceneManager.LoadScene(sceneName);
+        }
+    }
 
 }
 

@@ -60,7 +60,7 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
-            Debug.Log(_isFall);
+
         }
         private void OnCollisionEnter(Collision collision)
         {
@@ -83,6 +83,7 @@ namespace Cooking.Stage
             else if (other.tag == "Seasoning")
             {
                 GetSeasoning(_skinnedMeshRenderer, _ebiBlack);
+                Destroy(other.gameObject);
                 Debug.Log(_skinnedMeshRenderer.materials[0]);
             }
         }

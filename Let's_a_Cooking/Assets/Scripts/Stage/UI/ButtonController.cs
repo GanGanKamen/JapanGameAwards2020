@@ -1,16 +1,17 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Cooking.Stage
 {
     /// <summary>
-    /// ボタン自体にアタッチ
+    /// ボタンを押したときに、呼ばれる専用のクラス ボタンとメソッドを紐づける以上の役割はない
     /// </summary>
     public class ButtonController : MonoBehaviour
     {
+        /// <summary>
+        /// ボタンの機能の種類 同じ名前をボタンゲームオブジェクトにつける
+        /// </summary>
         enum ButtonName
         {
             None,
@@ -18,38 +19,48 @@ namespace Cooking.Stage
             Egg,
             Chicken,
             Sausage,
-            ChangeToTop,
-            ChangeToFront,
-            ChangeToSide,
-            StartPowerMeter,
+            LookDownMode,
+            FrontMode,
+            SideMode,
+            PowerMeterMode,
             CancelButton
         }
         private ButtonName _buttonName = ButtonName.None;
+        private UIManager _uIManager;
+        private void Start()
+        {
+            _uIManager = UIManager.Instance;
+        }
         /// <summary>
         /// ボタンを押した際に呼ばれる共通メソッド UIManagerを通して表示画面中のボタンの情報を受け取る
         /// </summary>
-        public void OnTouch()
+        /// <param name="button">押されたボタンの情報</param>
+        public void OnTouch(Button button)
         {
-            //押されたボタンの情報
-            var button = gameObject.GetComponent<Button>();
             ///enum型へ変換 + 変換失敗時に警告
             Debug.AssertFormat(Enum.TryParse(button.name, out _buttonName), "不適切なボタンの名前:{0}が入力されました。", button.name);
             //アクティブボタン特定のための情報 UIの状態を取得
-            switch (UIManager.Instance.MainUIStateProperty)
+            switch (_uIManager.MainUIStateProperty)
             {
                 case ScreenState.ChooseFood:
                     switch (_buttonName)
                     {
                         case ButtonName.None:
-                            Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", UIManager.Instance.MainUIStateProperty.ToString());
+                            Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", _uIManager.MainUIStateProperty.ToString());
                             break;
                         case ButtonName.Shrimp:
+                            _uIManager.ChooseFood(_buttonName.ToString());
                             break;
                         case ButtonName.Egg:
+                            _uIManager.ChooseFood(_buttonName.ToString());
                             break;
                         case ButtonName.Chicken:
+                            _uIManager.ChooseFood(_buttonName.ToString());
                             break;
                         case ButtonName.Sausage:
+                            _uIManager.ChooseFood(_buttonName.ToString());
+                            break;
+                        default:
                             break;
                     }
                     break;
@@ -57,7 +68,7 @@ namespace Cooking.Stage
                     switch (_buttonName)
                     {
                         case ButtonName.None:
-                            Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", UIManager.Instance.MainUIStateProperty.ToString());
+                            Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", _uIManager.MainUIStateProperty.ToString());
                             break;
                         default:
                             break;
@@ -67,23 +78,26 @@ namespace Cooking.Stage
                     switch (_buttonName)
                     {
                         case ButtonName.None:
-                            Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", UIManager.Instance.MainUIStateProperty.ToString());
+                            Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", _uIManager.MainUIStateProperty.ToString());
                             break;
                         default:
                             break;
                     }
                     break;
-                case ScreenState.AngleMode:
+                case ScreenState.FrontMode:
                     switch (_buttonName)
                     {
                         case ButtonName.None:
-                            Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", UIManager.Instance.MainUIStateProperty.ToString());
+                            Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", _uIManager.MainUIStateProperty.ToString());
                             break;
-                        case ButtonName.ChangeToTop:
+                        case ButtonName.LookDownMode:
+                            _uIManager.ChangeUI(_buttonName.ToString());
                             break;
-                        case ButtonName.ChangeToFront:
+                        case ButtonName.SideMode:
+                            _uIManager.ChangeUI(_buttonName.ToString());
                             break;
-                        case ButtonName.ChangeToSide:
+                        case ButtonName.PowerMeterMode:
+                            _uIManager.ChangeUI(_buttonName.ToString());
                             break;
                         default:
                             break;
@@ -93,17 +107,16 @@ namespace Cooking.Stage
                     switch (_buttonName)
                     {
                         case ButtonName.None:
-                            Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", UIManager.Instance.MainUIStateProperty.ToString());
+                            Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", _uIManager.MainUIStateProperty.ToString());
                             break;
-                        case ButtonName.ChangeToTop:
+                        case ButtonName.LookDownMode:
+                            _uIManager.ChangeUI(_buttonName.ToString());
                             break;
-                        case ButtonName.ChangeToFront:
+                        case ButtonName.FrontMode:
+                            _uIManager.ChangeUI(_buttonName.ToString());
                             break;
-                        case ButtonName.ChangeToSide:
-                            break;
-                        case ButtonName.StartPowerMeter:
-                            break;
-                        case ButtonName.CancelButton:
+                        case ButtonName.PowerMeterMode:
+                            _uIManager.ChangeUI(_buttonName.ToString());
                             break;
                         default:
                             break;
@@ -113,15 +126,13 @@ namespace Cooking.Stage
                     switch (_buttonName)
                     {
                         case ButtonName.None:
-                            Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", UIManager.Instance.MainUIStateProperty.ToString());
+                            Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", _uIManager.MainUIStateProperty.ToString());
                             break;
-                        case ButtonName.ChangeToTop:
+                        case ButtonName.FrontMode:
+                            _uIManager.ChangeUI(_buttonName.ToString());
                             break;
-                        case ButtonName.ChangeToFront:
-                            break;
-                        case ButtonName.ChangeToSide:
-                            break;
-                        case ButtonName.CancelButton:
+                        case ButtonName.SideMode:
+                            _uIManager.ChangeUI(_buttonName.ToString());
                             break;
                         default:
                             break;
@@ -131,9 +142,10 @@ namespace Cooking.Stage
                     switch (_buttonName)
                     {
                         case ButtonName.None:
-                            Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", UIManager.Instance.MainUIStateProperty.ToString());
+                            Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", _uIManager.MainUIStateProperty.ToString());
                             break;
                         case ButtonName.CancelButton:
+                            _uIManager.ResetUIMode();
                             break;
                         default:
                             break;
@@ -143,7 +155,7 @@ namespace Cooking.Stage
                     switch (_buttonName)
                     {
                         case ButtonName.None:
-                            Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", UIManager.Instance.MainUIStateProperty.ToString());
+                            Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", _uIManager.MainUIStateProperty.ToString());
                             break;
                         default:
                             break;
@@ -153,7 +165,7 @@ namespace Cooking.Stage
                     switch (_buttonName)
                     {
                         case ButtonName.None:
-                            Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", UIManager.Instance.MainUIStateProperty.ToString());
+                            Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", _uIManager.MainUIStateProperty.ToString());
                             break;
                         default:
                             break;
@@ -163,7 +175,7 @@ namespace Cooking.Stage
                     switch (_buttonName)
                     {
                         case ButtonName.None:
-                            Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", UIManager.Instance.MainUIStateProperty.ToString());
+                            Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", _uIManager.MainUIStateProperty.ToString());
                             break;
                         case ButtonName.CancelButton:
                             break;
@@ -175,10 +187,5 @@ namespace Cooking.Stage
                     break;
             }
         }
-        private static void OnTouch(string objectName)
-        {
-
-        }
     }
-
 }

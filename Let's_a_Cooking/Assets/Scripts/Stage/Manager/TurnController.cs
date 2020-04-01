@@ -17,6 +17,14 @@ namespace Cooking.Stage
             get { return _turnNumber; }
         }
         private int _turnNumber = 0;
+        /// <summary>
+        /// AIのターンであることを表す
+        /// </summary>
+        public bool IsAITurn
+        {
+            get { return _isAITurn; }
+        }
+        private bool _isAITurn;
         [SerializeField] GameObject _playerPrefab;
         [SerializeField] GameObject _aIPrefab;
         /// <summary>
@@ -24,7 +32,7 @@ namespace Cooking.Stage
         /// </summary>
         private int _playerSumNumber = 1;
         /// <summary>
-        /// foodStatusesにおける要素番号。この値でアクティブプレイヤーに指示 順番決めにも有人プレイヤーの番号として使用
+        /// _foodStatusesにおける要素番号。この値でアクティブプレイヤーに指示 準備段階にも有人プレイヤーの番号として使用 Chooseで仕様予定
         /// </summary>
         public int ActivePlayerIndex
         {
@@ -32,17 +40,22 @@ namespace Cooking.Stage
         }
         private int _activePlayerIndex = 0;
         /// <summary>
-        /// ターン回し用要素番号配列 1 3 2 0ならプレイヤー2 4 3 1の順にターンが回る
+        /// 要素番号配列(プレイヤー番号管理・プレイヤー番号へ変換用) 用途：ターンを回す・リザルトでプレイヤー番号(=要素番号 + 1)を取得
         /// </summary>
-        public int[] IndexArray
+        /// <remarks> 1 3 2 0ならプレイヤー2 4 3 1の順にターンが回る 0番目 = 最初にショットをするプレイヤーの番号 最初のターンのプレイヤーは何番のプレイヤーなのか？を知ることができる</remarks>
+        public int[] PlayerIndexArray
         {
-            get { return _indexArray; }
+            get { return _playerIndexArray; }
         }
-        private int[] _indexArray;
+        private int[] _playerIndexArray;
         /// <summary>
         /// プレイヤーの情報
         /// </summary>
-        public FoodStatus[] foodStatuses;
+        public FoodStatus[] FoodStatuses
+        {
+            get { return _foodStatuses; }
+        }
+        private FoodStatus[] _foodStatuses;
         /// <summary>
         /// ゲーム開始時の座標を示すオブジェクト
         /// </summary>
@@ -75,22 +88,15 @@ namespace Cooking.Stage
         }
         #endregion
 
-        [SerializeField] GameObject _goal;
         // Start is called before the first frame update
         void Start()
         {
             _playerSumNumber = GameManager.Instance.playerNumber + GameManager.Instance.computerNumber;
-            ///タグ検索エラーをできるだけ防ぐ
-            if (_goal == null)
-            {
-                Debug.Log("ゴールオブジェクトがセットされていません。タグ検索されました。");
-                GameObject.FindGameObjectWithTag("Finish");
-            }
             _orderPower = new float[_playerSumNumber];
-            _indexArray = new int[_playerSumNumber];
-            for (int i = 0; i < _indexArray.Length; i++)
+            _playerIndexArray = new int[_playerSumNumber];
+            for (int i = 0; i < _playerIndexArray.Length; i++)
             {
-                _indexArray[i] = i;
+                _playerIndexArray[i] = i;
             }
         }
 
@@ -116,16 +122,10 @@ namespace Cooking.Stage
                 {
                     if (_orderPower[j] < _orderPower[j + 1])
                     {
-                        ///値とプレイヤーをシンクロさせて入れ替える
-                        var tempValue = _orderPower[j];
-                        _orderPower[j] = _orderPower[j + 1];
-                        _orderPower[j + 1] = tempValue;
-                        var tempFood = foodStatuses[j];
-                        foodStatuses[j] = foodStatuses[j + 1];
-                        foodStatuses[j + 1] = tempFood;
-                        var tempIndex = _indexArray[j];
-                        _indexArray[j] = _indexArray[j + 1];
-                        _indexArray[j + 1] = tempIndex;
+                        //値とプレイヤーをシンクロさせて入れ替える
+                        ArrayMethod.ChangeArrayValuesFromHighToLow(_orderPower,j);
+                        ArrayMethod.ChangeArrayValuesFromHighToLow(_foodStatuses, j);
+                        ArrayMethod.ChangeArrayValuesFromHighToLow(_playerIndexArray, j);
                     }
                 }
             }
@@ -138,33 +138,32 @@ namespace Cooking.Stage
         {
             ///プレイヤー番号 一人目 ＝ 0番目
             int playerNumber = 0;
-            foodStatuses = new FoodStatus[_playerSumNumber];
+            _foodStatuses = new FoodStatus[_playerSumNumber];
             var startPoint = _startPositionObject.position;
             ///プレイヤーを生成 プレイヤー番号が小さいのがプレイしている人で大きいのがAI
             for (int i = 0; i < GameManager.Instance.playerNumber; i++)
             {
-                foodStatuses[playerNumber] = Instantiate(_playerPrefab).GetComponent<FoodStatus>();
-                foodStatuses[playerNumber].playerNumber = playerNumber + 1;
+                _foodStatuses[playerNumber] = Instantiate(_playerPrefab).GetComponent<FoodStatus>();
+                _foodStatuses[playerNumber].playerNumber = playerNumber + 1;
                 playerNumber++;
             }
             ///AIを生成
             for (int i = 0; i < GameManager.Instance.computerNumber; i++)
             {
-                foodStatuses[playerNumber] = Instantiate(_aIPrefab).GetComponent<FoodStatus>();
-                foodStatuses[playerNumber].playerNumber = playerNumber + 1;
+                _foodStatuses[playerNumber] = Instantiate(_aIPrefab).GetComponent<FoodStatus>();
+                _foodStatuses[playerNumber].playerNumber = playerNumber + 1;
                 playerNumber++;
             }
             ///各プレイヤーを初期位置に配置
             for (int i = 0; i < _playerSumNumber; i++)
             {
-                foodStatuses[i].transform.position = startPoint;
+                _foodStatuses[i].transform.position = startPoint;
                 startPoint.x += 0.5f;
             }
-            ///値を元にFoodStatusesを並び替える
+            ///順番決めの値を元に_foodStatusesを並び替える 順番決めが終わった時点でactiveindexは0に初期化 流れを追いかけにくい(現状)
             PlayerInOrder();
-            ShotManager.Instance.SetShotManager(foodStatuses[_activePlayerIndex].Rigidbody);
-            CameraManager.Instance.SetCameraMoveCenterPosition(foodStatuses[_activePlayerIndex].transform.position);
-            PredictLineController.Instance.SetPredictLineInstantiatePosition(foodStatuses[_activePlayerIndex].transform.position);
+            SetObjectsPositionForNextPlayer(_activePlayerIndex);
+            CheckNextPlayerAI();
             ///ターンを1にセットしてゲーム開始
             _turnNumber = 1;
         }
@@ -174,13 +173,37 @@ namespace Cooking.Stage
         {
             if (ShotManager.Instance.ShotModeProperty == ShotState.ShotEndMode)
             {
-                if (foodStatuses[_activePlayerIndex].IsGoal)
+                if (_foodStatuses[_activePlayerIndex].IsGoal)
                 {
                     Debug.Log("Goal");
                 }
                 ChangeTurn();
             }
+            ///デバッグ用 ゲーム終了
+#if UNITY_EDITOR
+            if (Input.GetKeyDown(KeyCode.Return) && !_isAITurn)
+            {
+                _turnNumber = 11;
+            }
+#endif
         }
+        /// <summary>
+        /// 次のターンのプレイヤーがAIかどうかを確認する プレイヤー作成後とターン切り替え時に呼ばれる
+        /// </summary>
+        void CheckNextPlayerAI()
+        {
+            var aI = _foodStatuses[_activePlayerIndex].GetComponent<AI>();
+            if (aI != null )
+            {
+                _isAITurn = true;
+                aI.TurnAI();
+            }
+            else
+            {
+                _isAITurn = false;
+            }
+        }
+
         /// <summary>
         /// アクティブプレイヤーを入れ替えて、次の人のターンに切り替え
         /// </summary>
@@ -192,14 +215,14 @@ namespace Cooking.Stage
             {
                 case StageGameState.Preparation:
                     {
-                        ///順番決め終了
+                        ///順番決め終了 このときAI生成されていない AI判定はGetComponentでは不可 アニメーションを入れるなら注意
                         if (_activePlayerIndex == GameManager.Instance.playerNumber)
                         {
                             _activePlayerIndex = 0;
-                            ///値を比較して順番を決定する
                         }
                     }
                     break;
+                    //10ターン目が終わったら終了
                 case StageGameState.Play:
                     {
                         if (_activePlayerIndex == _playerSumNumber)
@@ -207,6 +230,8 @@ namespace Cooking.Stage
                             _activePlayerIndex = 0;
                             _turnNumber++;
                         }
+                        ///順巡り処理(0へ初期化)が終わった後にチェック
+                        CheckNextPlayerAI();
                         UIManager.Instance.ResetUIMode();
                         SetObjectsPositionForNextPlayer(_activePlayerIndex);
                     }
@@ -223,19 +248,20 @@ namespace Cooking.Stage
         /// <param name="activePlayerIndex"></param>
         private void SetObjectsPositionForNextPlayer(int activePlayerIndex)
         {
-            ShotManager.Instance.SetShotManager(foodStatuses[activePlayerIndex].Rigidbody);
-            CameraManager.Instance.SetCameraMoveCenterPosition(foodStatuses[activePlayerIndex].transform.position);
-            PredictLineController.Instance.SetPredictLineInstantiatePosition(foodStatuses[activePlayerIndex].transform.position);
+            GimmickManager.Instance.WaterManager();
+            GimmickManager.Instance.SeasoningManager();
+            ShotManager.Instance.SetShotManager(_foodStatuses[activePlayerIndex].Rigidbody);
+            CameraManager.Instance.SetCameraMoveCenterPosition(_foodStatuses[activePlayerIndex].transform.position);
+            PredictLineController.Instance.SetPredictLineInstantiatePosition(_foodStatuses[activePlayerIndex].transform.position);
         }
         /// <summary>
         /// プレイヤー落下時にscenecontrollerに呼ばれる
         /// </summary>
         public void ResetPlayerOnStartPoint()
         {
-            foodStatuses[_activePlayerIndex].ReStart(_startPositionObject.position);
-            foodStatuses[_activePlayerIndex].Rigidbody.velocity = Vector3.zero;
-            foodStatuses[_activePlayerIndex].transform.eulerAngles = Vector3.zero;
+            _foodStatuses[_activePlayerIndex].ReStart(_startPositionObject.position);
+            _foodStatuses[_activePlayerIndex].Rigidbody.velocity = Vector3.zero;
+            _foodStatuses[_activePlayerIndex].transform.eulerAngles = Vector3.zero;
         }
     }
-
 }

@@ -14,8 +14,6 @@ namespace Cooking.Stage
         {
             
         }
-
-
         // Update is called once per frame
         void Update()
 		{

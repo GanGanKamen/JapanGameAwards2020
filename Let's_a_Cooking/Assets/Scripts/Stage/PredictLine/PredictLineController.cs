@@ -127,7 +127,7 @@ namespace Cooking.Stage
                     PredictLineManage();
                     PredictFallPoint();
                     break;
-                case ScreenState.AngleMode:
+                case ScreenState.FrontMode:
                     //予測線を飛ばす方向を取得。
                     _predictLines_SpeedVector = ShotManager.Instance.transform.forward * 20;
                     PredictLineManage();
@@ -170,7 +170,7 @@ namespace Cooking.Stage
                     ChangePredictFallPointOnXZ();
                     PredictPhysicsManage();
                     break;
-                case ScreenState.AngleMode:
+                case ScreenState.FrontMode:
                     //落下地点の変更を予測線にも伝える。
                     ChangePredictFallPointOnXZ();
                     PredictPhysicsManage();

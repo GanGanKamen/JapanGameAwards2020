@@ -17,7 +17,7 @@
         ChooseFood,
         DecideOrder,
         Start,
-        AngleMode,
+        FrontMode,
         SideMode,
         LookDownMode,
         PowerMeterMode,
