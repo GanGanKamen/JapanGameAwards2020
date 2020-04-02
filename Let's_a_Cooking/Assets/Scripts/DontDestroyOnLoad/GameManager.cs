@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Cooking
 {
     /// <summary>
-    /// そのゲームを始める際に読み込むステージ・人数を記録し 。
+    /// そのゲームを始める際に読み込むステージ・人数を記録
     /// </summary>
     public class GameManager : MonoBehaviour
     {
@@ -21,7 +21,7 @@ namespace Cooking
         }
 
         /// <summary>
-        /// このクラスのインスタンスを取得し 。
+        /// このクラスのインスタンスを取得
         /// </summary>
         public static GameManager Instance
         {
@@ -33,7 +33,7 @@ namespace Cooking
         private static GameManager instance = null;
 
         /// <summary>
-        /// Start()の実行より先行して処理したい内容を記述し 。
+        /// Start()の実行より先行して処理したい内容を記述
         /// </summary>
         void Awake()
         {
@@ -54,15 +54,16 @@ namespace Cooking
         }
 
         #endregion
+<<<<<<< HEAD
         ///プレイヤーの人数が想定を超えないように制御→プロパティ・例外処理
         public int playerNumber = 1;
         public int computerNumber = 1;
+=======
+>>>>>>> 605b3a883f6896e6ef20d67d36eef4970e38728a
         /// <summary>
-        /// 重力の大きさが入り 。落下地点を計算するうえで必要 。Foodの重力の値を参照し 。各予測線オブジェクト生成時に渡し 。
-        /// 食材のもつ重力の値は現在1 。この値を変える場合、スクリプトで重力制御をする必要があり 。スケールではなく重さを変えると、ショット時に加えるべき力の量が変わり 。
-        /// 1から変えない想定 。
+        ///プレイヤーの人数が想定を超えないように制御→プロパティ・例外処理
         /// </summary>
-        public readonly float gravityScale = 1;
+        public int playerNumber = 1,computerNumber = 1;
 
         // Start is called before the first frame update
         void Start()

@@ -34,7 +34,6 @@ namespace Cooking.Test
         [SerializeField] GameObject predictObj;
         PredictObject predictObjectType;
         List<GameObject> tempPredictObj = new List<GameObject>();
-        bool predictShootFlag = false;
         int a = 0;
         [SerializeField] float predictTimeInterval = 0.5f;
         float predictTimeCount;
@@ -67,37 +66,6 @@ namespace Cooking.Test
             //左右キーのInput判定
             Y_Rot = Input.GetAxis("Horizontal");
             X_Rot = Input.GetAxis("Vertical");
-            //if ((X_Rot == 0 && Y_Rot == 0) && !predictShootFlag)
-            {
-                //PredictStart();
-                //predictShootFlag = true;
-            }
-            //else if ((X_Rot != 0 || Y_Rot != 0) && predictShootFlag)
-            {
-                //Destroy(tempPredictObj[0]);
-                //tempPredictObj.RemoveAt(0);
-                //PredictStart();
-                //predictObjInterval = 0;
-                //predictShootFlag = false;
-            }
-            //else if (X_Rot != 0 || Y_Rot != 0)
-            //{
-            //    //tempPredictObj = null;
-            //    //PredictStart();
-            //    destroyTimeCounter += Time.deltaTime;
-            //}
-            //Debug.Log(shotAngleTransform.transform.forward);
-            //if (predictShootFlag)
-            //{
-            //    if (predictObjectType.predictObjInterval >= 0.1f)
-            //    {
-            //        PredictObjStop();
-            //    }
-            //    else
-            //    {
-            //        predictObjectType.predictObjInterval += Time.deltaTime;
-            //    }
-            //}
             //カメラのY軸回転
             transform.Rotate(0, Y_Rot * 2, 0);
             //力の方向を決める
@@ -192,10 +160,6 @@ namespace Cooking.Test
             tempPredictObj[tempPredictObj.Count - 1].transform.position = food.transform.position; //+ new Vector3(0, 0, 0);
             obj.GetComponent<PredictObject>().initialSpeedVector = initialSpeedVector;
             obj.transform.parent = this.transform;
-            //shotAngleObj.transform.GetChild(0);
-            //rigidbody = tempPredictObj[tempPredictObj.Count - 1].GetComponent<Rigidbody>();
-            //predictObjectType = tempPredictObj[tempPredictObj.Count - 1].GetComponent<PredictObject>();
-            //rigidbody.AddForce(shotAngleTransform.transform.forward * 20, ForceMode.Impulse);
             Time.timeScale = 1;
         }
         void FixedUpdate()

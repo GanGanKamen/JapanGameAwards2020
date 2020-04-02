@@ -5,7 +5,7 @@
     /// </summary>
     public enum StageGameState
     {
-        ChooseFood,
+        Preparation,
         Play,
         Finish
     }
@@ -17,7 +17,11 @@
         ChooseFood,
         DecideOrder,
         Start,
+<<<<<<< HEAD
         AngleMode,
+=======
+        FrontMode,
+>>>>>>> 605b3a883f6896e6ef20d67d36eef4970e38728a
         SideMode,
         LookDownMode,
         PowerMeterMode,
