@@ -56,7 +56,7 @@ namespace Cooking
         #endregion
         ///プレイヤーの人数が想定を超えないように制御→プロパティ・例外処理
         public int playerNumber = 1;
-        public int computerNumber = 0;
+        public int computerNumber = 1;
         /// <summary>
         /// 重力の大きさが入り 。落下地点を計算するうえで必要 。Foodの重力の値を参照し 。各予測線オブジェクト生成時に渡し 。
         /// 食材のもつ重力の値は現在1 。この値を変える場合、スクリプトで重力制御をする必要があり 。スケールではなく重さを変えると、ショット時に加えるべき力の量が変わり 。

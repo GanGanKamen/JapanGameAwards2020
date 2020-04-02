@@ -15,11 +15,13 @@
     public enum ScreenState
     {
         ChooseFood,
+        DecideOrder,
         Start,
         AngleMode,
-        LookDown,
+        SideMode,
+        LookDownMode,
         PowerMeterMode,
-        Shotting,
+        ShottingMode,
         Finish,
         Pause
     }
@@ -31,6 +33,7 @@
         WaitMode,/// 待機中
         AngleMode,/// 角度の決定中
         PowerMeterMode,/// ショットパワー決定中
-        Shotting/// ショット中
+        ShottingMode,/// ショット中
+        ShotEndMode///ショット終了
     }
 }

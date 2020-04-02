@@ -42,6 +42,7 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
+            ///メソッド化予定
             if (_gameState == StageGameState.ChooseFood && UIManager.Instance.MainUIStateProperty == ScreenState.Start)
             {
                 _gameState = StageGameState.Play;
