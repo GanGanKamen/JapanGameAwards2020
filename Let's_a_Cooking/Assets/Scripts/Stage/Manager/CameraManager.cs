@@ -24,6 +24,14 @@ namespace Cooking.Stage
         /// <summary> 0 == top, 1 == front, 2 == side </summary>
         public int camNo = 0;
 
+        enum CameraMode
+        {
+            Top,
+            Front,
+            Side
+        }
+        CameraMode cameraMode = CameraMode.Top;
+
         [SerializeField]
         private CinemachineVirtualCamera topCam;
         [SerializeField]
@@ -61,65 +69,18 @@ namespace Cooking.Stage
         void Start()
         {
             _cameraMoveCenter = Camera.main.transform.parent;
-            _cameraLocalPositions[0] = (topCam.transform.localPosition);
-            _cameraLocalPositions[1] = (frontCam.transform.localPosition);
-            _cameraLocalPositions[2] = (sideCam.transform.localPosition);
+            _cameraLocalPositions[(int)CameraMode.Top] = (topCam.transform.localPosition);
+            _cameraLocalPositions[(int)CameraMode.Front] = (frontCam.transform.localPosition);
+            _cameraLocalPositions[(int)CameraMode.Side] = (sideCam.transform.localPosition);
         }
 
         // Update is called once per frame
         void Update()
         {
-            switch (UIManager.Instance.MainUIStateProperty)
+
+            switch (cameraMode)
             {
-                case ScreenState.ChooseFood:
-                    break;
-                case ScreenState.DecideOrder:
-                    break;
-                case ScreenState.Start:
-                    break;
-                case ScreenState.FrontMode:
-                    //Frntカメラの処理
-                    if (camNo == 1)
-                    {
-                        topCam.Priority = 0;
-                        frontCam.Priority = 1;
-                        sideCam.Priority = 0;
-                    }
-                    break;
-                case ScreenState.SideMode:
-                    //Sideカメラの処理
-                    if (camNo == 2)
-                    {
-                        topCam.Priority = 0;
-                        frontCam.Priority = 0;
-                        sideCam.Priority = 1;
-
-                        //左クリックされた瞬間で呼び出される
-                        if (Input.GetMouseButtonDown(0))
-                        {
-                            newSideCameraPos = sideCam.transform.position;  //現在のカメラの座標を代入
-                            clickPos = Input.mousePosition;     //クリックされたマウスの座標を代入
-                        }
-                        //左クリックされている間呼び出される
-                        else if (Input.GetMouseButton(0))
-                        {
-                            sideCam.transform.position += transform.forward * (clickPos.x - Input.mousePosition.x) / 100;   //マウスの移動量/100をカメラの左右方向に代入
-                            sideCam.transform.position += transform.up * (clickPos.y - Input.mousePosition.y) / 100;   //マウスの移動量/100をカメラの上下方向に代入
-
-                            clickPos = Input.mousePosition;     //移動後の座標で初期化
-                        }
-
-                        wheelScroll = Input.GetAxis("Mouse ScrollWheel");   //マウスホイールの回転量を格納
-                                                                            //マウスホイールが入力されたら
-                        if (wheelScroll != 0)
-                        {
-                            sideCam.transform.position += transform.right * wheelScroll * -4;       //マウスホイールの回転をカメラの前後方向に代入
-                        }
-                    }
-                    break;
-                case ScreenState.LookDownMode:
-                    //Topカメラの処理
-                    if (camNo == 0)
+                case CameraMode.Top:
                     {
                         topCam.Priority = 1;
                         frontCam.Priority = 0;
@@ -150,18 +111,51 @@ namespace Cooking.Stage
                                                                             //topCam.transform.position = newTopCameraPos;       //カメラの座標に代入
                                                                             //}
                     }
+
+
+
                     break;
-                case ScreenState.PowerMeterMode:
+                case CameraMode.Front:
+                    {
+                        topCam.Priority = 0;
+                        frontCam.Priority = 1;
+                        sideCam.Priority = 0;
+                    }
                     break;
-                case ScreenState.ShottingMode:
-                    break;
-                case ScreenState.Finish:
-                    break;
-                case ScreenState.Pause:
+                case CameraMode.Side:
+                    {
+                        topCam.Priority = 0;
+                        frontCam.Priority = 0;
+                        sideCam.Priority = 1;
+
+                        //左クリックされた瞬間で呼び出される
+                        if (Input.GetMouseButtonDown(0))
+                        {
+                            newSideCameraPos = sideCam.transform.position;  //現在のカメラの座標を代入
+                            clickPos = Input.mousePosition;     //クリックされたマウスの座標を代入
+                        }
+                        //左クリックされている間呼び出される
+                        else if (Input.GetMouseButton(0))
+                        {
+                            sideCam.transform.position += transform.forward * (clickPos.x - Input.mousePosition.x) / 100;   //マウスの移動量/100をカメラの左右方向に代入
+                            sideCam.transform.position += transform.up * (clickPos.y - Input.mousePosition.y) / 100;   //マウスの移動量/100をカメラの上下方向に代入
+
+                            clickPos = Input.mousePosition;     //移動後の座標で初期化
+                        }
+
+                        wheelScroll = Input.GetAxis("Mouse ScrollWheel");   //マウスホイールの回転量を格納
+                                                                            //マウスホイールが入力されたら
+                        if (wheelScroll != 0)
+                        {
+                            sideCam.transform.position += transform.right * wheelScroll * -4;       //マウスホイールの回転をカメラの前後方向に代入
+                        }
+
+                    }
                     break;
                 default:
                     break;
             }
+
             switch (ShotManager.Instance.ShotModeProperty)
             {
                 case ShotState.WaitMode:
@@ -175,7 +169,7 @@ namespace Cooking.Stage
                     {
                         if (_changeTopCameraTimeCounter > _changeTopCameraTime)
                         {
-                            camNo = 0;
+                            cameraMode = CameraMode.Top;
                             topCam.LookAt = TurnController.Instance.FoodStatuses[TurnController.Instance.ActivePlayerIndex].transform;
                             _changeTopCameraTimeCounter = 0;
                         }
@@ -207,18 +201,20 @@ namespace Cooking.Stage
         {
             //           newTopCameraPos = topCam.transform.position;  //現在のtopカメラの座標を代入
             //Topカメラに切り替える
-            camNo = 0;
+            //camNo = 0;
+            cameraMode = CameraMode.Top;
         }
         public void OnFront()
         {
             //Frontカメラに切り替える
-            camNo = 1;
+            // camNo = 1;
+            cameraMode = CameraMode.Front;
         }
         public void OnSide()
         {
             //            newSideCameraPos = sideCam.transform.position;  //現在のsiideカメラの座標を代入
             //Sideカメラに切り替える
-            camNo = 2;
+            cameraMode = CameraMode.Side;
         }
         /// <summary>
         /// カメラの位置を基準(_cameraMoveCenter)に対する元の位置に戻す

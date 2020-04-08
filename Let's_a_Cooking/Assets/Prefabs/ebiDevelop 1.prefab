@@ -391,7 +391,6 @@ MonoBehaviour:
   _ebiBlack: {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
   _ebi: {fileID: 2100000, guid: e4e6277cc55c3ae4bb46a09b8f5547a8, type: 2}
   playerPoint: {fileID: 0}
-  isAI: 0
   playerNumber: 0
   foodType: 0
   shotPoint: {fileID: 0}
