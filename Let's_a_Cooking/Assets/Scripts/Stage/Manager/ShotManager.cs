@@ -191,9 +191,9 @@ namespace Cooking.Stage
             {
                 eulerX = 0;
             }
-            else if (eulerX < 360 - _limitVerticalAngle && eulerX > 270)
+            else if (eulerX < 360 - _limitVerticalAngle && eulerX > 180)
             {
-                eulerX = 300;
+                eulerX = 360 - _limitVerticalAngle;
             }
             return new Vector2(eulerX, eulerY);
         }

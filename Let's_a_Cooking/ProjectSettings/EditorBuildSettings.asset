@@ -5,10 +5,13 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Developments/SugawaraPlayScene.unity
     guid: 9bd9d74c281504542b39f11b40b7dd52
   - enabled: 0
     path: Assets/Scenes/Developments/ArchiveScene/0305PlayScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/Scenes/Developments/HamaguchiPlayScene.unity
+    guid: a1789236a018eb84cb4d8e544bb8e865
   m_configObjects: {}

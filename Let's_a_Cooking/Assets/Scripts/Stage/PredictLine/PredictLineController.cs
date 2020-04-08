@@ -19,10 +19,6 @@ namespace Cooking.Stage
         /// </summary>
         [SerializeField]private List<PredictLine> _predictLines = new List<PredictLine>();
         /// <summary>
-        /// 予測線を飛ばす方向ベクトル。
-        /// </summary>
-        private Vector3 _predictLines_SpeedVector;
-        /// <summary>
         /// 予測落下地点表示用プレハブオブジェクト。
         /// </summary>
         [SerializeField] GameObject _predictShotPointPrefab;
@@ -51,6 +47,10 @@ namespace Cooking.Stage
         /// </summary>
         private int _destroyIndex = 0;
         private Vector3 _instantiatePosition;
+        /// <summary>
+        /// レイ判定を行うレイヤー
+        /// </summary>
+        [SerializeField] LayerMask _rayCollisionLayer;
 
         #region インスタンスへのstaticなアクセスポイント
         /// <summary>
@@ -78,11 +78,147 @@ namespace Cooking.Stage
             //割り切れる数字である想定。
             _displayCountOfpredictLines = Mathf.RoundToInt(_destroyTime / _predictTimeInterval);
         }
+        // Update is called once per frame
+        void Update()
+        {
+            if (!TurnController.Instance.IsAITurn)
+            {
+                var shotManager = ShotManager.Instance;
+                var maxShotSpeedVector = shotManager.transform.forward * shotManager.maxShotPower;
+                //予測線を管理。
+                switch (UIManager.Instance.MainUIStateProperty)
+                {
+                    case ScreenState.ChooseFood:
+                        break;
+                    case ScreenState.Start:
+                        PredictLineManage(maxShotSpeedVector);
+                        //予測線を飛ばす方向を取得して最大パワーで渡す
+                        PredictFallPoint(maxShotSpeedVector);
+                        break;
+                    case ScreenState.FrontMode:
+                        //予測線を飛ばす方向を取得。
+                        PredictLineManage(maxShotSpeedVector);
+                        PredictFallPoint(maxShotSpeedVector);
+                        break;
+                    case ScreenState.SideMode:
+                        //予測線を飛ばす方向を取得。
+                        PredictLineManage(maxShotSpeedVector);
+                        PredictFallPoint(maxShotSpeedVector);
+                        break;
+                    case ScreenState.LookDownMode:
+                        //予測線を飛ばす方向を取得。
+                        PredictLineManage(maxShotSpeedVector);
+                        PredictFallPoint(maxShotSpeedVector);
+                        break;
+                    case ScreenState.PowerMeterMode:
+                        //予測線を飛ばす方向を取得。
+                        PredictLineManage(maxShotSpeedVector);
+                        PredictFallPoint(maxShotSpeedVector);
+                        break;
+                    case ScreenState.ShottingMode:
+                        break;
+                    case ScreenState.Finish:
+                        break;
+                    case ScreenState.Pause:
+                        break;
+                    default:
+                        break;
+                }
+                ///予測線の挙動
+                switch (UIManager.Instance.MainUIStateProperty)
+                {
+                    case ScreenState.ChooseFood:
+                        break;
+                    case ScreenState.Start:
+                        //落下地点の変更を予測線にも伝える。
+                        //ChangePredictFallPointOnXZ(maxShotSpeedVector);
+                        //PredictPhysicsManage();
+                        break;
+                    case ScreenState.FrontMode:
+                        //落下地点の変更を予測線にも伝える。
+                        ChangePredictFallPointOnXZ(maxShotSpeedVector);
+                        PredictByRayCast(maxShotSpeedVector);
+                        PredictPhysicsManage();
+                        break;
+                    case ScreenState.SideMode:
+                        //落下地点の変更を予測線にも伝える。
+                        ChangePredictFallPointOnXZ(maxShotSpeedVector);
+                        PredictByRayCast(maxShotSpeedVector);
+                        PredictPhysicsManage();
+                        break;
+                    case ScreenState.LookDownMode:
+                        //落下地点の変更を予測線にも伝える。
+                        ChangePredictFallPointOnXZ(maxShotSpeedVector);
+                        PredictByRayCast(maxShotSpeedVector);
+                        PredictPhysicsManage();
+                        break;
+                    case ScreenState.PowerMeterMode:
+                        //落下地点の変更を予測線にも伝える。
+                        ChangePredictFallPointOnXZ(maxShotSpeedVector);
+                        PredictByRayCast(maxShotSpeedVector);
+                        PredictPhysicsManage();
+                        break;
+                    case ScreenState.ShottingMode:
+                        break;
+                    case ScreenState.Finish:
+                        break;
+                    case ScreenState.Pause:
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        private void PredictByRayCast(Vector3 maxShotSpeedVector)
+        {
+            //レイによる落下地点予測 無限ループ防止目的で 滞空時間100秒制限
+            for (float flyTime = 0f; flyTime < 100;)
+            {
+                Vector3 originPoint = transform.position + new Vector3(maxShotSpeedVector.x * flyTime, CalculateYposition(maxShotSpeedVector, flyTime), maxShotSpeedVector.z * flyTime);
+                flyTime += 0.005f;
+                Vector3 endPoint = transform.position + new Vector3(maxShotSpeedVector.x * flyTime, CalculateYposition(maxShotSpeedVector, flyTime), maxShotSpeedVector.z * flyTime);
+                //終点 - 始点で方向ベクトルを算出
+                if (CastRay(originPoint, endPoint - originPoint))
+                    break;
+                if (flyTime > 99.9f)
+                {
+                    Debug.Log("当たっていない");
+                }
+            }
+
+        }
 
         void FixedUpdate()
         {
         }
+        /// <summary>
+        /// 任意の滞空時間におけるy座標を計算 座標 = v0(初速度ベクトル) * 時間 + 1/2 * 重力加速度 * (時間)^2
+        /// </summary>
+        /// <param name="firstSpeedVector"></param>
+        /// <param name="flyTime"></param>
+        /// <returns></returns>
+        private float CalculateYposition(Vector3 firstSpeedVector, float flyTime)
+        {
+            return (firstSpeedVector.y * flyTime - 0.5f * 9.81f * StageSceneManager.Instance.gravityScale * flyTime * flyTime);
+        }
 
+        private bool CastRay(Vector3 originPoint, Vector3 direction)
+        {
+            ///レイの長さ
+            float length = 1f;
+            //Rayが当たったオブジェクトの情報を入れる箱
+            RaycastHit hit; //原点 方向
+            Ray ray = new Ray(originPoint, direction);
+            Debug.DrawRay(originPoint, direction * length / direction.magnitude, Color.red, 1f);
+            //Kitchenレイヤーとレイ判定を行う
+            if (Physics.Raycast(ray, out hit, length, _rayCollisionLayer))//if (Physics.SphereCast(ray, 0.1f , out hit, length, _rayCollisionLayer))
+            {
+                _predictShotPoint.transform.position = hit.point;
+                return true;
+            }
+            return false;
+        }
         /// <summary>
         ///予測線の挙動を計算します。y方向のみの処理
         /// </summary>
@@ -100,111 +236,23 @@ namespace Cooking.Stage
         /// <summary>
         /// 落下予測地点の変更を予測線を描くオブジェクトに対して渡す。XZ平面方向の変更。
         /// </summary>
-        private void ChangePredictFallPointOnXZ()
+        private void ChangePredictFallPointOnXZ(Vector3 speedVector)
         {
             for (int i = 0; i < _predictLines.Count; i++)
             {
                 //完全にプログラム計算形式にすることも可能。
                 var predictRb = _predictLines[i].predictLineRigidbody;
                 var velocity = predictRb.velocity;
-                velocity.x = _predictLines_SpeedVector.x;
-                velocity.z = _predictLines_SpeedVector.z;
+                velocity.x = speedVector.x;
+                velocity.z = speedVector.z;
                 predictRb.velocity = velocity;
             }
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-            //予測線を管理。
-            switch (UIManager.Instance.MainUIStateProperty)
-            {
-                case ScreenState.ChooseFood:
-                    break;
-                case ScreenState.Start:
-                    //予測線を飛ばす方向を取得。
-                    _predictLines_SpeedVector = ShotManager.Instance.transform.forward * 20;
-                    PredictLineManage();
-                    PredictFallPoint();
-                    break;
-                case ScreenState.FrontMode:
-                    //予測線を飛ばす方向を取得。
-                    _predictLines_SpeedVector = ShotManager.Instance.transform.forward * 20;
-                    PredictLineManage();
-                    PredictFallPoint();
-                    break;
-                case ScreenState.SideMode:
-                    //予測線を飛ばす方向を取得。
-                    _predictLines_SpeedVector = ShotManager.Instance.transform.forward * 20;
-                    PredictLineManage();
-                    PredictFallPoint();
-                    break;
-                case ScreenState.LookDownMode:
-                    //予測線を飛ばす方向を取得。
-                    _predictLines_SpeedVector = ShotManager.Instance.transform.forward * 20;
-                    PredictLineManage();
-                    PredictFallPoint();
-                    break;
-                case ScreenState.PowerMeterMode:
-                    //予測線を飛ばす方向を取得。
-                    _predictLines_SpeedVector = ShotManager.Instance.transform.forward * 20;
-                    PredictLineManage();
-                    PredictFallPoint();
-                    break;
-                case ScreenState.ShottingMode:
-                    break;
-                case ScreenState.Finish:
-                    break;
-                case ScreenState.Pause:
-                    break;
-                default:
-                    break;
-            }
-            ///予測線の挙動
-            switch (UIManager.Instance.MainUIStateProperty)
-            {
-                case ScreenState.ChooseFood:
-                    break;
-                case ScreenState.Start:
-                    //落下地点の変更を予測線にも伝える。
-                    ChangePredictFallPointOnXZ();
-                    PredictPhysicsManage();
-                    break;
-                case ScreenState.FrontMode:
-                    //落下地点の変更を予測線にも伝える。
-                    ChangePredictFallPointOnXZ();
-                    PredictPhysicsManage();
-                    break;
-                case ScreenState.SideMode:
-                    //落下地点の変更を予測線にも伝える。
-                    ChangePredictFallPointOnXZ();
-                    PredictPhysicsManage();
-                    break;
-                case ScreenState.LookDownMode:
-                    //落下地点の変更を予測線にも伝える。
-                    ChangePredictFallPointOnXZ();
-                    PredictPhysicsManage();
-                    break;
-                case ScreenState.PowerMeterMode:
-                    //落下地点の変更を予測線にも伝える。
-                    ChangePredictFallPointOnXZ();
-                    PredictPhysicsManage();
-                    break;
-                case ScreenState.ShottingMode:
-                    break;
-                case ScreenState.Finish:
-                    break;
-                case ScreenState.Pause:
-                    break;
-                default:
-                    break;
-            }
-
-        }
         /// <summary>
         /// 予測落下地点を計算
         /// </summary>
-        private void PredictFallPoint()
+        private void PredictFallPoint(Vector3 speedVector)
         {
             #region 予測落下地点計算方法説明
             //距離(座標) = v0(初速度ベクトル) * 時間 + 1/2 * 重力加速度 * (時間)^2 //物体の大きさの分だけわずかにずれ  現在0.5fから発射
@@ -214,21 +262,21 @@ namespace Cooking.Stage
             //t  =  initialSpeedVector.y /9.81f * gravityScale
             //滞空時間を算出。座標 y = 0 に戻ってくるまでにかかる時間。
             #endregion
-            float t = _predictLines_SpeedVector.y / (0.5f * 9.81f * StageSceneManager.Instance.gravityScale);
+            float t = speedVector.y / (0.5f * 9.81f * StageSceneManager.Instance.gravityScale);
             //Debug.Log(t);
             //その時間ぶんだけxz平面上で初速のxzベクトル方向に等速直線運動させて、その運動が終わった地点を落下予測地点とする。ただし、落下地点は高さ0とする。
-            Vector3 fallPoint = _instantiatePosition + new Vector3(_predictLines_SpeedVector.x, 0, _predictLines_SpeedVector.z) * t;
-            _predictShotPoint.transform.position = fallPoint;
+            Vector3 fallPoint = _instantiatePosition + new Vector3(speedVector.x, 0, speedVector.z) * t;
+            //_predictShotPoint.transform.position = fallPoint;
         }
         /// <summary>
         /// 予測線を管理
         /// </summary>
-        private void PredictLineManage()
+        private void PredictLineManage(Vector3 speedVector)
         {
             if (_predictTimeCounter >= _predictTimeInterval)
             {
                 _predictTimeCounter = 0;
-                PredictLine predictLine = InstantiatePredictLine();
+                PredictLine predictLine = InstantiatePredictLine(speedVector);
                 ManagePredictLinesList(predictLine);
             }
             else
@@ -271,12 +319,12 @@ namespace Cooking.Stage
         /// </summary>
         /// <remarks>予測線生成位置はturnControllerを参照</remarks>
         /// <returns></returns>
-        private PredictLine InstantiatePredictLine()
+        private PredictLine InstantiatePredictLine(Vector3 speedVector)
         {
             var obj = Instantiate(_predictObjectPrefab);
             obj.transform.position = _instantiatePosition; //+ new Vector3(0, 0, 0);
             var predictLine = obj.GetComponent<PredictLine>();
-            predictLine.predictLineRigidbody.velocity = _predictLines_SpeedVector;
+            predictLine.predictLineRigidbody.velocity = speedVector;
             //obj.transform.parent = this.transform;
             return predictLine;
         }
@@ -297,7 +345,7 @@ namespace Cooking.Stage
         public void SetPredictLineInstantiatePosition(Vector3 instantiatePosition)
         {
             _instantiatePosition = instantiatePosition;
+            this.transform.position = instantiatePosition;
         }
     }
 }
-//                = turnController.foodStatuses[turnController.ActivePlayerIndex].transform.position; //+ new Vector3(0, 0, 0);
