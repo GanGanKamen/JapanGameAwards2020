@@ -107,7 +107,7 @@ namespace Cooking.Stage
                             }
                             #region デバッグコード スペースを押すと最大パワーで飛ぶ
 
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
                             if (Input.GetKeyDown(KeyCode.Space))
                             {
                                 ChangeShotState(ShotState.ShottingMode);
@@ -115,7 +115,7 @@ namespace Cooking.Stage
                                 _shotRigidbody.velocity = initialSpeedVector;
                                 //isShot = true;
                             }
-#endif
+//#endif
                             #endregion
                         }
                     }

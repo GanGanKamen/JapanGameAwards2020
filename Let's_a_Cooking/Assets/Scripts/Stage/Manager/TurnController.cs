@@ -180,12 +180,21 @@ namespace Cooking.Stage
                 ChangeTurn();
             }
             ///デバッグ用 ゲーム終了
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
             if (Input.GetKeyDown(KeyCode.Return) && !_isAITurn)
             {
                 _turnNumber = 11;
             }
-#endif
+//#endif
+        }
+        /// <summary>
+        /// 指定したプレイヤーの番号を取得(要素番号ではない)
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public int GetPlayerNumber(int number)
+        {
+            return _playerIndexArray[number] + 1;
         }
         /// <summary>
         /// 次のターンのプレイヤーがAIかどうかを確認する プレイヤー作成後とターン切り替え時に呼ばれる
@@ -203,7 +212,6 @@ namespace Cooking.Stage
                 _isAITurn = false;
             }
         }
-
         /// <summary>
         /// アクティブプレイヤーを入れ替えて、次の人のターンに切り替え
         /// </summary>

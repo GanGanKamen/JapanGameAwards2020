@@ -13,7 +13,11 @@ namespace Cooking.Stage
         /// <summary>
         ///ショット前のカメラの動きで用いる、カメラの回転や動きの中心の座標情報。メインカメラの親オブジェクトが持つ。食材の中心を軸にカメラを回転させる。
         /// </summary>
-        private Transform _cameraMoveCenter;
+        [SerializeField] private Transform _cameraRotateCenter;
+        /// <summary>
+        ///ショット前のカメラの動きで用いる、カメラの回転や動きの中心の座標情報。メインカメラの親オブジェクトが持つ。食材の中心を軸にカメラを回転させる。
+        /// </summary>
+        [SerializeField] private Transform _cameraObjects;
         private float _changeTopCameraTimeCounter;
        [SerializeField] private float _changeTopCameraTime = 0.3f;
         Vector3[] _cameraLocalPositions = new Vector3[3];
@@ -68,7 +72,7 @@ namespace Cooking.Stage
         // Start is called before the first frame update
         void Start()
         {
-            _cameraMoveCenter = Camera.main.transform.parent;
+            _cameraRotateCenter = Camera.main.transform.parent;
             _cameraLocalPositions[(int)CameraMode.Top] = (topCam.transform.localPosition);
             _cameraLocalPositions[(int)CameraMode.Front] = (frontCam.transform.localPosition);
             _cameraLocalPositions[(int)CameraMode.Side] = (sideCam.transform.localPosition);
@@ -193,26 +197,22 @@ namespace Cooking.Stage
         private void BeforeShotCameraRotate()
         {
             var tempShotRotation = ShotManager.Instance.transform.eulerAngles;
-            var tempRortation = _cameraMoveCenter.eulerAngles;
+            var tempRortation = _cameraRotateCenter.eulerAngles;
             tempRortation.y = tempShotRotation.y;
-            _cameraMoveCenter.eulerAngles = tempRortation;
+            _cameraRotateCenter.eulerAngles = tempRortation;
         }
         public void OnTop()
         {
-            //           newTopCameraPos = topCam.transform.position;  //現在のtopカメラの座標を代入
             //Topカメラに切り替える
-            //camNo = 0;
             cameraMode = CameraMode.Top;
         }
         public void OnFront()
         {
             //Frontカメラに切り替える
-            // camNo = 1;
             cameraMode = CameraMode.Front;
         }
         public void OnSide()
         {
-            //            newSideCameraPos = sideCam.transform.position;  //現在のsiideカメラの座標を代入
             //Sideカメラに切り替える
             cameraMode = CameraMode.Side;
         }
@@ -231,7 +231,7 @@ namespace Cooking.Stage
         /// <param name="cameraSetPositon"></param>
         public void SetCameraMoveCenterPosition(Vector3 cameraSetPositon)
         {
-            _cameraMoveCenter.position = cameraSetPositon;
+            _cameraRotateCenter.position = cameraSetPositon;
             SetCameraLocalPosition();
         }
         /// <summary>

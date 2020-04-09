@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Cooking.Stage
 {
     /// <summary>
-    /// 基本リードオンリーではないパラメータなどの食材の持つ情報の格納場所。
+    /// 食材の持つ情報の格納場所。ポイント関連はPlayerPointクラス
     /// </summary>
     public class FoodStatus : FoodGraphic
     {

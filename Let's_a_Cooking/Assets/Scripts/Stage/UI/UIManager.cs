@@ -146,9 +146,10 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
+            Debug.Log(UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject());
             #region デフォルトUIの更新(プレイヤー番号・ターン数) スコアの更新はUIの状態を限定
             _turnNumberText.text = _turnController.TurnNumber.ToString();
-            _playerNumberTextOnPlay.text = (_turnController.PlayerIndexArray[_turnController.ActivePlayerIndex] + 1).ToString();
+            _playerNumberTextOnPlay.text = (_turnController.GetPlayerNumber(_turnController.ActivePlayerIndex)).ToString();
             #endregion
             switch (_mainUIState)
             {
@@ -230,7 +231,6 @@ namespace Cooking.Stage
         {
             _winnerPlayerNumber.text = winnerPlayerNumber.ToString();
         }
-
         /// <summary>
         /// ゲーム終了時UI用
         /// </summary>
@@ -241,7 +241,6 @@ namespace Cooking.Stage
             _finishUIMode = afterChangefinishUIMode;
             _finishBackGroundImages[(int)_finishUIMode].SetActive(true);
         }
-
         /// <summary>
         /// アクティブプレイヤーのプレイヤーポイント取得のため、ターンコントローラーを経由してポイント取得
         /// </summary>
@@ -380,7 +379,10 @@ namespace Cooking.Stage
             _turnController.DecideOrderValue(playerNumber, Random.Range(70.0f, 95.0f));
             _orderPowerTexts[playerNumber].text = _turnController.OrderPower[playerNumber].ToString("00.00");
         }
-
+        public int GetActivePlayerNumber()
+        {
+            return _turnController.PlayerIndexArray[_turnController.ActivePlayerIndex] + 1;
+        }
         /// <summary>
         /// 複数有人プレイヤーがいるときは、何度も呼ばれる想定
         /// </summary>

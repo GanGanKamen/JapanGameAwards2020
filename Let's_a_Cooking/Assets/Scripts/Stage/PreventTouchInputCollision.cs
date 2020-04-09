@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Cooking.Stage
 {
     /// <summary>
-    /// 入力の衝突を防ぐ。 入力を行うクラス ShotManager
+    /// 入力の衝突を防ぐ。 入力を行うクラス Eventにあったとは…
     /// </summary>
     public class PreventTouchInputCollision : MonoBehaviour
     {

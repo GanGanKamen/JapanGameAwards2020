@@ -161,7 +161,7 @@ namespace Cooking.Stage
             InitializeFinishPointArray();
             InDescendingOrder();
             //降順に並び替えたことにより、最初の要素に最もポイントの高いプレイヤーが来る
-            UIManager.Instance.UpdateWinnerPlayerNumber(_turnController.PlayerIndexArray[0] + 1);
+            UIManager.Instance.UpdateWinnerPlayerNumber(_turnController.GetPlayerNumber(0));
         }
         /// <summary>
         /// ポイントを降順に並び替え
