@@ -44,7 +44,10 @@ namespace Cooking.Stage
         /// <summary>
         /// 順番決め用最大/最小値・スライダーと同期するのを忘れない
         /// </summary>
-        float _orderMin = 0, _orderMax = 100;
+        private float _orderMin = 0, _orderMax = 100;
+        /// <summary>
+        /// 現状400 差の4倍 インスペクタにて
+        /// </summary>
         [SerializeField] float _orderMeterSpeed = 50;
         [SerializeField] GameObject[] _playerListOrderPower;
         [SerializeField] GameObject[] _isAIListOrderPower;
@@ -59,7 +62,7 @@ namespace Cooking.Stage
         /// <summary>
         /// shotPowerゲージを取得
         /// </summary>
-        [SerializeField] Slider _powerGage;
+        [SerializeField] Slider _shotPowerGage;
         /// <summary>
         /// 入力衝突発生のためpublic
         /// </summary>
@@ -127,12 +130,15 @@ namespace Cooking.Stage
         }
         #endregion
 
+        public void InitializeShotPowerGage(ShotParameter shotParameter)
+        {
+            ///スライダーの値同期(他も必要に応じて追加)
+            _shotPowerGage.maxValue = shotParameter.MaxShotPower;
+            _shotPowerGage.minValue = shotParameter.MinShotPower;
+        }
         // Start is called before the first frame update
         void Start()
         {
-            ///スライダーの値と同期(他も必要に応じて追加)
-            ShotManager.Instance.maxShotPower = _powerGage.maxValue;
-            ShotManager.Instance.minShotPower = _powerGage.minValue;
             _turnController = TurnController.Instance;
             _chooseFoodNames = new string[GameManager.Instance.playerNumber + GameManager.Instance.computerNumber];
         }
@@ -179,7 +185,7 @@ namespace Cooking.Stage
                     break;
                 case ScreenState.PowerMeterMode:
                     //shotPowerをゲージに反映
-                    _powerGage.value = ShotManager.Instance.ShotPower;
+                    _shotPowerGage.value = ShotManager.Instance.ShotPower;
                     break;
                 case ScreenState.ShottingMode:
                     UpdatePointText();

@@ -84,7 +84,7 @@ namespace Cooking.Stage
             if (!TurnController.Instance.IsAITurn)
             {
                 var shotManager = ShotManager.Instance;
-                var maxShotSpeedVector = shotManager.transform.forward * shotManager.maxShotPower;
+                var maxShotSpeedVector = shotManager.CalculateMaxShotPowerVector();
                 //予測線を管理。
                 switch (UIManager.Instance.MainUIStateProperty)
                 {
@@ -202,7 +202,6 @@ namespace Cooking.Stage
         {
             return (firstSpeedVector.y * flyTime - 0.5f * 9.81f * StageSceneManager.Instance.gravityScale * flyTime * flyTime);
         }
-
         private bool CastRay(Vector3 originPoint, Vector3 direction)
         {
             ///レイの長さ
@@ -248,7 +247,6 @@ namespace Cooking.Stage
                 predictRb.velocity = velocity;
             }
         }
-
         /// <summary>
         /// 予測落下地点を計算
         /// </summary>

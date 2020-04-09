@@ -20,6 +20,10 @@ namespace Cooking.Stage
         }
         private ShotState _shotMode = ShotState.WaitMode;
         /// <summary>
+        /// ショットパラメータリスト 限界高低角度 最大最小パワー
+        /// </summary>
+        private ShotParameter _shotParameter;
+        /// <summary>
         /// 1フレーム前のマウスの位置。ショットの方向をドラッグで決める際、回転量を計算するために使う。
         /// </summary>
         private Vector2 _lastMouseLeftButtonDownPosition;
@@ -27,10 +31,6 @@ namespace Cooking.Stage
         /// マウス感度を決める。
         /// </summary>
         [SerializeField] float _verticalMouseSensitivity = 25, _horizontallMouseSensitivity = 25;
-        /// <summary>
-        /// ショットの最大パワーと最小パワー。Sliderの最大最小値が初期化時に代入される
-        /// </summary>
-        public float maxShotPower = 20, minShotPower = 5;
         /// <summary>
         /// メーターで変動させるショットの強さ
         /// </summary>
@@ -43,29 +43,6 @@ namespace Cooking.Stage
         /// ショット時に力を加えるため用 アクティブな食材の持つRigidbody
         /// </summary>
         private Rigidbody _shotRigidbody;
-        /// <summary>
-        /// 垂直方向回転の限界角度。15から90度の間を想定。プロパティを通すことで値をチェック。
-        /// </summary>
-        [SerializeField] float _serializedLimitVerticalAngle = 60;
-        /// <summary>
-        /// 垂直方向回転の限界角度に不本意な値が入らないように、値をチェック。
-        /// </summary>
-        private float _LimitVerticalAngle
-        {
-            get { return _limitVerticalAngle; }
-            set
-            {
-                if (15 < value && value < 90)
-                {
-                    _limitVerticalAngle = value;
-                }
-                else
-                {
-                    _limitVerticalAngle = 60;
-                }
-            }
-        }
-        private float _limitVerticalAngle = 60;
 
         #region インスタンスへのstaticなアクセスポイント
         /// <summary>
@@ -83,13 +60,13 @@ namespace Cooking.Stage
         private void Awake()
         {
             _instance = this;
+            _shotParameter = Resources.Load<ShotParameter>("ScriptableObjects/ShotParameter");
         }
         #endregion
-
         // Start is called before the first frame update
         void Start()
         {
-            _LimitVerticalAngle = _serializedLimitVerticalAngle;
+            UIManager.Instance.InitializeShotPowerGage(_shotParameter);
         }
 
         // Update is called once per frame
@@ -119,7 +96,7 @@ namespace Cooking.Stage
                     break;
                 case ShotState.PowerMeterMode:
                     {
-                        _shotPower = ChangeShotPower(minShotPower, maxShotPower, 30, _shotPower);
+                        _shotPower = ChangeShotPower(_shotParameter.MinShotPower, _shotParameter.MaxShotPower, 2 * Mathf.Abs(_shotParameter.MaxShotPower -  _shotParameter.MinShotPower) , _shotPower);//速度ログ 5 20 (差15のとき)→ 30  差の倍速で算出   
                         if (!TurnController.Instance.IsAITurn)
                         {
                             //左クリックされた時に呼び出される
@@ -134,7 +111,7 @@ namespace Cooking.Stage
                             if (Input.GetKeyDown(KeyCode.Space))
                             {
                                 ChangeShotState(ShotState.ShottingMode);
-                                var initialSpeedVector = transform.forward * 20;
+                                var initialSpeedVector = CalculateMaxShotPowerVector();
                                 _shotRigidbody.velocity = initialSpeedVector;
                                 //isShot = true;
                             }
@@ -191,9 +168,9 @@ namespace Cooking.Stage
             {
                 eulerX = 0;
             }
-            else if (eulerX < 360 - _limitVerticalAngle && eulerX > 180)
+            else if (eulerX < 360 - _shotParameter.LimitVerticalAngle && eulerX > 180)
             {
-                eulerX = 360 - _limitVerticalAngle;
+                eulerX = 360 - _shotParameter.LimitVerticalAngle;
             }
             return new Vector2(eulerX, eulerY);
         }
@@ -233,7 +210,10 @@ namespace Cooking.Stage
             var initialSpeedVector = shotPower;
             _shotRigidbody.velocity = initialSpeedVector;
         }
-
+        public Vector3 CalculateMaxShotPowerVector()
+        {
+            return transform.forward * _shotParameter.MaxShotPower;
+        }
         /// <summary>
         /// 次のプレイヤーに対してショットの対象をセット 角度さえ渡せばAIでも演出可能
         /// </summary>

@@ -11,7 +11,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Developments/ArchiveScene/0305PlayScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Developments/HamaguchiPlayScene.unity
     guid: a1789236a018eb84cb4d8e544bb8e865
+  - enabled: 1
+    path: Assets/PlayScene.unity
+    guid: f4d53432028cc104ba83b487f67257bf
   m_configObjects: {}

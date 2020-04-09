@@ -401,7 +401,7 @@ MonoBehaviour:
   - {fileID: 982638050}
   - {fileID: 64523705}
   - {fileID: 1203266428}
-  _powerGage: {fileID: 895745811}
+  _shotPowerGage: {fileID: 895745811}
   returnButton: {fileID: 607945098}
   _shotStartButtons:
   - {fileID: 93220}
@@ -4339,7 +4339,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 0.29882812, z: 0.033203125, w: -0.056640625}
+  m_BoundingSphereOverride: {x: 1e-45, y: 113612810, z: 1.7484e-41, w: 0.3984375}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -8302,9 +8302,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _verticalMouseSensitivity: 25
   _horizontallMouseSensitivity: 25
-  maxShotPower: 20
-  minShotPower: 5
-  _serializedLimitVerticalAngle: 89
+  _serializedLimitVerticalAngle: 80
 --- !u!114 &1335392428
 MonoBehaviour:
   m_ObjectHideFlags: 0
