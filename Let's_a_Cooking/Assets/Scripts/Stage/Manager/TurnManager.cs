@@ -7,7 +7,7 @@ namespace Cooking.Stage
     /// <summary>
     /// ターンの管理により、ゲームを進行。シーン内にあるすべてのFoodStatusの情報を参照して、アクティブ状態を切り替える。
     /// </summary>
-    public class TurnController : MonoBehaviour
+    public class TurnManager : MonoBehaviour
     {
         /// <summary>
         /// 現在のターン数を表します。
@@ -73,11 +73,11 @@ namespace Cooking.Stage
         /// <summary>
         /// このクラスのインスタンスを取得。
         /// </summary>
-        public static TurnController Instance
+        public static TurnManager Instance
         {
             get { return _instance; }
         }
-        static TurnController _instance = null;
+        static TurnManager _instance = null;
 
         /// <summary>
         /// Start()より先に実行
@@ -281,7 +281,7 @@ namespace Cooking.Stage
             GimmickManager.Instance.SeasoningManager();
             ShotManager.Instance.SetShotManager(_foodStatuses[activePlayerIndex].Rigidbody);
             CameraManager.Instance.SetCameraMoveCenterPosition(_foodStatuses[activePlayerIndex].transform.position);
-            PredictLineController.Instance.SetPredictLineInstantiatePosition(_foodStatuses[activePlayerIndex].transform.position);
+            PredictLineManager.Instance.SetPredictLineInstantiatePosition(_foodStatuses[activePlayerIndex].transform.position);
         }
         /// <summary>
         /// プレイヤー落下時にscenecontrollerに呼ばれる

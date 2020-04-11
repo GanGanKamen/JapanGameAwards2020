@@ -171,7 +171,7 @@ namespace Cooking.Stage
                         if (_changeTopCameraTimeCounter > _changeTopCameraTime)
                         {
                             cameraMode = CameraMode.Top;
-                            topCam.LookAt = TurnController.Instance.FoodStatuses[TurnController.Instance.ActivePlayerIndex].transform;
+                            topCam.LookAt = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].transform;
                             _changeTopCameraTimeCounter = 0;
                         }
                         else

@@ -70,7 +70,8 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
-
+            //if (!TurnController.Instance.IsAITurn)
+            //Debug.Log(Rigidbody.velocity.magnitude);
         }
         private void OnCollisionEnter(Collision collision)
         {

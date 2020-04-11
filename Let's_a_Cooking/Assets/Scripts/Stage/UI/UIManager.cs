@@ -27,7 +27,7 @@ namespace Cooking.Stage
         /// <summary>
         /// よく使うため変数化
         /// </summary>
-        TurnController _turnController;
+        TurnManager _turnController;
         /// <summary>
         /// 食材選択画面での選択ボタンイメージ。順番はFoodStatus.FoodTypeに準じる
         /// </summary>
@@ -139,7 +139,7 @@ namespace Cooking.Stage
         // Start is called before the first frame update
         void Start()
         {
-            _turnController = TurnController.Instance;
+            _turnController = TurnManager.Instance;
             _chooseFoodNames = new string[GameManager.Instance.playerNumber + GameManager.Instance.computerNumber];
         }
 
@@ -159,7 +159,7 @@ namespace Cooking.Stage
                     {
                         var powerMeterValue = _orderGage.value;
                         _orderGage.value = ChangeShotPower(_orderMin, _orderMax, _orderMeterSpeed, powerMeterValue);
-                        if (!TurnController.Instance.IsAITurn)
+                        if (!TurnManager.Instance.IsAITurn)
                         {
                             if (TouchInput.GetTouchPhase() == TouchInfo.Down)
                             {

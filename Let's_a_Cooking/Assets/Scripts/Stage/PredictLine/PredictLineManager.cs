@@ -8,7 +8,7 @@ namespace Cooking.Stage
     /// 予測線を生成
     /// 回転に合わせて飛ばす先の地点を計算して、予測線を飛ばす地点を変更する。
     /// </summary>
-    public class PredictLineController : MonoBehaviour
+    public class PredictLineManager : MonoBehaviour
     {
         /// <summary>
         /// 予測線表示用のプレハブオブジェクト。
@@ -56,11 +56,11 @@ namespace Cooking.Stage
         /// <summary>
         /// このクラスのインスタンスを取得。
         /// </summary>
-        public static PredictLineController Instance
+        public static PredictLineManager Instance
         {
             get { return _instance; }
         }
-        static PredictLineController _instance = null;
+        static PredictLineManager _instance = null;
 
         /// <summary>
         /// Start()より先に実行
@@ -81,7 +81,7 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
-            if (!TurnController.Instance.IsAITurn)
+            if (!TurnManager.Instance.IsAITurn)
             {
                 var shotManager = ShotManager.Instance;
                 var maxShotSpeedVector = shotManager.CalculateMaxShotPowerVector();

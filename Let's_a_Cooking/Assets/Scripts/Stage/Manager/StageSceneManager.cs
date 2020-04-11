@@ -44,8 +44,8 @@ namespace Cooking.Stage
         /// <summary>
         /// 終了時のポイント
         /// </summary>
-        public int[] pointsOnFinish;
-        TurnController _turnController;
+        int[] _pointsOnFinish;
+        TurnManager _turnController;
         // Start is called before the first frame update
         void Start()
         {
@@ -55,7 +55,7 @@ namespace Cooking.Stage
                 Debug.Log("ゴールオブジェクトがセットされていません。タグ検索されました。");
                 GameObject.FindGameObjectWithTag("Finish");
             }
-            _turnController = TurnController.Instance;
+            _turnController = TurnManager.Instance;
         }
 
         // Update is called once per frame
@@ -68,12 +68,12 @@ namespace Cooking.Stage
                     if (UIManager.Instance.MainUIStateProperty == ScreenState.Start)
                     {
                         _gameState = StageGameState.Play;
-                        TurnController.Instance.CreatePlayers();
+                        TurnManager.Instance.CreatePlayers();
                     }
                     break;
                 case StageGameState.Play:
                     {
-                        if (TurnController.Instance.TurnNumber > 10)
+                        if (TurnManager.Instance.TurnNumber > 10)
                         {
                             _gameState = StageGameState.Finish;
                             UIManager.Instance.ChangeUI("Finish");
@@ -99,7 +99,7 @@ namespace Cooking.Stage
                 default:
                     break;
             }
-            var predictLineController = PredictLineController.Instance;
+            var predictLineController = PredictLineManager.Instance;
             switch (UIManager.Instance.MainUIStateProperty)
             {
                 case ScreenState.ChooseFood:
@@ -168,13 +168,13 @@ namespace Cooking.Stage
         /// </summary>
         private void InDescendingOrder()
         {
-            for (int i = 0; i < pointsOnFinish.Length - 1; i++)
+            for (int i = 0; i < _pointsOnFinish.Length - 1; i++)
             {
-                for (int j = 0; j < pointsOnFinish.Length - 1 - i; j++)
+                for (int j = 0; j < _pointsOnFinish.Length - 1 - i; j++)
                 {
-                    if (pointsOnFinish[j] < pointsOnFinish[j + 1])
+                    if (_pointsOnFinish[j] < _pointsOnFinish[j + 1])
                     {
-                        ArrayMethod.ChangeArrayValuesFromHighToLow(pointsOnFinish, j);
+                        ArrayMethod.ChangeArrayValuesFromHighToLow(_pointsOnFinish, j);
                         //indexArray = プレイヤー番号 をポイントの高い順に並び替える
                         ArrayMethod.ChangeArrayValuesFromHighToLow(_turnController.PlayerIndexArray, j);
                     }
@@ -186,10 +186,10 @@ namespace Cooking.Stage
         /// </summary>
         private void InitializeFinishPointArray()
         {
-            pointsOnFinish = new int[_turnController.FoodStatuses.Length];
+            _pointsOnFinish = new int[_turnController.FoodStatuses.Length];
             for (int i = 0; i < _turnController.FoodStatuses.Length; i++)
             {
-                pointsOnFinish[i] = _turnController.FoodStatuses[i].playerPoint.Point;
+                _pointsOnFinish[i] = _turnController.FoodStatuses[i].playerPoint.Point;
             }
         }
 

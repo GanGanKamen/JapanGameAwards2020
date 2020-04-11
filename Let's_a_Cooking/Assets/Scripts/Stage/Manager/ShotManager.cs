@@ -78,7 +78,7 @@ namespace Cooking.Stage
 				case ShotState.WaitMode:
                     break;
                 case ShotState.AngleMode:
-                    if (!TurnController.Instance.IsAITurn)
+                    if (!TurnManager.Instance.IsAITurn)
                     {
                         ///スマホ対応は途中 上下回転がうまくいかなかった
                         if (TouchInput.GetTouchPhase() == TouchInfo.Down)
@@ -97,10 +97,10 @@ namespace Cooking.Stage
                 case ShotState.PowerMeterMode:
                     {
                         _shotPower = ChangeShotPower(_shotParameter.MinShotPower, _shotParameter.MaxShotPower, 2 * Mathf.Abs(_shotParameter.MaxShotPower -  _shotParameter.MinShotPower) , _shotPower);//速度ログ 5 20 (差15のとき)→ 30  差の倍速で算出   
-                        if (!TurnController.Instance.IsAITurn)
+                        if (!TurnManager.Instance.IsAITurn)
                         {
                             //左クリックされた時に呼び出される
-                            if (!PreventTouchInputCollision.Instance.ShotInvalid && TouchInput.GetTouchPhase() == TouchInfo.Down)
+                            if (!PreventTouchInputCollision.Instance.ShotInvalid[(int)PreventTouchInputCollision.ButtonName.ShotButton] && TouchInput.GetTouchPhase() == TouchInfo.Down)
                             {
                                 Shot(transform.forward * _shotPower);
                                 ChangeShotState(ShotState.ShottingMode);
@@ -192,7 +192,7 @@ namespace Cooking.Stage
                 case ShotState.ShottingMode:
                     {
                         UIManager.Instance.ChangeUI("ShottingMode");
-                        PredictLineController.Instance.DestroyPredictLine();
+                        PredictLineManager.Instance.DestroyPredictLine();
                     }
                     break;
                 case ShotState.ShotEndMode:

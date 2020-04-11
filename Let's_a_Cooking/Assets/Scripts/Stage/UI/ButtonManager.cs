@@ -7,7 +7,7 @@ namespace Cooking.Stage
     /// <summary>
     /// ボタンを押したときに、呼ばれる専用のクラス ボタンとメソッドを紐づける以上の役割はない
     /// </summary>
-    public class ButtonController : MonoBehaviour
+    public class ButtonManager : MonoBehaviour
     {
         /// <summary>
         /// ボタンの機能の種類 同じ名前をボタンゲームオブジェクトにつける
