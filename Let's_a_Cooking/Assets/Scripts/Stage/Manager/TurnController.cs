@@ -99,7 +99,7 @@ namespace Cooking.Stage
                 _playerIndexArray[i] = i;
             }
         }
-
+        
         /// <summary>
         /// ショットを打つ順番を決めるために、値を格納する要素番号・格納したい値を受け取る
         /// </summary>
@@ -160,6 +160,26 @@ namespace Cooking.Stage
                 _foodStatuses[i].transform.position = startPoint;
                 startPoint.x += 0.5f;
             }
+            StartCoroutine(WaitForCreatedPlayerStop());
+        }
+
+        /// <summary>
+        /// 生成位置はシーン上で指定するので、地面の上にぴったり配置されない恐れあり。プレイヤー座標を参照する際カメラ位置がずれるのを防ぐ
+        /// </summary>
+        /// <returns></returns>
+        IEnumerator WaitForCreatedPlayerStop()
+        {
+            while (!_foodStatuses[_activePlayerIndex].OnKitchen)
+            {
+                yield return null;
+            }
+            InitializeTurn();
+        }
+        /// <summary>
+        /// ターン制の初期化
+        /// </summary>
+        private void InitializeTurn()
+        {
             ///順番決めの値を元に_foodStatusesを並び替える 順番決めが終わった時点でactiveindexは0に初期化 流れを追いかけにくい(現状)
             PlayerInOrder();
             SetObjectsPositionForNextPlayer(_activePlayerIndex);
@@ -167,6 +187,7 @@ namespace Cooking.Stage
             ///ターンを1にセットしてゲーム開始
             _turnNumber = 1;
         }
+
 
         // Update is called once per frame
         void Update()

@@ -8,9 +8,6 @@ namespace Cooking.Stage
     /// </summary>
     public class FoodStatus : FoodGraphic
     {
-        [SerializeField] protected SkinnedMeshRenderer _skinnedMeshRenderer;
-        [SerializeField] private Material _ebiBlack;
-        [SerializeField] private Material _ebi;
         public PlayerPoint playerPoint;
         /// <summary>
         /// プレイヤーの番号は、ユーザーを1番から順に当てていき、その後コンピューターに割り当てる。
@@ -46,6 +43,19 @@ namespace Cooking.Stage
             get { return _isGoal; }
         }
         private bool _isGoal;
+        /// <summary>
+        /// キッチン(＝椅子の上テーブルの上まな板・皿などステージとして認識できるもの)の上にいるかを判定 初期化時以外でも使用するなら、Physics.OverlapAreaによる範囲指定などの必要がある
+        /// </summary>
+        public bool OnKitchen
+        {
+            get { return _onKitchen; }
+        }
+        private bool _onKitchen = false;
+        #region グラフィック関連変数
+        [SerializeField] protected SkinnedMeshRenderer _skinnedMeshRenderer;
+        [SerializeField] private Material _ebiBlack;
+        [SerializeField] private Material _ebi;
+        #endregion
         private void OnEnable()
         {
             //shotPoint = transform.GetChild(0);
@@ -71,6 +81,11 @@ namespace Cooking.Stage
             else if (collision.gameObject.tag == "Finish")
             {
                 _isGoal = true;
+            }
+            //初期化時以外でも使用するなら、範囲指定などの必要がある
+            //else if (collision.gameObject.tag == "Kitchen") 現状タグ無し
+            {
+                _onKitchen = true;
             }
         }
         private void OnTriggerEnter(Collider other)

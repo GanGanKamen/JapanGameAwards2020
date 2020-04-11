@@ -2136,8 +2136,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e04e840414210514fb91ba5fadd9b213, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cameraRotateCenter: {fileID: 0}
-  _cameraObjects: {fileID: 0}
+  _cameraRotateCenter: {fileID: 55672308}
+  _cameraObjectsTransform: {fileID: 1097188509}
   _changeTopCameraTime: 0.3
   camNo: 0
   topCam: {fileID: 1269139271}

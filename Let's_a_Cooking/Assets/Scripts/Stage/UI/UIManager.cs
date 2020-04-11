@@ -146,7 +146,6 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
-            Debug.Log(UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject());
             #region デフォルトUIの更新(プレイヤー番号・ターン数) スコアの更新はUIの状態を限定
             _turnNumberText.text = _turnController.TurnNumber.ToString();
             _playerNumberTextOnPlay.text = (_turnController.GetPlayerNumber(_turnController.ActivePlayerIndex)).ToString();

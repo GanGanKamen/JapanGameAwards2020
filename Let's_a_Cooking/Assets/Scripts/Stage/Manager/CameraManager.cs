@@ -6,18 +6,18 @@ using Cinemachine;
 namespace Cooking.Stage
 {
     /// <summary>
-    /// ターン開始時にアクティブなプレイヤーの情報を取得し、そのプレイヤーを追従する。
+    /// ターン開始時にアクティブなプレイヤーの情報を取得し、そのプレイヤーを追従
     /// </summary>
     public class CameraManager : MonoBehaviour
     {
         /// <summary>
-        ///ショット前のカメラの動きで用いる、カメラの回転や動きの中心の座標情報。メインカメラの親オブジェクトが持つ。食材の中心を軸にカメラを回転させる。
+        ///ショット前のカメラの動きで用いる、カメラの回転中心の座標情報。frontカメラの親オブジェクトが持つ。食材の中心を軸にカメラを回転させる
         /// </summary>
         [SerializeField] private Transform _cameraRotateCenter;
         /// <summary>
-        ///ショット前のカメラの動きで用いる、カメラの回転や動きの中心の座標情報。メインカメラの親オブジェクトが持つ。食材の中心を軸にカメラを回転させる。
+        ///ショット前のカメラの動きで用いる、すべてのカメラの親オブジェクトの座標情報。位置情報をリセットするときに使う
         /// </summary>
-        [SerializeField] private Transform _cameraObjects;
+        [SerializeField] private Transform _cameraObjectsTransform;
         private float _changeTopCameraTimeCounter;
        [SerializeField] private float _changeTopCameraTime = 0.3f;
         Vector3[] _cameraLocalPositions = new Vector3[3];
@@ -72,7 +72,6 @@ namespace Cooking.Stage
         // Start is called before the first frame update
         void Start()
         {
-            _cameraRotateCenter = Camera.main.transform.parent;
             _cameraLocalPositions[(int)CameraMode.Top] = (topCam.transform.localPosition);
             _cameraLocalPositions[(int)CameraMode.Front] = (frontCam.transform.localPosition);
             _cameraLocalPositions[(int)CameraMode.Side] = (sideCam.transform.localPosition);
@@ -109,15 +108,13 @@ namespace Cooking.Stage
 
                         wheelScroll = Input.GetAxis("Mouse ScrollWheel");   //マウスホイールの回転量を格納
                                                                             //マウスホイールが入力されたら
-                                                                            //if (wheelScroll != 0)
-                                                                            //{
-                                                                            //newTopCameraPos.y = topCam.transform.position.y + wheelScroll * -8;
-                                                                            //topCam.transform.position = newTopCameraPos;       //カメラの座標に代入
-                                                                            //}
+                        if (wheelScroll != 0)
+                        {
+                            newTopCameraPos = topCam.transform.position;  //現在のカメラの座標を代入
+                            newTopCameraPos.y = topCam.transform.position.y + wheelScroll * -8;
+                            topCam.transform.position = newTopCameraPos;       //カメラの座標に代入
+                        }
                     }
-
-
-
                     break;
                 case CameraMode.Front:
                     {
@@ -190,9 +187,8 @@ namespace Cooking.Stage
         }
 
         /// <summary>
-        /// ショット前のカメラの動く。食材の中心を軸にカメラを回転させる。
+        /// ショット前のカメラ。食材の中心を軸にカメラを回転させる。
         /// ショット前のカメラの回転は、ショットの向きを決めるオブジェクトのRotationのyを参照し (左右)。x(高さ方向の回転)は参照しない。
-        /// ショット前のカメラ動作はmainカメラで行う。
         /// </summary>
         private void BeforeShotCameraRotate()
         {
@@ -221,9 +217,9 @@ namespace Cooking.Stage
         /// </summary>
         private void SetCameraLocalPosition()
         {
-            topCam.transform.localPosition = _cameraLocalPositions[0];
-            frontCam.transform.localPosition = _cameraLocalPositions[1];
-            sideCam.transform.localPosition = _cameraLocalPositions[2];
+            topCam.transform.localPosition = _cameraLocalPositions[(int)CameraMode.Top];
+            frontCam.transform.localPosition = _cameraLocalPositions[(int)CameraMode.Front];
+            sideCam.transform.localPosition = _cameraLocalPositions[(int)CameraMode.Side];
         }
         /// <summary>
         /// ターン開始時にカメラの動きの中心をセット player中心
@@ -231,6 +227,7 @@ namespace Cooking.Stage
         /// <param name="cameraSetPositon"></param>
         public void SetCameraMoveCenterPosition(Vector3 cameraSetPositon)
         {
+            _cameraObjectsTransform.position = cameraSetPositon;
             _cameraRotateCenter.position = cameraSetPositon;
             SetCameraLocalPosition();
         }
