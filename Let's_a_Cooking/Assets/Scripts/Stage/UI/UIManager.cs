@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace Cooking.Stage
 {
     /// <summary>
-    /// ボタン関連はButtonController・それ以外のUIの制御
+    /// ボタン関連はButtonController・PlayMode中以外のUIの制御
     /// </summary>
     public class UIManager : ChangePowerMeter
     {
@@ -36,6 +36,11 @@ namespace Cooking.Stage
         /// 選ばれた食材リスト FoodStatus用のenumへ変換
         /// </summary>
         private string[] _chooseFoodNames;
+        /// <summary>
+        /// ゲーム開始にかかる時間
+        /// </summary>
+        private float _startTime = 1;
+
         #region 順番決め用変数
         /// <summary>
         /// 順番決め用ゲージを取得
@@ -58,31 +63,16 @@ namespace Cooking.Stage
         bool _invalidInputDecideOrder;
         #endregion
 
-        #region プレイ画面用変数
-        /// <summary>
-        /// shotPowerゲージを取得
-        /// </summary>
-        [SerializeField] Slider _shotPowerGage;
-        /// <summary>
-        /// 入力衝突発生のためpublic
-        /// </summary>
-        public RectTransform returnButton;
-        /// <summary>
-        /// ゲーム開始にかかる時間
-        /// </summary>
-        private float _startTime = 1;
-        /// <summary>
-        /// AIのターン中はショット開始ボタンは表示しない
-        /// </summary>
-        [SerializeField] private GameObject[] _shotStartButtons;
-        [SerializeField] private GameObject _defaultIsAIImage;
-        [SerializeField] private Text _turnNumberText;
-        [SerializeField] private Text _playerNumberTextOnPlay;
-        [SerializeField] private Text _pointNumberTextOnPlay;
+        #region プレイ画面用変数 (PlayModeUIスクリプトがメインで担当)
         /// <summary>
         /// ショット画面から画面を戻すときに戻し先を指定
         /// </summary>
         private ScreenState _beforeShotScreenState;
+        private PlayModeUI _playModeUI;
+        public PlayModeUI PlayModeUI
+        {
+            get { return _playModeUI ? _playModeUI : FindObjectOfType<PlayModeUI>(); }
+        }
         #endregion
 
         #region ゲーム終了画面用変数
@@ -130,26 +120,17 @@ namespace Cooking.Stage
         }
         #endregion
 
-        public void InitializeShotPowerGage(ShotParameter shotParameter)
-        {
-            ///スライダーの値同期(他も必要に応じて追加)
-            _shotPowerGage.maxValue = shotParameter.MaxShotPower;
-            _shotPowerGage.minValue = shotParameter.MinShotPower;
-        }
         // Start is called before the first frame update
         void Start()
         {
             _turnController = TurnManager.Instance;
+            _playModeUI = FindObjectOfType<PlayModeUI>();
             _chooseFoodNames = new string[GameManager.Instance.playerNumber + GameManager.Instance.computerNumber];
         }
 
         // Update is called once per frame
         void Update()
         {
-            #region デフォルトUIの更新(プレイヤー番号・ターン数) スコアの更新はUIの状態を限定
-            _turnNumberText.text = _turnController.TurnNumber.ToString();
-            _playerNumberTextOnPlay.text = (_turnController.GetPlayerNumber(_turnController.ActivePlayerIndex)).ToString();
-            #endregion
             switch (_mainUIState)
             {
                 case ScreenState.ChooseFood:
@@ -164,9 +145,18 @@ namespace Cooking.Stage
                             if (TouchInput.GetTouchPhase() == TouchInfo.Down)
                             {
                                 _invalidInputDecideOrder = true;
-                                ///順番を決める数値を決定
-                                _turnController.DecideOrderValue(_turnController.ActivePlayerIndex, _orderGage.value);
-                                _orderPowerTexts[_turnController.ActivePlayerIndex].text = _turnController.OrderPower[_turnController.ActivePlayerIndex].ToString("00.00");
+                                //順番を決める数値を決定
+                                var orderPower =  _turnController.PlayerDecideOrderValue(_turnController.ActivePlayerIndex, _orderGage.value);
+                                _orderPowerTexts[_turnController.ActivePlayerIndex].text = orderPower.ToString("00.00");
+                                StartCoroutine(WaitOnDecideOrder());
+                            }
+                            else if (Input.GetKeyDown(KeyCode.Space))
+                            {
+                                _invalidInputDecideOrder = true;
+                                //順番を決める数値を決定
+                                _orderGage.value = 100;
+                               var orderPower = _turnController.PlayerDecideOrderValue(_turnController.ActivePlayerIndex, _orderGage.value);
+                                _orderPowerTexts[_turnController.ActivePlayerIndex].text = orderPower.ToString("00.00");
                                 StartCoroutine(WaitOnDecideOrder());
                             }
                         }
@@ -175,20 +165,15 @@ namespace Cooking.Stage
                 case ScreenState.Start:
                     break;
                 case ScreenState.FrontMode:
-                    UpdatePointText();
                     break;
                 case ScreenState.SideMode:
-                    UpdatePointText();
                     break;
                 case ScreenState.LookDownMode:
-                    UpdatePointText();
                     break;
                 case ScreenState.PowerMeterMode:
-                    //shotPowerをゲージに反映
-                    _shotPowerGage.value = ShotManager.Instance.ShotPower;
                     break;
                 case ScreenState.ShottingMode:
-                    UpdatePointText();
+
                     break;
                 case ScreenState.Finish:
                     switch (_finishUIMode)
@@ -241,13 +226,6 @@ namespace Cooking.Stage
             _finishBackGroundImages[(int)_finishUIMode].SetActive(true);
         }
         /// <summary>
-        /// アクティブプレイヤーのプレイヤーポイント取得のため、ターンコントローラーを経由してポイント取得
-        /// </summary>
-        private void UpdatePointText()
-        {
-            _pointNumberTextOnPlay.text = _turnController.FoodStatuses[_turnController.ActivePlayerIndex].playerPoint.Point.ToString();
-        }
-        /// <summary>
         /// 食材を選ぶ際のマウスクリックで呼ばれる
         /// </summary>
         /// <param name="foodName"></param>選ばれた食材の名前
@@ -273,33 +251,8 @@ namespace Cooking.Stage
                     ChangeUI(_beforeShotScreenState.ToString());
                     break;
                 case ScreenState.ShottingMode:
-                    ChangeUIOnTurnStart();
+                    _playModeUI.ChangeUIOnTurnStart();
                     break;
-            }
-        }
-        /// <summary>
-        /// ターン開始時にAIかどうかをチェックしてUIを切り替える
-        /// </summary>
-        private void ChangeUIOnTurnStart()
-        {
-            if (_turnController.IsAITurn)
-            {
-                ChangeUI("SideMode");
-                _defaultIsAIImage.SetActive(true);
-                foreach (var shotStartButton in _shotStartButtons)
-                {
-                    shotStartButton.SetActive(false);
-                }
-            }
-            ///ショット終了時は見下ろしスタート プレイヤーの時
-            else
-            {
-                ChangeUI("LookDownMode");
-                _defaultIsAIImage.SetActive(false);
-                foreach (var shotStartButton in _shotStartButtons)
-                {
-                    shotStartButton.SetActive(true);
-                }
             }
         }
         /// <summary>
@@ -375,7 +328,7 @@ namespace Cooking.Stage
         {
             _playerListOrderPower[playerNumber].SetActive(true);
             _isAIListOrderPower[playerNumber].SetActive(true);
-            _turnController.DecideOrderValue(playerNumber, Random.Range(70.0f, 95.0f));
+            _turnController.AIDecideOrderValue(playerNumber);
             _orderPowerTexts[playerNumber].text = _turnController.OrderPower[playerNumber].ToString("00.00");
         }
         public int GetActivePlayerNumber()
@@ -400,7 +353,7 @@ namespace Cooking.Stage
         IEnumerator GameStartUI()
         {
             yield return new WaitForSeconds(_startTime);
-            ChangeUIOnTurnStart();
+            _playModeUI.ChangeUIOnTurnStart();
         }
     }
 }

@@ -99,6 +99,7 @@ namespace Cooking.Stage
                     {
                         var newSeasoning = Instantiate(_seasoningPrefab);
                         newSeasoning.transform.position = _instantiateSeasoningPoint[i];
+                        _seasonings[i] = newSeasoning;//登録することでAIが検知可能に
                     }
                 }
             }

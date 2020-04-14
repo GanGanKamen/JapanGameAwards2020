@@ -101,14 +101,25 @@ namespace Cooking.Stage
         }
         
         /// <summary>
-        /// ショットを打つ順番を決めるために、値を格納する要素番号・格納したい値を受け取る
+        /// ショットを打つ順番を決める
+        /// </summary>
+        /// <param name="playerNumberIndex"></param>
+        public float AIDecideOrderValue(int playerNumberIndex)
+        {
+            _orderPower[playerNumberIndex] = Random.Range(70.0f, 95.0f);
+            return _orderPower[playerNumberIndex];
+        }
+
+        /// <summary>
+        /// ショットを打つ順番を決める 値が決まってその値がもどってくる流れを尊重 AIに合わせた
         /// </summary>
         /// <param name="playerNumberIndex"></param>
         /// <param name="value"></param>
-        public void DecideOrderValue(int playerNumberIndex, float value)
+        public float PlayerDecideOrderValue(int playerNumberIndex, float value)
         {
             //ランダム要素 現状演出無しで値が最初に出て、プレイヤーはそれより大きいのを狙う形式
             _orderPower[playerNumberIndex] = value;
+            return value;
         }
 
         /// <summary>
@@ -134,12 +145,11 @@ namespace Cooking.Stage
         /// <summary>
         /// プレイヤーを生成 どの種類の食材を生成するのかという情報が必要
         /// </summary>
-        public void CreatePlayers()
+        public void CreatePlayersOnInitialize()
         {
             ///プレイヤー番号 一人目 ＝ 0番目
             int playerNumber = 0;
             _foodStatuses = new FoodStatus[_playerSumNumber];
-            var startPoint = _startPositionObject.position;
             ///プレイヤーを生成 プレイヤー番号が小さいのがプレイしている人で大きいのがAI
             for (int i = 0; i < GameManager.Instance.playerNumber; i++)
             {
@@ -157,10 +167,18 @@ namespace Cooking.Stage
             ///各プレイヤーを初期位置に配置
             for (int i = 0; i < _playerSumNumber; i++)
             {
-                _foodStatuses[i].transform.position = startPoint;
-                startPoint.x += 0.5f;
+                _foodStatuses[i].transform.position = GetPlayerStartPoint(i);
             }
             StartCoroutine(WaitForCreatedPlayerStop());
+        }
+        /// <summary>
+        /// 指定された元要素番号のプレイヤーのスタート地点を算出
+        /// </summary>
+        /// <param name="playerIndex"></param>
+        private Vector3 GetPlayerStartPoint(int playerIndex)
+        {
+            var startPoint = _startPositionObject.position;
+            return startPoint + new Vector3(0.5f * playerIndex, 0 , 0); //プレイヤー番号依存で少しずらして配置
         }
 
         /// <summary>
@@ -192,13 +210,12 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
-            if (ShotManager.Instance.ShotModeProperty == ShotState.ShotEndMode)
+            if (StageSceneManager.Instance.FoodStateOnGameProperty == StageSceneManager.FoodStateOnGame.ShotEnd)
             {
                 if (_foodStatuses[_activePlayerIndex].IsGoal)
                 {
                     Debug.Log("Goal");
                 }
-                ChangeTurn();
             }
             ///デバッグ用 ゲーム終了
 //#if UNITY_EDITOR
@@ -209,11 +226,11 @@ namespace Cooking.Stage
 //#endif
         }
         /// <summary>
-        /// 指定したプレイヤーの番号を取得(要素番号ではない)
+        /// アクティブプレイヤーIndexを渡せば、その要素のプレイヤーが何番のプレイヤーだったかを返す UI表示用に1加算している
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
-        public int GetPlayerNumber(int number)
+        public int GetPlayerNumberFromActivePlayerIndex(int number)
         {
             return _playerIndexArray[number] + 1;
         }
@@ -238,12 +255,12 @@ namespace Cooking.Stage
         /// </summary>
         public void ChangeTurn()
         {
-            ///次のターン数へ
-            _activePlayerIndex++;
             switch (StageSceneManager.Instance.GameState)
             {
                 case StageGameState.Preparation:
                     {
+                        ///次のターン数へ
+                        _activePlayerIndex++;
                         ///順番決め終了 このときAI生成されていない AI判定はGetComponentでは不可 アニメーションを入れるなら注意
                         if (_activePlayerIndex == GameManager.Instance.playerNumber)
                         {
@@ -251,9 +268,21 @@ namespace Cooking.Stage
                         }
                     }
                     break;
-                    //10ターン目が終わったら終了
+                    //10ターン目が終わったら終了(SceneManager)
                 case StageGameState.Play:
                     {
+                        if (_foodStatuses[_activePlayerIndex].IsGoal)
+                        {
+                            //次の食材を生成して登録
+                            if (_isAITurn)
+                                _foodStatuses[_activePlayerIndex] = Instantiate(_aIPrefab).GetComponent<FoodStatus>();
+                            else
+                                _foodStatuses[_activePlayerIndex] = Instantiate(_playerPrefab).GetComponent<FoodStatus>();
+                            //スタート地点へ配置
+                            ResetPlayerOnStartPoint();
+                        }
+                        //次のターン数へ
+                        _activePlayerIndex++;
                         if (_activePlayerIndex == _playerSumNumber)
                         {
                             _activePlayerIndex = 0;
@@ -282,13 +311,15 @@ namespace Cooking.Stage
             ShotManager.Instance.SetShotManager(_foodStatuses[activePlayerIndex].Rigidbody);
             CameraManager.Instance.SetCameraMoveCenterPosition(_foodStatuses[activePlayerIndex].transform.position);
             PredictLineManager.Instance.SetPredictLineInstantiatePosition(_foodStatuses[activePlayerIndex].transform.position);
+            PredictLineManager.Instance.SetActivePredictShotPoint(!_isAITurn);
         }
         /// <summary>
-        /// プレイヤー落下時にscenecontrollerに呼ばれる
+        /// UI表示のない異常落下にも呼ばれる アニメーション再生中などショット前プレイヤー落下時にsceneManagerに呼ばれる
         /// </summary>
         public void ResetPlayerOnStartPoint()
         {
-            _foodStatuses[_activePlayerIndex].ReStart(_startPositionObject.position);
+            var startPoint = GetPlayerStartPoint(GetPlayerNumberFromActivePlayerIndex(_activePlayerIndex) - 1); //プレイヤー番号 - 1 が元の要素番号
+            _foodStatuses[_activePlayerIndex].ReStart(startPoint);
             _foodStatuses[_activePlayerIndex].Rigidbody.velocity = Vector3.zero;
             _foodStatuses[_activePlayerIndex].transform.eulerAngles = Vector3.zero;
         }

@@ -79,10 +79,6 @@ namespace Cooking.Stage
             {
                 _isFall = true;
             }
-            else if (collision.gameObject.tag == "Finish")
-            {
-                _isGoal = true;
-            }
             //初期化時以外でも使用するなら、範囲指定などの必要がある
             //else if (collision.gameObject.tag == "Kitchen") 現状タグ無し
             {
@@ -91,6 +87,10 @@ namespace Cooking.Stage
         }
         private void OnTriggerEnter(Collider other)
         {
+            if (other.tag == "Finish")
+            {
+                _isGoal = true;
+            }
             if (other.tag == "Water")
             {
                 CleanSeasoning(_skinnedMeshRenderer, _ebi);
@@ -104,14 +104,14 @@ namespace Cooking.Stage
             }
         }
         /// <summary>
-        /// スタート地点に戻されます。
+        /// 落下後・ゴール後にスタート地点に戻る際呼ばれる
         /// </summary>
         /// <param name="startPoint"></param>
         public void ReStart(Vector3 startPoint)
         {
             transform.position = startPoint;
             _isFall = false;
+            _isGoal = false;
         }
     }
-
 }

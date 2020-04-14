@@ -345,5 +345,14 @@ namespace Cooking.Stage
             _instantiatePosition = instantiatePosition;
             this.transform.position = instantiatePosition;
         }
+        /// <summary>
+        /// 落下予測地点の表示を切り替える
+        /// </summary>
+        /// <param name="activeState"></param>
+        public void SetActivePredictShotPoint(bool activeState )
+        {
+            _predictShotPoint.SetActive(activeState);
+        }
+
     }
 }

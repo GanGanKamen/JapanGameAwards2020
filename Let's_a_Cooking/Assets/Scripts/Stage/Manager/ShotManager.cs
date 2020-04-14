@@ -66,7 +66,7 @@ namespace Cooking.Stage
         // Start is called before the first frame update
         void Start()
         {
-            UIManager.Instance.InitializeShotPowerGage(_shotParameter);
+            UIManager.Instance.PlayModeUI.InitializeShotPowerGage(_shotParameter);
         }
 
         // Update is called once per frame
@@ -122,14 +122,15 @@ namespace Cooking.Stage
                     break;
                 case ShotState.ShottingMode:
                     {
-                        ///食材が止まったらショット終了
-                        if (_shotRigidbody.velocity.magnitude < 0.0001f)
+                        ///食材が止まった + 落下・ゴール待機時間が終わったら、ショット終了
+                        if (_shotRigidbody.velocity.magnitude < 0.0001f )//&& StageSceneManager.Instance.FoodStateOnGameProperty == StageSceneManager.FoodStateOnGame.ShotEnd)
                             ChangeShotState(ShotState.ShotEndMode);
                     }
                     break;
                 case ShotState.ShotEndMode:
                     {
-                        ChangeShotState(ShotState.WaitMode);
+                        if (StageSceneManager.Instance.FoodStateOnGameProperty == StageSceneManager.FoodStateOnGame.ShotEnd)
+                            ChangeShotState(ShotState.WaitMode);
                     }
                     break;
                 default:

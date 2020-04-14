@@ -80,7 +80,6 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
-
             switch (cameraMode)
             {
                 case CameraMode.Top:
@@ -156,7 +155,6 @@ namespace Cooking.Stage
                 default:
                     break;
             }
-
             switch (ShotManager.Instance.ShotModeProperty)
             {
                 case ShotState.WaitMode:
@@ -179,18 +177,29 @@ namespace Cooking.Stage
                     }
                     break;
                 case ShotState.ShotEndMode:
-                    CameraTrackReset();
                     break;
                 default:
                     break;
             }
         }
-
         /// <summary>
-        /// ショット前のカメラ。食材の中心を軸にカメラを回転させる。
-        /// ショット前のカメラの回転は、ショットの向きを決めるオブジェクトのRotationのyを参照し (左右)。x(高さ方向の回転)は参照しない。
+        /// EndMode切り替えをUpdateで行い、そのあとのフレームで確実に実行
         /// </summary>
-        private void BeforeShotCameraRotate()
+        private void LateUpdate()
+        {
+            switch (StageSceneManager.Instance.FoodStateOnGameProperty)
+            {
+                case StageSceneManager.FoodStateOnGame.ShotEnd:
+                    CameraTrackReset();
+                    break;
+
+            }
+        }
+            /// <summary>
+            /// ショット前のカメラ。食材の中心を軸にカメラを回転させる。
+            /// ショット前のカメラの回転は、ショットの向きを決めるオブジェクトのRotationのyを参照し (左右)。x(高さ方向の回転)は参照しない。
+            /// </summary>
+            private void BeforeShotCameraRotate()
         {
             var tempShotRotation = ShotManager.Instance.transform.eulerAngles;
             var tempRortation = _cameraRotateCenter.eulerAngles;

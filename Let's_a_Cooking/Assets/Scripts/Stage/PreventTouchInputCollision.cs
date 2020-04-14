@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace Cooking.Stage
 {
     /// <summary>
-    /// 入力の衝突を防ぐ。現状スマホ対応していない Event…→うまく動かなかった RayCastの設定をすべて変更は手間 
+    /// 画面タッチ入力・ボタンの衝突を防ぐ。現状スマホ対応していない Eventうまく動かなかった RayCastの設定をすべて変更は手間 
     /// </summary>
     public class PreventTouchInputCollision : MonoBehaviour
     {
