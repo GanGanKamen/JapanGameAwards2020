@@ -153,14 +153,14 @@ namespace Cooking.Stage
             ///プレイヤーを生成 プレイヤー番号が小さいのがプレイしている人で大きいのがAI
             for (int i = 0; i < GameManager.Instance.playerNumber; i++)
             {
-                _foodStatuses[playerNumber] = Instantiate(_playerPrefab).GetComponent<FoodStatus>();
+                _foodStatuses[playerNumber] = Instantiate(_playerPrefab).GetComponentInChildren<FoodStatus>();
                 _foodStatuses[playerNumber].playerNumber = playerNumber + 1;
                 playerNumber++;
             }
             ///AIを生成
             for (int i = 0; i < GameManager.Instance.computerNumber; i++)
             {
-                _foodStatuses[playerNumber] = Instantiate(_aIPrefab).GetComponent<FoodStatus>();
+                _foodStatuses[playerNumber] = Instantiate(_aIPrefab).GetComponentInChildren<FoodStatus>();
                 _foodStatuses[playerNumber].playerNumber = playerNumber + 1;
                 playerNumber++;
             }
@@ -169,6 +169,7 @@ namespace Cooking.Stage
             {
                 _foodStatuses[i].transform.position = GetPlayerStartPoint(i);
             }
+            StageSceneManager.Instance.InitializePlayerPointList(_playerSumNumber);
             StartCoroutine(WaitForCreatedPlayerStop());
         }
         /// <summary>
@@ -187,7 +188,7 @@ namespace Cooking.Stage
         /// <returns></returns>
         IEnumerator WaitForCreatedPlayerStop()
         {
-            while (!_foodStatuses[_activePlayerIndex].OnKitchen)
+            while (StageSceneManager.Instance.GameState == StageGameState.Preparation)//(!_foodStatuses[_activePlayerIndex].OnKitchen)
             {
                 yield return null;
             }
@@ -205,7 +206,6 @@ namespace Cooking.Stage
             ///ターンを1にセットしてゲーム開始
             _turnNumber = 1;
         }
-
 
         // Update is called once per frame
         void Update()
@@ -273,11 +273,12 @@ namespace Cooking.Stage
                     {
                         if (_foodStatuses[_activePlayerIndex].IsGoal)
                         {
+                            StageSceneManager.Instance.AddPlayerPointToList(_activePlayerIndex);
                             //次の食材を生成して登録
                             if (_isAITurn)
-                                _foodStatuses[_activePlayerIndex] = Instantiate(_aIPrefab).GetComponent<FoodStatus>();
+                                _foodStatuses[_activePlayerIndex] = Instantiate(_aIPrefab).GetComponentInChildren<FoodStatus>();
                             else
-                                _foodStatuses[_activePlayerIndex] = Instantiate(_playerPrefab).GetComponent<FoodStatus>();
+                                _foodStatuses[_activePlayerIndex] = Instantiate(_playerPrefab).GetComponentInChildren<FoodStatus>();
                             //スタート地点へ配置
                             ResetPlayerOnStartPoint();
                         }
@@ -292,6 +293,12 @@ namespace Cooking.Stage
                         CheckNextPlayerAI();
                         UIManager.Instance.ResetUIMode();
                         SetObjectsPositionForNextPlayer(_activePlayerIndex);
+                        if (!_isAITurn)
+                        {
+                            _foodStatuses[_activePlayerIndex].PlayerAnimatioManage(true);
+                            _foodStatuses[_activePlayerIndex].SetShotPointOnFoodCenter();
+                            PredictLineManager.Instance.SetPredictLineInstantiatePosition(_foodStatuses[_activePlayerIndex].ShotPoint.position);
+                        }
                     }
                     break;
                 case StageGameState.Finish:
@@ -310,7 +317,6 @@ namespace Cooking.Stage
             GimmickManager.Instance.SeasoningManager();
             ShotManager.Instance.SetShotManager(_foodStatuses[activePlayerIndex].Rigidbody);
             CameraManager.Instance.SetCameraMoveCenterPosition(_foodStatuses[activePlayerIndex].transform.position);
-            PredictLineManager.Instance.SetPredictLineInstantiatePosition(_foodStatuses[activePlayerIndex].transform.position);
             PredictLineManager.Instance.SetActivePredictShotPoint(!_isAITurn);
         }
         /// <summary>

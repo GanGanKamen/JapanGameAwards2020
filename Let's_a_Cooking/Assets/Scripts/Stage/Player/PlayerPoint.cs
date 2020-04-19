@@ -6,11 +6,21 @@ using UnityEngine;
 /// </summary>
 public class PlayerPoint : MonoBehaviour
 {
+    /// <summary>
+    /// 初期ポイント + 獲得ポイント
+    /// </summary>
     public int Point
     {
-        get { return _point; }
+        get { return _getPoint + _firstPoint; }
     }
-    private int _point = 100;
+    /// <summary>
+    /// 獲得ポイント
+    /// </summary>
+    private int _getPoint = 0;
+    /// <summary>
+    /// 初期ポイント
+    /// </summary>
+    private const int _firstPoint = 100;
     /// <summary>
     /// 初回水洗いフラグ
     /// </summary>
@@ -33,7 +43,7 @@ public class PlayerPoint : MonoBehaviour
     /// <returns></returns>
     private void FirstWash()
     {
-        _point += 50;
+        _getPoint += 50;
         _isFirstWash = false;
     }
     /// <summary>
@@ -41,7 +51,7 @@ public class PlayerPoint : MonoBehaviour
     /// </summary>
     private void TouchSeasoning()
     {
-        _point *= 2;
+        _getPoint *= 2;
     }
     private void OnTriggerEnter(Collider other)
     {

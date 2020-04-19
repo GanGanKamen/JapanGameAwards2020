@@ -209,7 +209,7 @@ namespace Cooking.Stage
             //Rayが当たったオブジェクトの情報を入れる箱
             RaycastHit hit; //原点 方向
             Ray ray = new Ray(originPoint, direction);
-            Debug.DrawRay(originPoint, direction * length / direction.magnitude, Color.red, 1f);
+            Debug.DrawRay(originPoint, direction * length / direction.magnitude, Color.red, 0.2f);
             //Kitchenレイヤーとレイ判定を行う
             if (Physics.Raycast(ray, out hit, length, _rayCollisionLayer))//if (Physics.SphereCast(ray, 0.1f , out hit, length, _rayCollisionLayer))
             {

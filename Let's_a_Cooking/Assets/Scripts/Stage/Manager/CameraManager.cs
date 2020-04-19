@@ -20,7 +20,7 @@ namespace Cooking.Stage
         [SerializeField] private Transform _cameraObjectsTransform;
         private float _changeTopCameraTimeCounter;
        [SerializeField] private float _changeTopCameraTime = 0.3f;
-        Vector3[] _cameraLocalPositions = new Vector3[3];
+        Vector3[] _cameraLocalPositions;
         /// <summary>
         /// ゲーム開始前のUIにて、ドラッグした状態 = タッチしていた状態でゲームが始まると、ドラッグ量が座標に代入されてバグるのを防ぐ
         /// </summary>
@@ -30,11 +30,12 @@ namespace Cooking.Stage
 
         enum CameraMode
         {
+            Wait,
             Top,
             Front,
             Side
         }
-        CameraMode cameraMode = CameraMode.Top;
+        CameraMode cameraMode = CameraMode.Wait;
 
         [SerializeField]
         private CinemachineVirtualCamera topCam;
@@ -72,6 +73,7 @@ namespace Cooking.Stage
         // Start is called before the first frame update
         void Start()
         {
+            _cameraLocalPositions = new Vector3[System.Enum.GetValues(typeof(CameraMode)).Length];
             _cameraLocalPositions[(int)CameraMode.Top] = (topCam.transform.localPosition);
             _cameraLocalPositions[(int)CameraMode.Front] = (frontCam.transform.localPosition);
             _cameraLocalPositions[(int)CameraMode.Side] = (sideCam.transform.localPosition);
@@ -82,6 +84,8 @@ namespace Cooking.Stage
         {
             switch (cameraMode)
             {
+                case CameraMode.Wait:
+                    break;
                 case CameraMode.Top:
                     {
                         topCam.Priority = 1;

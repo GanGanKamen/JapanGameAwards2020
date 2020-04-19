@@ -14,7 +14,7 @@ namespace Cooking.Stage
         /// <summary>
         /// メインとなるUIの状態の数だけUIを用意
         /// </summary>
-        [SerializeField] GameObject[] _stageSceneMainUIs = new GameObject[System.Enum.GetValues(typeof(ScreenState)).Length];
+        [SerializeField] GameObject[] _stageSceneMainUIs = null;
         /// <summary>
         /// 現在のUIの状態が入る
         /// </summary>
@@ -27,7 +27,7 @@ namespace Cooking.Stage
         /// <summary>
         /// よく使うため変数化
         /// </summary>
-        TurnManager _turnController;
+        TurnManager _turnManager;
         /// <summary>
         /// 食材選択画面での選択ボタンイメージ。順番はFoodStatus.FoodTypeに準じる
         /// </summary>
@@ -123,7 +123,7 @@ namespace Cooking.Stage
         // Start is called before the first frame update
         void Start()
         {
-            _turnController = TurnManager.Instance;
+            _turnManager = TurnManager.Instance;
             _playModeUI = FindObjectOfType<PlayModeUI>();
             _chooseFoodNames = new string[GameManager.Instance.playerNumber + GameManager.Instance.computerNumber];
         }
@@ -146,8 +146,8 @@ namespace Cooking.Stage
                             {
                                 _invalidInputDecideOrder = true;
                                 //順番を決める数値を決定
-                                var orderPower =  _turnController.PlayerDecideOrderValue(_turnController.ActivePlayerIndex, _orderGage.value);
-                                _orderPowerTexts[_turnController.ActivePlayerIndex].text = orderPower.ToString("00.00");
+                                var orderPower =  _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _orderGage.value);
+                                _orderPowerTexts[_turnManager.ActivePlayerIndex].text = orderPower.ToString("00.00");
                                 StartCoroutine(WaitOnDecideOrder());
                             }
                             else if (Input.GetKeyDown(KeyCode.Space))
@@ -155,8 +155,8 @@ namespace Cooking.Stage
                                 _invalidInputDecideOrder = true;
                                 //順番を決める数値を決定
                                 _orderGage.value = 100;
-                               var orderPower = _turnController.PlayerDecideOrderValue(_turnController.ActivePlayerIndex, _orderGage.value);
-                                _orderPowerTexts[_turnController.ActivePlayerIndex].text = orderPower.ToString("00.00");
+                               var orderPower = _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _orderGage.value);
+                                _orderPowerTexts[_turnManager.ActivePlayerIndex].text = orderPower.ToString("00.00");
                                 StartCoroutine(WaitOnDecideOrder());
                             }
                         }
@@ -233,7 +233,7 @@ namespace Cooking.Stage
         {
             ///作成中
             ///選ばれた食材に応じてプレイヤーを生成する。現在TurnControllerに生成の役割がある。
-            _chooseFoodNames[_turnController.ActivePlayerIndex] = foodName;
+            _chooseFoodNames[_turnManager.ActivePlayerIndex] = foodName;
             //index++;
             ChangeUI("DecideOrder");
         }
@@ -265,7 +265,7 @@ namespace Cooking.Stage
             _beforeShotScreenState = _mainUIState;
             _stageSceneMainUIs[(int)_mainUIState].SetActive(false);
             ///enum型へ変換 + 変換失敗時に警告
-            Debug.AssertFormat(System.Enum.TryParse(afterScreenStateString, out _mainUIState), "不適切な値:{0}が入力されました。", afterScreenStateString);
+            EnumParseMethod.TryParseAndDebugAssertFormat(afterScreenStateString, true, out _mainUIState);
             /// ショットの状態を変更→ShotManagerへ
             switch (_mainUIState)
             {
@@ -307,10 +307,10 @@ namespace Cooking.Stage
                     break;
                 case ScreenState.Finish:
                     _finishUIMode = FinishUIMode.Finish;
-                    for (int i = 0; i < _turnController.FoodStatuses.Length; i++)
+                    for (int i = 0; i < _turnManager.FoodStatuses.Length; i++)
                     {
+                        _finishScoreTexts[i].text = StageSceneManager.Instance.GetSumPlayerPoint(i).ToString();
                         _finishScoreImages[i].SetActive(true);
-                        _finishScoreTexts[_turnController.PlayerIndexArray[i]].text = _turnController.FoodStatuses[i].playerPoint.Point.ToString();
                     }
                     break;
                 case ScreenState.Pause:
@@ -328,12 +328,12 @@ namespace Cooking.Stage
         {
             _playerListOrderPower[playerNumber].SetActive(true);
             _isAIListOrderPower[playerNumber].SetActive(true);
-            _turnController.AIDecideOrderValue(playerNumber);
-            _orderPowerTexts[playerNumber].text = _turnController.OrderPower[playerNumber].ToString("00.00");
+            _turnManager.AIDecideOrderValue(playerNumber);
+            _orderPowerTexts[playerNumber].text = _turnManager.OrderPower[playerNumber].ToString("00.00");
         }
         public int GetActivePlayerNumber()
         {
-            return _turnController.PlayerIndexArray[_turnController.ActivePlayerIndex] + 1;
+            return _turnManager.PlayerIndexArray[_turnManager.ActivePlayerIndex] + 1;
         }
         /// <summary>
         /// 複数有人プレイヤーがいるときは、何度も呼ばれる想定
@@ -343,9 +343,9 @@ namespace Cooking.Stage
         {
             yield return new WaitForSeconds(1f);
             ///ターンの変更
-            _turnController.ChangeTurn();
+            _turnManager.ChangeTurn();
             _invalidInputDecideOrder = false;
-            if (_turnController.ActivePlayerIndex == 0)
+            if (_turnManager.ActivePlayerIndex == 0)
             {
                 ChangeUI("Start");
             }
@@ -354,6 +354,8 @@ namespace Cooking.Stage
         {
             yield return new WaitForSeconds(_startTime);
             _playModeUI.ChangeUIOnTurnStart();
+            _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].SetShotPointOnFoodCenter();
+            PredictLineManager.Instance.SetPredictLineInstantiatePosition(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].ShotPoint.position);
         }
     }
 }

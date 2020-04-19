@@ -37,8 +37,7 @@ namespace Cooking.Stage
         /// <param name="button">押されたボタンの情報</param>
         public void OnTouch(Button button)
         {
-            ///enum型へ変換 + 変換失敗時に警告
-            Debug.AssertFormat(Enum.TryParse(button.name, out _buttonName), "不適切なボタンの名前:{0}が入力されました。", button.name);
+            EnumParseMethod.TryParseAndDebugAssertFormat(button.name, true,out _buttonName);
             //アクティブボタン特定のための情報 UIの状態を取得
             switch (_uIManager.MainUIStateProperty)
             {

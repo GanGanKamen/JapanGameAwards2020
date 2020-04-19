@@ -8,7 +8,11 @@ namespace Cooking.Stage
     /// </summary>
     public class FoodStatus : FoodGraphic
     {
-        public PlayerPoint playerPoint;
+        public PlayerPoint PlayerPointProperty
+        {
+            get { return _playerPoint; }
+        }
+        private PlayerPoint _playerPoint;
         /// <summary>
         /// プレイヤーの番号は、ユーザーを1番から順に当てていき、その後コンピューターに割り当てる。
         /// </summary>
@@ -22,17 +26,21 @@ namespace Cooking.Stage
         }
         public FoodType foodType = FoodType.Shrimp;
         /// <summary>
-        /// ショットする際に打つ場所(力点)。
+        /// ショットする際に打つ場所(力点)
         /// </summary>
-        public Transform shotPoint;
+        public Transform ShotPoint
+        {
+            get { return _shotPoint; }
+        }
+        [SerializeField] private Transform _shotPoint;
         /// <summary>
         /// ショット時に使用。TurnControllerに管理してもらう。
         /// </summary>
         public Rigidbody Rigidbody
         {
-            get { return _rigidbody;}
+            get { return _rigidbody; }
         }
-        private Rigidbody _rigidbody;
+        [SerializeField] private Rigidbody _rigidbody;
         public bool IsFall
         {
             get { return _isFall; }
@@ -56,11 +64,15 @@ namespace Cooking.Stage
         [SerializeField] private Material _ebiBlack;
         [SerializeField] private Material _ebi;
         #endregion
+        /// <summary>
+        /// このスクリプトに置くかは未定
+        /// </summary>
+        [SerializeField] Animator _foodAnimator;
         private void OnEnable()
         {
             //shotPoint = transform.GetChild(0);
-            _rigidbody = GetComponent<Rigidbody>();
-            playerPoint = GetComponent<PlayerPoint>();
+            if (_rigidbody != null) _rigidbody = GetComponentInChildren<Rigidbody>();
+            _playerPoint = GetComponent<PlayerPoint>();
         }
         // Start is called before the first frame update
         void Start()
@@ -75,7 +87,7 @@ namespace Cooking.Stage
         }
         private void OnCollisionEnter(Collision collision)
         {
-            if(collision.gameObject.tag == "Floor")
+            if (collision.gameObject.tag == "Floor")
             {
                 _isFall = true;
             }
@@ -112,6 +124,21 @@ namespace Cooking.Stage
             transform.position = startPoint;
             _isFall = false;
             _isGoal = false;
+        }
+        /// <summary>
+        /// ショット開始時アニメーション停止(空中で動きに影響を与える) ターン終了時アニメーション再生 仮
+        /// </summary>
+        /// <param name="isEnable"></param>
+        public void PlayerAnimatioManage(bool isEnable)
+        {
+            if (_foodAnimator != null)
+                _foodAnimator.enabled = isEnable;
+            //Debug.Assert(_foodAnimator != null, "アニメーションコンポーネントがありません。");
+        }
+        public void SetShotPointOnFoodCenter()
+        {
+            if(_shotPoint != null)
+             _shotPoint.position = this.transform.position;
         }
     }
 }

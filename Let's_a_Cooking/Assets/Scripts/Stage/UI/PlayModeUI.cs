@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 namespace Cooking.Stage
 {
@@ -29,7 +30,7 @@ namespace Cooking.Stage
         /// <summary>
         /// よく使うため変数化
         /// </summary>
-        TurnManager _turnController;
+        TurnManager _turnManager;
 
         public void InitializeShotPowerGage(ShotParameter shotParameter)
         {
@@ -41,15 +42,15 @@ namespace Cooking.Stage
         // Start is called before the first frame update
         void Start()
         {
-            _turnController = TurnManager.Instance;
+            _turnManager = TurnManager.Instance;
         }
 
         // Update is called once per frame
         void Update()
         {
             #region デフォルトUIの更新(プレイヤー番号・ターン数) スコアの更新はUIの状態を限定
-            _turnNumberText.text = _turnController.TurnNumber.ToString();
-            _playerNumberTextOnPlay.text = (_turnController.GetPlayerNumberFromActivePlayerIndex(_turnController.ActivePlayerIndex)).ToString();
+            _turnNumberText.text = _turnManager.TurnNumber.ToString();
+            _playerNumberTextOnPlay.text = (_turnManager.GetPlayerNumberFromActivePlayerIndex(_turnManager.ActivePlayerIndex)).ToString();
             #endregion
             //ショット関連UIのみを管理
             switch (UIManager.Instance.MainUIStateProperty)
@@ -96,18 +97,18 @@ namespace Cooking.Stage
             }
         }
         /// <summary>
-        /// アクティブプレイヤーのプレイヤーポイント取得のため、ターンコントローラーを経由してポイント取得
+        /// アクティブプレイヤーのプレイヤーポイント取得のため、ターンマネージャーを経由してポイント取得
         /// </summary>
         private void UpdatePointText()
         {
-            _pointNumberTextOnPlay.text = _turnController.FoodStatuses[_turnController.ActivePlayerIndex].playerPoint.Point.ToString();
+            _pointNumberTextOnPlay.text = _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].PlayerPointProperty.Point.ToString();
         }
         /// <summary>
         /// ターン開始時にAIかどうかをチェックしてUIを切り替える
         /// </summary>
         public void ChangeUIOnTurnStart()
         {
-            if (_turnController.IsAITurn)
+            if (_turnManager.IsAITurn)
             {
                 UIManager.Instance.ChangeUI("SideMode");
                 _defaultIsAIImage.SetActive(true);

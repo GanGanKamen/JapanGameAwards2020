@@ -40,6 +40,9 @@ namespace Cooking.Stage
         /// 1から変えない想定 。
         /// </summary>
         public readonly float gravityScale = 1;
+        /// <summary>
+        /// 表示用 プレイヤーがゲーム全体で獲得した合計ポイント(食材再スタート前も含む)UIが常に参照する
+        /// </summary>
         public List <int>[] PlayerPointList
         {
             get { return _playerPointList; }
@@ -56,11 +59,11 @@ namespace Cooking.Stage
         private float _waitTimeCounterOnGoal = 0;
         public GameObject goal;
         /// <summary>
-        /// 終了時のポイント
+        /// 終了時の書くプレイヤーの合計ポイント
         /// </summary>
         int[] _pointsOnFinish;
         [SerializeField] int _turnNumberOnGameEnd = 10;
-        TurnManager _turnController;
+        TurnManager _turnManager;
         /// <summary>
         /// ゲーム上でのアクティブプレイヤーの状態 Normal Falled Goal
         /// </summary>
@@ -80,8 +83,9 @@ namespace Cooking.Stage
         /// ポイントリストをプレイヤーの人数分用意
         /// </summary>
         /// <param name="playerNumber"></param>
-        private void InitializePlayerPointList(int playerNumber)
+        public void InitializePlayerPointList(int playerNumber)
         {
+            _playerPointList = new List<int>[playerNumber];
             for (int i = 0; i < playerNumber; i++)
             {
                 _playerPointList[i] = new List<int>();
@@ -96,7 +100,7 @@ namespace Cooking.Stage
                 Debug.Log("ゴールオブジェクトがセットされていません。タグ検索されました。");
                 GameObject.FindGameObjectWithTag("Finish");
             }
-            _turnController = TurnManager.Instance;
+            _turnManager = TurnManager.Instance;
         }
 
         // Update is called once per frame
@@ -120,6 +124,7 @@ namespace Cooking.Stage
                             _gameState = StageGameState.Finish;
                             UIManager.Instance.ChangeUI("Finish");
                         }
+                        Debug.Log(GetSumPlayerPoint(0));
                     }
                     break;
                 case StageGameState.Finish:
@@ -151,26 +156,23 @@ namespace Cooking.Stage
                 case ScreenState.Start:
                     break;
                 case ScreenState.FrontMode:
-                    predictLineController.SetPredictLineInstantiatePosition(_turnController.FoodStatuses[_turnController.ActivePlayerIndex].transform.position);
+                    Debug.Log(_playerPointList.Length);
                     break;
                 case ScreenState.SideMode:
-                    predictLineController.SetPredictLineInstantiatePosition(_turnController.FoodStatuses[_turnController.ActivePlayerIndex].transform.position);
                     break;
                 case ScreenState.LookDownMode:
-                    predictLineController.SetPredictLineInstantiatePosition(_turnController.FoodStatuses[_turnController.ActivePlayerIndex].transform.position);
                     break;
                 case ScreenState.PowerMeterMode:
-                    predictLineController.SetPredictLineInstantiatePosition(_turnController.FoodStatuses[_turnController.ActivePlayerIndex].transform.position);
                     break;
                 case ScreenState.ShottingMode:
                     switch (_foodStateOnGame)
                     {
                         case FoodStateOnGame.Normal:
-                            if (_turnController.FoodStatuses[_turnController.ActivePlayerIndex].IsGoal)
+                            if (_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].IsGoal)
                             {
                                 _foodStateOnGame = FoodStateOnGame.Goal;
                             }
-                            else if (_turnController.FoodStatuses[_turnController.ActivePlayerIndex].IsFall) // 万が一ゴール中に落下することはない
+                            else if (_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].IsFall) // 万が一ゴール中に落下することはない
                             {
                                 _foodStateOnGame = FoodStateOnGame.Falled;
                             }
@@ -187,7 +189,7 @@ namespace Cooking.Stage
                             break;
                         case FoodStateOnGame.ShotEnd:
                             _foodStateOnGame = FoodStateOnGame.Normal;
-                            _turnController.ChangeTurn();
+                            _turnManager.ChangeTurn();
                             break;
                         default:
                             break;
@@ -206,14 +208,13 @@ namespace Cooking.Stage
         /// </summary>
         private float WaitForShotEndTIme(float waitTime, float waitTimeCounter)
         {
-            //Debug.Log(waitTimeCounter);
             waitTimeCounter += Time.deltaTime;
             if (waitTimeCounter > waitTime)
             {
                 switch (_foodStateOnGame)
                 {
                     case FoodStateOnGame.Falled:
-                        _turnController.ResetPlayerOnStartPoint();
+                        _turnManager.ResetPlayerOnStartPoint();
                         break;
                     case FoodStateOnGame.Goal:
                         break;
@@ -225,7 +226,6 @@ namespace Cooking.Stage
             }
             return waitTimeCounter;
         }
-
         /// <summary>
         /// 落下後(物理挙動)に実行するために使用 IsFall = trueの検出を1フレーム残す
         /// </summary>
@@ -234,21 +234,21 @@ namespace Cooking.Stage
             if (_gameState == StageGameState.Play)
             {
                 // UI表示のない異常落下にも呼ばれる アニメーション再生中などショット前プレイヤー落下時にsceneManagerに呼ばれる
-                if (_turnController.FoodStatuses[_turnController.ActivePlayerIndex].IsFall)
+                if (_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].IsFall)
                 {
                     switch (UIManager.Instance.MainUIStateProperty)
                     {
                         case ScreenState.FrontMode:
-                            _turnController.ResetPlayerOnStartPoint();
+                            _turnManager.ResetPlayerOnStartPoint();
                             break;
                         case ScreenState.SideMode:
-                            _turnController.ResetPlayerOnStartPoint();
+                            _turnManager.ResetPlayerOnStartPoint();
                             break;
                         case ScreenState.LookDownMode:
-                            _turnController.ResetPlayerOnStartPoint();
+                            _turnManager.ResetPlayerOnStartPoint();
                             break;
                         case ScreenState.PowerMeterMode:
-                            _turnController.ResetPlayerOnStartPoint();
+                            _turnManager.ResetPlayerOnStartPoint();
                             break;
                         default:
                             break;
@@ -265,7 +265,7 @@ namespace Cooking.Stage
             InitializeFinishPointArray();
             InDescendingOrder();
             //降順に並び替えたことにより、最初の要素に最もポイントの高いプレイヤーが来る
-            UIManager.Instance.UpdateWinnerPlayerNumber(_turnController.GetPlayerNumberFromActivePlayerIndex(0));
+            UIManager.Instance.UpdateWinnerPlayerNumber(_turnManager.GetPlayerNumberFromActivePlayerIndex(0));
         }
         /// <summary>
         /// ポイントを降順に並び替え
@@ -280,7 +280,7 @@ namespace Cooking.Stage
                     {
                         ArrayMethod.ChangeArrayValuesFromHighToLow(_pointsOnFinish, j);
                         //indexArray = プレイヤー番号 をポイントの高い順に並び替える
-                        ArrayMethod.ChangeArrayValuesFromHighToLow(_turnController.PlayerIndexArray, j);
+                        ArrayMethod.ChangeArrayValuesFromHighToLow(_turnManager.PlayerIndexArray, j);
                     }
                 }
             }
@@ -290,11 +290,19 @@ namespace Cooking.Stage
         /// </summary>
         private void InitializeFinishPointArray()
         {
-            _pointsOnFinish = new int[_turnController.FoodStatuses.Length];
-            for (int i = 0; i < _turnController.FoodStatuses.Length; i++)
+            _pointsOnFinish = new int[_playerPointList.Length];
+            for (int i = 0; i < _turnManager.FoodStatuses.Length; i++)
             {
-                _pointsOnFinish[i] = _turnController.FoodStatuses[i].playerPoint.Point;
+                _pointsOnFinish[i] = GetSumPlayerPoint(i);
             }
+        }
+        public void AddPlayerPointToList(int playerPointIndex)
+        {
+            _playerPointList[playerPointIndex].Add(_turnManager.FoodStatuses[playerPointIndex].PlayerPointProperty.Point);
+        }
+        public int GetSumPlayerPoint(int playerIndex)
+        {
+            return PlayerPointList[playerIndex].Sum();
         }
         private void ChangeGameState(StageGameState stageGameState)
         {

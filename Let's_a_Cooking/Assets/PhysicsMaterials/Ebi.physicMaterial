@@ -7,8 +7,8 @@ PhysicMaterial:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Ebi
-  dynamicFriction: 30
-  staticFriction: 30000
-  bounciness: 0.2
+  dynamicFriction: 3000
+  staticFriction: 300
+  bounciness: 0.99
   frictionCombine: 3
   bounceCombine: 0

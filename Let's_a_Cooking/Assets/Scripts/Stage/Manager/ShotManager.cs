@@ -194,6 +194,7 @@ namespace Cooking.Stage
                     {
                         UIManager.Instance.ChangeUI("ShottingMode");
                         PredictLineManager.Instance.DestroyPredictLine();
+                        TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].PlayerAnimatioManage(false);
                     }
                     break;
                 case ShotState.ShotEndMode:
