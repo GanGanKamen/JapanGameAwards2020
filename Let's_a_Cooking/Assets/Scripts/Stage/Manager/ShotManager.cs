@@ -24,10 +24,6 @@ namespace Cooking.Stage
         /// </summary>
         private ShotParameter _shotParameter;
         /// <summary>
-        /// 1フレーム前のマウスの位置。ショットの方向をドラッグで決める際、回転量を計算するために使う。
-        /// </summary>
-        private Vector2 _lastMouseLeftButtonDownPosition;
-        /// <summary>
         /// マウス感度を決める。
         /// </summary>
         [SerializeField] float _verticalMouseSensitivity = 25, _horizontallMouseSensitivity = 25;
@@ -80,50 +76,19 @@ namespace Cooking.Stage
                 case ShotState.AngleMode:
                     if (!TurnManager.Instance.IsAITurn)
                     {
-                        ///スマホ対応は途中 上下回転がうまくいかなかった
-                        if (TouchInput.GetTouchPhase() == TouchInfo.Down)
+                        if (TouchInput.GetTouchPhase() == TouchInfo.Moved)
                         {
-                            _lastMouseLeftButtonDownPosition = Input.mousePosition;
-                        }
-                        else if (TouchInput.GetTouchPhase() == TouchInfo.Moved)
-                        {
-                            ///角度の決定
-							var eulerAngle = DecisionAngle();
+                            var eulerAngle = DecisionAngle();
                             transform.eulerAngles = new Vector3(eulerAngle.x, eulerAngle.y, 0);
-                            _lastMouseLeftButtonDownPosition = Input.mousePosition;
                         }
                     }
                     break;
                 case ShotState.PowerMeterMode:
-                    {
-                        _shotPower = ChangeShotPower(_shotParameter.MinShotPower, _shotParameter.MaxShotPower, 2 * Mathf.Abs(_shotParameter.MaxShotPower -  _shotParameter.MinShotPower) , _shotPower);//速度ログ 5 20 (差15のとき)→ 30  差の倍速で算出   
-                        if (!TurnManager.Instance.IsAITurn)
-                        {
-                            //左クリックされた時に呼び出される
-                            if (!PreventTouchInputCollision.Instance.ShotInvalid[(int)PreventTouchInputCollision.ButtonName.ShotButton] && TouchInput.GetTouchPhase() == TouchInfo.Down)
-                            {
-                                Shot(transform.forward * _shotPower);
-                                ChangeShotState(ShotState.ShottingMode);
-                            }
-                            #region デバッグコード スペースを押すと最大パワーで飛ぶ
-
-//#if UNITY_EDITOR
-                            if (Input.GetKeyDown(KeyCode.Space))
-                            {
-                                ChangeShotState(ShotState.ShottingMode);
-                                var initialSpeedVector = CalculateMaxShotPowerVector();
-                                _shotRigidbody.velocity = initialSpeedVector;
-                                //isShot = true;
-                            }
-//#endif
-                            #endregion
-                        }
-                    }
                     break;
                 case ShotState.ShottingMode:
                     {
                         ///食材が止まった + 落下・ゴール待機時間が終わったら、ショット終了
-                        if (_shotRigidbody.velocity.magnitude < 0.0001f )//&& StageSceneManager.Instance.FoodStateOnGameProperty == StageSceneManager.FoodStateOnGame.ShotEnd)
+                        if (_shotRigidbody.velocity.magnitude < 0.0001f)//&& StageSceneManager.Instance.FoodStateOnGameProperty == StageSceneManager.FoodStateOnGame.ShotEnd)
                             ChangeShotState(ShotState.ShotEndMode);
                     }
                     break;
@@ -138,17 +103,64 @@ namespace Cooking.Stage
             }
         }
         /// <summary>
+        /// PreventTouchInputCollisionにて衝突を防いだ後に実行するためLate
+        /// </summary>
+        void LateUpdate()
+        {
+            switch (_shotMode)
+            {
+                ///スタート時・見下ろしカメラ時・ゲーム終了時を想定
+				case ShotState.WaitMode:
+                    break;
+                case ShotState.AngleMode:
+                    break;
+                case ShotState.PowerMeterMode:
+                    {
+                        _shotPower = ChangeShotPower(_shotParameter.MinShotPower, _shotParameter.MaxShotPower, 2 * Mathf.Abs(_shotParameter.MaxShotPower - _shotParameter.MinShotPower), _shotPower);//速度ログ 5 20 (差15のとき)→ 30  差の倍速で算出   
+                        if (!TurnManager.Instance.IsAITurn)
+                        {
+                            //左クリックされた時に呼び出される
+                            if (!PreventTouchInputCollision.Instance.ShotInvalid[(int)PreventTouchInputCollision.ButtonName.ShotButton] && TouchInput.GetTouchPhase() == TouchInfo.Down)
+                            {
+                                Shot(transform.forward * _shotPower);
+                                ChangeShotState(ShotState.ShottingMode);
+                            }
+                            #region デバッグコード スペースを押すと最大パワーで飛ぶ
+
+                            //#if UNITY_EDITOR
+                            if (Input.GetKeyDown(KeyCode.Space))
+                            {
+                                ChangeShotState(ShotState.ShottingMode);
+                                var initialSpeedVector = CalculateMaxShotPowerVector();
+                                _shotRigidbody.velocity = initialSpeedVector;
+                                //isShot = true;
+                            }
+                            //#endif
+                            #endregion
+                        }
+                    }
+                    break;
+                case ShotState.ShottingMode:
+                    break;
+                case ShotState.ShotEndMode:
+                    break;
+                default:
+                    break;
+            }
+        }
+        /// <summary>
 		/// ショットの角度を決める
 		/// </summary>
 		/// <returns></returns>
 		private Vector2 DecisionAngle()
         {
+            var touchInputPosition = TouchInput.GetDeltaPosition();
             /// ショットの向きを決める際、入力を格納するための変数
-            var horizontalRot = Input.mousePosition.x - _lastMouseLeftButtonDownPosition.x;
-            var verticalRot = _lastMouseLeftButtonDownPosition.y - Input.mousePosition.y;
+            var horizontalRot = touchInputPosition.x;
+            var verticalRot = -touchInputPosition.y;
             //発射方向の角度の制御に使う変数の定義
             var eulerX = transform.eulerAngles.x;
-            ///上下回転速度に上限を与え 。
+            ///上下回転速度に上限
             if (verticalRot / _verticalMouseSensitivity > 10)
             {
                 eulerX = transform.eulerAngles.x + 10;

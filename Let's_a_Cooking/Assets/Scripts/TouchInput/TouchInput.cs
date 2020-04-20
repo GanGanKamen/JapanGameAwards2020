@@ -72,7 +72,7 @@ namespace Touches
 		}
 
 		/// <summary>
-		/// タッチデルタポジションを取得(エディタとスマホを考慮)
+		/// タッチ状態取得し デルタポジションを取得(エディタとスマホを考慮) PCの場合1フレーム前の値も記憶される
 		/// </summary>
 		/// <returns>タッチポジション。タッチされていない場合は (0, 0, 0)</returns>
 		public static Vector3 GetDeltaPosition()
@@ -84,8 +84,8 @@ namespace Touches
 				{
 					var now = Input.mousePosition;
 					var delta = now - previousPosition;
-					previousPosition = now;
-					return delta;
+                    previousPosition = now;
+                    return delta;
 				}
 			}
 			else

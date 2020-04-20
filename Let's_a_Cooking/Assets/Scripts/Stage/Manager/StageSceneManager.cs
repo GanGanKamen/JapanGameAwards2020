@@ -124,7 +124,6 @@ namespace Cooking.Stage
                             _gameState = StageGameState.Finish;
                             UIManager.Instance.ChangeUI("Finish");
                         }
-                        Debug.Log(GetSumPlayerPoint(0));
                     }
                     break;
                 case StageGameState.Finish:
@@ -156,7 +155,6 @@ namespace Cooking.Stage
                 case ScreenState.Start:
                     break;
                 case ScreenState.FrontMode:
-                    Debug.Log(_playerPointList.Length);
                     break;
                 case ScreenState.SideMode:
                     break;

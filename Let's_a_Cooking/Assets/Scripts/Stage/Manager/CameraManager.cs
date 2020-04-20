@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using Touches;
 
 namespace Cooking.Stage
 {
@@ -19,7 +20,7 @@ namespace Cooking.Stage
         /// </summary>
         [SerializeField] private Transform _cameraObjectsTransform;
         private float _changeTopCameraTimeCounter;
-       [SerializeField] private float _changeTopCameraTime = 0.3f;
+        [SerializeField] private float _changeTopCameraTime = 0.3f;
         Vector3[] _cameraLocalPositions;
         /// <summary>
         /// ゲーム開始前のUIにて、ドラッグした状態 = タッチしていた状態でゲームが始まると、ドラッグ量が座標に代入されてバグるのを防ぐ
@@ -91,22 +92,19 @@ namespace Cooking.Stage
                         topCam.Priority = 1;
                         frontCam.Priority = 0;
                         sideCam.Priority = 0;
-
-                        //左クリックされた瞬間で呼び出される
-                        if (Input.GetMouseButtonDown(0))
+                        if (_isTouchOnGamePlay)
                         {
-                            newTopCameraPos = topCam.transform.position;  //現在のカメラの座標を代入
-                            clickPos = Input.mousePosition;     //クリックされたマウスの座標を代入
-                            _isTouchOnGamePlay = true;
-                        }
-                        //左クリックされている間呼び出される
-                        else if (Input.GetMouseButton(0) && _isTouchOnGamePlay)
-                        {
-                            newTopCameraPos.x += (clickPos.x - Input.mousePosition.x) / 100;   //x座標のマウスの移動量を計算
-                            newTopCameraPos.z += (clickPos.y - Input.mousePosition.y) / 100;   //y座標のマウスの移動量を計算
-
+                            //左クリックされている間呼び出される
+                            var touchPosition = TouchInput.GetDeltaPosition();
+                            newTopCameraPos = topCam.transform.position;
+                            newTopCameraPos.x -= (touchPosition.x) / 100;   //x座標のマウスの移動量を計算
+                            newTopCameraPos.z -= (touchPosition.y) / 100;   //y座標のマウスの移動量を計算
                             topCam.transform.position = newTopCameraPos;   //マウスの移動量/100を代入
-                            clickPos = Input.mousePosition;     //移動後の座標で初期化
+                        }
+                        //入力準備ができてからの入力であることを示す変数に代入
+                        else if (TouchInput.GetTouchPhase() == TouchInfo.Down)
+                        {
+                            _isTouchOnGamePlay = true;
                         }
 
                         wheelScroll = Input.GetAxis("Mouse ScrollWheel");   //マウスホイールの回転量を格納
@@ -132,21 +130,10 @@ namespace Cooking.Stage
                         frontCam.Priority = 0;
                         sideCam.Priority = 1;
 
-                        //左クリックされた瞬間で呼び出される
-                        if (Input.GetMouseButtonDown(0))
-                        {
-                            newSideCameraPos = sideCam.transform.position;  //現在のカメラの座標を代入
-                            clickPos = Input.mousePosition;     //クリックされたマウスの座標を代入
-                        }
                         //左クリックされている間呼び出される
-                        else if (Input.GetMouseButton(0))
-                        {
-                            sideCam.transform.position += transform.forward * (clickPos.x - Input.mousePosition.x) / 100;   //マウスの移動量/100をカメラの左右方向に代入
-                            sideCam.transform.position += transform.up * (clickPos.y - Input.mousePosition.y) / 100;   //マウスの移動量/100をカメラの上下方向に代入
-
-                            clickPos = Input.mousePosition;     //移動後の座標で初期化
-                        }
-
+                        var touchPosition = TouchInput.GetDeltaPosition();
+                        sideCam.transform.position -= transform.forward * (touchPosition.x) / 100;   //マウスの移動量/100をカメラの左右方向に代入
+                        sideCam.transform.position -= transform.up * (touchPosition.y) / 100;   //マウスの移動量/100をカメラの上下方向に代入
                         wheelScroll = Input.GetAxis("Mouse ScrollWheel");   //マウスホイールの回転量を格納
                                                                             //マウスホイールが入力されたら
                         if (wheelScroll != 0)
@@ -196,14 +183,13 @@ namespace Cooking.Stage
                 case StageSceneManager.FoodStateOnGame.ShotEnd:
                     CameraTrackReset();
                     break;
-
             }
         }
-            /// <summary>
-            /// ショット前のカメラ。食材の中心を軸にカメラを回転させる。
-            /// ショット前のカメラの回転は、ショットの向きを決めるオブジェクトのRotationのyを参照し (左右)。x(高さ方向の回転)は参照しない。
-            /// </summary>
-            private void BeforeShotCameraRotate()
+        /// <summary>
+        /// ショット前のカメラ。食材の中心を軸にカメラを回転させる。
+        /// ショット前のカメラの回転は、ショットの向きを決めるオブジェクトのRotationのyを参照し (左右)。x(高さ方向の回転)は参照しない。
+        /// </summary>
+        private void BeforeShotCameraRotate()
         {
             var tempShotRotation = ShotManager.Instance.transform.eulerAngles;
             var tempRortation = _cameraRotateCenter.eulerAngles;

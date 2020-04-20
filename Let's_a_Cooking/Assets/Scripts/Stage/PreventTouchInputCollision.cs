@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Touches;
 
 namespace Cooking.Stage
 {
@@ -83,15 +84,16 @@ namespace Cooking.Stage
             var returnButtonTransform = returnButton.transform.position;
             var returnButtonWidth = returnButton.sizeDelta.x;
             var returnButtonHeight = returnButton.sizeDelta.y;
-            if (Input.mousePosition.x >= returnButtonTransform.x && Input.mousePosition.x <= returnButtonTransform.x + returnButtonWidth
-                && Input.mousePosition.y >= returnButtonTransform.y && Input.mousePosition.y <= returnButtonTransform.y + returnButtonHeight)       //ボタンの座標とタッチする場所がかぶっていたら
-            {
-                return true;    //ボタンの入力を許可し、画面のタッチは禁止
-            }
-            else
-            {
-                return false;
-            }
+            var touchPosition = TouchInput.GetPosition();
+                if (touchPosition.x >= returnButtonTransform.x && touchPosition.x <= returnButtonTransform.x + returnButtonWidth
+                && touchPosition.y >= returnButtonTransform.y && touchPosition.y <= returnButtonTransform.y + returnButtonHeight)       //ボタンの座標とタッチする場所がかぶっていたら
+                {
+                    return true;    //ボタンの入力を許可し、画面のタッチは禁止
+                }
+                else
+                {
+                    return false;
+                }
         }
     }
 }
