@@ -22,9 +22,9 @@ public class PlayerPoint : MonoBehaviour
     /// </summary>
     private const int _firstPoint = 100;
     /// <summary>
-    /// 初回水洗いフラグ
+    /// 初回フラグ
     /// </summary>
-    bool _isFirstWash = true;
+    bool _isFirstWash = true , _isFirstTowel = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -47,6 +47,16 @@ public class PlayerPoint : MonoBehaviour
         _isFirstWash = false;
     }
     /// <summary>
+    /// 初めてタオルに触れる
+    /// </summary>
+    /// <param name="point"></param>
+    /// <returns></returns>
+    private void FirstTowelTouch()
+    {
+        _getPoint += 50;
+        _isFirstTowel = false;
+    }
+    /// <summary>
     /// 調味料に触れる
     /// </summary>
     private void TouchSeasoning()
@@ -65,5 +75,11 @@ public class PlayerPoint : MonoBehaviour
             TouchSeasoning();
         }
     }
-
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Towel" && _isFirstTowel)
+        {
+            FirstTowelTouch();
+        }
+    }
 }

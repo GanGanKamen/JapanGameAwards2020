@@ -71,7 +71,7 @@ namespace Cooking.Stage
         private void OnEnable()
         {
             //shotPoint = transform.GetChild(0);
-            if (_rigidbody != null) _rigidbody = GetComponentInChildren<Rigidbody>();
+            if (_rigidbody == null) _rigidbody = GetComponentInChildren<Rigidbody>();
             _playerPoint = GetComponent<PlayerPoint>();
         }
         // Start is called before the first frame update
@@ -133,7 +133,6 @@ namespace Cooking.Stage
         {
             if (_foodAnimator != null)
                 _foodAnimator.enabled = isEnable;
-            //Debug.Assert(_foodAnimator != null, "アニメーションコンポーネントがありません。");
         }
         public void SetShotPointOnFoodCenter()
         {

@@ -23,6 +23,7 @@ namespace Cooking.Stage
             FrontMode,
             SideMode,
             PowerMeterMode,
+            ShottingMode,
             CancelButton
         }
         private ButtonName _buttonName = ButtonName.None;
@@ -143,8 +144,18 @@ namespace Cooking.Stage
                         case ButtonName.None:
                             Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", _uIManager.MainUIStateProperty.ToString());
                             break;
-                        case ButtonName.CancelButton:
-                            _uIManager.ResetUIMode();
+                        case ButtonName.LookDownMode:
+                            _uIManager.ChangeUI(_buttonName.ToString());
+                            break;
+                        case ButtonName.FrontMode:
+                            _uIManager.ChangeUI(_buttonName.ToString());
+                            break;
+                        case ButtonName.SideMode:
+                            _uIManager.ChangeUI(_buttonName.ToString());
+                            break;
+                        case ButtonName.ShottingMode:
+                            ShotManager.Instance.StopShotPowerMeter();
+                            _uIManager.ChangeUI(_buttonName.ToString());
                             break;
                         default:
                             break;
