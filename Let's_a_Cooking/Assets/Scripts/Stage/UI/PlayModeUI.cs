@@ -15,7 +15,7 @@ namespace Cooking.Stage
         /// <summary>
         /// shotPowerゲージを取得
         /// </summary>
-        [SerializeField] Slider _shotPowerGage;
+        [SerializeField] Image _shotPowerGage;
         /// <summary>
         /// AIのターン中はショット開始ボタンは表示しない
         /// </summary>
@@ -35,8 +35,8 @@ namespace Cooking.Stage
         public void InitializeShotPowerGage(ShotParameter shotParameter)
         {
             ///スライダーの値同期(他も必要に応じて追加)
-            _shotPowerGage.maxValue = shotParameter.MaxShotPower;
-            _shotPowerGage.minValue = shotParameter.MinShotPower;
+            //_shotPowerGage.maxValue = shotParameter.MaxShotPower;
+            //_shotPowerGage.minValue = shotParameter.MinShotPower;
         }
 
         // Start is called before the first frame update
@@ -66,7 +66,7 @@ namespace Cooking.Stage
                     break;
                 case ScreenState.PowerMeterMode:
                     //shotPowerをゲージに反映
-                    _shotPowerGage.value = ShotManager.Instance.ShotPower;
+                    _shotPowerGage.fillAmount = (ShotManager.Instance.ShotPower - ShotManager.Instance.ShotParameter.MinShotPower) / (ShotManager.Instance.ShotParameter.MaxShotPower - ShotManager.Instance.ShotParameter.MinShotPower);
                     break;
                 case ScreenState.ShottingMode:
                     UpdatePointText();

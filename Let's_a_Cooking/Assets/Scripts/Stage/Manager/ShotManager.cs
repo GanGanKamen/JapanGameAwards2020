@@ -19,6 +19,10 @@ namespace Cooking.Stage
             get { return _shotMode; }
         }
         private ShotState _shotMode = ShotState.WaitMode;
+        public ShotParameter ShotParameter
+        {
+            get { return _shotParameter; }
+        }
         /// <summary>
         /// ショットパラメータリスト 限界高低角度 最大最小パワー
         /// </summary>
@@ -122,8 +126,6 @@ namespace Cooking.Stage
                             //左クリックされた時に呼び出される
                             if (!PreventTouchInputCollision.Instance.ShotInvalid[(int)PreventTouchInputCollision.ButtonName.ShotButton] && TouchInput.GetTouchPhase() == TouchInfo.Down)
                             {
-                                Shot(transform.forward * _shotPower);
-                                ChangeShotState(ShotState.ShottingMode);
                             }
                             #region デバッグコード スペースを押すと最大パワーで飛ぶ
 
@@ -215,6 +217,11 @@ namespace Cooking.Stage
                 default:
                     break;
             }
+        }
+        public void StopShotPowerMeter()
+        {
+            Shot(transform.forward * _shotPower);
+            ChangeShotState(ShotState.ShottingMode);
         }
         /// <summary>
         ///食材に力を加える処理

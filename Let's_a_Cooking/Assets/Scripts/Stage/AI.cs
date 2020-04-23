@@ -25,7 +25,7 @@ namespace Cooking.Stage
         /// <summary>
         /// 一定半径範囲内に調味料があるかどうかで行動を決める
         /// </summary>
-        float _searchArea = 20;
+        float _searchArea = 50;
 
         private void Start()
         {
