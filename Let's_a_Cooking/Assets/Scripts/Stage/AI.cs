@@ -15,7 +15,7 @@ namespace Cooking.Stage
         /// 射出角度
         /// </summary>
         [SerializeField, Range(0F, 90F)]
-        private float ThrowingAngle;
+        private float ThrowingAngle = 0;
 
         float rad, x, y, speed;
 

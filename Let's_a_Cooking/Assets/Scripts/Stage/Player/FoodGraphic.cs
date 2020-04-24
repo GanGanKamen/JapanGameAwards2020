@@ -19,22 +19,11 @@ namespace Cooking.Stage
 		{
         }
         /// <summary>
-        /// 調味料を得る
+        /// マテリアルを指定したものに変更
         /// </summary>
-        protected void GetSeasoning(SkinnedMeshRenderer skinnedMeshRenderer , Material material)
+        protected void ChangeMaterial(SkinnedMeshRenderer skinnedMeshRenderer , Material material)
         {
-            //動かないので調整中
-            //skinnedMeshRenderer.materials[0] = material;
-            skinnedMeshRenderer.materials[0].color = Color.black;
-        }
-        /// <summary>
-        /// 水で洗う
-        /// </summary>
-        /// <param name="skinnedMeshRenderer"></param>
-        /// <param name="material"></param>
-        protected void CleanSeasoning(SkinnedMeshRenderer skinnedMeshRenderer, Material material)
-        {
-            skinnedMeshRenderer.materials[0].color = Color.white;
+            skinnedMeshRenderer.material = material;
         }
     }
 

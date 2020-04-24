@@ -14,11 +14,11 @@ namespace Cooking.Stage
         /// <summary>
         ///ショット前のカメラの動きで用いる、カメラの回転中心の座標情報。frontカメラの親オブジェクトが持つ。食材の中心を軸にカメラを回転させる
         /// </summary>
-        [SerializeField] private Transform _cameraRotateCenter;
+        [SerializeField] private Transform _cameraRotateCenter = null;
         /// <summary>
         ///ショット前のカメラの動きで用いる、すべてのカメラの親オブジェクトの座標情報。位置情報をリセットするときに使う
         /// </summary>
-        [SerializeField] private Transform _cameraObjectsTransform;
+        [SerializeField] private Transform _cameraObjectsTransform = null;
         private float _changeTopCameraTimeCounter;
         [SerializeField] private float _changeTopCameraTime = 0.3f;
         Vector3[] _cameraLocalPositions;
@@ -39,11 +39,11 @@ namespace Cooking.Stage
         CameraMode cameraMode = CameraMode.Wait;
 
         [SerializeField]
-        private CinemachineVirtualCamera topCam;
+        private CinemachineVirtualCamera topCam = null;
         [SerializeField]
-        private CinemachineVirtualCamera frontCam;
+        private CinemachineVirtualCamera frontCam = null;
         [SerializeField]
-        private CinemachineVirtualCamera sideCam;
+        private CinemachineVirtualCamera sideCam = null;
 
         [SerializeField]
         private Vector2 clickPos;   //クリックされた座標の定義

@@ -27,11 +27,11 @@ namespace Cooking.Stage
         /// <summary>
         /// よく使うため変数化
         /// </summary>
-        TurnManager _turnManager;
+        TurnManager _turnManager = null;
         /// <summary>
         /// 食材選択画面での選択ボタンイメージ。順番はFoodStatus.FoodTypeに準じる
         /// </summary>
-        [SerializeField] private Image[] _chooseFoodImages;
+        //[SerializeField] private Image[] _chooseFoodImages = null;
         /// <summary>
         /// 選ばれた食材リスト FoodStatus用のenumへ変換
         /// </summary>
@@ -45,7 +45,7 @@ namespace Cooking.Stage
         /// <summary>
         /// 順番決め用ゲージを取得
         /// </summary>
-        [SerializeField] private Slider _orderGage;
+        [SerializeField] private Slider _orderGage = null;
         /// <summary>
         /// 順番決め用最大/最小値・スライダーと同期するのを忘れない
         /// </summary>
@@ -54,9 +54,9 @@ namespace Cooking.Stage
         /// 現状400 差の4倍 インスペクタにて
         /// </summary>
         [SerializeField] float _orderMeterSpeed = 50;
-        [SerializeField] GameObject[] _playerListOrderPower;
-        [SerializeField] GameObject[] _isAIListOrderPower;
-        [SerializeField] Text[] _orderPowerTexts;
+        [SerializeField] GameObject[] _playerListOrderPower = null;
+        [SerializeField] GameObject[] _isAIListOrderPower = null;
+        [SerializeField] Text[] _orderPowerTexts = null;
         /// <summary>
         /// 入力受付しない時間用変数
         /// </summary>
@@ -95,10 +95,10 @@ namespace Cooking.Stage
         /// <summary>
         /// 0:Finish!! 1:Score (2:Retry 保留)
         /// </summary>
-        [SerializeField] GameObject[] _finishBackGroundImages;
-        [SerializeField] GameObject[] _finishScoreImages;
-        [SerializeField] Text[] _finishScoreTexts;
-        [SerializeField] Text _winnerPlayerNumber;
+        [SerializeField] GameObject[] _finishBackGroundImages = null;
+        [SerializeField] GameObject[] _finishScoreImages = null;
+        [SerializeField] Text[] _finishScoreTexts = null;
+        [SerializeField] Text _winnerPlayerNumber = null;
         #endregion
 
         #region インスタンスへのstaticなアクセスポイント

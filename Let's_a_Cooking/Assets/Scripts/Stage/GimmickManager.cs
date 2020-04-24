@@ -31,19 +31,19 @@ namespace Cooking.Stage
         {
             get { return _water; }
         }
-        private GameObject[] _water;
+        private GameObject[] _water = null;
 
         public GameObject[] Seasonings
         {
             get { return _seasonings; }
         }
-        private GameObject[] _seasonings;
+        private GameObject[] _seasonings = null;
         /// <summary>
         /// 現状固定位置 皿の上の中からランダム？
         /// </summary>
         Vector3[] _instantiateSeasoningPoint;
 
-        [SerializeField] GameObject _seasoningPrefab;
+        [SerializeField] GameObject _seasoningPrefab = null;
         // Start is called before the first frame update
         void Start()
         {

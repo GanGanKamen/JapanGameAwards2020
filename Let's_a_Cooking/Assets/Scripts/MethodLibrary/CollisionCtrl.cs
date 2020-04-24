@@ -5,7 +5,7 @@ using UnityEngine;
 namespace GanGanKamen {
     public class CollisionCtrl : MonoBehaviour
     {
-        [SerializeField]private GameObject colliderObj;
+        [SerializeField]private GameObject colliderObj = null;
 
         public void SetAngleX(float angle)
         {

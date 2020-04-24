@@ -32,7 +32,7 @@ namespace Cooking.Stage
         {
             get { return _shotPoint; }
         }
-        [SerializeField] private Transform _shotPoint;
+        [SerializeField] private Transform _shotPoint = null;
         /// <summary>
         /// ショット時に使用。TurnControllerに管理してもらう。
         /// </summary>
@@ -40,7 +40,7 @@ namespace Cooking.Stage
         {
             get { return _rigidbody; }
         }
-        [SerializeField] private Rigidbody _rigidbody;
+        [SerializeField] private Rigidbody _rigidbody = null;
         public bool IsFall
         {
             get { return _isFall; }
@@ -60,14 +60,14 @@ namespace Cooking.Stage
         }
         private bool _onKitchen = false;
         #region グラフィック関連変数
-        [SerializeField] protected SkinnedMeshRenderer _skinnedMeshRenderer;
-        [SerializeField] private Material _ebiBlack;
-        [SerializeField] private Material _ebi;
+        [SerializeField] protected SkinnedMeshRenderer _skinnedMeshRenderer = null;
+        [SerializeField] private Material _ebiBlack = null;
+        [SerializeField] private Material _ebi = null;
         #endregion
         /// <summary>
         /// このスクリプトに置くかは未定
         /// </summary>
-        [SerializeField] Animator _foodAnimator;
+        [SerializeField] Animator _foodAnimator = null;
         private void OnEnable()
         {
             //shotPoint = transform.GetChild(0);
@@ -105,12 +105,12 @@ namespace Cooking.Stage
             }
             if (other.tag == "Water")
             {
-                CleanSeasoning(_skinnedMeshRenderer, _ebi);
+                ChangeMaterial(_skinnedMeshRenderer, _ebi);
             }
             /// とりあえず調味料はトリガーで
             else if (other.tag == "Seasoning")
             {
-                GetSeasoning(_skinnedMeshRenderer, _ebiBlack);
+                ChangeMaterial(_skinnedMeshRenderer, _ebiBlack);
                 Destroy(other.gameObject);
                 Debug.Log(_skinnedMeshRenderer.materials[0]);
             }

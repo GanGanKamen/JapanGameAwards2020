@@ -15,22 +15,22 @@ namespace Cooking.Stage
         /// <summary>
         /// shotPowerゲージを取得
         /// </summary>
-        [SerializeField] Image _shotPowerGage;
+        [SerializeField] Image _shotPowerGage = null;
         /// <summary>
         /// AIのターン中はショット開始ボタンは表示しない
         /// </summary>
-        [SerializeField] private GameObject[] _shotStartButtons;
-        [SerializeField] private GameObject _defaultIsAIImage;
-        [SerializeField] private Text _turnNumberText;
-        [SerializeField] private Text _playerNumberTextOnPlay;
-        [SerializeField] private Text _pointNumberTextOnPlay;
-        [SerializeField] private GameObject _falledImage;
-        [SerializeField] private GameObject _goalImage;
+        [SerializeField] private GameObject[] _shotStartButtons = null;
+        [SerializeField] private GameObject _defaultIsAIImage = null;
+        [SerializeField] private Text _turnNumberText = null;
+        [SerializeField] private Text _playerNumberTextOnPlay = null;
+        [SerializeField] private Text _pointNumberTextOnPlay = null;
+        [SerializeField] private GameObject _falledImage = null;
+        [SerializeField] private GameObject _goalImage = null;
         #endregion
         /// <summary>
         /// よく使うため変数化
         /// </summary>
-        TurnManager _turnManager;
+        TurnManager _turnManager = null;
 
         public void InitializeShotPowerGage(ShotParameter shotParameter)
         {

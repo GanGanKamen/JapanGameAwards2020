@@ -9,12 +9,12 @@ namespace Cooking.Stage
         public int BreakCount { get { return breakCount; } }
         public bool HasBroken { get { return hasBroken; } }
 
-        [SerializeField] private GameObject eggObject;
-        [SerializeField] private Transform eggShells;
-        [SerializeField] private GameObject eggInObject;
-        [SerializeField] private Transform center;
-        [SerializeField] private float breakPower;
-        [SerializeField] private Material[] breakMaterials; //2種類 Length = 2
+        [SerializeField] private GameObject eggObject = null;
+        [SerializeField] private Transform eggShells = null;
+        [SerializeField] private GameObject eggInObject = null;
+        [SerializeField] private Transform center = null;
+        [SerializeField] private float breakPower = 0;
+        [SerializeField] private Material[] breakMaterials = null; //2種類 Length = 2
 
         private GameObject[] shells;
         private int breakCount = 0;

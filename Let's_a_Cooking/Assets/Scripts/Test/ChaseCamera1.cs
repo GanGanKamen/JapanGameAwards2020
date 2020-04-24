@@ -49,14 +49,14 @@ namespace Cooking.Test
 
         //shotPowerゲージを取得
         [SerializeField]
-        private Slider powerGage;
+        private Slider powerGage = null;
 
         //発射方向の角度の制御に使う変数の定義
         float eulerX = 0;
         /// <summary>
         /// 予測線表示用のオブジェクト 。
         /// </summary>
-        [SerializeField] GameObject predictObj;
+        [SerializeField] GameObject predictObj = null;
 
         PredictObject predictObjectType;
 

@@ -13,7 +13,7 @@ namespace Cooking.Stage
         /// <summary>
         /// 予測線表示用のプレハブオブジェクト。
         /// </summary>
-        [SerializeField] GameObject _predictObjectPrefab;
+        [SerializeField] GameObject _predictObjectPrefab = null;
         /// <summary>
         /// 現在シーン上に存在している予測線オブジェクトが入る。
         /// </summary>
@@ -21,11 +21,11 @@ namespace Cooking.Stage
         /// <summary>
         /// 予測落下地点表示用プレハブオブジェクト。
         /// </summary>
-        [SerializeField] GameObject _predictShotPointPrefab;
+        [SerializeField] GameObject _predictShotPointPrefab = null;
         /// <summary>
         /// 現在シーン上に存在している予測落下地点オブジェクトが入る。
         /// </summary>
-        private GameObject _predictShotPoint;
+        private GameObject _predictShotPoint = null;
         /// <summary>
         /// 予測線が出ている時間カウント。
         /// </summary>
@@ -50,7 +50,7 @@ namespace Cooking.Stage
         /// <summary>
         /// レイ判定を行うレイヤー
         /// </summary>
-        [SerializeField] LayerMask _rayCollisionLayer;
+        [SerializeField] LayerMask _rayCollisionLayer = 0;
 
         #region インスタンスへのstaticなアクセスポイント
         /// <summary>
@@ -172,15 +172,18 @@ namespace Cooking.Stage
 
         private void PredictByRayCast(Vector3 maxShotSpeedVector)
         {
+            int i = 1;//累積誤差発生を防ぐためのインクリメント変数
             //レイによる落下地点予測 無限ループ防止目的で 滞空時間100秒制限
-            for (float flyTime = 0f; flyTime < 100;)
+            for (float flyTime = 0f ; flyTime < 100 ; i++)
             {
                 Vector3 originPoint = transform.position + new Vector3(maxShotSpeedVector.x * flyTime, CalculateYposition(maxShotSpeedVector, flyTime), maxShotSpeedVector.z * flyTime);
-                flyTime += 0.005f;
+                flyTime = i / 200f; //累積誤差の発生を防ぐ 精度を決める変数 精度上げると処理が重い
                 Vector3 endPoint = transform.position + new Vector3(maxShotSpeedVector.x * flyTime, CalculateYposition(maxShotSpeedVector, flyTime), maxShotSpeedVector.z * flyTime);
                 //終点 - 始点で方向ベクトルを算出
-                if (CastRay(originPoint, endPoint - originPoint))
+                var direction = endPoint - originPoint;
+                if (CastRayOnKitchen(originPoint, direction))
                     break;
+                Debug.DrawRay(originPoint, direction, Color.red, 0.2f);
                 if (flyTime > 99.9f)
                 {
                     Debug.Log("当たっていない");
@@ -188,7 +191,6 @@ namespace Cooking.Stage
             }
 
         }
-
         void FixedUpdate()
         {
         }
@@ -202,16 +204,21 @@ namespace Cooking.Stage
         {
             return (firstSpeedVector.y * flyTime - 0.5f * 9.81f * StageSceneManager.Instance.gravityScale * flyTime * flyTime);
         }
-        private bool CastRay(Vector3 originPoint, Vector3 direction)
+        /// <summary>
+        /// レイを飛ばしてKitchenレイヤーに当たったらTrueを返す
+        /// </summary>
+        /// <param name="originPoint"></param>
+        /// <param name="direction"></param>
+        /// <returns>Kitchenレイヤーに当たったかどうか</returns>
+        private bool CastRayOnKitchen(Vector3 originPoint, Vector3 direction)
         {
             ///レイの長さ
-            float length = 1f;
+            float rayLength = direction.magnitude;
             //Rayが当たったオブジェクトの情報を入れる箱
             RaycastHit hit; //原点 方向
             Ray ray = new Ray(originPoint, direction);
-            Debug.DrawRay(originPoint, direction * length / direction.magnitude, Color.red, 0.2f);
             //Kitchenレイヤーとレイ判定を行う
-            if (Physics.Raycast(ray, out hit, length, _rayCollisionLayer))//if (Physics.SphereCast(ray, 0.1f , out hit, length, _rayCollisionLayer))
+            if (Physics.Raycast(ray, out hit, rayLength, _rayCollisionLayer))
             {
                 _predictShotPoint.transform.position = hit.point;
                 return true;
@@ -225,7 +232,7 @@ namespace Cooking.Stage
         {
             for (int i = 0; i < _predictLines.Count; i++)
             {
-                //完全にプログラム計算形式にすることも可能 。
+                //完全にプログラム計算形式にすることも可能
                 var predictRb = _predictLines[i].predictLineRigidbody;
                 var velocity = predictRb.velocity;
                 velocity.y -= 9.81f * StageSceneManager.Instance.gravityScale * Time.deltaTime;
@@ -233,13 +240,13 @@ namespace Cooking.Stage
             }
         }
         /// <summary>
-        /// 落下予測地点の変更を予測線を描くオブジェクトに対して渡す。XZ平面方向の変更。
+        /// 落下予測地点の変更を予測線を描くオブジェクトに対して渡す。XZ平面方向の変更
         /// </summary>
         private void ChangePredictFallPointOnXZ(Vector3 speedVector)
         {
             for (int i = 0; i < _predictLines.Count; i++)
             {
-                //完全にプログラム計算形式にすることも可能。
+                //完全にプログラム計算形式にすることも可能
                 var predictRb = _predictLines[i].predictLineRigidbody;
                 var velocity = predictRb.velocity;
                 velocity.x = speedVector.x;
@@ -261,7 +268,6 @@ namespace Cooking.Stage
             //滞空時間を算出。座標 y = 0 に戻ってくるまでにかかる時間。
             #endregion
             float t = speedVector.y / (0.5f * 9.81f * StageSceneManager.Instance.gravityScale);
-            //Debug.Log(t);
             //その時間ぶんだけxz平面上で初速のxzベクトル方向に等速直線運動させて、その運動が終わった地点を落下予測地点とする。ただし、落下地点は高さ0とする。
             Vector3 fallPoint = _instantiatePosition + new Vector3(speedVector.x, 0, speedVector.z) * t;
             //_predictShotPoint.transform.position = fallPoint;

@@ -49,7 +49,7 @@ namespace Cooking.Stage
         /// <summary>
         /// 衝突が起きるボタンを登録
         /// </summary>
-        [SerializeField] RectTransform[] _preventTouchInputButtons;
+        [SerializeField] RectTransform[] _preventTouchInputButtons = null;
         // Start is called before the first frame update
         void Start()
         {
