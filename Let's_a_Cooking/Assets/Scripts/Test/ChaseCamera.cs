@@ -15,7 +15,7 @@ namespace Cooking.Test
         Transform shotAngleTransform;
         //パワー調整時の加減に使うスイッチ
         bool powerUp = true;
-        new Rigidbody rigidbody;
+        new Rigidbody rigidbody = null;
         //食材を打つ力を定義
         public float shotPower;
         //カメラの回転に使う変数の定義
@@ -25,30 +25,27 @@ namespace Cooking.Test
         Rigidbody rb;
         //shotPowerゲージを取得
         [SerializeField]
-        private Slider powerGage;
+        private Slider powerGage = null;
         //発射方向の角度の制御に使う変数の定義
         float eulerX = 0;
         /// <summary>
         /// 予測線表示用のオブジェクト 。
         /// </summary>
-        [SerializeField] GameObject predictObj;
+        [SerializeField] GameObject predictObj = null;
         PredictObject predictObjectType;
         List<GameObject> tempPredictObj = new List<GameObject>();
-        int a = 0;
         [SerializeField] float predictTimeInterval = 0.5f;
-        float predictTimeCount;
+        float predictTimeCount = 0;
         float gravityScale = 1;
         [SerializeField]
-        GameObject predictShotPoint;
-        GameObject point;
+        GameObject predictShotPoint = null;
+        GameObject point = null;
         bool isShot;
 
         //public 
         // Start is called before the first frame update
         void Start()
         {
-            //Debug.Log(a);
-            a = 1;
             //食材を取得
             food = GameObject.Find("food");
             //食材のRigidbodyを取得

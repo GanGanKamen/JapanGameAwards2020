@@ -43,14 +43,14 @@ namespace Cooking.Stage
         /// <summary>
         /// 表示用 プレイヤーがゲーム全体で獲得した合計ポイント(食材再スタート前も含む)UIが常に参照する
         /// </summary>
-        public List <int>[] PlayerPointList
+        public List<int>[] PlayerPointList
         {
             get { return _playerPointList; }
         }
         private List<int>[] _playerPointList;
         /// <summary>
-                                                     /// やがて演出時間と同期
-                                                     /// </summary>
+        /// やがて演出時間と同期
+        /// </summary>
         private float _waitTimeNormal = 1f;
         private float _waitTimeCounterNormal = 0;
         private float _waitTimeOnFall = 2f;
@@ -62,6 +62,10 @@ namespace Cooking.Stage
         /// 終了時の書くプレイヤーの合計ポイント
         /// </summary>
         int[] _pointsOnFinish;
+        public int TurnNumberOnGameEnd
+        {
+            get { return _turnNumberOnGameEnd; }
+        }
         [SerializeField] int _turnNumberOnGameEnd = 10;
         TurnManager _turnManager;
         /// <summary>
@@ -106,7 +110,6 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
-            //Debug.Log(_foodStateOnGame);
             switch (_gameState)
             {
                 case StageGameState.Preparation:
@@ -159,8 +162,6 @@ namespace Cooking.Stage
                 case ScreenState.SideMode:
                     break;
                 case ScreenState.LookDownMode:
-                    break;
-                case ScreenState.PowerMeterMode:
                     break;
                 case ScreenState.ShottingMode:
                     switch (_foodStateOnGame)
@@ -243,9 +244,6 @@ namespace Cooking.Stage
                             _turnManager.ResetPlayerOnStartPoint();
                             break;
                         case ScreenState.LookDownMode:
-                            _turnManager.ResetPlayerOnStartPoint();
-                            break;
-                        case ScreenState.PowerMeterMode:
                             _turnManager.ResetPlayerOnStartPoint();
                             break;
                         default:

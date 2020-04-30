@@ -6,7 +6,7 @@ namespace GanGanKamen.Test
 {
     public class FoodLookPoint : MonoBehaviour
     {
-        [SerializeField] private GameObject food;
+        [SerializeField] private GameObject food = null;
 
         private void FixedUpdate() //RigidbodyのVelocity変化を追跡するので、リアルタイムベースのFixedUpdate()を使用する
         {

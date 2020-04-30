@@ -49,7 +49,7 @@ namespace Cooking.Stage
         /// <summary>
         /// 衝突が起きるボタンを登録
         /// </summary>
-        [SerializeField] RectTransform[] _preventTouchInputButtons;
+        [SerializeField] RectTransform[] _preventTouchInputButtons = null;
         // Start is called before the first frame update
         void Start()
         {
@@ -63,15 +63,15 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
-            #region サーチモードに戻る際のマウス入力(発射)の防止
-            if (ShotManager.Instance.ShotModeProperty == ShotState.PowerMeterMode)
-            {
-                _shotInvalid[(int)ButtonName.ShotButton] = PreventInputCollision(_preventTouchInputButtons[(int)ButtonName.ShotButton]);
-            }
-            else
-            {
-                _shotInvalid[(int)ButtonName.ShotButton] = false;
-            }
+            #region サーチモードに戻る際のマウス入力(発射)の防止 発射方法の変更により不要になった
+            //if (ShotManager.Instance.ShotModeProperty == ShotState.PowerMeterMode)
+            //{
+            //    _shotInvalid[(int)ButtonName.ShotButton] = PreventInputCollision(_preventTouchInputButtons[(int)ButtonName.ShotButton]);
+            //}
+            //else
+            //{
+            //    _shotInvalid[(int)ButtonName.ShotButton] = false;
+            //}
             #endregion
         }
         /// <summary>

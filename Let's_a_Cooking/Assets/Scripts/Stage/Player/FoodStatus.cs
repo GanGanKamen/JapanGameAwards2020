@@ -26,13 +26,13 @@ namespace Cooking.Stage
         }
         public FoodType foodType = FoodType.Shrimp;
         /// <summary>
-        /// ショットする際に打つ場所(力点)
+        /// 食材の中心座標=ショットする際に打つ場所(力点)
         /// </summary>
-        public Transform ShotPoint
+        public Transform CenterPoint
         {
-            get { return _shotPoint; }
+            get { return _centerPoint; }
         }
-        [SerializeField] private Transform _shotPoint;
+        [SerializeField] private Transform _centerPoint = null;
         /// <summary>
         /// ショット時に使用。TurnControllerに管理してもらう。
         /// </summary>
@@ -40,7 +40,7 @@ namespace Cooking.Stage
         {
             get { return _rigidbody; }
         }
-        [SerializeField] private Rigidbody _rigidbody;
+        [SerializeField] private Rigidbody _rigidbody = null;
         public bool IsFall
         {
             get { return _isFall; }
@@ -59,18 +59,26 @@ namespace Cooking.Stage
             get { return _onKitchen; }
         }
         private bool _onKitchen = false;
-        #region グラフィック関連変数
-        [SerializeField] protected SkinnedMeshRenderer _skinnedMeshRenderer;
-        [SerializeField] private Material _ebiBlack;
-        [SerializeField] private Material _ebi;
-        #endregion
+        [SerializeField] CapsuleCollider _capsuleCollider = null;
         /// <summary>
         /// このスクリプトに置くかは未定
         /// </summary>
-        [SerializeField] Animator _foodAnimator;
+        [SerializeField] Animator _foodAnimator = null;
+        #region グラフィック関連変数
+        [SerializeField] private Material _shrimpNormalGraphic = null;
+        [SerializeField] private GameObject _shrimpHead = null;
+        /// <summary>
+        /// えびの頭が外れているかどうか
+        /// </summary>
+        public bool IsHeadFallOff
+        {
+            get { return _isHeadFallOff; }
+        }
+        private bool _isHeadFallOff;
+        #endregion
+
         private void OnEnable()
         {
-            //shotPoint = transform.GetChild(0);
             if (_rigidbody == null) _rigidbody = GetComponentInChildren<Rigidbody>();
             _playerPoint = GetComponent<PlayerPoint>();
         }
@@ -82,8 +90,6 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
-            //if (!TurnController.Instance.IsAITurn)
-            //Debug.Log(Rigidbody.velocity.magnitude);
         }
         private void OnCollisionEnter(Collision collision)
         {
@@ -91,11 +97,18 @@ namespace Cooking.Stage
             {
                 _isFall = true;
             }
-            //初期化時以外でも使用するなら、範囲指定などの必要がある
-            //else if (collision.gameObject.tag == "Kitchen") 現状タグ無し
+            else if (collision.gameObject.tag == "Wall" && !_isHeadFallOff && !TurnManager.Instance.IsAITurn)//CPUは未実装
             {
-                _onKitchen = true;
+                _shrimpHead.transform.parent = null;
+                _shrimpHead.AddComponent<Rigidbody>();
+                _isHeadFallOff = true;
+                var center = _capsuleCollider.center;
+                _capsuleCollider.center = new Vector3(center.x, center.y, -0.1008767f);
+                _capsuleCollider.height = 0.3048875f;
+                _playerPoint.TouchWall();
             }
+            //初期化変数 着地
+            _onKitchen = true;
         }
         private void OnTriggerEnter(Collider other)
         {
@@ -105,14 +118,13 @@ namespace Cooking.Stage
             }
             if (other.tag == "Water")
             {
-                CleanSeasoning(_skinnedMeshRenderer, _ebi);
+                ChangeMaterial(_shrimpNormalGraphic);
             }
             /// とりあえず調味料はトリガーで
             else if (other.tag == "Seasoning")
             {
-                GetSeasoning(_skinnedMeshRenderer, _ebiBlack);
+                ChangeMaterial(other.gameObject.GetComponent<MeshRenderer>().material);
                 Destroy(other.gameObject);
-                Debug.Log(_skinnedMeshRenderer.materials[0]);
             }
         }
         /// <summary>
@@ -136,8 +148,8 @@ namespace Cooking.Stage
         }
         public void SetShotPointOnFoodCenter()
         {
-            if(_shotPoint != null)
-             _shotPoint.position = this.transform.position;
+            if(_centerPoint != null)
+             _centerPoint.position = this.transform.position;
         }
     }
 }

@@ -9,6 +9,9 @@ TagManager:
   - Seasoning
   - Towel
   - DirtDish
+  - RareSeasoning
+  - Wall
+  - TowelAbovePoint
   layers:
   - Default
   - TransparentFX

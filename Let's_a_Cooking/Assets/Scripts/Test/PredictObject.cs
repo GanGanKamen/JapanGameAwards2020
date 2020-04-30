@@ -7,7 +7,7 @@ namespace Cooking.Test
 	public class PredictObject : MonoBehaviour
 	{
 		//予測オブジェクトが消えるまでのカウンター
-		float desteoyCounter = 0;
+		//float desteoyCounter = 0;
 		/// <summary>
 		/// 予測線表示時間間隔 。
 		/// </summary>

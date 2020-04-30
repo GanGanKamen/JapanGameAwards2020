@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using Touches;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,11 +26,11 @@ namespace Cooking.Stage
         /// <summary>
         /// よく使うため変数化
         /// </summary>
-        TurnManager _turnManager;
+        TurnManager _turnManager = null;
         /// <summary>
         /// 食材選択画面での選択ボタンイメージ。順番はFoodStatus.FoodTypeに準じる
         /// </summary>
-        [SerializeField] private Image[] _chooseFoodImages;
+        //[SerializeField] private Image[] _chooseFoodImages = null;
         /// <summary>
         /// 選ばれた食材リスト FoodStatus用のenumへ変換
         /// </summary>
@@ -43,20 +42,28 @@ namespace Cooking.Stage
 
         #region 順番決め用変数
         /// <summary>
-        /// 順番決め用ゲージを取得
+        /// int版 順番決め用ゲージ
         /// </summary>
-        [SerializeField] private Slider _orderGage;
+        [SerializeField] private Image _orderGagesOfInteger = null;
         /// <summary>
-        /// 順番決め用最大/最小値・スライダーと同期するのを忘れない
+        /// float版 順番決め用ゲージ
+        /// </summary>
+        [SerializeField] private Slider _orderGage = null;
+        /// <summary>
+        /// 順番決め用最大/最小値
         /// </summary>
         private float _orderMin = 0, _orderMax = 100;
+        /// <summary>
+        /// 順番決めで変化させる値
+        /// </summary>
+        private float _powerMeterValue = 0;
         /// <summary>
         /// 現状400 差の4倍 インスペクタにて
         /// </summary>
         [SerializeField] float _orderMeterSpeed = 50;
-        [SerializeField] GameObject[] _playerListOrderPower;
-        [SerializeField] GameObject[] _isAIListOrderPower;
-        [SerializeField] Text[] _orderPowerTexts;
+        [SerializeField] GameObject[] _playerListOrderPower = null;
+        [SerializeField] GameObject[] _isAIListOrderPower = null;
+        [SerializeField] Text[] _orderPowerTexts = null;
         /// <summary>
         /// 入力受付しない時間用変数
         /// </summary>
@@ -95,10 +102,10 @@ namespace Cooking.Stage
         /// <summary>
         /// 0:Finish!! 1:Score (2:Retry 保留)
         /// </summary>
-        [SerializeField] GameObject[] _finishBackGroundImages;
-        [SerializeField] GameObject[] _finishScoreImages;
-        [SerializeField] Text[] _finishScoreTexts;
-        [SerializeField] Text _winnerPlayerNumber;
+        [SerializeField] GameObject[] _finishBackGroundImages = null;
+        [SerializeField] GameObject[] _finishScoreImages = null;
+        [SerializeField] Text[] _finishScoreTexts = null;
+        [SerializeField] Text _winnerPlayerNumber = null;
         #endregion
 
         #region インスタンスへのstaticなアクセスポイント
@@ -138,15 +145,20 @@ namespace Cooking.Stage
                 case ScreenState.DecideOrder:
                     if (!_invalidInputDecideOrder)
                     {
-                        var powerMeterValue = _orderGage.value;
-                        _orderGage.value = ChangeShotPower(_orderMin, _orderMax, _orderMeterSpeed, powerMeterValue);
+                        //float スライダー
+                        //powerMeterValue = _orderGage.value;
+                        //_orderGage.value = ChangeShotPower(_orderMin, _orderMax, _orderMeterSpeed, powerMeterValue);
+                        _powerMeterValue = ChangeShotPower(_orderMin, _orderMax, _orderMeterSpeed, _powerMeterValue);
+                        //int Image
+                        _orderGagesOfInteger.sprite = ChoosePowerMeterUIOfInteger(_powerMeterValue / _orderMax);
                         if (!TurnManager.Instance.IsAITurn)
                         {
                             if (TouchInput.GetTouchPhase() == TouchInfo.Down)
                             {
                                 _invalidInputDecideOrder = true;
                                 //順番を決める数値を決定
-                                var orderPower =  _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _orderGage.value);
+                                //var orderPower = _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _orderGage.value);
+                                var orderPower = _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _powerMeterValue);
                                 _orderPowerTexts[_turnManager.ActivePlayerIndex].text = orderPower.ToString("00.00");
                                 StartCoroutine(WaitOnDecideOrder());
                             }
@@ -154,8 +166,10 @@ namespace Cooking.Stage
                             {
                                 _invalidInputDecideOrder = true;
                                 //順番を決める数値を決定
-                                _orderGage.value = 100;
-                               var orderPower = _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _orderGage.value);
+                                //_orderGage.value = 100;
+                                _powerMeterValue = 100;
+                                _orderGagesOfInteger.sprite = ChoosePowerMeterUIOfInteger(_powerMeterValue / _orderMax);
+                                var orderPower = _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _powerMeterValue);
                                 _orderPowerTexts[_turnManager.ActivePlayerIndex].text = orderPower.ToString("00.00");
                                 StartCoroutine(WaitOnDecideOrder());
                             }
@@ -170,10 +184,7 @@ namespace Cooking.Stage
                     break;
                 case ScreenState.LookDownMode:
                     break;
-                case ScreenState.PowerMeterMode:
-                    break;
                 case ScreenState.ShottingMode:
-
                     break;
                 case ScreenState.Finish:
                     switch (_finishUIMode)
@@ -299,11 +310,10 @@ namespace Cooking.Stage
                     ShotManager.Instance.ChangeShotState(ShotState.WaitMode);
                     CameraManager.Instance.OnTop();
                     break;
-                case ScreenState.PowerMeterMode:
-                    ShotManager.Instance.ChangeShotState(ShotState.PowerMeterMode);
-                    break;
                 case ScreenState.ShottingMode:
                     _beforeShotScreenState = ScreenState.ShottingMode;
+                    if (!_turnManager.IsAITurn)
+                        ShotManager.Instance.StopShotPowerMeter();
                     break;
                 case ScreenState.Finish:
                     _finishUIMode = FinishUIMode.Finish;
@@ -355,7 +365,7 @@ namespace Cooking.Stage
             yield return new WaitForSeconds(_startTime);
             _playModeUI.ChangeUIOnTurnStart();
             _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].SetShotPointOnFoodCenter();
-            PredictLineManager.Instance.SetPredictLineInstantiatePosition(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].ShotPoint.position);
+            PredictLineManager.Instance.SetPredictLineInstantiatePosition(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].CenterPoint.position);
         }
     }
 }

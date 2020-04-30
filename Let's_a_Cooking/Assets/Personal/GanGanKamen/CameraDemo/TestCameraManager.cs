@@ -7,8 +7,8 @@ namespace GanGanKamen.Test
 {
     public class TestCameraManager : MonoBehaviour
     {
-        [SerializeField] CinemachineVirtualCamera shootingCam; //シューティングカメラを参照
-        [SerializeField] CinemachineVirtualCamera topCam;　//トップカメラを参照
+        [SerializeField] CinemachineVirtualCamera shootingCam = null; //シューティングカメラを参照
+        [SerializeField] CinemachineVirtualCamera topCam = null;　//トップカメラを参照
         
         public void ChangeToShoot()
         {

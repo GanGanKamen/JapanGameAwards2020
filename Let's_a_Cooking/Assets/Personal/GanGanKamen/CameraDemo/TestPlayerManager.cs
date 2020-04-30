@@ -7,11 +7,11 @@ namespace GanGanKamen.Test
 {
     public class TestPlayerManager : MonoBehaviour
     {
-        [SerializeField] private Button topCamButton; //トップカメラに切り替えるボタン
-        [SerializeField] private Button shootingCamButton; //シューティングカメラに切り替えるボタン
-        [SerializeField] private Button shootButton; //仮の発射ボタン
-        [SerializeField] private GameObject food; //食材
-        [SerializeField] private TestCameraManager cameraManager; 
+        [SerializeField] private Button topCamButton = null; //トップカメラに切り替えるボタン
+        [SerializeField] private Button shootingCamButton = null; //シューティングカメラに切り替えるボタン
+        [SerializeField] private Button shootButton = null; //仮の発射ボタン
+        [SerializeField] private GameObject food = null; //食材
+        [SerializeField] private TestCameraManager cameraManager = null; 
         private void Awake()
         {
             topCamButton.onClick.AddListener(() => TopCamButtonOnClick());  //ボタンに関数メソッドを登録

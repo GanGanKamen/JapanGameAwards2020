@@ -25,8 +25,8 @@ namespace Cooking.Stage
             get { return _isAITurn; }
         }
         private bool _isAITurn;
-        [SerializeField] GameObject _playerPrefab;
-        [SerializeField] GameObject _aIPrefab;
+        [SerializeField] GameObject _playerPrefab = null;
+        [SerializeField] GameObject _aIPrefab = null;
         /// <summary>
         /// プレイヤーの合計人数。ローカルでよく使うため定義
         /// </summary>
@@ -59,7 +59,7 @@ namespace Cooking.Stage
         /// <summary>
         /// ゲーム開始時の座標を示すオブジェクト
         /// </summary>
-        [SerializeField] Transform _startPositionObject;
+        [SerializeField] Transform _startPositionObject = null;
         /// <summary>
         /// メーターで変動させる順番を決めるための値
         /// </summary>
@@ -288,6 +288,10 @@ namespace Cooking.Stage
                         {
                             _activePlayerIndex = 0;
                             _turnNumber++;
+                            if (_turnNumber > StageSceneManager.Instance.TurnNumberOnGameEnd)
+                            {
+                                break;
+                            }
                         }
                         ///順巡り処理(0へ初期化)が終わった後にチェック
                         CheckNextPlayerAI();
@@ -295,9 +299,16 @@ namespace Cooking.Stage
                         SetObjectsPositionForNextPlayer(_activePlayerIndex);
                         if (!_isAITurn)
                         {
-                            _foodStatuses[_activePlayerIndex].PlayerAnimatioManage(true);
+                            if (!_foodStatuses[_activePlayerIndex].IsHeadFallOff)
+                            {
+                                _foodStatuses[_activePlayerIndex].PlayerAnimatioManage(true);
+                            }
                             _foodStatuses[_activePlayerIndex].SetShotPointOnFoodCenter();
-                            PredictLineManager.Instance.SetPredictLineInstantiatePosition(_foodStatuses[_activePlayerIndex].ShotPoint.position);
+                            PredictLineManager.Instance.SetPredictLineInstantiatePosition(_foodStatuses[_activePlayerIndex].CenterPoint.position);
+                        }
+                        if (StageSceneManager.Instance.TurnNumberOnGameEnd - _turnNumber == 2)
+                        {
+                            GimmickManager.Instance.AppearRareSeasoning();
                         }
                     }
                     break;

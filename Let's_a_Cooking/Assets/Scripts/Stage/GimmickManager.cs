@@ -31,36 +31,48 @@ namespace Cooking.Stage
         {
             get { return _water; }
         }
-        private GameObject[] _water;
-
+        private GameObject[] _water = null;
         public GameObject[] Seasonings
         {
             get { return _seasonings; }
         }
-        private GameObject[] _seasonings;
+        private GameObject[] _seasonings = null;
+        public GameObject[] TargetTowelPositionObjects
+        {
+            get { return _targetTowelPositionObjects; }
+        }
+        private GameObject[] _targetTowelPositionObjects;
+        GameObject _rareSeasoning;
         /// <summary>
         /// 現状固定位置 皿の上の中からランダム？
         /// </summary>
         Vector3[] _instantiateSeasoningPoint;
-
-        [SerializeField] GameObject _seasoningPrefab;
+        [SerializeField] GameObject _seasoningPrefab = null;
         // Start is called before the first frame update
         void Start()
         {
             //処理を早くするタグ検索
             _water = GameObject.FindGameObjectsWithTag("Water");
             _seasonings = GameObject.FindGameObjectsWithTag("Seasoning");
+            _rareSeasoning = GameObject.FindGameObjectWithTag("RareSeasoning");
+            var towelsAbovePoint = GameObject.FindGameObjectsWithTag("TowelAbovePoint");
+            _targetTowelPositionObjects = new GameObject[towelsAbovePoint.Length];
             _instantiateSeasoningPoint = new Vector3[_seasonings.Length];
             for (int i = 0; i < _seasonings.Length; i++)
             {
                 _instantiateSeasoningPoint[i] = _seasonings[i].transform.position; 
             }
+            _rareSeasoning.SetActive(false);
         }
 
         // Update is called once per frame
         void Update()
         {
 
+        }
+        public void AppearRareSeasoning()
+        {
+            _rareSeasoning.SetActive(true);
         }
         /// <summary>
         /// ターンが変わるときに水が出なくなる場所を制御
@@ -94,8 +106,8 @@ namespace Cooking.Stage
                 //}
                 if (_seasonings[i] == null )
                 {
-                    ///50%の確率
-                    if (GetSeedID(10) < 5)
+                    ///  x / (10)%の確率で再出現
+                    if (GetSeedID(10) < 3)
                     {
                         var newSeasoning = Instantiate(_seasoningPrefab);
                         newSeasoning.transform.position = _instantiateSeasoningPoint[i];
@@ -104,7 +116,6 @@ namespace Cooking.Stage
                 }
             }
         }
-
         /// <summary>
         /// 乱数発生
         /// </summary>

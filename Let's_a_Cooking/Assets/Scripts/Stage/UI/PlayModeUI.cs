@@ -2,41 +2,49 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Linq;
 
 namespace Cooking.Stage
 {
     /// <summary>
     /// ショット関連Uiの制御
     /// </summary>
-    public class PlayModeUI : MonoBehaviour
+    public class PlayModeUI : ChangePowerMeter
     {
         #region プレイ画面用変数
         /// <summary>
-        /// shotPowerゲージを取得
+        /// float版 shotPowerゲージ
         /// </summary>
-        [SerializeField] Image _shotPowerGage;
+        [SerializeField] Image _shotPowerGage = null;
+        /// <summary>
+        /// int版 shotPowerゲージ
+        /// </summary>
+        [SerializeField]private Image _shotPowerGagesOfInteger = null;
+        /// <summary>
+        /// 9段階に分かれているショットゲージ AwakeでResourcesフォルダから読み取る
+        /// </summary>
+        public Sprite[] ShotPowerGageSprites
+        {
+            get { return _shotPowerGageSprites; }
+        }
+        private Sprite[] _shotPowerGageSprites = null;
         /// <summary>
         /// AIのターン中はショット開始ボタンは表示しない
         /// </summary>
-        [SerializeField] private GameObject[] _shotStartButtons;
-        [SerializeField] private GameObject _defaultIsAIImage;
-        [SerializeField] private Text _turnNumberText;
-        [SerializeField] private Text _playerNumberTextOnPlay;
-        [SerializeField] private Text _pointNumberTextOnPlay;
-        [SerializeField] private GameObject _falledImage;
-        [SerializeField] private GameObject _goalImage;
+        [SerializeField] private GameObject[] _shotButtons = null;
+        [SerializeField] private GameObject _defaultIsAIImage = null;
+        [SerializeField] private Text _turnNumberText = null;
+        [SerializeField] private Text _playerNumberTextOnPlay = null;
+        [SerializeField] private Text _pointNumberTextOnPlay = null;
+        [SerializeField] private GameObject _falledImage = null;
+        [SerializeField] private GameObject _goalImage = null;
         #endregion
         /// <summary>
         /// よく使うため変数化
         /// </summary>
-        TurnManager _turnManager;
-
-        public void InitializeShotPowerGage(ShotParameter shotParameter)
+        TurnManager _turnManager = null;
+        private void Awake()
         {
-            ///スライダーの値同期(他も必要に応じて追加)
-            //_shotPowerGage.maxValue = shotParameter.MaxShotPower;
-            //_shotPowerGage.minValue = shotParameter.MinShotPower;
+            _shotPowerGageSprites = Resources.LoadAll<Sprite>("Powermeter");
         }
 
         // Start is called before the first frame update
@@ -56,6 +64,15 @@ namespace Cooking.Stage
             switch (UIManager.Instance.MainUIStateProperty)
             {
                 case ScreenState.FrontMode:
+                    {
+                        //最大最小パワーに対して、現在のパワーがどれだけあるかを計算
+                        var shotPowerRate = (ShotManager.Instance.ShotPower - ShotManager.Instance.ShotParameter.MinShotPower) / (ShotManager.Instance.ShotParameter.MaxShotPower - ShotManager.Instance.ShotParameter.MinShotPower);
+                        //floatバージョン shotPowerをゲージに反映
+                        //_shotPowerGage.fillAmount = shotPowerRate;
+
+                        //intバージョン shotPowerをゲージに反映
+                        _shotPowerGagesOfInteger.sprite = ChoosePowerMeterUIOfInteger(shotPowerRate);
+                    }
                     UpdatePointText();
                     break;
                 case ScreenState.SideMode:
@@ -63,10 +80,6 @@ namespace Cooking.Stage
                     break;
                 case ScreenState.LookDownMode:
                     UpdatePointText();
-                    break;
-                case ScreenState.PowerMeterMode:
-                    //shotPowerをゲージに反映
-                    _shotPowerGage.fillAmount = (ShotManager.Instance.ShotPower - ShotManager.Instance.ShotParameter.MinShotPower) / (ShotManager.Instance.ShotParameter.MaxShotPower - ShotManager.Instance.ShotParameter.MinShotPower);
                     break;
                 case ScreenState.ShottingMode:
                     UpdatePointText();
@@ -112,7 +125,7 @@ namespace Cooking.Stage
             {
                 UIManager.Instance.ChangeUI("SideMode");
                 _defaultIsAIImage.SetActive(true);
-                foreach (var shotStartButton in _shotStartButtons)
+                foreach (var shotStartButton in _shotButtons)
                 {
                     shotStartButton.SetActive(false);
                 }
@@ -122,7 +135,7 @@ namespace Cooking.Stage
             {
                 UIManager.Instance.ChangeUI("LookDownMode");
                 _defaultIsAIImage.SetActive(false);
-                foreach (var shotStartButton in _shotStartButtons)
+                foreach (var shotStartButton in _shotButtons)
                 {
                     shotStartButton.SetActive(true);
                 }

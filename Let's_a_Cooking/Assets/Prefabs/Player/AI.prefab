@@ -399,15 +399,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6865a81d3964e3d4f8db92a50faabc6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPoint: {fileID: 0}
+  _skinnedMeshRenderer: {fileID: 350885762032766455}
+  _RareMaterial: {fileID: 0}
   playerNumber: 0
   foodType: 0
-  _shotPoint: {fileID: 7878049816325859576}
+  _centerPoint: {fileID: 7878049816325859576}
   _rigidbody: {fileID: 382828628839790765}
-  _skinnedMeshRenderer: {fileID: 350885762032766455}
-  _ebiBlack: {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
-  _ebi: {fileID: 2100000, guid: e4e6277cc55c3ae4bb46a09b8f5547a8, type: 2}
   _foodAnimator: {fileID: 0}
+  _ebiNormalGraphic: {fileID: 2100000, guid: e4e6277cc55c3ae4bb46a09b8f5547a8, type: 2}
   ThrowingObject: {fileID: 6953393799243547356}
   ThrowingAngle: 45
 --- !u!54 &382828628839790765
@@ -425,7 +424,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!95 &6953393799243547354
 Animator:
   serializedVersion: 3

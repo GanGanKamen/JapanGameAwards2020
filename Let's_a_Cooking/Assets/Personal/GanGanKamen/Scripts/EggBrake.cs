@@ -6,8 +6,8 @@ namespace GanGanKamen
 {
     public class EggBrake : MonoBehaviour
     {
-        [SerializeField] private Transform center;
-        [SerializeField] private float power;
+        [SerializeField] private Transform center = null;
+        [SerializeField] private float power = 0;
         private Vector3 centerPosition;
         private bool isBraked = false;
 
