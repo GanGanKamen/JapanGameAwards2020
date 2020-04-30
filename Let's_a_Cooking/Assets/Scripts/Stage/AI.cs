@@ -118,7 +118,6 @@ namespace Cooking.Stage
         /// <returns></returns>
         private GameObject DecideTarget(float searchDistance)
         {
-
             foreach (var seasoning in GimmickManager.Instance.Seasonings)
             {
                 if (seasoning != null)
@@ -127,6 +126,17 @@ namespace Cooking.Stage
                     if (Mathf.Pow(distance.x, 2) + Mathf.Pow(distance.y, 2) <= Mathf.Pow(searchDistance, 2))
                     {
                         return seasoning;
+                    }
+                }
+            }
+            foreach (var targetTowelPositionObject in GimmickManager.Instance.TargetTowelPositionObjects)
+            {
+                if (targetTowelPositionObject != null)
+                {
+                    var distance = CalculateDistance(this.transform.position, targetTowelPositionObject.transform.position);
+                    if (Mathf.Pow(distance.x, 2) + Mathf.Pow(distance.y, 2) <= Mathf.Pow(searchDistance, 2))
+                    {
+                        return targetTowelPositionObject;
                     }
                 }
             }

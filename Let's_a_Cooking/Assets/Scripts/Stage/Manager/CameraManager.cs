@@ -210,7 +210,7 @@ namespace Cooking.Stage
         /// <summary>
         /// カメラの位置を基準(_cameraMoveCenter)に対する元の位置に戻す
         /// </summary>
-        private void SetCameraLocalPosition()
+        public void SetCameraLocalPosition()
         {
             topCam.transform.localPosition = _cameraLocalPositions[(int)CameraMode.Top];
             frontCam.transform.localPosition = _cameraLocalPositions[(int)CameraMode.Front];

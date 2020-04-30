@@ -191,6 +191,7 @@ namespace Cooking.Stage
         public void StopShotPowerMeter()
         {
             ChangeShotState(ShotState.ShottingMode);
+            CameraManager.Instance.SetCameraLocalPosition();
             Shot(transform.forward * _shotPower);
         }
         /// <summary>

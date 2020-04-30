@@ -299,9 +299,16 @@ namespace Cooking.Stage
                         SetObjectsPositionForNextPlayer(_activePlayerIndex);
                         if (!_isAITurn)
                         {
-                            _foodStatuses[_activePlayerIndex].PlayerAnimatioManage(true);
+                            if (!_foodStatuses[_activePlayerIndex].IsHeadFallOff)
+                            {
+                                _foodStatuses[_activePlayerIndex].PlayerAnimatioManage(true);
+                            }
                             _foodStatuses[_activePlayerIndex].SetShotPointOnFoodCenter();
                             PredictLineManager.Instance.SetPredictLineInstantiatePosition(_foodStatuses[_activePlayerIndex].CenterPoint.position);
+                        }
+                        if (StageSceneManager.Instance.TurnNumberOnGameEnd - _turnNumber == 2)
+                        {
+                            GimmickManager.Instance.AppearRareSeasoning();
                         }
                     }
                     break;

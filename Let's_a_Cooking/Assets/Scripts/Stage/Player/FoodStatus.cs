@@ -59,12 +59,22 @@ namespace Cooking.Stage
             get { return _onKitchen; }
         }
         private bool _onKitchen = false;
+        [SerializeField] CapsuleCollider _capsuleCollider = null;
         /// <summary>
         /// このスクリプトに置くかは未定
         /// </summary>
         [SerializeField] Animator _foodAnimator = null;
         #region グラフィック関連変数
-        [SerializeField] private Material _ebiNormalGraphic = null;
+        [SerializeField] private Material _shrimpNormalGraphic = null;
+        [SerializeField] private GameObject _shrimpHead = null;
+        /// <summary>
+        /// えびの頭が外れているかどうか
+        /// </summary>
+        public bool IsHeadFallOff
+        {
+            get { return _isHeadFallOff; }
+        }
+        private bool _isHeadFallOff;
         #endregion
 
         private void OnEnable()
@@ -87,11 +97,18 @@ namespace Cooking.Stage
             {
                 _isFall = true;
             }
-            //初期化時以外でも使用するなら、範囲指定などの必要がある
-            //else if (collision.gameObject.tag == "Kitchen") 現状タグ無し
+            else if (collision.gameObject.tag == "Wall" && !_isHeadFallOff && !TurnManager.Instance.IsAITurn)//CPUは未実装
             {
-                _onKitchen = true;
+                _shrimpHead.transform.parent = null;
+                _shrimpHead.AddComponent<Rigidbody>();
+                _isHeadFallOff = true;
+                var center = _capsuleCollider.center;
+                _capsuleCollider.center = new Vector3(center.x, center.y, -0.1008767f);
+                _capsuleCollider.height = 0.3048875f;
+                _playerPoint.TouchWall();
             }
+            //初期化変数 着地
+            _onKitchen = true;
         }
         private void OnTriggerEnter(Collider other)
         {
@@ -101,7 +118,7 @@ namespace Cooking.Stage
             }
             if (other.tag == "Water")
             {
-                ChangeMaterial(_ebiNormalGraphic);
+                ChangeMaterial(_shrimpNormalGraphic);
             }
             /// とりあえず調味料はトリガーで
             else if (other.tag == "Seasoning")

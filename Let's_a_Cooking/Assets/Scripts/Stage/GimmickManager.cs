@@ -37,11 +37,12 @@ namespace Cooking.Stage
             get { return _seasonings; }
         }
         private GameObject[] _seasonings = null;
-        public float[] TargetTowelPosition
+        public GameObject[] TargetTowelPositionObjects
         {
-            get { return _targetTowelPosition; }
+            get { return _targetTowelPositionObjects; }
         }
-        private float[] _targetTowelPosition = null;
+        private GameObject[] _targetTowelPositionObjects;
+        GameObject _rareSeasoning;
         /// <summary>
         /// 現状固定位置 皿の上の中からランダム？
         /// </summary>
@@ -53,18 +54,25 @@ namespace Cooking.Stage
             //処理を早くするタグ検索
             _water = GameObject.FindGameObjectsWithTag("Water");
             _seasonings = GameObject.FindGameObjectsWithTag("Seasoning");
-
+            _rareSeasoning = GameObject.FindGameObjectWithTag("RareSeasoning");
+            var towelsAbovePoint = GameObject.FindGameObjectsWithTag("TowelAbovePoint");
+            _targetTowelPositionObjects = new GameObject[towelsAbovePoint.Length];
             _instantiateSeasoningPoint = new Vector3[_seasonings.Length];
             for (int i = 0; i < _seasonings.Length; i++)
             {
                 _instantiateSeasoningPoint[i] = _seasonings[i].transform.position; 
             }
+            _rareSeasoning.SetActive(false);
         }
 
         // Update is called once per frame
         void Update()
         {
 
+        }
+        public void AppearRareSeasoning()
+        {
+            _rareSeasoning.SetActive(true);
         }
         /// <summary>
         /// ターンが変わるときに水が出なくなる場所を制御
@@ -108,7 +116,6 @@ namespace Cooking.Stage
                 }
             }
         }
-
         /// <summary>
         /// 乱数発生
         /// </summary>
