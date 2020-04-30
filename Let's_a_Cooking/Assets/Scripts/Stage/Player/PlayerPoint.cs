@@ -11,30 +11,53 @@ public class PlayerPoint : MonoBehaviour
     /// </summary>
     public int Point
     {
-        get { return _getPoint + _firstPoint; }
+        get { return _firstPoint + _getPoint; }
     }
-    /// <summary>
-    /// 獲得ポイント
-    /// </summary>
-    private int _getPoint = 0;
     /// <summary>
     /// 初期ポイント
     /// </summary>
     private const int _firstPoint = 100;
     /// <summary>
+    /// 獲得ポイント
+    /// </summary>
+    private int _getPoint = 0;
+    /// <summary>
     /// 初回フラグ
     /// </summary>
-    bool _isFirstWash = true , _isFirstTowel = true;
+    bool _isFirstWash = true, _isFirstTowel = true;
+    /// <summary>
+    /// 汚れた皿に触れたときポイントを失うフラグ
+    /// </summary>
+    bool _lostPointOnTouchDirtDish = true;
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
+    }
+    /// <summary>
+    /// ショット時に呼ばれる アニメーションなどで触れるのでこのタイミング 衝突時ポイント獲得フラグのリセット
+    /// </summary>
+    public void ResetGetPointBool()
+    {
+        _lostPointOnTouchDirtDish = true;
+    }
+    /// <summary>
+    /// 汚れた皿に触れる
+    /// </summary>
+    private void TouchDirtDish()
+    {
+        _getPoint -= 50;
+        if (_firstPoint  + _getPoint< 0)
+        {
+            _getPoint = -100;
+        }
+        _lostPointOnTouchDirtDish = false;
     }
     /// <summary>
     /// 初めて水洗い
@@ -61,7 +84,8 @@ public class PlayerPoint : MonoBehaviour
     /// </summary>
     private void TouchSeasoning()
     {
-        _getPoint *= 2;
+        //マイナスを考慮 例 -50 のとき 50点 → 100点
+        _getPoint = 2 * Mathf.Abs(_getPoint);
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -80,6 +104,11 @@ public class PlayerPoint : MonoBehaviour
         if (collision.gameObject.tag == "Towel" && _isFirstTowel)
         {
             FirstTowelTouch();
+        }
+        else if (collision.gameObject.tag == "DirtDish" && _lostPointOnTouchDirtDish)
+        {
+            Debug.Log(57);
+            TouchDirtDish();
         }
     }
 }

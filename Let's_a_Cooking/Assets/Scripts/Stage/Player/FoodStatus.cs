@@ -26,13 +26,13 @@ namespace Cooking.Stage
         }
         public FoodType foodType = FoodType.Shrimp;
         /// <summary>
-        /// ショットする際に打つ場所(力点)
+        /// 食材の中心座標=ショットする際に打つ場所(力点)
         /// </summary>
-        public Transform ShotPoint
+        public Transform CenterPoint
         {
-            get { return _shotPoint; }
+            get { return _centerPoint; }
         }
-        [SerializeField] private Transform _shotPoint = null;
+        [SerializeField] private Transform _centerPoint = null;
         /// <summary>
         /// ショット時に使用。TurnControllerに管理してもらう。
         /// </summary>
@@ -59,18 +59,16 @@ namespace Cooking.Stage
             get { return _onKitchen; }
         }
         private bool _onKitchen = false;
-        #region グラフィック関連変数
-        [SerializeField] protected SkinnedMeshRenderer _skinnedMeshRenderer = null;
-        [SerializeField] private Material _ebiBlack = null;
-        [SerializeField] private Material _ebi = null;
-        #endregion
         /// <summary>
         /// このスクリプトに置くかは未定
         /// </summary>
         [SerializeField] Animator _foodAnimator = null;
+        #region グラフィック関連変数
+        [SerializeField] private Material _ebiNormalGraphic = null;
+        #endregion
+
         private void OnEnable()
         {
-            //shotPoint = transform.GetChild(0);
             if (_rigidbody == null) _rigidbody = GetComponentInChildren<Rigidbody>();
             _playerPoint = GetComponent<PlayerPoint>();
         }
@@ -82,8 +80,6 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
-            //if (!TurnController.Instance.IsAITurn)
-            //Debug.Log(Rigidbody.velocity.magnitude);
         }
         private void OnCollisionEnter(Collision collision)
         {
@@ -105,14 +101,13 @@ namespace Cooking.Stage
             }
             if (other.tag == "Water")
             {
-                ChangeMaterial(_skinnedMeshRenderer, _ebi);
+                ChangeMaterial(_ebiNormalGraphic);
             }
             /// とりあえず調味料はトリガーで
             else if (other.tag == "Seasoning")
             {
-                ChangeMaterial(_skinnedMeshRenderer, _ebiBlack);
+                ChangeMaterial(other.gameObject.GetComponent<MeshRenderer>().material);
                 Destroy(other.gameObject);
-                Debug.Log(_skinnedMeshRenderer.materials[0]);
             }
         }
         /// <summary>
@@ -136,8 +131,8 @@ namespace Cooking.Stage
         }
         public void SetShotPointOnFoodCenter()
         {
-            if(_shotPoint != null)
-             _shotPoint.position = this.transform.position;
+            if(_centerPoint != null)
+             _centerPoint.position = this.transform.position;
         }
     }
 }

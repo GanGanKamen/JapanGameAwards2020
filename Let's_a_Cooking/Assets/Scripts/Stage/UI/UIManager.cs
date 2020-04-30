@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using Touches;
 using UnityEngine;
 using UnityEngine.UI;
@@ -43,13 +42,21 @@ namespace Cooking.Stage
 
         #region 順番決め用変数
         /// <summary>
-        /// 順番決め用ゲージを取得
+        /// int版 順番決め用ゲージ
+        /// </summary>
+        [SerializeField] private Image _orderGagesOfInteger = null;
+        /// <summary>
+        /// float版 順番決め用ゲージ
         /// </summary>
         [SerializeField] private Slider _orderGage = null;
         /// <summary>
-        /// 順番決め用最大/最小値・スライダーと同期するのを忘れない
+        /// 順番決め用最大/最小値
         /// </summary>
         private float _orderMin = 0, _orderMax = 100;
+        /// <summary>
+        /// 順番決めで変化させる値
+        /// </summary>
+        private float _powerMeterValue = 0;
         /// <summary>
         /// 現状400 差の4倍 インスペクタにて
         /// </summary>
@@ -138,15 +145,20 @@ namespace Cooking.Stage
                 case ScreenState.DecideOrder:
                     if (!_invalidInputDecideOrder)
                     {
-                        var powerMeterValue = _orderGage.value;
-                        _orderGage.value = ChangeShotPower(_orderMin, _orderMax, _orderMeterSpeed, powerMeterValue);
+                        //float スライダー
+                        //powerMeterValue = _orderGage.value;
+                        //_orderGage.value = ChangeShotPower(_orderMin, _orderMax, _orderMeterSpeed, powerMeterValue);
+                        _powerMeterValue = ChangeShotPower(_orderMin, _orderMax, _orderMeterSpeed, _powerMeterValue);
+                        //int Image
+                        _orderGagesOfInteger.sprite = ChoosePowerMeterUIOfInteger(_powerMeterValue / _orderMax);
                         if (!TurnManager.Instance.IsAITurn)
                         {
                             if (TouchInput.GetTouchPhase() == TouchInfo.Down)
                             {
                                 _invalidInputDecideOrder = true;
                                 //順番を決める数値を決定
-                                var orderPower =  _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _orderGage.value);
+                                //var orderPower = _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _orderGage.value);
+                                var orderPower = _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _powerMeterValue);
                                 _orderPowerTexts[_turnManager.ActivePlayerIndex].text = orderPower.ToString("00.00");
                                 StartCoroutine(WaitOnDecideOrder());
                             }
@@ -154,8 +166,10 @@ namespace Cooking.Stage
                             {
                                 _invalidInputDecideOrder = true;
                                 //順番を決める数値を決定
-                                _orderGage.value = 100;
-                               var orderPower = _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _orderGage.value);
+                                //_orderGage.value = 100;
+                                _powerMeterValue = 100;
+                                _orderGagesOfInteger.sprite = ChoosePowerMeterUIOfInteger(_powerMeterValue / _orderMax);
+                                var orderPower = _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _powerMeterValue);
                                 _orderPowerTexts[_turnManager.ActivePlayerIndex].text = orderPower.ToString("00.00");
                                 StartCoroutine(WaitOnDecideOrder());
                             }
@@ -170,10 +184,7 @@ namespace Cooking.Stage
                     break;
                 case ScreenState.LookDownMode:
                     break;
-                case ScreenState.PowerMeterMode:
-                    break;
                 case ScreenState.ShottingMode:
-
                     break;
                 case ScreenState.Finish:
                     switch (_finishUIMode)
@@ -299,11 +310,10 @@ namespace Cooking.Stage
                     ShotManager.Instance.ChangeShotState(ShotState.WaitMode);
                     CameraManager.Instance.OnTop();
                     break;
-                case ScreenState.PowerMeterMode:
-                    ShotManager.Instance.ChangeShotState(ShotState.PowerMeterMode);
-                    break;
                 case ScreenState.ShottingMode:
                     _beforeShotScreenState = ScreenState.ShottingMode;
+                    if (!_turnManager.IsAITurn)
+                        ShotManager.Instance.StopShotPowerMeter();
                     break;
                 case ScreenState.Finish:
                     _finishUIMode = FinishUIMode.Finish;
@@ -355,7 +365,7 @@ namespace Cooking.Stage
             yield return new WaitForSeconds(_startTime);
             _playModeUI.ChangeUIOnTurnStart();
             _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].SetShotPointOnFoodCenter();
-            PredictLineManager.Instance.SetPredictLineInstantiatePosition(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].ShotPoint.position);
+            PredictLineManager.Instance.SetPredictLineInstantiatePosition(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].CenterPoint.position);
         }
     }
 }

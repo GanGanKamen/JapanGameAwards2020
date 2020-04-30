@@ -20,7 +20,6 @@
         FrontMode,
         SideMode,
         LookDownMode,
-        PowerMeterMode,
         ShottingMode,
         Finish,
         Pause
@@ -32,7 +31,6 @@
     {
         WaitMode,/// 待機中
         AngleMode,/// 角度の決定中
-        PowerMeterMode,/// ショットパワー決定中
         ShottingMode,/// ショット中
         ShotEndMode///ショット終了
     }

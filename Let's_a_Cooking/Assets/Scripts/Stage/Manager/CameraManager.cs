@@ -52,7 +52,7 @@ namespace Cooking.Stage
         //[SerializeField]
         private Vector3 newSideCameraPos;   //sideカメラの座標を定義
         //[SerializeField]
-        private float wheelScroll;  //マウスホイールのスクロール数を定義
+        private float zoomScalingValue;  //マウスホイールのスクロール数を定義
         #region インスタンスへのstaticなアクセスポイント
         /// <summary>
         /// このクラスのインスタンスを取得。
@@ -106,13 +106,11 @@ namespace Cooking.Stage
                         {
                             _isTouchOnGamePlay = true;
                         }
-
-                        wheelScroll = Input.GetAxis("Mouse ScrollWheel");   //マウスホイールの回転量を格納
-                                                                            //マウスホイールが入力されたら
-                        if (wheelScroll != 0)
+                        zoomScalingValue = CameraZoomScaling.GetCameraZoomScalingValue();   //マウスホイールの回転量を格納
+                        if (zoomScalingValue != 0)
                         {
                             newTopCameraPos = topCam.transform.position;  //現在のカメラの座標を代入
-                            newTopCameraPos.y = topCam.transform.position.y + wheelScroll * -8;
+                            newTopCameraPos.y = topCam.transform.position.y +  zoomScalingValue;
                             topCam.transform.position = newTopCameraPos;       //カメラの座標に代入
                         }
                     }
@@ -134,11 +132,11 @@ namespace Cooking.Stage
                         var touchPosition = TouchInput.GetDeltaPosition();
                         sideCam.transform.position -= transform.forward * (touchPosition.x) / 100;   //マウスの移動量/100をカメラの左右方向に代入
                         sideCam.transform.position -= transform.up * (touchPosition.y) / 100;   //マウスの移動量/100をカメラの上下方向に代入
-                        wheelScroll = Input.GetAxis("Mouse ScrollWheel");   //マウスホイールの回転量を格納
+                        zoomScalingValue = Input.GetAxis("Mouse ScrollWheel");   //マウスホイールの回転量を格納
                                                                             //マウスホイールが入力されたら
-                        if (wheelScroll != 0)
+                        if (zoomScalingValue != 0)
                         {
-                            sideCam.transform.position += transform.right * wheelScroll * -4;       //マウスホイールの回転をカメラの前後方向に代入
+                            sideCam.transform.position += transform.right * zoomScalingValue * -4;       //マウスホイールの回転をカメラの前後方向に代入
                         }
 
                     }
@@ -152,8 +150,6 @@ namespace Cooking.Stage
                     break;
                 case ShotState.AngleMode:
                     BeforeShotCameraRotate();
-                    break;
-                case ShotState.PowerMeterMode:
                     break;
                 case ShotState.ShottingMode:
                     {

@@ -110,11 +110,6 @@ namespace Cooking.Stage
                         PredictLineManage(maxShotSpeedVector);
                         PredictFallPoint(maxShotSpeedVector);
                         break;
-                    case ScreenState.PowerMeterMode:
-                        //予測線を飛ばす方向を取得。
-                        PredictLineManage(maxShotSpeedVector);
-                        PredictFallPoint(maxShotSpeedVector);
-                        break;
                     case ScreenState.ShottingMode:
                         break;
                     case ScreenState.Finish:
@@ -152,12 +147,6 @@ namespace Cooking.Stage
                         PredictByRayCast(maxShotSpeedVector);
                         PredictPhysicsManage();
                         break;
-                    case ScreenState.PowerMeterMode:
-                        //落下地点の変更を予測線にも伝える。
-                        ChangePredictFallPointOnXZ(maxShotSpeedVector);
-                        PredictByRayCast(maxShotSpeedVector);
-                        PredictPhysicsManage();
-                        break;
                     case ScreenState.ShottingMode:
                         break;
                     case ScreenState.Finish:
@@ -189,7 +178,6 @@ namespace Cooking.Stage
                     Debug.Log("当たっていない");
                 }
             }
-
         }
         void FixedUpdate()
         {

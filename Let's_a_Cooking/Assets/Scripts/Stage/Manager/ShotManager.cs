@@ -66,7 +66,7 @@ namespace Cooking.Stage
         // Start is called before the first frame update
         void Start()
         {
-            UIManager.Instance.PlayModeUI.InitializeShotPowerGage(_shotParameter);
+            _shotPower = _shotParameter.MinShotPower;
         }
 
         // Update is called once per frame
@@ -85,9 +85,25 @@ namespace Cooking.Stage
                             var eulerAngle = DecisionAngle();
                             transform.eulerAngles = new Vector3(eulerAngle.x, eulerAngle.y, 0);
                         }
+                        _shotPower = ChangeShotPower(_shotParameter.MinShotPower, _shotParameter.MaxShotPower, 2 * Mathf.Abs(_shotParameter.MaxShotPower - _shotParameter.MinShotPower), _shotPower);//速度ログ 5 20 (差15のとき)→ 30  差の倍速で算出   
+                        if (!TurnManager.Instance.IsAITurn)
+                        {
+                            //左クリックされた時に呼び出される
+                            //if (!PreventTouchInputCollision.Instance.ShotInvalid[(int)PreventTouchInputCollision.ButtonName.ShotButton] && TouchInput.GetTouchPhase() == TouchInfo.Down)
+                            //{
+                            //}
+                            #region デバッグコード スペースを押すと最大パワーで飛ぶ
+
+                            //#if UNITY_EDITOR
+                            if (Input.GetKeyDown(KeyCode.Space))
+                            {
+                                UIManager.Instance.ChangeUI("ShottingMode");
+                                Shot(CalculateMaxShotPowerVector());
+                            }
+                            //#endif
+                            #endregion
+                        }
                     }
-                    break;
-                case ShotState.PowerMeterMode:
                     break;
                 case ShotState.ShottingMode:
                     {
@@ -101,50 +117,6 @@ namespace Cooking.Stage
                         if (StageSceneManager.Instance.FoodStateOnGameProperty == StageSceneManager.FoodStateOnGame.ShotEnd)
                             ChangeShotState(ShotState.WaitMode);
                     }
-                    break;
-                default:
-                    break;
-            }
-        }
-        /// <summary>
-        /// PreventTouchInputCollisionにて衝突を防いだ後に実行するためLate
-        /// </summary>
-        void LateUpdate()
-        {
-            switch (_shotMode)
-            {
-                ///スタート時・見下ろしカメラ時・ゲーム終了時を想定
-				case ShotState.WaitMode:
-                    break;
-                case ShotState.AngleMode:
-                    break;
-                case ShotState.PowerMeterMode:
-                    {
-                        _shotPower = ChangeShotPower(_shotParameter.MinShotPower, _shotParameter.MaxShotPower, 2 * Mathf.Abs(_shotParameter.MaxShotPower - _shotParameter.MinShotPower), _shotPower);//速度ログ 5 20 (差15のとき)→ 30  差の倍速で算出   
-                        if (!TurnManager.Instance.IsAITurn)
-                        {
-                            //左クリックされた時に呼び出される
-                            if (!PreventTouchInputCollision.Instance.ShotInvalid[(int)PreventTouchInputCollision.ButtonName.ShotButton] && TouchInput.GetTouchPhase() == TouchInfo.Down)
-                            {
-                            }
-                            #region デバッグコード スペースを押すと最大パワーで飛ぶ
-
-                            //#if UNITY_EDITOR
-                            if (Input.GetKeyDown(KeyCode.Space))
-                            {
-                                ChangeShotState(ShotState.ShottingMode);
-                                var initialSpeedVector = CalculateMaxShotPowerVector();
-                                _shotRigidbody.velocity = initialSpeedVector;
-                                //isShot = true;
-                            }
-                            //#endif
-                            #endregion
-                        }
-                    }
-                    break;
-                case ShotState.ShottingMode:
-                    break;
-                case ShotState.ShotEndMode:
                     break;
                 default:
                     break;
@@ -202,13 +174,11 @@ namespace Cooking.Stage
                     break;
                 case ShotState.AngleMode:
                     break;
-                case ShotState.PowerMeterMode:
-                    break;
                 case ShotState.ShottingMode:
                     {
-                        UIManager.Instance.ChangeUI("ShottingMode");
                         PredictLineManager.Instance.DestroyPredictLine();
                         TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].PlayerAnimatioManage(false);
+                        TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].PlayerPointProperty.ResetGetPointBool();
                     }
                     break;
                 case ShotState.ShotEndMode:
@@ -220,8 +190,8 @@ namespace Cooking.Stage
         }
         public void StopShotPowerMeter()
         {
-            Shot(transform.forward * _shotPower);
             ChangeShotState(ShotState.ShottingMode);
+            Shot(transform.forward * _shotPower);
         }
         /// <summary>
         ///食材に力を加える処理
@@ -251,6 +221,7 @@ namespace Cooking.Stage
         {
             Shot(aIShotPower);
             ChangeShotState(ShotState.ShottingMode);
+            UIManager.Instance.ChangeUI("ShottingMode");
         }
     }
 }

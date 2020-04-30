@@ -22,10 +22,6 @@ namespace Cooking.Stage
         Vector3 targetPosition;
 
         Rigidbody rid;
-        /// <summary>
-        /// 一定半径範囲内に調味料があるかどうかで行動を決める
-        /// </summary>
-        float _searchArea = 50;
 
         private void Start()
         {
@@ -88,27 +84,53 @@ namespace Cooking.Stage
 
             return new Vector2(x, y);
         }
-
+        /// <summary>
+        /// AIのターンになったら呼ばれる
+        /// </summary>
         public void TurnAI()
         {
-            StartCoroutine(Shooting(DecideTarget()));
+            var targetObject = SearchTargetObject();
+            StartCoroutine(Shooting(targetObject));
         }
-
-        private GameObject DecideTarget()
+        /// <summary>
+        /// ターゲットを探す距離を決めて探す(一定半径範囲内にターゲットがあるかどうかで行動を決める) 見つからなければゴールへ
+        /// </summary>
+        /// <returns></returns>
+        private GameObject SearchTargetObject()
         {
+            int i = 25;//累積誤差発生を防ぐためのインクリメント変数
+            //半径100メートルでターゲット検索 無限ループ防止目的で距離制限
+            for (float distance = i / 100f; distance < 100; i++)
+            {
+                distance = i / 100f; //累積誤差の発生を防ぐ 精度を決める変数 精度上げると処理が重い
+                var target = DecideTarget(distance);
+                if (target != null)
+                {
+                    return target;
+                }
+            }
+            return StageSceneManager.Instance.goal;
+        }
+        /// <summary>
+        /// 指定された距離で自分中心に球体の半径を設定し、その範囲の中でターゲットを探す その半径の中で見つからなければnullを返す
+        /// </summary>
+        /// <param name="searchDistance">探索範囲の半径</param>
+        /// <returns></returns>
+        private GameObject DecideTarget(float searchDistance)
+        {
+
             foreach (var seasoning in GimmickManager.Instance.Seasonings)
             {
                 if (seasoning != null)
                 {
                     var distance = CalculateDistance(this.transform.position, seasoning.transform.position);
-                    if (Mathf.Pow(distance.x, 2) + Mathf.Pow(distance.y, 2) <= Mathf.Pow(_searchArea, 2))
+                    if (Mathf.Pow(distance.x, 2) + Mathf.Pow(distance.y, 2) <= Mathf.Pow(searchDistance, 2))
                     {
                         return seasoning;
                     }
                 }
             }
-
-            return StageSceneManager.Instance.goal;
+            return null;
         }
 
         /// <summary>
@@ -132,5 +154,4 @@ namespace Cooking.Stage
             }
         }
     }
-
 }

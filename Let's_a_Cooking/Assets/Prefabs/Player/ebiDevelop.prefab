@@ -334,14 +334,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b2f24c6e7ef524409c06c1026695495, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _skinnedMeshRenderer: {fileID: 2484488461429338661}
+  _RareMaterial: {fileID: 0}
   playerNumber: 0
   foodType: 0
-  _shotPoint: {fileID: 7833259288611724176}
+  _centerPoint: {fileID: 967193702390513020}
   _rigidbody: {fileID: 6236115760655724435}
-  _skinnedMeshRenderer: {fileID: 2484488461429338661}
-  _ebiBlack: {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
-  _ebi: {fileID: 2100000, guid: e4e6277cc55c3ae4bb46a09b8f5547a8, type: 2}
   _foodAnimator: {fileID: 9120880134355479713}
+  _ebiNormalGraphic: {fileID: 2100000, guid: e4e6277cc55c3ae4bb46a09b8f5547a8, type: 2}
 --- !u!114 &3789123603381715187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -381,7 +381,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!1 &4485098196317645658
 GameObject:
   m_ObjectHideFlags: 0

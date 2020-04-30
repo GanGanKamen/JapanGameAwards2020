@@ -32,17 +32,20 @@ namespace Cooking.Stage
             get { return _water; }
         }
         private GameObject[] _water = null;
-
         public GameObject[] Seasonings
         {
             get { return _seasonings; }
         }
         private GameObject[] _seasonings = null;
+        public float[] TargetTowelPosition
+        {
+            get { return _targetTowelPosition; }
+        }
+        private float[] _targetTowelPosition = null;
         /// <summary>
         /// 現状固定位置 皿の上の中からランダム？
         /// </summary>
         Vector3[] _instantiateSeasoningPoint;
-
         [SerializeField] GameObject _seasoningPrefab = null;
         // Start is called before the first frame update
         void Start()
@@ -50,6 +53,7 @@ namespace Cooking.Stage
             //処理を早くするタグ検索
             _water = GameObject.FindGameObjectsWithTag("Water");
             _seasonings = GameObject.FindGameObjectsWithTag("Seasoning");
+
             _instantiateSeasoningPoint = new Vector3[_seasonings.Length];
             for (int i = 0; i < _seasonings.Length; i++)
             {
@@ -94,8 +98,8 @@ namespace Cooking.Stage
                 //}
                 if (_seasonings[i] == null )
                 {
-                    ///50%の確率
-                    if (GetSeedID(10) < 5)
+                    ///  x / (10)%の確率で再出現
+                    if (GetSeedID(10) < 3)
                     {
                         var newSeasoning = Instantiate(_seasoningPrefab);
                         newSeasoning.transform.position = _instantiateSeasoningPoint[i];

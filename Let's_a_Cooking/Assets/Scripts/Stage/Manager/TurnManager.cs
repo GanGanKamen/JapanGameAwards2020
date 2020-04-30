@@ -288,6 +288,10 @@ namespace Cooking.Stage
                         {
                             _activePlayerIndex = 0;
                             _turnNumber++;
+                            if (_turnNumber > StageSceneManager.Instance.TurnNumberOnGameEnd)
+                            {
+                                break;
+                            }
                         }
                         ///順巡り処理(0へ初期化)が終わった後にチェック
                         CheckNextPlayerAI();
@@ -297,7 +301,7 @@ namespace Cooking.Stage
                         {
                             _foodStatuses[_activePlayerIndex].PlayerAnimatioManage(true);
                             _foodStatuses[_activePlayerIndex].SetShotPointOnFoodCenter();
-                            PredictLineManager.Instance.SetPredictLineInstantiatePosition(_foodStatuses[_activePlayerIndex].ShotPoint.position);
+                            PredictLineManager.Instance.SetPredictLineInstantiatePosition(_foodStatuses[_activePlayerIndex].CenterPoint.position);
                         }
                     }
                     break;

@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Cooking.Stage
 {
@@ -48,6 +48,23 @@ namespace Cooking.Stage
                     return value;
                 }
             }
+        }
+        /// <summary>
+        /// 9段階に分かれているショットゲージのうちどれを表示するか選ぶ 最大最小パワーに対する比率を渡す
+        /// </summary>
+        /// <param name="rate">最大最小パワーに対する比率</param>
+        /// <returns></returns>
+        protected Sprite ChoosePowerMeterUIOfInteger(float rate)
+        {
+            var shotPowerGageSprites = UIManager.Instance.PlayModeUI.ShotPowerGageSprites;
+            // ゲージの画像は0番目に最大パワー 最後に最小パワーが入っているため、逆順で返す
+            var shotPowerGageIndex = shotPowerGageSprites.Length - 1 -(int)Mathf.Floor(rate * shotPowerGageSprites.Length);
+            //最大パワーのときのみ 8 - 9でマイナスになる → 0番目に修正
+            if (shotPowerGageIndex < 0)
+            {
+                shotPowerGageIndex = 0;
+            }
+            return shotPowerGageSprites[shotPowerGageIndex];
         }
     }
 }

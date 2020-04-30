@@ -22,7 +22,6 @@ namespace Cooking.Stage
             LookDownMode,
             FrontMode,
             SideMode,
-            PowerMeterMode,
             ShottingMode,
             CancelButton
         }
@@ -96,7 +95,7 @@ namespace Cooking.Stage
                         case ButtonName.SideMode:
                             _uIManager.ChangeUI(_buttonName.ToString());
                             break;
-                        case ButtonName.PowerMeterMode:
+                        case ButtonName.ShottingMode:
                             _uIManager.ChangeUI(_buttonName.ToString());
                             break;
                         default:
@@ -115,9 +114,6 @@ namespace Cooking.Stage
                         case ButtonName.FrontMode:
                             _uIManager.ChangeUI(_buttonName.ToString());
                             break;
-                        case ButtonName.PowerMeterMode:
-                            _uIManager.ChangeUI(_buttonName.ToString());
-                            break;
                         default:
                             break;
                     }
@@ -132,29 +128,6 @@ namespace Cooking.Stage
                             _uIManager.ChangeUI(_buttonName.ToString());
                             break;
                         case ButtonName.SideMode:
-                            _uIManager.ChangeUI(_buttonName.ToString());
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case ScreenState.PowerMeterMode:
-                    switch (_buttonName)
-                    {
-                        case ButtonName.None:
-                            Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", _uIManager.MainUIStateProperty.ToString());
-                            break;
-                        case ButtonName.LookDownMode:
-                            _uIManager.ChangeUI(_buttonName.ToString());
-                            break;
-                        case ButtonName.FrontMode:
-                            _uIManager.ChangeUI(_buttonName.ToString());
-                            break;
-                        case ButtonName.SideMode:
-                            _uIManager.ChangeUI(_buttonName.ToString());
-                            break;
-                        case ButtonName.ShottingMode:
-                            ShotManager.Instance.StopShotPowerMeter();
                             _uIManager.ChangeUI(_buttonName.ToString());
                             break;
                         default:
