@@ -99,17 +99,29 @@ namespace Cooking.Stage
             }
             else if (collision.gameObject.tag == "Wall" && !_isHeadFallOff && !TurnManager.Instance.IsAITurn)//CPUは未実装
             {
-                _shrimpHead.transform.parent = null;
-                _shrimpHead.AddComponent<Rigidbody>();
-                _isHeadFallOff = true;
-                var center = _capsuleCollider.center;
-                _capsuleCollider.center = new Vector3(center.x, center.y, -0.1008767f);
-                _capsuleCollider.height = 0.3048875f;
+                FallOffShrimpHead();
                 _playerPoint.TouchWall();
+            }
+            else if (collision.gameObject.tag == "Knife")
+            {
+                FallOffShrimpHead();
             }
             //初期化変数 着地
             _onKitchen = true;
         }
+        /// <summary>
+        /// エビの頭が取れる
+        /// </summary>
+        private void FallOffShrimpHead()
+        {
+            _shrimpHead.transform.parent = null;
+            _shrimpHead.AddComponent<Rigidbody>();
+            _isHeadFallOff = true;
+            var center = _capsuleCollider.center;
+            _capsuleCollider.center = new Vector3(center.x, center.y, -0.1008767f);
+            _capsuleCollider.height = 0.3048875f;
+        }
+
         private void OnTriggerEnter(Collider other)
         {
             if (other.tag == "Finish")

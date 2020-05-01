@@ -51,7 +51,11 @@ namespace Cooking.Stage
                     {
                         // タッチ位置の移動後、長さを再測し、前回の距離からの相対値を取る。
                         float newTouchDistance = Vector2.Distance(touch1.position, touch2.position);
-                        return (_touchDistanceOnZoomStart - newTouchDistance) / 200.0f;
+                        //差分計算
+                        float deltaDistance = _touchDistanceOnZoomStart - newTouchDistance;
+                        // 1フレーム前の値として記憶
+                        _touchDistanceOnZoomStart = newTouchDistance;
+                        return deltaDistance / 100.0f;
                     }
                 }
                 return 0;

@@ -12,6 +12,8 @@ TagManager:
   - RareSeasoning
   - Wall
   - TowelAbovePoint
+  - FxTemporaire
+  - Knife
   layers:
   - Default
   - TransparentFX
