@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 namespace Cooking.Stage
@@ -32,6 +33,20 @@ namespace Cooking.Stage
         /// </summary>
         bool _lostPointOnTouchDirtDish = true;
         /// <summary>
+        /// ポイント取得可能フラグ
+        /// </summary>
+        bool[] _canGetPointFlags = new bool[Enum.GetValues(typeof(GetPointOnTouch)).Length];
+        /// <summary>
+        /// bool配列 CanGetPoint用
+        /// </summary>
+        enum GetPointOnTouch
+        {
+            DirtDish,
+            Foam,
+            Seasoning,
+            RareSeasoning
+        }
+        /// <summary>
         /// 自分自身のステータス
         /// </summary>
         private FoodStatus _foodStatus;
@@ -43,7 +58,6 @@ namespace Cooking.Stage
         // Start is called before the first frame update
         void Start()
         {
-
         }
 
         // Update is called once per frame
@@ -56,7 +70,36 @@ namespace Cooking.Stage
         /// </summary>
         public void ResetGetPointBool()
         {
-            _lostPointOnTouchDirtDish = true;
+            for (int i = 0; i < _canGetPointFlags.Length; i++)
+            {
+                _canGetPointFlags[i] = true;
+            }
+        }
+        /// <summary>
+        /// 泡に触れる
+        /// </summary>
+        private void TouchFoam()
+        {
+            _getPoint += 10;
+            _canGetPointFlags[(int)GetPointOnTouch.Foam] = false;
+        }
+        /// <summary>
+        /// 調味料に触れる
+        /// </summary>
+        private void TouchSeasoning()
+        {
+            //マイナスを考慮 例 -50 のとき 50点 → 100点
+            _getPoint = 2 * Mathf.Abs(_getPoint);
+            _canGetPointFlags[(int)GetPointOnTouch.Seasoning] = false;
+        }
+        /// <summary>
+        /// レア調味料に触れる
+        /// </summary>
+        private void TouchRareSeasoning()
+        {
+            //マイナスを考慮 例 -50 のとき 50点 → 100点
+            _getPoint = 2 * Mathf.Abs(_getPoint);
+            _canGetPointFlags[(int)GetPointOnTouch.RareSeasoning] = false;
         }
         /// <summary>
         /// 汚れた皿に触れる
@@ -68,7 +111,7 @@ namespace Cooking.Stage
             {
                 _getPoint = -100;
             }
-            _lostPointOnTouchDirtDish = false;
+            _canGetPointFlags[(int)GetPointOnTouch.DirtDish] = false;
         }
         /// <summary>
         /// 壁に触れる 頭が取れていないことが条件
@@ -97,14 +140,6 @@ namespace Cooking.Stage
             _getPoint += 50;
             _isFirstTowel = false;
         }
-        /// <summary>
-        /// 調味料に触れる
-        /// </summary>
-        private void TouchSeasoning()
-        {
-            //マイナスを考慮 例 -50 のとき 50点 → 100点
-            _getPoint = 2 * Mathf.Abs(_getPoint);
-        }
         private void OnTriggerEnter(Collider other)
         {
             if (other.tag == "Water" && _isFirstWash)
@@ -112,13 +147,17 @@ namespace Cooking.Stage
                 FirstWash();
             }
             /// とりあえず調味料はトリガーで
-            else if (other.tag == "Seasoning")
+            else if (other.tag == "Seasoning" && _canGetPointFlags[(int)GetPointOnTouch.Seasoning])
             {
                 TouchSeasoning();
             }
-            else if (other.tag == "RareSeasoning")
+            else if (other.tag == "RareSeasoning" && _canGetPointFlags[(int)GetPointOnTouch.RareSeasoning])
             {
-                TouchSeasoning();
+                TouchRareSeasoning();
+            }
+            else if (other.tag == "Foam" && _canGetPointFlags[(int)GetPointOnTouch.Foam])
+            {
+                TouchFoam();
             }
         }
         private void OnCollisionEnter(Collision collision)
@@ -127,7 +166,7 @@ namespace Cooking.Stage
             {
                 FirstTowelTouch();
             }
-            else if (collision.gameObject.tag == "DirtDish" && _lostPointOnTouchDirtDish)
+            else if (collision.gameObject.tag == "DirtDish" && _canGetPointFlags[(int)GetPointOnTouch.DirtDish])
             {
                 TouchDirtDish();
             }

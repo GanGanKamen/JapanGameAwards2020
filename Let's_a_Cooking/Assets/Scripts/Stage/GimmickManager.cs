@@ -42,27 +42,57 @@ namespace Cooking.Stage
             get { return _targetTowelPositionObjects; }
         }
         private GameObject[] _targetTowelPositionObjects;
-        GameObject _rareSeasoning;
+        private GameObject _rareSeasoning;
+        public Vector3 FoamPosition
+        {
+            get { return _foamPosition; }
+        }
+        /// <summary>
+        /// AI用
+        /// </summary>
+        private Vector3 _foamPosition;
+        private GameObject _foamInstantiateZone;
+        [SerializeField] private GameObject _foamPrefab = null;
         /// <summary>
         /// 現状固定位置 皿の上の中からランダム？
         /// </summary>
-        Vector3[] _instantiateSeasoningPoint;
+        private Vector3[] _instantiateSeasoningPoint;
         [SerializeField] GameObject _seasoningPrefab = null;
         // Start is called before the first frame update
         void Start()
+        {
+            GameObjectFindAndInitialize();
+        }
+        /// <summary>
+        /// オブジェクトを探し、データの初期化を行う
+        /// </summary>
+        private void GameObjectFindAndInitialize()
         {
             //処理を早くするタグ検索
             _water = GameObject.FindGameObjectsWithTag("Water");
             _seasonings = GameObject.FindGameObjectsWithTag("Seasoning");
             _rareSeasoning = GameObject.FindGameObjectWithTag("RareSeasoning");
+            _foamInstantiateZone = GameObject.FindGameObjectWithTag("FoamZone");
+            _foamInstantiateZone.SetActive(false);
             var towelsAbovePoint = GameObject.FindGameObjectsWithTag("TowelAbovePoint");
             _targetTowelPositionObjects = new GameObject[towelsAbovePoint.Length];
             _instantiateSeasoningPoint = new Vector3[_seasonings.Length];
             for (int i = 0; i < _seasonings.Length; i++)
             {
-                _instantiateSeasoningPoint[i] = _seasonings[i].transform.position; 
+                _instantiateSeasoningPoint[i] = _seasonings[i].transform.position;
             }
             _rareSeasoning.SetActive(false);
+            InstantiateFoams();
+        }
+
+        private void InstantiateFoams()
+        {
+            var referencePoint = _foamInstantiateZone.transform.GetChild(0).position;
+            //泡発生領域の2端の座標 この2点の間の座標に発生させる
+            Vector3[] foamInstantiateZone = { referencePoint, referencePoint + _foamInstantiateZone.transform.localScale };
+            var foam = Instantiate(_foamPrefab);
+            //AI用に保存
+            _foamPosition = foam.transform.position = new Vector3(GetFloatSeedID(foamInstantiateZone[0].x, foamInstantiateZone[1].x), GetFloatSeedID(foamInstantiateZone[0].y, foamInstantiateZone[1].y), GetFloatSeedID(foamInstantiateZone[0].z, foamInstantiateZone[1].z));
         }
 
         // Update is called once per frame
@@ -79,7 +109,7 @@ namespace Cooking.Stage
         /// </summary>
         public void WaterManager()
         {
-            var seedId = GetSeedID(_water.Length);
+            var seedId = GetIntSeedID(_water.Length);
             for (int i = 0; i < _water.Length; i++)
             {
                 if (seedId == i)
@@ -107,7 +137,7 @@ namespace Cooking.Stage
                 if (_seasonings[i] == null )
                 {
                     ///  x / (10)%の確率で再出現
-                    if (GetSeedID(10) < 3)
+                    if (GetIntSeedID(10) < 3)
                     {
                         var newSeasoning = Instantiate(_seasoningPrefab);
                         newSeasoning.transform.position = _instantiateSeasoningPoint[i];
@@ -117,12 +147,20 @@ namespace Cooking.Stage
             }
         }
         /// <summary>
-        /// 乱数発生
+        /// 最小値0から指定した範囲のint乱数発生
         /// </summary>
         /// <returns></returns>
-        private int GetSeedID(int rangeOfSeed)
+        private int GetIntSeedID(int rangeOfSeedFromZero)
         {
-            return Random.Range(0, rangeOfSeed);
+            return Random.Range(0, rangeOfSeedFromZero);
+        }
+        /// <summary>
+        /// 最小値から最大値の間でfloat乱数発生
+        /// </summary>
+        /// <returns></returns>
+        private float GetFloatSeedID(float minSeed , float maxSeed)
+        {
+            return Random.Range (minSeed, maxSeed);
         }
     }
 

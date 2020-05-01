@@ -634,8 +634,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1140233157897976292}
   - component: {fileID: 2484488461429338661}
-  - component: {fileID: 7682015478539897405}
-  - component: {fileID: 6398423587818177028}
   m_Layer: 0
   m_Name: polySurface2
   m_TagString: Untagged
@@ -716,33 +714,6 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.10672636, y: -0.029443594, z: 0}
     m_Extent: {x: 0.15332891, y: 0.057391837, z: 0.04570474}
   m_DirtyAABB: 0
---- !u!136 &7682015478539897405
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7357744358427165647}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  m_Radius: 0.032950148
-  m_Height: 0.4048395
-  m_Direction: 0
-  m_Center: {x: 0.0800741, y: 0.02437584, z: 0.4925181}
---- !u!65 &6398423587818177028
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7357744358427165647}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.32873818, y: 0.07288198, z: 0.06723059}
-  m_Center: {x: 0.098665126, y: 0.015896635, z: 0.48871648}
 --- !u!1 &8291686876855394125
 GameObject:
   m_ObjectHideFlags: 0

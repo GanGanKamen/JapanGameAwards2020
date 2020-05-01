@@ -143,6 +143,10 @@ namespace Cooking.Stage
                 ChangeMaterial(other.gameObject.GetComponent<MeshRenderer>().material);
                 Destroy(other.gameObject);
             }
+            else if (other.tag == "Foam")
+            {
+                Destroy(other.gameObject);
+            }
         }
         /// <summary>
         /// 落下後・ゴール後にスタート地点に戻る際呼ばれる
