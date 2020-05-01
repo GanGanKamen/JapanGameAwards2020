@@ -42,9 +42,12 @@ namespace Cooking.Stage
                     if (touch2.phase == TouchPhase.Began)
                     {
                         _touchDistanceOnZoomStart = Vector2.Distance(touch1.position, touch2.position);
-                        return 0;
                     }
-                    else if (touch1.phase == TouchPhase.Moved && touch2.phase == TouchPhase.Moved)
+                    if (touch1.phase == TouchPhase.Stationary && touch2.phase == TouchPhase.Stationary)
+                    {
+                        _touchDistanceOnZoomStart = Vector2.Distance(touch1.position, touch2.position);
+                    }
+                    if (touch1.phase == TouchPhase.Moved && touch2.phase == TouchPhase.Moved)
                     {
                         // タッチ位置の移動後、長さを再測し、前回の距離からの相対値を取る。
                         float newTouchDistance = Vector2.Distance(touch1.position, touch2.position);

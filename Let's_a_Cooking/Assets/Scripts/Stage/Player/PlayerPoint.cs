@@ -116,6 +116,10 @@ namespace Cooking.Stage
             {
                 TouchSeasoning();
             }
+            else if (other.tag == "RareSeasoning")
+            {
+                TouchSeasoning();
+            }
         }
         private void OnCollisionEnter(Collision collision)
         {
