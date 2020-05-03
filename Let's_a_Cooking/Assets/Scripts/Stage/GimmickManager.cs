@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Cooking.Stage
 {
     /// <summary>
-    /// 発生するギミックの制御 水・泡・調味料
+    /// 発生するギミックの制御 水・あわ・調味料
     /// </summary>
     public class GimmickManager : MonoBehaviour
     {
@@ -43,16 +43,46 @@ namespace Cooking.Stage
         }
         private GameObject[] _targetTowelPositionObjects;
         private GameObject _rareSeasoning;
-        public Vector3 FoamPosition
+        /// <summary>
+        /// レア調味料を持っているか判定用
+        /// </summary>
+        public Material RareMaterial
         {
-            get { return _foamPosition; }
+            get { return _rareMaterial; }
+        }
+        [SerializeField] private Material _rareMaterial = null;
+        /// <summary>
+        /// シーン内に存在するあわ
+        /// </summary>
+        public GameObject Bubble
+        {
+            get { return _bubble; }
         }
         /// <summary>
-        /// AI用
+        /// AI用 シーン内にあるあわ
         /// </summary>
-        private Vector3 _foamPosition;
-        private GameObject _foamInstantiateZone;
-        [SerializeField] private GameObject _foamPrefab = null;
+        private GameObject _bubble;
+        private float _changeDirectionTimeCounterOfBubble;
+        /// <summary>
+        /// あわの進行方向を変えるまでにかかる時間(乱数取得)
+        /// </summary>
+        private float _changeDirectionTimeOfBubble;
+        /// <summary>
+        /// ランダムウォーク用
+        /// </summary>
+        Rigidbody _bubbleRigidbody;
+        /// <summary>
+        ///あわ発生領域の2端(x.y.zの最小値と最大値)の座標 この2点の間の座標に発生させる
+        /// </summary>
+        Vector3[] _bubbleLimitPosition;
+        enum LimitValue
+        {
+            Min,Max
+        }
+        private Vector3 _speedVectorOfBubble;
+        [SerializeField] private float _maxSpeedOfBubble = 2f;
+        private GameObject _bubbleInstantiateZone;
+        [SerializeField] private GameObject _bubblePrefab = null;
         /// <summary>
         /// 現状固定位置 皿の上の中からランダム？
         /// </summary>
@@ -72,8 +102,8 @@ namespace Cooking.Stage
             _water = GameObject.FindGameObjectsWithTag("Water");
             _seasonings = GameObject.FindGameObjectsWithTag("Seasoning");
             _rareSeasoning = GameObject.FindGameObjectWithTag("RareSeasoning");
-            _foamInstantiateZone = GameObject.FindGameObjectWithTag("FoamZone");
-            _foamInstantiateZone.SetActive(false);
+            _bubbleInstantiateZone = GameObject.FindGameObjectWithTag("BubbleZone");
+            _bubbleInstantiateZone.SetActive(false);
             var towelsAbovePoint = GameObject.FindGameObjectsWithTag("TowelAbovePoint");
             _targetTowelPositionObjects = new GameObject[towelsAbovePoint.Length];
             _instantiateSeasoningPoint = new Vector3[_seasonings.Length];
@@ -82,23 +112,53 @@ namespace Cooking.Stage
                 _instantiateSeasoningPoint[i] = _seasonings[i].transform.position;
             }
             _rareSeasoning.SetActive(false);
-            InstantiateFoams();
+            InstantiateBubbles();
         }
 
-        private void InstantiateFoams()
+        private void InstantiateBubbles()
         {
-            var referencePoint = _foamInstantiateZone.transform.GetChild(0).position;
-            //泡発生領域の2端の座標 この2点の間の座標に発生させる
-            Vector3[] foamInstantiateZone = { referencePoint, referencePoint + _foamInstantiateZone.transform.localScale };
-            var foam = Instantiate(_foamPrefab);
-            //AI用に保存
-            _foamPosition = foam.transform.position = new Vector3(GetFloatSeedID(foamInstantiateZone[0].x, foamInstantiateZone[1].x), GetFloatSeedID(foamInstantiateZone[0].y, foamInstantiateZone[1].y), GetFloatSeedID(foamInstantiateZone[0].z, foamInstantiateZone[1].z));
+            var referencePoint = _bubbleInstantiateZone.transform.GetChild(0).position;
+            _bubble = Instantiate(_bubblePrefab);
+            _bubbleRigidbody = _bubble.GetComponent<Rigidbody>();
+            _bubbleLimitPosition = new Vector3[] { referencePoint, referencePoint + _bubbleInstantiateZone.transform.localScale };
+            _bubble.transform.position = new Vector3(GetRandomFloat(_bubbleLimitPosition[(int)LimitValue.Min].x, _bubbleLimitPosition[(int)LimitValue.Max].x), GetRandomFloat(_bubbleLimitPosition[(int)LimitValue.Min].y, _bubbleLimitPosition[(int)LimitValue.Max].y), GetRandomFloat(_bubbleLimitPosition[(int)LimitValue.Min].z, _bubbleLimitPosition[(int)LimitValue.Max].z));
+            ChangeBubbleSpeedVectorDirection();
         }
 
         // Update is called once per frame
         void Update()
         {
-
+            if(_bubble != null)
+            ManageBubbleMove();
+        }
+        /// <summary>
+        /// あわの挙動の管理
+        /// </summary>
+        private void ManageBubbleMove()
+        {
+            if (_bubble.transform.position.x < _bubbleLimitPosition[(int)LimitValue.Min].x || _bubble.transform.position.y < _bubbleLimitPosition[(int)LimitValue.Min].y || _bubble.transform.position.z < _bubbleLimitPosition[(int)LimitValue.Min].z )
+            {
+                ChangeBubbleSpeedVectorDirection();
+            }
+            else if (_bubble.transform.position.x > _bubbleLimitPosition[(int)LimitValue.Max].x || _bubble.transform.position.y > _bubbleLimitPosition[(int)LimitValue.Max].y || _bubble.transform.position.z > _bubbleLimitPosition[(int)LimitValue.Max].z )
+            {
+                ChangeBubbleSpeedVectorDirection();
+            }
+            else if (_changeDirectionTimeCounterOfBubble >= _changeDirectionTimeOfBubble)
+            {
+                ChangeBubbleSpeedVectorDirection();
+            }
+            else
+            {
+                _changeDirectionTimeCounterOfBubble += Time.deltaTime;
+            }
+            _bubbleRigidbody.velocity = _speedVectorOfBubble;
+        }
+        private void ChangeBubbleSpeedVectorDirection()
+        {
+            _speedVectorOfBubble = new Vector3(GetRandomFloat(-_maxSpeedOfBubble, _maxSpeedOfBubble), GetRandomFloat(-_maxSpeedOfBubble, _maxSpeedOfBubble), GetRandomFloat(-_maxSpeedOfBubble, _maxSpeedOfBubble));
+            _changeDirectionTimeOfBubble = GetRandomFloat(1, 5);
+            _changeDirectionTimeCounterOfBubble = 0;
         }
         public void AppearRareSeasoning()
         {
@@ -109,7 +169,7 @@ namespace Cooking.Stage
         /// </summary>
         public void WaterManager()
         {
-            var seedId = GetIntSeedID(_water.Length);
+            var seedId = GetRandomInt(_water.Length);
             for (int i = 0; i < _water.Length; i++)
             {
                 if (seedId == i)
@@ -137,7 +197,7 @@ namespace Cooking.Stage
                 if (_seasonings[i] == null )
                 {
                     ///  x / (10)%の確率で再出現
-                    if (GetIntSeedID(10) < 3)
+                    if (GetRandomInt(10) < 3)
                     {
                         var newSeasoning = Instantiate(_seasoningPrefab);
                         newSeasoning.transform.position = _instantiateSeasoningPoint[i];
@@ -150,7 +210,7 @@ namespace Cooking.Stage
         /// 最小値0から指定した範囲のint乱数発生
         /// </summary>
         /// <returns></returns>
-        private int GetIntSeedID(int rangeOfSeedFromZero)
+        private int GetRandomInt(int rangeOfSeedFromZero)
         {
             return Random.Range(0, rangeOfSeedFromZero);
         }
@@ -158,9 +218,9 @@ namespace Cooking.Stage
         /// 最小値から最大値の間でfloat乱数発生
         /// </summary>
         /// <returns></returns>
-        private float GetFloatSeedID(float minSeed , float maxSeed)
+        private float GetRandomFloat(float min , float max)
         {
-            return Random.Range (minSeed, maxSeed);
+            return Random.Range (min, max);
         }
     }
 

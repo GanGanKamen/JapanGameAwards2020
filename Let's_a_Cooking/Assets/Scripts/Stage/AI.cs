@@ -23,17 +23,17 @@ namespace Cooking.Stage
 
         Rigidbody rid;
 
-        private void Start()
+        new private void Start()
         {
             //実験用コード
             //StartCoroutine(Shooting(GameObject.FindGameObjectWithTag("Finish")));
-            // 射出
-            rid = ThrowingObject.GetComponent<Rigidbody>();
+            //射出
+           rid = ThrowingObject.GetComponent<Rigidbody>();
         }
 
-        private void Update()
-        {
-        }
+        //private void Update()
+        //{
+        //}
 
         /// <summary>
         /// ボールを射出する
@@ -109,7 +109,7 @@ namespace Cooking.Stage
                     return target;
                 }
             }
-            return StageSceneManager.Instance.goal;
+            return StageSceneManager.Instance.Goal;
         }
         /// <summary>
         /// 指定された距離で自分中心に球体の半径を設定し、その範囲の中でターゲットを探す その半径の中で見つからなければnullを返す

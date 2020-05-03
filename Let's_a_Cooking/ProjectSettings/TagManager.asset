@@ -14,8 +14,8 @@ TagManager:
   - TowelAbovePoint
   - FxTemporaire
   - Knife
-  - Foam
-  - FoamZone
+  - Bubble
+  - BubbleZone
   layers:
   - Default
   - TransparentFX

@@ -177,7 +177,23 @@ namespace Cooking.Stage
                 case ShotState.ShottingMode:
                     {
                         PredictLineManager.Instance.DestroyPredictLine();
-                        TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].PlayerAnimatioManage(false);
+                        if (!TurnManager.Instance.IsAITurn)
+                        {
+                            switch (TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].FoodType)
+                            {
+                                case FoodType.Shrimp:
+                                    TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].PlayerAnimatioManage(false);
+                                    break;
+                                case FoodType.Egg:
+                                    break;
+                                case FoodType.Chicken:
+                                    break;
+                                case FoodType.Sausage:
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
                         TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].PlayerPointProperty.ResetGetPointBool();
                     }
                     break;

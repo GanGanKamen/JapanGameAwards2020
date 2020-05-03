@@ -43,8 +43,8 @@ GameObject:
   - component: {fileID: 2961669370795248147}
   - component: {fileID: 2961669370795248146}
   m_Layer: 0
-  m_Name: FoamZone
-  m_TagString: FoamZone
+  m_Name: BubbleZone
+  m_TagString: BubbleZone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

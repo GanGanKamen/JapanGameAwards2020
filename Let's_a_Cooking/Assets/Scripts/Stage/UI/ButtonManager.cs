@@ -48,16 +48,24 @@ namespace Cooking.Stage
                             Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", _uIManager.MainUIStateProperty.ToString());
                             break;
                         case ButtonName.Shrimp:
-                            _uIManager.ChooseFood(_buttonName.ToString());
+                            //index++; 複数プレイヤー対応→TurnManager
+                            StageSceneManager.Instance.SetChooseFoodNames(_buttonName.ToString());
+                            _uIManager.ChangeUI("DecideOrder");
                             break;
                         case ButtonName.Egg:
-                            _uIManager.ChooseFood(_buttonName.ToString());
+                            //index++; 複数プレイヤー対応→TurnManager
+                            StageSceneManager.Instance.SetChooseFoodNames(_buttonName.ToString());
+                            _uIManager.ChangeUI("DecideOrder");
                             break;
                         case ButtonName.Chicken:
-                            _uIManager.ChooseFood(_buttonName.ToString());
+                            //index++; 複数プレイヤー対応→TurnManager
+                            StageSceneManager.Instance.SetChooseFoodNames(_buttonName.ToString());
+                            _uIManager.ChangeUI("DecideOrder");
                             break;
                         case ButtonName.Sausage:
-                            _uIManager.ChooseFood(_buttonName.ToString());
+                            //index++; 複数プレイヤー対応→TurnManager
+                            StageSceneManager.Instance.SetChooseFoodNames(_buttonName.ToString());
+                            _uIManager.ChangeUI("DecideOrder");
                             break;
                         default:
                             break;

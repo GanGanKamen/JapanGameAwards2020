@@ -29,10 +29,6 @@ namespace Cooking.Stage
         /// </summary>
         bool _isFirstWash = true, _isFirstTowel = true;
         /// <summary>
-        /// 汚れた皿に触れたときポイントを失うフラグ
-        /// </summary>
-        bool _lostPointOnTouchDirtDish = true;
-        /// <summary>
         /// ポイント取得可能フラグ
         /// </summary>
         bool[] _canGetPointFlags = new bool[Enum.GetValues(typeof(GetPointOnTouch)).Length];
@@ -42,7 +38,7 @@ namespace Cooking.Stage
         enum GetPointOnTouch
         {
             DirtDish,
-            Foam,
+            Bubble,
             Seasoning,
             RareSeasoning
         }
@@ -54,6 +50,7 @@ namespace Cooking.Stage
         private void OnEnable()
         {
             _foodStatus = GetComponent<FoodStatus>();
+            ComponentCheck.CheckNecessaryCopmonent<FoodStatus>(this , true);
         }
         // Start is called before the first frame update
         void Start()
@@ -76,12 +73,12 @@ namespace Cooking.Stage
             }
         }
         /// <summary>
-        /// 泡に触れる
+        /// あわに触れる
         /// </summary>
-        private void TouchFoam()
+        private void TouchBubble()
         {
             _getPoint += 10;
-            _canGetPointFlags[(int)GetPointOnTouch.Foam] = false;
+            _canGetPointFlags[(int)GetPointOnTouch.Bubble] = false;
         }
         /// <summary>
         /// 調味料に触れる
@@ -155,9 +152,9 @@ namespace Cooking.Stage
             {
                 TouchRareSeasoning();
             }
-            else if (other.tag == "Foam" && _canGetPointFlags[(int)GetPointOnTouch.Foam])
+            else if (other.tag == "Bubble" && _canGetPointFlags[(int)GetPointOnTouch.Bubble])
             {
-                TouchFoam();
+                TouchBubble();
             }
         }
         private void OnCollisionEnter(Collision collision)
