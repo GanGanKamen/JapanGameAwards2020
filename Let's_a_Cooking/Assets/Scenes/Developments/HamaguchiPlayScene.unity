@@ -2598,7 +2598,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cameraRotateCenter: {fileID: 55672308}
-  _cameraObjectsTransform: {fileID: 1097188509}
+  _cameraObjectParentTransform: {fileID: 1097188508}
   _changeTopCameraTime: 0.3
   camNo: 0
   topCam: {fileID: 1269139271}
@@ -4168,7 +4168,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rareMaterial: {fileID: 2100000, guid: 33e48cfe0de0f0c49b45bfe313a515f8, type: 2}
-  _maxSpeedOfBubble: 1
+  _maxSpeedOfBubble: 0.4
   _bubblePrefab: {fileID: 5027561759296517961, guid: dcb3cfb061bc5df44975ced65c75c1d1,
     type: 3}
   _seasoningPrefab: {fileID: 8995005209892001127, guid: f69685df7cd5f944c8ab522e9b303d24,
@@ -4661,7 +4661,7 @@ MonoBehaviour:
   - {fileID: 2128107329363381656, guid: eae7d126522a4104a8702d41912aa414, type: 3}
   - {fileID: 7341511688390596188, guid: ebeacf18643c8574a9621f8cc57f2c17, type: 3}
   - {fileID: 8487068949613764779, guid: a3106b04a938b0249955707de2456287, type: 3}
-  - {fileID: 8057611580657491502, guid: 5085bf5c6c21594448ac20eee276799c, type: 3}
+  - {fileID: 4689672585035630470, guid: 0872c9ccb44e03a468883e612612a7f1, type: 3}
   _aIPrefabs:
   - {fileID: 6953393799243547356, guid: d1cf84e6008dd324799d19fd84cb14ba, type: 3}
   - {fileID: 0}
@@ -9773,14 +9773,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1367310551}
-  m_LocalRotation: {x: 0.017452212, y: 0.005235161, z: -0.00009138031, w: 0.99983406}
-  m_LocalPosition: {x: 0, y: 0.8, z: -1.8}
+  m_LocalRotation: {x: 0.01745239, y: 0.00261759, z: -0.000045690314, w: 0.9998443}
+  m_LocalPosition: {x: 0.14, y: 0.18, z: -1.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1782000389}
   m_Father: {fileID: 55672308}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 2, y: 0.6, z: 0}
+  m_LocalEulerAnglesHint: {x: 2, y: 0.3, z: 0}
 --- !u!114 &1367310553
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13218,8 +13218,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1782000389}
   - component: {fileID: 1782000392}
-  - component: {fileID: 1782000391}
   - component: {fileID: 1782000390}
+  - component: {fileID: 1782000391}
   m_Layer: 0
   m_Name: cm
   m_TagString: Untagged
@@ -13253,11 +13253,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa7155796051b734daa718462081dc5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_BindingMode: 1
-  m_FollowOffset: {x: 0, y: -11.2016, z: 5.157236}
-  m_XDamping: 1
-  m_YDamping: 1
-  m_ZDamping: 1
+  m_BindingMode: 0
+  m_FollowOffset: {x: 0, y: 1, z: -2}
+  m_XDamping: 0
+  m_YDamping: 0
+  m_ZDamping: 0
   m_AngularDampingMode: 0
   m_PitchDamping: 0
   m_YawDamping: 0

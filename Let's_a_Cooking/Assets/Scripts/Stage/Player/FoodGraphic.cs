@@ -17,7 +17,6 @@ namespace Cooking.Stage
         [SerializeField] protected Material _foodNormalGraphic = null;
         protected virtual void Start()
         {
-            Debug.Log(_foodMeshRenderer);
         }
         /// <summary>
         /// レア調味料を持っているか

@@ -123,7 +123,7 @@ namespace Cooking.Stage
         {
             if (_turnManager.IsAITurn)
             {
-                UIManager.Instance.ChangeUI("SideMode");
+                UIManager.Instance.ChangeUI("FrontMode");
                 _defaultIsAIImage.SetActive(true);
                 foreach (var shotStartButton in _shotButtons)
                 {

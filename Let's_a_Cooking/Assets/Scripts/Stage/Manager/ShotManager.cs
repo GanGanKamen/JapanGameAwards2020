@@ -88,12 +88,7 @@ namespace Cooking.Stage
                         _shotPower = ChangeShotPower(_shotParameter.MinShotPower, _shotParameter.MaxShotPower, 2 * Mathf.Abs(_shotParameter.MaxShotPower - _shotParameter.MinShotPower), _shotPower);//速度ログ 5 20 (差15のとき)→ 30  差の倍速で算出   
                         if (!TurnManager.Instance.IsAITurn)
                         {
-                            //左クリックされた時に呼び出される
-                            //if (!PreventTouchInputCollision.Instance.ShotInvalid[(int)PreventTouchInputCollision.ButtonName.ShotButton] && TouchInput.GetTouchPhase() == TouchInfo.Down)
-                            //{
-                            //}
                             #region デバッグコード スペースを押すと最大パワーで飛ぶ
-
                             //#if UNITY_EDITOR
                             if (Input.GetKeyDown(KeyCode.Space))
                             {
@@ -207,7 +202,8 @@ namespace Cooking.Stage
         public void StopShotPowerMeter()
         {
             ChangeShotState(ShotState.ShottingMode);
-            CameraManager.Instance.SetCameraLocalPosition();
+            //CameraManager.Instance.SetCameraLocalPosition();
+            CameraManager.Instance.SetCameraPositionNearPlayer();
             Shot(transform.forward * _shotPower);
         }
         /// <summary>

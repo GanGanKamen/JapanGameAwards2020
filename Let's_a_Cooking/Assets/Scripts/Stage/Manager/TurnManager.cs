@@ -335,7 +335,7 @@ namespace Cooking.Stage
                     _foodStatuses[playerIndex].transform.eulerAngles = Vector3.zero;
                     break;
                 case FoodType.Sausage:
-                    _foodStatuses[playerIndex].transform.eulerAngles = new Vector3(90,0,0);
+                    _foodStatuses[playerIndex].transform.eulerAngles = Vector3.zero;
                     break;
                 default:
                     break;

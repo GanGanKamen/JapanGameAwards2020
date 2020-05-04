@@ -260,7 +260,7 @@ MonoBehaviour:
   _foodSkinnedMeshRenderer: {fileID: 2484488461429338661}
   _foodMeshRenderer: {fileID: 0}
   _foodNormalGraphic: {fileID: 2100000, guid: e4e6277cc55c3ae4bb46a09b8f5547a8, type: 2}
-  _centerPoint: {fileID: 967193702390513020}
+  _centerPoint: {fileID: 7833259288611724176}
   _rigidbody: {fileID: 4479837848373791946}
 --- !u!114 &6626410273865131183
 MonoBehaviour:
