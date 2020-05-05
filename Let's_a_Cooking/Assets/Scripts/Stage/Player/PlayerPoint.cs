@@ -19,7 +19,7 @@ namespace Cooking.Stage
         /// <summary>
         /// 初期ポイント
         /// </summary>
-        private const int _firstPoint = 100;
+        private int _firstPoint = 100;
         /// <summary>
         /// 獲得ポイント
         /// </summary>
@@ -43,7 +43,7 @@ namespace Cooking.Stage
             RareSeasoning
         }
         /// <summary>
-        /// 自分自身のステータス
+        /// 自分自身のステータス レア調味料を持つかどうかはStageSceneが判定するからいらない予定
         /// </summary>
         private FoodStatus _foodStatus;
 
@@ -61,6 +61,36 @@ namespace Cooking.Stage
         void Update()
         {
 
+        }
+        /// <summary>
+        /// レア調味料を持ってゴール
+        /// </summary>
+        public void GoalWithRareSeasoning()
+        {
+            //マイナスを考慮 例 -50 のとき 50点 → 100点
+            _getPoint = 2 * Mathf.Abs(_getPoint);
+            _firstPoint = 2 * Mathf.Abs(_getPoint);
+        }
+        /// <summary>
+        /// 調味料が洗い流される
+        /// </summary>
+        public void SeasoningWashAwayed()
+        {
+            _getPoint /= 2;
+        }
+        /// <summary>
+        /// 卵に亀裂が入る
+        /// </summary>
+        public void EggCracked()
+        {
+            _getPoint += 10;
+        }
+        /// <summary>
+        /// 食材が切られたときに呼ばれる 卵は割れたとき
+        /// </summary>
+        public void CutFood()
+        {
+            _getPoint += 200;
         }
         /// <summary>
         /// ショット時に呼ばれる アニメーションなどで触れるのでこのタイミング 衝突時ポイント獲得フラグのリセット

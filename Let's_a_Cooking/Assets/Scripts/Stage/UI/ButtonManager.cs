@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,6 +28,8 @@ namespace Cooking.Stage
         }
         private ButtonName _buttonName = ButtonName.None;
         private UIManager _uIManager;
+        [SerializeField] private float _shotButtonWaitTime = 1.5f;
+
         private void Start()
         {
             _uIManager = UIManager.Instance;
@@ -104,7 +107,10 @@ namespace Cooking.Stage
                             _uIManager.ChangeUI(_buttonName.ToString());
                             break;
                         case ButtonName.ShottingMode:
-                            _uIManager.ChangeUI(_buttonName.ToString());
+                            _uIManager.PlayModeUI.ChangeShotButtonTouched(true);
+                            StartCoroutine(ShotButtonWait());
+                            //パワーメーターを停止して待機させる
+                            ShotManager.Instance.ChangeShotState(ShotState.WaitMode);
                             break;
                         default:
                             break;
@@ -178,5 +184,11 @@ namespace Cooking.Stage
                     break;
             }
         }
+        IEnumerator ShotButtonWait()
+        {
+            yield return new WaitForSeconds(_shotButtonWaitTime);
+            _uIManager.ChangeUI(_buttonName.ToString());
+        }
+
     }
 }
