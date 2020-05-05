@@ -37,11 +37,6 @@ namespace Cooking.Stage
         /// 指定しないとPivotになる 予測線の開始位置
         /// </summary>
         [SerializeField] private Transform _centerPoint = null;
-        public Transform FoodPositionForCamera
-        {
-            get { return _foodPositionForCamera; }
-        }
-        [SerializeField] private Transform _foodPositionForCamera = null;
         /// <summary>
         /// ショット時に使用。TurnControllerに管理してもらう。
         /// </summary>
@@ -50,16 +45,6 @@ namespace Cooking.Stage
             get { return _rigidbody; }
         }
         [SerializeField] private Rigidbody _rigidbody = null;
-        public bool IsFoodInStartArea
-        {
-            get { return _isFoodInStartArea; }
-        }
-        private bool _isFoodInStartArea = true;
-        /// <summary>
-        /// 各食材のレイヤーの初期値(= Default) OnEnableで初期化
-        /// </summary>
-        private LayerMask _foodDefaultLayer = 0;
-        [SerializeField] private LayerMask _foodLayerInStartArea = 0;
         public bool IsFall
         {
             get { return _isFall; }
@@ -87,25 +72,21 @@ namespace Cooking.Stage
             //if (StageSceneManager.Instance.GameState == StageGameState.Preparation || ShotManager.Instance.ShotModeProperty == ShotState.ShotEndMode)
                 _foodType = foodType;
         }
+
         private void OnEnable()
         {
             if (_rigidbody == null) _rigidbody = GetComponentInChildren<Rigidbody>();
             _playerPoint = GetComponent<PlayerPoint>();
             _shrimp = GetComponent<Shrimp>();
-            _foodDefaultLayer = this.gameObject.layer;
-            SetFoodLayer(_foodLayerInStartArea);
         }
-
         protected override void Start()
         {
             base.Start();
         }
-        /// <summary>
-        /// 派生クラスのAIでも実行される
-        /// </summary>
+        // Update is called once per frame
         void Update()
         {
-           _foodPositionForCamera.transform.position = this.transform.position;
+            Debug.Log(_foodType);
         }
         private void OnCollisionEnter(Collision collision)
         {
@@ -138,6 +119,7 @@ namespace Cooking.Stage
             //初期化変数 着地
             _onKitchen = true;
         }
+
         private void OnTriggerEnter(Collider other)
         {
             if (other.tag == "Finish")
@@ -162,32 +144,6 @@ namespace Cooking.Stage
             else if (other.tag == "Bubble")
             {
                 Destroy(other.gameObject);
-            }
-            else if (other.tag == "StartArea" && !_isFoodInStartArea)//落下後復帰想定
-            {
-                _isFoodInStartArea = true;
-                SetFoodLayer(_foodLayerInStartArea);
-            }
-        }
-        private void OnTriggerExit(Collider other)
-        {
-            if (other.tag == "StartArea" && _isFoodInStartArea)
-            {
-                _isFoodInStartArea = false;
-                SetFoodLayer(_foodDefaultLayer);
-            }
-        }
-        /// <summary>
-        /// 食材のレイヤーを指定 StartAreaとDefault
-        /// </summary>
-        /// <param name="layerMask"></param>
-        private void SetFoodLayer(LayerMask layerMask)
-        {
-            var layer = CalculateLayerNumber.ChangeSingleLayerNumberFromLayerValue(layerMask);
-            var foodChildObjects = this.transform.root.GetComponentsInChildren<Transform>();
-            foreach (var foodChildObject in foodChildObjects)
-            {
-                foodChildObject.gameObject.layer = layer;
             }
         }
         public void SetPlayerNumber(int playerNumber )
@@ -217,11 +173,6 @@ namespace Cooking.Stage
         {
             if (_centerPoint != null)
                 _centerPoint.position = this.transform.position;
-        }
-        public void SetParentObject(Transform transform)
-        {
-            //食材のrotationの影響を受けるのを防ぐ
-            _foodPositionForCamera.parent = transform;
         }
     }
 }

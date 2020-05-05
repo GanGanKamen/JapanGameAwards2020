@@ -199,14 +199,12 @@ namespace Cooking.Stage
                     break;
             }
         }
-        /// <summary>
-        /// ショット状態へ移動
-        /// </summary>
-        public void ShotStart()
+        public void StopShotPowerMeter()
         {
+            ChangeShotState(ShotState.ShottingMode);
+            //CameraManager.Instance.SetCameraLocalPosition();
             CameraManager.Instance.SetCameraPositionNearPlayer();
             Shot(transform.forward * _shotPower);
-            ChangeShotState(ShotState.ShottingMode);
         }
         /// <summary>
         ///食材に力を加える処理

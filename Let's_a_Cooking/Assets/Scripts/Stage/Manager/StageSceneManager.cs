@@ -71,7 +71,7 @@ namespace Cooking.Stage
         {
             get { return _goal; }
         }
-       [SerializeField] private GameObject _goal = null;
+       [SerializeField] private GameObject _goal;
         /// <summary>
         /// 終了時の書くプレイヤーの合計ポイント
         /// </summary>
@@ -97,11 +97,6 @@ namespace Cooking.Stage
             get { return _foodStateOnGame; }
         }
         private FoodStateOnGame _foodStateOnGame = FoodStateOnGame.Normal;
-        /// <summary>
-        /// ヒエラルキー整頓用の食材の親オブジェクト
-        /// </summary>
-        [SerializeField] Transform _foodPositionsParent = null;
-
         /// <summary>
         /// 選ばれた食材に応じてプレイヤーを生成するために選んだ文字列保存 食材を選ぶ際のマウスクリックで呼ばれる
         /// </summary>
@@ -267,11 +262,10 @@ namespace Cooking.Stage
                     FoodType playerFoodType = FoodType.Shrimp;
                     //文字列に変換後、正しい値を代入
                     playerFoodType = EnumParseMethod.TryParseAndDebugAssertFormatAndReturnResult(_chooseFoodNames[playerNumber], true, playerFoodType);
-                    var playerStatus = Instantiate(ChooseInstantiatePrefab(playerFoodType , false).GetComponentInChildren<FoodStatus>());
+                    var playerStatus = Instantiate(ChooseInstantiatePrefab(playerFoodType , false).GetComponent<FoodStatus>());
                     playerStatus.SetFoodTypeOnInitialize(playerFoodType);
                     _turnManager.SetPlayerInformationsOnInitialize(playerNumber , playerStatus);
                     _turnManager.ResetPlayerOnStartPoint(GetPlayerStartPoint(playerNumber),playerNumber);
-                    playerStatus.SetParentObject(_foodPositionsParent);
                 }
                 else
                 {
@@ -283,7 +277,6 @@ namespace Cooking.Stage
                     aiStatus.SetFoodTypeOnInitialize(aIFoodType);
                     _turnManager.SetPlayerInformationsOnInitialize(playerNumber, aiStatus);
                     _turnManager.ResetPlayerOnStartPoint(GetPlayerStartPoint(playerNumber),playerNumber);
-                    aiStatus.SetParentObject(_foodPositionsParent);
                 }
             }
             InitializePlayerPointList(GameManager.Instance.PlayerSumNumber);
@@ -361,7 +354,7 @@ namespace Cooking.Stage
         {
             if (isAI)
             {
-                return Instantiate(_aIPrefabs[0]).GetComponentInChildren<FoodStatus>();
+                return Instantiate(_aIPrefabs[0]).GetComponent<FoodStatus>();
             }
             else
             {

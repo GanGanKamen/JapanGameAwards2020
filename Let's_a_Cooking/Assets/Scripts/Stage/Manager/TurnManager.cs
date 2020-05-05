@@ -58,14 +58,6 @@ namespace Cooking.Stage
             get { return _orderPower; }
         }
        private float[] _orderPower;
-        /// <summary>
-        /// ターン終了後の処理分岐用
-        /// </summary>
-        enum AfterChangeTurnState
-        {
-            NotChange, Change, GameEnd
-        }
-
 
         #region インスタンスへのstaticなアクセスポイント
         /// <summary>
@@ -241,16 +233,7 @@ namespace Cooking.Stage
                     //10ターン目が終わったら終了(SceneManager)
                 case StageGameState.Play:
                     {
-                        if (_foodStatuses[_activePlayerIndex].IsFoodInStartArea)
-                        {
-                            var playerNumber = GetPlayerNumberFromActivePlayerIndex(_activePlayerIndex) - 1;
-                            var startPoint = StageSceneManager.Instance.GetPlayerStartPoint(playerNumber);
-                            //スタート地点へ配置
-                            ResetPlayerOnStartPoint(startPoint, _activePlayerIndex);
-                            InitializeOnTurnChange();
-                            break;
-                        }
-                        else if (_foodStatuses[_activePlayerIndex].IsGoal)
+                        if (_foodStatuses[_activePlayerIndex].IsGoal)
                         {
                             StageSceneManager.Instance.AddPlayerPointToList(_activePlayerIndex);
                             var foodType = _foodStatuses[_activePlayerIndex].FoodType;
@@ -271,26 +254,43 @@ namespace Cooking.Stage
                             }
                             var startPoint = StageSceneManager.Instance.GetPlayerStartPoint(playerNumber);
                             //スタート地点へ配置
-                            ResetPlayerOnStartPoint(startPoint, _activePlayerIndex);
+                            ResetPlayerOnStartPoint(startPoint,_activePlayerIndex);
                         }
-                        //次のプレイヤーに順番を回す
+                        //次のターン数へ
                         _activePlayerIndex++;
-                        switch (IsChangeTurn())
+                        if (_activePlayerIndex == GameManager.Instance.PlayerSumNumber)
                         {
-                            case AfterChangeTurnState.NotChange:
+                            _activePlayerIndex = 0;
+                            _turnNumber++;
+                            if (_turnNumber > StageSceneManager.Instance.TurnNumberOnGameEnd)
+                            {
                                 break;
-                            case AfterChangeTurnState.Change:
-                                _activePlayerIndex = 0;
-                                _turnNumber++;
-                                break;
-                            case AfterChangeTurnState.GameEnd:
-                                //処理終了
-                                return;
-                            default:
-                                break;
+                            }
                         }
-                        InitializeOnTurnChange();
-                        if (StageSceneManager.Instance.TurnNumberOnGameEnd - _turnNumber == 2)//ラスト3ターン
+                        ///順巡り処理(0へ初期化)が終わった後にチェック
+                        CheckNextPlayerAI();
+                        UIManager.Instance.ResetUIMode();
+                        SetObjectsPositionForNextPlayer(_activePlayerIndex);
+                        if (!_isAITurn)
+                        {
+                            switch (_foodStatuses[_activePlayerIndex].FoodType)
+                            {
+                                case FoodType.Shrimp:
+                                    _foodStatuses[_activePlayerIndex].PlayerAnimatioManage(true);
+                                    _foodStatuses[_activePlayerIndex].SetShotPointOnFoodCenter();
+                                    break;
+                                case FoodType.Egg:
+                                    break;
+                                case FoodType.Chicken:
+                                    break;
+                                case FoodType.Sausage:
+                                    break;
+                                default:
+                                    break;
+                            }
+                            PredictLineManager.Instance.SetPredictLineInstantiatePosition(_foodStatuses[_activePlayerIndex].CenterPoint.position);
+                        }
+                        if (StageSceneManager.Instance.TurnNumberOnGameEnd - _turnNumber == 2)
                         {
                             GimmickManager.Instance.AppearRareSeasoning();
                         }
@@ -302,64 +302,6 @@ namespace Cooking.Stage
                     break;
             }
         }
-
-        private AfterChangeTurnState IsChangeTurn()
-        {
-            if (_activePlayerIndex == GameManager.Instance.PlayerSumNumber)
-            {
-                if (_turnNumber > StageSceneManager.Instance.TurnNumberOnGameEnd)
-                {
-                    return AfterChangeTurnState.GameEnd;
-                }
-                else
-                {
-                    return AfterChangeTurnState.Change;
-                }
-            }
-            else
-            {
-                return AfterChangeTurnState.NotChange;
-            }
-        }
-
-        /// <summary>
-        /// ターンが変わるときの初期化処理
-        /// </summary>
-        private void InitializeOnTurnChange()
-        {
-            ///順巡り処理(0へ初期化)が終わった後にチェック
-            CheckNextPlayerAI();
-            UIManager.Instance.ResetUIMode();
-            SetObjectsPositionForNextPlayer(_activePlayerIndex);
-            CheckPlayerAnimationPlay();
-            PredictLineManager.Instance.SetPredictLineInstantiatePosition(_foodStatuses[_activePlayerIndex].CenterPoint.position);
-        }
-
-        /// <summary>
-        /// プレイヤーのアニメーションを再生するか判断
-        /// </summary>
-        private void CheckPlayerAnimationPlay()
-        {
-            if (!_isAITurn)
-            {
-                switch (_foodStatuses[_activePlayerIndex].FoodType)
-                {
-                    case FoodType.Shrimp:
-                        _foodStatuses[_activePlayerIndex].PlayerAnimatioManage(true);
-                        _foodStatuses[_activePlayerIndex].SetShotPointOnFoodCenter();
-                        break;
-                    case FoodType.Egg:
-                        break;
-                    case FoodType.Chicken:
-                        break;
-                    case FoodType.Sausage:
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-
         /// <summary>
         /// 次のターンのプレイヤーのためにオブジェクトの場所をリセット
         /// </summary>

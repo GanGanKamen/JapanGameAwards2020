@@ -296,7 +296,7 @@ namespace Cooking.Stage
                 case ScreenState.ShottingMode:
                     _beforeShotScreenState = ScreenState.ShottingMode;
                     if (!_turnManager.IsAITurn)
-                        ShotManager.Instance.ShotStart();
+                        ShotManager.Instance.StopShotPowerMeter();
                     break;
                 case ScreenState.Finish:
                     _finishUIMode = FinishUIMode.Finish;

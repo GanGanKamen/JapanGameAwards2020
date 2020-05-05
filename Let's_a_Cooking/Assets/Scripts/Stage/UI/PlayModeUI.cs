@@ -27,11 +27,6 @@ namespace Cooking.Stage
             get { return _shotPowerGageSprites; }
         }
         private Sprite[] _shotPowerGageSprites = null;
-        [SerializeField] private Sprite[] _shotButtonSprites;
-        enum ShotButtonSprite
-        {
-            Normal,Touched
-        }
         /// <summary>
         /// AIのターン中はショット開始ボタンは表示しない
         /// </summary>
@@ -115,27 +110,6 @@ namespace Cooking.Stage
             }
         }
         /// <summary>
-        /// ショットボタンの見た目変更
-        /// </summary>
-        public void ChangeShotButtonTouched(bool isTouched)
-        {
-            if (isTouched)
-            {
-                for (int i = 0; i < _shotButtons.Length; i++)
-                {
-                    _shotButtons[i].GetComponent<Image>().sprite = _shotButtonSprites[(int)ShotButtonSprite.Touched];
-                }
-            }
-            else
-            {
-                for (int i = 0; i < _shotButtons.Length; i++)
-                {
-                    _shotButtons[i].GetComponent<Image>().sprite = _shotButtonSprites[(int)ShotButtonSprite.Normal];
-                }
-            }
-        }
-
-        /// <summary>
         /// アクティブプレイヤーのプレイヤーポイント取得のため、ターンマネージャーを経由してポイント取得
         /// </summary>
         private void UpdatePointText()
@@ -147,7 +121,6 @@ namespace Cooking.Stage
         /// </summary>
         public void ChangeUIOnTurnStart()
         {
-            ChangeShotButtonTouched(false);
             if (_turnManager.IsAITurn)
             {
                 UIManager.Instance.ChangeUI("FrontMode");
@@ -156,8 +129,6 @@ namespace Cooking.Stage
                 {
                     shotStartButton.SetActive(false);
                 }
-                //現状非表示
-                _shotPowerGagesOfInteger.gameObject.SetActive(false);
             }
             ///ショット終了時は見下ろしスタート プレイヤーの時
             else
@@ -168,7 +139,6 @@ namespace Cooking.Stage
                 {
                     shotStartButton.SetActive(true);
                 }
-                _shotPowerGagesOfInteger.gameObject.SetActive(true);
             }
         }
     }

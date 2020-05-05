@@ -51,10 +51,6 @@ namespace Cooking.Stage
         private Vector3 newSideCameraPos;   //sideカメラの座標を定義
         //[SerializeField]
         private float zoomScalingValue;  //マウスホイールのスクロール数を定義
-        /// <summary>
-        /// ズーム縮小による最大のプレイヤーからの距離
-        /// </summary>
-        [SerializeField] private float _zoomLimitYPositionFromPlayer = 50;
         //[SerializeField] Transform cameraPositionOnShotting;
         #region インスタンスへのstaticなアクセスポイント
         /// <summary>
@@ -112,22 +108,9 @@ namespace Cooking.Stage
                         zoomScalingValue = CameraZoomScaling.GetCameraZoomScalingValue();   //マウスホイールの回転量を格納
                         if (zoomScalingValue != 0)
                         {
-                            var playerPosition = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].transform.position + new Vector3(0,1,0); //約プレイヤーの大きさ分加算
                             newTopCameraPos = topCam.transform.position;  //現在のカメラの座標を代入
                             newTopCameraPos.y = topCam.transform.position.y +  zoomScalingValue;
                             topCam.transform.position = newTopCameraPos;       //カメラの座標に代入
-                            //下限
-                            if (topCam.transform.position.y <= playerPosition.y)
-                            {
-                                var topCameraPosition = topCam.transform.position;
-                                topCam.transform.position = new Vector3(topCameraPosition.x, playerPosition.y, topCameraPosition.z);
-                            }
-                            //上限
-                            else if (topCam.transform.position.y >=  playerPosition.y + _zoomLimitYPositionFromPlayer)
-                            {
-                                var topCameraPosition = topCam.transform.position;
-                                topCam.transform.position = new Vector3(topCameraPosition.x, playerPosition.y + _zoomLimitYPositionFromPlayer, topCameraPosition.z);
-                            }
                         }
                     }
                     break;
@@ -143,21 +126,18 @@ namespace Cooking.Stage
                         topCam.Priority = 0;
                         frontCam.Priority = 0;
                         sideCam.Priority = 1;
-                        if (_isTouchOnGamePlay)
-                        {
-                            //左クリックされている間呼び出される
-                            var touchPosition = TouchInput.GetDeltaPosition();
-                            newSideCameraPos = sideCam.transform.localPosition;
-                            newSideCameraPos.z -= (touchPosition.x) / 100;   //x座標のマウスの移動量を計算
-                            newSideCameraPos.y += (touchPosition.y) / 100;   //y座標のマウスの移動量を計算
-                            sideCam.transform.localPosition = newSideCameraPos;   //マウスの移動量/100を代入
-                        }
-                        zoomScalingValue = CameraZoomScaling.GetCameraZoomScalingValue();   //マウスホイールの回転量を格納
-                        //マウスホイールが入力されたら
+
+                        //左クリックされている間呼び出される
+                        var touchPosition = TouchInput.GetDeltaPosition();
+                        sideCam.transform.position -= transform.forward * (touchPosition.x) / 100;   //マウスの移動量/100をカメラの左右方向に代入
+                        sideCam.transform.position -= transform.up * (touchPosition.y) / 100;   //マウスの移動量/100をカメラの上下方向に代入
+                        zoomScalingValue = Input.GetAxis("Mouse ScrollWheel");   //マウスホイールの回転量を格納
+                                                                            //マウスホイールが入力されたら
                         if (zoomScalingValue != 0)
                         {
-                            sideCam.transform.position += sideCam.transform.forward * zoomScalingValue * -4;       //マウスホイールの回転をカメラの前後方向に代入
+                            sideCam.transform.position += transform.right * zoomScalingValue * -4;       //マウスホイールの回転をカメラの前後方向に代入
                         }
+
                     }
                     break;
                 default:
@@ -174,8 +154,8 @@ namespace Cooking.Stage
                     {
                         if (_changeTopCameraTimeCounter > _changeTopCameraTime)
                         {
-                            frontCam.LookAt = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].FoodPositionForCamera;
-                            frontCam.Follow = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].FoodPositionForCamera;
+                            frontCam.LookAt = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].transform;
+                            frontCam.Follow = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].transform;
                             _changeTopCameraTimeCounter = 0;
                         }
                         else

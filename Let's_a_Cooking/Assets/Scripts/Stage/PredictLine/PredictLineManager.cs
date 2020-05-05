@@ -51,10 +51,6 @@ namespace Cooking.Stage
         /// レイ判定を行うレイヤー
         /// </summary>
         [SerializeField] LayerMask _rayCollisionLayer = 0;
-        /// <summary>
-        /// ヒエラルキー整頓用の親オブジェクト
-        /// </summary>
-        [SerializeField] GameObject _predictLinesParent = null;
 
         #region インスタンスへのstaticなアクセスポイント
         /// <summary>
@@ -273,7 +269,6 @@ namespace Cooking.Stage
             {
                 _predictTimeCounter = 0;
                 PredictLine predictLine = InstantiatePredictLine(speedVector);
-                predictLine.transform.parent = _predictLinesParent.transform;
                 ManagePredictLinesList(predictLine);
             }
             else
