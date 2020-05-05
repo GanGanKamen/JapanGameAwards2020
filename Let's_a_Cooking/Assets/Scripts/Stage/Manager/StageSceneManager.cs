@@ -267,11 +267,7 @@ namespace Cooking.Stage
                     FoodType playerFoodType = FoodType.Shrimp;
                     //文字列に変換後、正しい値を代入
                     playerFoodType = EnumParseMethod.TryParseAndDebugAssertFormatAndReturnResult(_chooseFoodNames[playerNumber], true, playerFoodType);
-                    var playerStatus = Instantiate(ChooseInstantiatePrefab(playerFoodType , false).GetComponentInChildren<FoodStatus>());
-                    playerStatus.SetFoodTypeOnInitialize(playerFoodType);
-                    _turnManager.SetPlayerInformationsOnInitialize(playerNumber , playerStatus);
-                    _turnManager.ResetPlayerOnStartPoint(GetPlayerStartPoint(playerNumber),playerNumber);
-                    playerStatus.SetParentObject(_foodPositionsParent);
+                    InitializePlayerData(playerNumber, playerFoodType, false);
                 }
                 else
                 {
@@ -279,15 +275,30 @@ namespace Cooking.Stage
                     FoodType aIFoodType = FoodType.Shrimp;
                     //文字列に変換後、正しい値を代入
                     aIFoodType = EnumParseMethod.TryParseAndDebugAssertFormatAndReturnResult(_chooseFoodNames[playerNumber], true, aIFoodType);
-                    var aiStatus = Instantiate(ChooseInstantiatePrefab(aIFoodType , true) ).GetComponent<FoodStatus>();
-                    aiStatus.SetFoodTypeOnInitialize(aIFoodType);
-                    _turnManager.SetPlayerInformationsOnInitialize(playerNumber, aiStatus);
-                    _turnManager.ResetPlayerOnStartPoint(GetPlayerStartPoint(playerNumber),playerNumber);
-                    aiStatus.SetParentObject(_foodPositionsParent);
+                    InitializePlayerData(playerNumber, aIFoodType, true);
                 }
             }
             InitializePlayerPointList(GameManager.Instance.PlayerSumNumber);
             _gameState = StageGameState.FinishFoodInstantiate;
+        }
+        /// <summary>
+        /// プレイヤーの情報を初期化 TurnManagerとプレイヤー個人が持つ情報 生成時に呼ばれる
+        /// </summary>
+        /// <param name="playerNumber">プレイヤーの番号</param>
+        /// <param name="playerFoodType">食材の種類</param>
+        /// <param name="isAI">AIかどうか</param>
+        public void InitializePlayerData(int playerNumber, FoodType playerFoodType ,bool isAI)
+        {
+            //次の食材を生成
+            FoodStatus playerStatus = InstantiateNextFood(playerFoodType, isAI);
+            //foodStatus配列に登録
+            _turnManager.SetFoodStatusValue(playerNumber, playerStatus);
+            //食材の種類を食材に渡す
+            playerStatus.SetFoodTypeOnInitialize(playerFoodType);
+            //Position初期化 スタート地点へ配置
+            _turnManager.ResetPlayerOnStartPoint(GetPlayerStartPoint(playerNumber), playerNumber);
+            //親子関係初期化
+            playerStatus.SetParentObject(_foodPositionsParent);
         }
 
         /// <summary>
@@ -353,7 +364,7 @@ namespace Cooking.Stage
         }
 
         /// <summary>
-        /// ゴールしたときに次の食材を生成
+        /// 食材の種類を選択して、次の食材を生成
         /// </summary>
         /// <param name="isAI">AIを生成するかどうか</param>
         /// <returns></returns>
@@ -362,13 +373,11 @@ namespace Cooking.Stage
             if (isAI)
             {
                 var nextAI = Instantiate(ChooseInstantiatePrefab(foodType, isAI)).GetComponent<FoodStatus>();
-                nextAI.SetParentObject(_foodPositionsParent);
                 return Instantiate(_aIPrefabs[0]).GetComponentInChildren<FoodStatus>();
             }
             else
             {
                 var nextFood = Instantiate(ChooseInstantiatePrefab(foodType, isAI)).GetComponent<FoodStatus>();
-                nextFood.SetParentObject(_foodPositionsParent);
                 return nextFood;
             }
         }

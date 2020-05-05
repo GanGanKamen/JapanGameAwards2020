@@ -65,8 +65,6 @@ namespace Cooking.Stage
         {
             NotChange, Change, GameEnd
         }
-
-
         #region インスタンスへのstaticなアクセスポイント
         /// <summary>
         /// このクラスのインスタンスを取得。
@@ -165,12 +163,11 @@ namespace Cooking.Stage
         }
 
         /// <summary>
-        /// プレイヤー情報をプレハブから取得
+        /// foodStatusに登録
         /// </summary>
-        public void SetPlayerInformationsOnInitialize(int playerNumber , FoodStatus playerStatus)
+        public void SetFoodStatusValue(int playerNumber , FoodStatus playerStatus)
         {
             _foodStatuses[playerNumber] = playerStatus;
-            _foodStatuses[playerNumber].SetPlayerNumber(playerNumber + 1);
         }
 
         // Update is called once per frame
@@ -255,26 +252,11 @@ namespace Cooking.Stage
                             StageSceneManager.Instance.AddPlayerPointToList(_activePlayerIndex);
                             var foodType = _foodStatuses[_activePlayerIndex].FoodType;
                             var playerNumber = GetPlayerNumberFromActivePlayerIndex(_activePlayerIndex) - 1;
-                            if (_isAITurn)
-                            {
-                                //次の食材を生成して配列に登録
-                                _foodStatuses[_activePlayerIndex] = StageSceneManager.Instance.InstantiateNextFood(foodType, true);
-                                //食材の種類を食材に渡す
-                                _foodStatuses[_activePlayerIndex].SetFoodTypeOnInitialize(foodType);
-                            }
-                            else
-                            {
-                                //次の食材を生成して配列に登録
-                                _foodStatuses[_activePlayerIndex] = StageSceneManager.Instance.InstantiateNextFood(foodType, false);
-                                //食材の種類を食材に渡す
-                                _foodStatuses[_activePlayerIndex].SetFoodTypeOnInitialize(foodType);
-                            }
-                            var startPoint = StageSceneManager.Instance.GetPlayerStartPoint(playerNumber);
-                            //スタート地点へ配置
-                            ResetPlayerOnStartPoint(startPoint, _activePlayerIndex);
+                            StageSceneManager.Instance.InitializePlayerData(playerNumber, foodType, _isAITurn);
                         }
                         //次のプレイヤーに順番を回す
                         _activePlayerIndex++;
+                        //次のターンにいくかどうか・ゲーム終了かで処理分岐
                         switch (IsChangeTurn())
                         {
                             case AfterChangeTurnState.NotChange:
@@ -290,6 +272,7 @@ namespace Cooking.Stage
                                 break;
                         }
                         InitializeOnTurnChange();
+                        //レア調味料発生
                         if (StageSceneManager.Instance.TurnNumberOnGameEnd - _turnNumber == 2)//ラスト3ターン
                         {
                             GimmickManager.Instance.AppearRareSeasoning();

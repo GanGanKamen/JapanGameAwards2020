@@ -14,10 +14,6 @@ namespace Cooking.Stage
         }
         private PlayerPoint _playerPoint;
         /// <summary>
-        /// プレイヤーの番号は、ユーザーを1番から順に当てていき、その後コンピューターに割り当てる。
-        /// </summary>
-        private int _playerNumber;
-        /// <summary>
         /// この食材の種類
         /// </summary>
         public FoodType FoodType
@@ -197,10 +193,6 @@ namespace Cooking.Stage
             {
                 foodChildObject.gameObject.layer = layer;
             }
-        }
-        public void SetPlayerNumber(int playerNumber )
-        {
-            _playerNumber = playerNumber;
         }
         /// <summary>
         /// 落下後・ゴール後にスタート地点に戻る際呼ばれる
