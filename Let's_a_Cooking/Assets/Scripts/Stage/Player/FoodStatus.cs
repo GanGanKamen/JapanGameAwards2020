@@ -178,6 +178,14 @@ namespace Cooking.Stage
             }
         }
         /// <summary>
+        /// ターン開始時に呼ばれる
+        /// </summary>
+        public void ResetFallAndGoalFlag()
+        {
+            _isFall = false;
+            _isGoal = false;
+        }
+        /// <summary>
         /// 食材のレイヤーを指定 StartAreaとDefault
         /// </summary>
         /// <param name="layerMask"></param>

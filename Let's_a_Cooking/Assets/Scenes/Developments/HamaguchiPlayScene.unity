@@ -14340,7 +14340,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: RETRY TO CLICK
+  m_Text: RETRY TO Touch
 --- !u!222 &1958549614
 CanvasRenderer:
   m_ObjectHideFlags: 0

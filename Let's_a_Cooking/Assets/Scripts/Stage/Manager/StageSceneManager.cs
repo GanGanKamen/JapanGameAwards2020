@@ -361,12 +361,15 @@ namespace Cooking.Stage
         {
             if (isAI)
             {
+                var nextAI = Instantiate(ChooseInstantiatePrefab(foodType, isAI)).GetComponent<FoodStatus>();
+                nextAI.SetParentObject(_foodPositionsParent);
                 return Instantiate(_aIPrefabs[0]).GetComponentInChildren<FoodStatus>();
             }
             else
             {
-                var nextFood = ChooseInstantiatePrefab(foodType, isAI);
-                return Instantiate(nextFood).GetComponent<FoodStatus>();
+                var nextFood = Instantiate(ChooseInstantiatePrefab(foodType, isAI)).GetComponent<FoodStatus>();
+                nextFood.SetParentObject(_foodPositionsParent);
+                return nextFood;
             }
         }
         /// <summary>

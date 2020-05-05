@@ -327,8 +327,9 @@ namespace Cooking.Stage
         /// </summary>
         private void InitializeOnTurnChange()
         {
-            ///順巡り処理(0へ初期化)が終わった後にチェック
+            //順巡り処理(0へ初期化)が終わった後にチェック
             CheckNextPlayerAI();
+            _foodStatuses[_activePlayerIndex].ResetFallAndGoalFlag();
             UIManager.Instance.ResetUIMode();
             SetObjectsPositionForNextPlayer(_activePlayerIndex);
             CheckPlayerAnimationPlay();
