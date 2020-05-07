@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,6 +28,8 @@ namespace Cooking.Stage
         }
         private ButtonName _buttonName = ButtonName.None;
         private UIManager _uIManager;
+        [SerializeField] private float _shotButtonWaitTime = 1.5f;
+
         private void Start()
         {
             _uIManager = UIManager.Instance;
@@ -48,16 +51,24 @@ namespace Cooking.Stage
                             Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", _uIManager.MainUIStateProperty.ToString());
                             break;
                         case ButtonName.Shrimp:
-                            _uIManager.ChooseFood(_buttonName.ToString());
+                            //index++; 複数プレイヤー対応→TurnManager
+                            StageSceneManager.Instance.SetChooseFoodNames(_buttonName.ToString());
+                            _uIManager.ChangeUI("DecideOrder");
                             break;
                         case ButtonName.Egg:
-                            _uIManager.ChooseFood(_buttonName.ToString());
+                            //index++; 複数プレイヤー対応→TurnManager
+                            StageSceneManager.Instance.SetChooseFoodNames(_buttonName.ToString());
+                            _uIManager.ChangeUI("DecideOrder");
                             break;
                         case ButtonName.Chicken:
-                            _uIManager.ChooseFood(_buttonName.ToString());
+                            //index++; 複数プレイヤー対応→TurnManager
+                            StageSceneManager.Instance.SetChooseFoodNames(_buttonName.ToString());
+                            _uIManager.ChangeUI("DecideOrder");
                             break;
                         case ButtonName.Sausage:
-                            _uIManager.ChooseFood(_buttonName.ToString());
+                            //index++; 複数プレイヤー対応→TurnManager
+                            StageSceneManager.Instance.SetChooseFoodNames(_buttonName.ToString());
+                            _uIManager.ChangeUI("DecideOrder");
                             break;
                         default:
                             break;
@@ -96,7 +107,10 @@ namespace Cooking.Stage
                             _uIManager.ChangeUI(_buttonName.ToString());
                             break;
                         case ButtonName.ShottingMode:
-                            _uIManager.ChangeUI(_buttonName.ToString());
+                            _uIManager.PlayModeUI.ChangeShotButtonTouched(true);
+                            StartCoroutine(ShotButtonWait());
+                            //パワーメーターを停止して待機させる
+                            ShotManager.Instance.ChangeShotState(ShotState.WaitMode);
                             break;
                         default:
                             break;
@@ -170,5 +184,11 @@ namespace Cooking.Stage
                     break;
             }
         }
+        IEnumerator ShotButtonWait()
+        {
+            yield return new WaitForSeconds(_shotButtonWaitTime);
+            _uIManager.ChangeUI(_buttonName.ToString());
+        }
+
     }
 }

@@ -14,25 +14,30 @@ namespace Cooking.Stage
         }
         private PlayerPoint _playerPoint;
         /// <summary>
-        /// プレイヤーの番号は、ユーザーを1番から順に当てていき、その後コンピューターに割り当てる。
+        /// この食材の種類
         /// </summary>
-        public int playerNumber;
-        public enum FoodType
+        public FoodType FoodType
         {
-            Shrimp,
-            Egg,
-            Chicken,
-            Sausage
+            get { return _foodType; }
         }
-        public FoodType foodType = FoodType.Shrimp;
+        private FoodType _foodType = FoodType.Shrimp;
+        private Shrimp _shrimp;
         /// <summary>
-        /// 食材の中心座標=ショットする際に打つ場所(力点)
+        /// 食材の中心座標=ショットする際に打つ場所(力点) 指定しないとPivotになる 予測線の開始位置
         /// </summary>
         public Transform CenterPoint
         {
-            get { return _centerPoint; }
+            get { return _centerPoint ? _centerPoint : this.transform ; }
         }
+        /// <summary>
+        /// 指定しないとPivotになる 予測線の開始位置
+        /// </summary>
         [SerializeField] private Transform _centerPoint = null;
+        public Transform FoodPositionForCamera
+        {
+            get { return _foodPositionForCamera; }
+        }
+        [SerializeField] private Transform _foodPositionForCamera = null;
         /// <summary>
         /// ショット時に使用。TurnControllerに管理してもらう。
         /// </summary>
@@ -41,6 +46,16 @@ namespace Cooking.Stage
             get { return _rigidbody; }
         }
         [SerializeField] private Rigidbody _rigidbody = null;
+        public bool IsFoodInStartArea
+        {
+            get { return _isFoodInStartArea; }
+        }
+        private bool _isFoodInStartArea = true;
+        /// <summary>
+        /// 各食材のレイヤーの初期値(= Default) OnEnableで初期化
+        /// </summary>
+        private LayerMask _foodDefaultLayer = 0;
+        [SerializeField] private LayerMask _foodLayerInStartArea = 0;
         public bool IsFall
         {
             get { return _isFall; }
@@ -59,53 +74,62 @@ namespace Cooking.Stage
             get { return _onKitchen; }
         }
         private bool _onKitchen = false;
-        [SerializeField] CapsuleCollider _capsuleCollider = null;
         /// <summary>
-        /// このスクリプトに置くかは未定
+        /// 食材初期化時に食材の種類を決める 呼ばれるタイミングを制限したかった←未実装
         /// </summary>
-        [SerializeField] Animator _foodAnimator = null;
-        #region グラフィック関連変数
-        [SerializeField] private Material _shrimpNormalGraphic = null;
-        [SerializeField] private GameObject _shrimpHead = null;
-        /// <summary>
-        /// えびの頭が外れているかどうか
-        /// </summary>
-        public bool IsHeadFallOff
+        /// <param name="foodType"></param>
+        public void SetFoodTypeOnInitialize(FoodType foodType)
         {
-            get { return _isHeadFallOff; }
+            //if (StageSceneManager.Instance.GameState == StageGameState.Preparation || ShotManager.Instance.ShotModeProperty == ShotState.ShotEndMode)
+                _foodType = foodType;
         }
-        private bool _isHeadFallOff;
-        #endregion
-
         private void OnEnable()
         {
             if (_rigidbody == null) _rigidbody = GetComponentInChildren<Rigidbody>();
             _playerPoint = GetComponent<PlayerPoint>();
-        }
-        // Start is called before the first frame update
-        void Start()
-        {
+            _shrimp = GetComponent<Shrimp>();
+            _foodDefaultLayer = this.gameObject.layer;
+            SetFoodLayer(_foodLayerInStartArea);
         }
 
-        // Update is called once per frame
+        protected override void Start()
+        {
+            base.Start();
+        }
+        /// <summary>
+        /// 派生クラスのAIでも実行される
+        /// </summary>
         void Update()
         {
+           _foodPositionForCamera.transform.position = this.transform.position;
         }
         private void OnCollisionEnter(Collision collision)
         {
+            switch (_foodType)
+            {
+                case FoodType.Shrimp:
+                    if (collision.gameObject.tag == "Wall" && !_shrimp.IsHeadFallOff && !TurnManager.Instance.IsAITurn)//CPUは未実装
+                    {
+                        _shrimp.FallOffShrimpHead();
+                        _playerPoint.TouchWall();
+                    }
+                    else if (collision.gameObject.tag == "Knife" && !_shrimp.IsHeadFallOff && !TurnManager.Instance.IsAITurn)//CPUは未実装
+                    {
+                        _shrimp.FallOffShrimpHead();
+                    }
+                    break;
+                case FoodType.Egg:
+                    break;
+                case FoodType.Chicken:
+                    break;
+                case FoodType.Sausage:
+                    break;
+                default:
+                    break;
+            }
             if (collision.gameObject.tag == "Floor")
             {
                 _isFall = true;
-            }
-            else if (collision.gameObject.tag == "Wall" && !_isHeadFallOff && !TurnManager.Instance.IsAITurn)//CPUは未実装
-            {
-                _shrimpHead.transform.parent = null;
-                _shrimpHead.AddComponent<Rigidbody>();
-                _isHeadFallOff = true;
-                var center = _capsuleCollider.center;
-                _capsuleCollider.center = new Vector3(center.x, center.y, -0.1008767f);
-                _capsuleCollider.height = 0.3048875f;
-                _playerPoint.TouchWall();
             }
             //初期化変数 着地
             _onKitchen = true;
@@ -116,15 +140,58 @@ namespace Cooking.Stage
             {
                 _isGoal = true;
             }
-            if (other.tag == "Water")
+            else if (other.tag == "Water")
             {
-                ChangeMaterial(_shrimpNormalGraphic);
+                ChangeMaterial(_foodNormalGraphic , _foodType);
             }
-            /// とりあえず調味料はトリガーで
+            // とりあえず調味料はトリガーで
             else if (other.tag == "Seasoning")
             {
-                ChangeMaterial(other.gameObject.GetComponent<MeshRenderer>().material);
+                ChangeMaterial(other.gameObject.GetComponent<MeshRenderer>().material , _foodType);
                 Destroy(other.gameObject);
+            }
+            else if (other.tag == "RareSeasoning")
+            {
+                ChangeMaterial(other.gameObject.GetComponent<MeshRenderer>().material , _foodType);
+                Destroy(other.gameObject);
+            }
+            else if (other.tag == "Bubble")
+            {
+                Destroy(other.gameObject);
+            }
+            else if (other.tag == "StartArea" && !_isFoodInStartArea)//落下後復帰想定
+            {
+                _isFoodInStartArea = true;
+                SetFoodLayer(_foodLayerInStartArea);
+            }
+        }
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.tag == "StartArea" && _isFoodInStartArea)
+            {
+                _isFoodInStartArea = false;
+                SetFoodLayer(_foodDefaultLayer);
+            }
+        }
+        /// <summary>
+        /// ターン開始時に呼ばれる
+        /// </summary>
+        public void ResetFallAndGoalFlag()
+        {
+            _isFall = false;
+            _isGoal = false;
+        }
+        /// <summary>
+        /// 食材のレイヤーを指定 StartAreaとDefault
+        /// </summary>
+        /// <param name="layerMask"></param>
+        private void SetFoodLayer(LayerMask layerMask)
+        {
+            var layer = CalculateLayerNumber.ChangeSingleLayerNumberFromLayerValue(layerMask);
+            var foodChildObjects = this.transform.root.GetComponentsInChildren<Transform>();
+            foreach (var foodChildObject in foodChildObjects)
+            {
+                foodChildObject.gameObject.layer = layer;
             }
         }
         /// <summary>
@@ -143,13 +210,18 @@ namespace Cooking.Stage
         /// <param name="isEnable"></param>
         public void PlayerAnimatioManage(bool isEnable)
         {
-            if (_foodAnimator != null)
-                _foodAnimator.enabled = isEnable;
+            if(!_shrimp.IsHeadFallOff)
+            _shrimp.AnimationManage(isEnable);
         }
         public void SetShotPointOnFoodCenter()
         {
-            if(_centerPoint != null)
-             _centerPoint.position = this.transform.position;
+            if (_centerPoint != null)
+                _centerPoint.position = this.transform.position;
+        }
+        public void SetParentObject(Transform transform)
+        {
+            //食材のrotationの影響を受けるのを防ぐ
+            _foodPositionForCamera.parent = transform;
         }
     }
 }

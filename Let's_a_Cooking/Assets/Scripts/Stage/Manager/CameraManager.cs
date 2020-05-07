@@ -12,23 +12,23 @@ namespace Cooking.Stage
     public class CameraManager : MonoBehaviour
     {
         /// <summary>
-        ///ショット前のカメラの動きで用いる、カメラの回転中心の座標情報。frontカメラの親オブジェクトが持つ。食材の中心を軸にカメラを回転させる
+        ///カメラの回転中心の座標情報。frontカメラの親オブジェクトが持つ。食材の中心を軸にカメラを回転させる
         /// </summary>
         [SerializeField] private Transform _cameraRotateCenter = null;
         /// <summary>
-        ///ショット前のカメラの動きで用いる、すべてのカメラの親オブジェクトの座標情報。位置情報をリセットするときに使う
+        ///すべてのカメラの親オブジェクトの座標情報。位置情報をリセットするときに使う
         /// </summary>
-        [SerializeField] private Transform _cameraObjectsTransform = null;
+        [SerializeField] private GameObject _cameraObjectParentTransform = null;
         private float _changeTopCameraTimeCounter;
         [SerializeField] private float _changeTopCameraTime = 0.3f;
         Vector3[] _cameraLocalPositions;
+        Vector3 _cameraLocalRotation;
         /// <summary>
         /// ゲーム開始前のUIにて、ドラッグした状態 = タッチしていた状態でゲームが始まると、ドラッグ量が座標に代入されてバグるのを防ぐ
         /// </summary>
         bool _isTouchOnGamePlay;
         /// <summary> 0 == top, 1 == front, 2 == side </summary>
         public int camNo = 0;
-
         enum CameraMode
         {
             Wait,
@@ -37,14 +37,12 @@ namespace Cooking.Stage
             Side
         }
         CameraMode cameraMode = CameraMode.Wait;
-
         [SerializeField]
         private CinemachineVirtualCamera topCam = null;
         [SerializeField]
         private CinemachineVirtualCamera frontCam = null;
         [SerializeField]
         private CinemachineVirtualCamera sideCam = null;
-
         [SerializeField]
         private Vector2 clickPos;   //クリックされた座標の定義
         //[SerializeField]
@@ -53,6 +51,11 @@ namespace Cooking.Stage
         private Vector3 newSideCameraPos;   //sideカメラの座標を定義
         //[SerializeField]
         private float zoomScalingValue;  //マウスホイールのスクロール数を定義
+        /// <summary>
+        /// ズーム縮小による最大のプレイヤーからの距離
+        /// </summary>
+        [SerializeField] private float _zoomLimitYPositionFromPlayer = 50;
+        //[SerializeField] Transform cameraPositionOnShotting;
         #region インスタンスへのstaticなアクセスポイント
         /// <summary>
         /// このクラスのインスタンスを取得。
@@ -78,8 +81,8 @@ namespace Cooking.Stage
             _cameraLocalPositions[(int)CameraMode.Top] = (topCam.transform.localPosition);
             _cameraLocalPositions[(int)CameraMode.Front] = (frontCam.transform.localPosition);
             _cameraLocalPositions[(int)CameraMode.Side] = (sideCam.transform.localPosition);
+            _cameraLocalRotation = frontCam.transform.localEulerAngles;
         }
-
         // Update is called once per frame
         void Update()
         {
@@ -109,9 +112,22 @@ namespace Cooking.Stage
                         zoomScalingValue = CameraZoomScaling.GetCameraZoomScalingValue();   //マウスホイールの回転量を格納
                         if (zoomScalingValue != 0)
                         {
+                            var playerPosition = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].transform.position + new Vector3(0,1,0); //約プレイヤーの大きさ分加算
                             newTopCameraPos = topCam.transform.position;  //現在のカメラの座標を代入
                             newTopCameraPos.y = topCam.transform.position.y +  zoomScalingValue;
                             topCam.transform.position = newTopCameraPos;       //カメラの座標に代入
+                            //下限
+                            if (topCam.transform.position.y <= playerPosition.y)
+                            {
+                                var topCameraPosition = topCam.transform.position;
+                                topCam.transform.position = new Vector3(topCameraPosition.x, playerPosition.y, topCameraPosition.z);
+                            }
+                            //上限
+                            else if (topCam.transform.position.y >=  playerPosition.y + _zoomLimitYPositionFromPlayer)
+                            {
+                                var topCameraPosition = topCam.transform.position;
+                                topCam.transform.position = new Vector3(topCameraPosition.x, playerPosition.y + _zoomLimitYPositionFromPlayer, topCameraPosition.z);
+                            }
                         }
                     }
                     break;
@@ -127,18 +143,21 @@ namespace Cooking.Stage
                         topCam.Priority = 0;
                         frontCam.Priority = 0;
                         sideCam.Priority = 1;
-
-                        //左クリックされている間呼び出される
-                        var touchPosition = TouchInput.GetDeltaPosition();
-                        sideCam.transform.position -= transform.forward * (touchPosition.x) / 100;   //マウスの移動量/100をカメラの左右方向に代入
-                        sideCam.transform.position -= transform.up * (touchPosition.y) / 100;   //マウスの移動量/100をカメラの上下方向に代入
-                        zoomScalingValue = Input.GetAxis("Mouse ScrollWheel");   //マウスホイールの回転量を格納
-                                                                            //マウスホイールが入力されたら
+                        if (_isTouchOnGamePlay)
+                        {
+                            //左クリックされている間呼び出される
+                            var touchPosition = TouchInput.GetDeltaPosition();
+                            newSideCameraPos = sideCam.transform.localPosition;
+                            newSideCameraPos.z -= (touchPosition.x) / 100;   //x座標のマウスの移動量を計算
+                            newSideCameraPos.y += (touchPosition.y) / 100;   //y座標のマウスの移動量を計算
+                            sideCam.transform.localPosition = newSideCameraPos;   //マウスの移動量/100を代入
+                        }
+                        zoomScalingValue = CameraZoomScaling.GetCameraZoomScalingValue();   //マウスホイールの回転量を格納
+                        //マウスホイールが入力されたら
                         if (zoomScalingValue != 0)
                         {
-                            sideCam.transform.position += transform.right * zoomScalingValue * -4;       //マウスホイールの回転をカメラの前後方向に代入
+                            sideCam.transform.position += sideCam.transform.forward * zoomScalingValue * -4;       //マウスホイールの回転をカメラの前後方向に代入
                         }
-
                     }
                     break;
                 default:
@@ -155,8 +174,8 @@ namespace Cooking.Stage
                     {
                         if (_changeTopCameraTimeCounter > _changeTopCameraTime)
                         {
-                            cameraMode = CameraMode.Top;
-                            topCam.LookAt = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].transform;
+                            frontCam.LookAt = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].FoodPositionForCamera;
+                            frontCam.Follow = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].FoodPositionForCamera;
                             _changeTopCameraTimeCounter = 0;
                         }
                         else
@@ -208,6 +227,14 @@ namespace Cooking.Stage
             cameraMode = CameraMode.Side;
         }
         /// <summary>
+        /// ショット中に呼ばれる
+        /// </summary>
+        public void SetCameraPositionNearPlayer()
+        {
+            var playerCenterPoint = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].CenterPoint.gameObject;
+            _cameraObjectParentTransform.transform.position = playerCenterPoint.transform.position;
+        }
+        /// <summary>
         /// カメラの位置を基準(_cameraMoveCenter)に対する元の位置に戻す
         /// </summary>
         public void SetCameraLocalPosition()
@@ -215,6 +242,7 @@ namespace Cooking.Stage
             topCam.transform.localPosition = _cameraLocalPositions[(int)CameraMode.Top];
             frontCam.transform.localPosition = _cameraLocalPositions[(int)CameraMode.Front];
             sideCam.transform.localPosition = _cameraLocalPositions[(int)CameraMode.Side];
+            frontCam.transform.localEulerAngles = _cameraLocalRotation;
         }
         /// <summary>
         /// ターン開始時にカメラの動きの中心をセット player中心
@@ -222,7 +250,7 @@ namespace Cooking.Stage
         /// <param name="cameraSetPositon"></param>
         public void SetCameraMoveCenterPosition(Vector3 cameraSetPositon)
         {
-            _cameraObjectsTransform.position = cameraSetPositon;
+            _cameraObjectParentTransform.transform.position = cameraSetPositon;
             _cameraRotateCenter.position = cameraSetPositon;
             SetCameraLocalPosition();
         }
@@ -231,7 +259,8 @@ namespace Cooking.Stage
         /// </summary>
         private void CameraTrackReset()
         {
-            topCam.LookAt = null;
+            frontCam.LookAt = null;
+            frontCam.Follow = null;
             topCam.transform.eulerAngles = new Vector3(90, 0, 0);
         }
     }

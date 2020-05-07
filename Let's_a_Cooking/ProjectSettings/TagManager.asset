@@ -12,6 +12,11 @@ TagManager:
   - RareSeasoning
   - Wall
   - TowelAbovePoint
+  - FxTemporaire
+  - Knife
+  - Bubble
+  - BubbleZone
+  - StartArea
   layers:
   - Default
   - TransparentFX
@@ -21,9 +26,9 @@ TagManager:
   - UI
   - 
   - 
-  - Food
-  - Kitchen
   - 
+  - Kitchen
+  - FoodInStartArea
   - 
   - 
   - 

@@ -32,10 +32,6 @@ namespace Cooking.Stage
         /// </summary>
         //[SerializeField] private Image[] _chooseFoodImages = null;
         /// <summary>
-        /// 選ばれた食材リスト FoodStatus用のenumへ変換
-        /// </summary>
-        private string[] _chooseFoodNames;
-        /// <summary>
         /// ゲーム開始にかかる時間
         /// </summary>
         private float _startTime = 1;
@@ -132,7 +128,6 @@ namespace Cooking.Stage
         {
             _turnManager = TurnManager.Instance;
             _playModeUI = FindObjectOfType<PlayModeUI>();
-            _chooseFoodNames = new string[GameManager.Instance.playerNumber + GameManager.Instance.computerNumber];
         }
 
         // Update is called once per frame
@@ -237,18 +232,6 @@ namespace Cooking.Stage
             _finishBackGroundImages[(int)_finishUIMode].SetActive(true);
         }
         /// <summary>
-        /// 食材を選ぶ際のマウスクリックで呼ばれる
-        /// </summary>
-        /// <param name="foodName"></param>選ばれた食材の名前
-        public void ChooseFood(string foodName)
-        {
-            ///作成中
-            ///選ばれた食材に応じてプレイヤーを生成する。現在TurnControllerに生成の役割がある。
-            _chooseFoodNames[_turnManager.ActivePlayerIndex] = foodName;
-            //index++;
-            ChangeUI("DecideOrder");
-        }
-        /// <summary>
         /// ショット先を決めるモードに戻る。スタート状態・ターン終了状態からも呼び出される、リセットの役割を持つ。
         /// </summary>
         public void ResetUIMode()
@@ -272,12 +255,12 @@ namespace Cooking.Stage
         /// <param name="afterScreenStateString"></param>文字列で変更後のUIの状態を指定
         public void ChangeUI(string afterScreenStateString)
         {
-            ///パワーメーターから戻るときに使う
+            //パワーメーターから戻るときに使う
             _beforeShotScreenState = _mainUIState;
             _stageSceneMainUIs[(int)_mainUIState].SetActive(false);
-            ///enum型へ変換 + 変換失敗時に警告
+            //enum型へ変換 + 変換失敗時に警告
             EnumParseMethod.TryParseAndDebugAssertFormat(afterScreenStateString, true, out _mainUIState);
-            /// ショットの状態を変更→ShotManagerへ
+            // ショットの状態を変更→ShotManagerへ
             switch (_mainUIState)
             {
                 case ScreenState.ChooseFood:
@@ -313,7 +296,7 @@ namespace Cooking.Stage
                 case ScreenState.ShottingMode:
                     _beforeShotScreenState = ScreenState.ShottingMode;
                     if (!_turnManager.IsAITurn)
-                        ShotManager.Instance.StopShotPowerMeter();
+                        ShotManager.Instance.ShotStart();
                     break;
                 case ScreenState.Finish:
                     _finishUIMode = FinishUIMode.Finish;

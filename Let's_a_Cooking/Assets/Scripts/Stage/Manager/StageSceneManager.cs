@@ -41,6 +41,12 @@ namespace Cooking.Stage
         /// </summary>
         public readonly float gravityScale = 1;
         /// <summary>
+        /// 初期値Shrimp 選ばれた食材リスト FoodStatus用のenumへ変換
+        /// </summary>
+        private string[] _chooseFoodNames;
+        [SerializeField] GameObject[] _playerPrefabs = new GameObject[System.Enum.GetValues(typeof(FoodType)).Length];
+        [SerializeField] GameObject[] _aIPrefabs = new GameObject[System.Enum.GetValues(typeof(FoodType)).Length];
+        /// <summary>
         /// 表示用 プレイヤーがゲーム全体で獲得した合計ポイント(食材再スタート前も含む)UIが常に参照する
         /// </summary>
         public List<int>[] PlayerPointList
@@ -57,7 +63,15 @@ namespace Cooking.Stage
         private float _waitTimeCounterOnFall = 0;
         private float _waitTimeOnGoal = 2f;
         private float _waitTimeCounterOnGoal = 0;
-        public GameObject goal;
+        /// <summary>
+        /// ゲーム開始時の座標を示すオブジェクト
+        /// </summary>
+        [SerializeField] Transform _startPositionObject = null;
+        public GameObject Goal
+        {
+            get { return _goal; }
+        }
+       [SerializeField] private GameObject _goal = null;
         /// <summary>
         /// 終了時の書くプレイヤーの合計ポイント
         /// </summary>
@@ -84,6 +98,36 @@ namespace Cooking.Stage
         }
         private FoodStateOnGame _foodStateOnGame = FoodStateOnGame.Normal;
         /// <summary>
+        /// ヒエラルキー整頓用の食材の親オブジェクト
+        /// </summary>
+        [SerializeField] Transform _foodPositionsParent = null;
+
+        /// <summary>
+        /// 選ばれた食材に応じてプレイヤーを生成するために選んだ文字列保存 食材を選ぶ際のマウスクリックで呼ばれる
+        /// </summary>
+        /// <param name="foodName">選ばれた食材の名前</param>
+        public void SetChooseFoodNames(string foodName)
+        {           
+            _chooseFoodNames [_turnManager.ActivePlayerIndex] = foodName;
+        }
+        /// <summary>
+        /// 生成するプレハブを選択 戻り値をInstantiateする
+        /// </summary>
+        /// <param name="foodType"></param>
+        /// <param name="isAI"></param>
+        /// <returns></returns>
+        private GameObject ChooseInstantiatePrefab(FoodType foodType , bool isAI)
+        {
+            if (isAI)
+            {
+                return _aIPrefabs[(int)foodType];
+            }
+            else
+            {
+                return _playerPrefabs[(int)foodType];
+            }
+        }
+        /// <summary>
         /// ポイントリストをプレイヤーの人数分用意
         /// </summary>
         /// <param name="playerNumber"></param>
@@ -98,13 +142,18 @@ namespace Cooking.Stage
         // Start is called before the first frame update
         void Start()
         {
-            ///タグ検索エラーをできるだけ防ぐ
-            if (goal == null)
+            ///タグ検索エラーを防ぐ
+            if (_goal == null)
             {
                 Debug.Log("ゴールオブジェクトがセットされていません。タグ検索されました。");
                 GameObject.FindGameObjectWithTag("Finish");
             }
             _turnManager = TurnManager.Instance;
+            _chooseFoodNames = new string[GameManager.Instance.PlayerSumNumber];
+            for (int i = 0; i < _chooseFoodNames.Length; i++)
+            {
+                _chooseFoodNames[i] = FoodType.Shrimp.ToString();
+            }
         }
 
         // Update is called once per frame
@@ -113,12 +162,13 @@ namespace Cooking.Stage
             switch (_gameState)
             {
                 case StageGameState.Preparation:
-                    ///メソッド化予定
                     if (UIManager.Instance.MainUIStateProperty == ScreenState.Start)
                     {
-                        _gameState = StageGameState.Play;
-                        TurnManager.Instance.CreatePlayersOnInitialize();
+                        CreatePlayersOnInitialize();
                     }
+                    break;
+                case StageGameState.FinishFoodInstantiate:
+                    _gameState = StageGameState.Play;
                     break;
                 case StageGameState.Play:
                     {
@@ -203,6 +253,55 @@ namespace Cooking.Stage
             }
         }
         /// <summary>
+        /// プレイヤーを生成してTurnManagerに情報を渡す どの種類の食材を生成するのかという情報が必要
+        /// </summary>
+        private void CreatePlayersOnInitialize()
+        {
+            //プレイヤー番号が小さいのがプレイしている人で大きい数字はAI
+            for (int playerNumber = 0; playerNumber < GameManager.Instance.PlayerSumNumber; playerNumber++)
+            {
+                //プレイヤーを生成
+                if (playerNumber < GameManager.Instance.playerNumber)
+                {
+                    //仮の値を入れる
+                    FoodType playerFoodType = FoodType.Shrimp;
+                    //文字列に変換後、正しい値を代入
+                    playerFoodType = EnumParseMethod.TryParseAndDebugAssertFormatAndReturnResult(_chooseFoodNames[playerNumber], true, playerFoodType);
+                    InitializePlayerData(playerNumber, playerFoodType, false);
+                }
+                else
+                {
+                    //仮の値を入れる
+                    FoodType aIFoodType = FoodType.Shrimp;
+                    //文字列に変換後、正しい値を代入
+                    aIFoodType = EnumParseMethod.TryParseAndDebugAssertFormatAndReturnResult(_chooseFoodNames[playerNumber], true, aIFoodType);
+                    InitializePlayerData(playerNumber, aIFoodType, true);
+                }
+            }
+            InitializePlayerPointList(GameManager.Instance.PlayerSumNumber);
+            _gameState = StageGameState.FinishFoodInstantiate;
+        }
+        /// <summary>
+        /// プレイヤーの情報を初期化 TurnManagerとプレイヤー個人が持つ情報 生成時に呼ばれる
+        /// </summary>
+        /// <param name="playerNumber">プレイヤーの番号</param>
+        /// <param name="playerFoodType">食材の種類</param>
+        /// <param name="isAI">AIかどうか</param>
+        public void InitializePlayerData(int playerNumber, FoodType playerFoodType ,bool isAI)
+        {
+            //次の食材を生成
+            FoodStatus playerStatus = InstantiateNextFood(playerFoodType, isAI);
+            //foodStatus配列に登録
+            _turnManager.SetFoodStatusValue(playerNumber, playerStatus);
+            //食材の種類を食材に渡す
+            playerStatus.SetFoodTypeOnInitialize(playerFoodType);
+            //Position初期化 スタート地点へ配置
+            _turnManager.ResetPlayerOnStartPoint(GetPlayerStartPoint(playerNumber), playerNumber);
+            //親子関係初期化
+            playerStatus.SetParentObject(_foodPositionsParent);
+        }
+
+        /// <summary>
         /// UI表示時間分だけ処理を待機。時間になったらNormalへ戻る 落下してたらスタート地点へ
         /// </summary>
         private float WaitForShotEndTIme(float waitTime, float waitTimeCounter)
@@ -213,7 +312,8 @@ namespace Cooking.Stage
                 switch (_foodStateOnGame)
                 {
                     case FoodStateOnGame.Falled:
-                        _turnManager.ResetPlayerOnStartPoint();
+                        var startPoint = GetPlayerStartPoint(_turnManager.GetPlayerNumberFromActivePlayerIndex(_turnManager.ActivePlayerIndex) - 1);
+                        _turnManager.ResetPlayerOnStartPoint( startPoint, _turnManager.ActivePlayerIndex);
                         break;
                     case FoodStateOnGame.Goal:
                         break;
@@ -235,22 +335,50 @@ namespace Cooking.Stage
                 // UI表示のない異常落下にも呼ばれる アニメーション再生中などショット前プレイヤー落下時にsceneManagerに呼ばれる
                 if (_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].IsFall)
                 {
+                    var startPoint = GetPlayerStartPoint(_turnManager.GetPlayerNumberFromActivePlayerIndex(_turnManager.ActivePlayerIndex) - 1);
                     switch (UIManager.Instance.MainUIStateProperty)
                     {
                         case ScreenState.FrontMode:
-                            _turnManager.ResetPlayerOnStartPoint();
+                            _turnManager.ResetPlayerOnStartPoint(startPoint, _turnManager.ActivePlayerIndex);
                             break;
                         case ScreenState.SideMode:
-                            _turnManager.ResetPlayerOnStartPoint();
+                            _turnManager.ResetPlayerOnStartPoint(startPoint, _turnManager.ActivePlayerIndex);
                             break;
                         case ScreenState.LookDownMode:
-                            _turnManager.ResetPlayerOnStartPoint();
+                            _turnManager.ResetPlayerOnStartPoint(startPoint, _turnManager.ActivePlayerIndex);
                             break;
                         default:
                             break;
                     }
                 }
 
+            }
+        }
+        /// <summary>
+        /// 指定された元要素番号のプレイヤーのスタート地点を算出
+        /// </summary>
+        /// <param name="playerIndex"></param>
+        public Vector3 GetPlayerStartPoint(int playerIndex)
+        {
+            return _startPositionObject.position + new Vector3(0.5f * playerIndex, 0, 0); //プレイヤー番号依存で少しずらして配置
+        }
+
+        /// <summary>
+        /// 食材の種類を選択して、次の食材を生成
+        /// </summary>
+        /// <param name="isAI">AIを生成するかどうか</param>
+        /// <returns></returns>
+        public FoodStatus InstantiateNextFood(FoodType foodType , bool isAI)
+        {
+            if (isAI)
+            {
+                var nextAI = Instantiate(ChooseInstantiatePrefab(foodType, isAI)).GetComponent<FoodStatus>();
+                return Instantiate(_aIPrefabs[0]).GetComponentInChildren<FoodStatus>();
+            }
+            else
+            {
+                var nextFood = Instantiate(ChooseInstantiatePrefab(foodType, isAI)).GetComponent<FoodStatus>();
+                return nextFood;
             }
         }
         /// <summary>
@@ -305,5 +433,4 @@ namespace Cooking.Stage
 
         }
     }
-
 }

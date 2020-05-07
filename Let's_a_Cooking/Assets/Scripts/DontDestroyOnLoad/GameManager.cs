@@ -55,6 +55,13 @@ namespace Cooking
 
         #endregion
         /// <summary>
+        /// 合計人数
+        /// </summary>
+        public int PlayerSumNumber
+        {
+            get { return playerNumber + computerNumber; }
+        }
+        /// <summary>
         ///プレイヤーの人数が想定を超えないように制御→プロパティ・例外処理
         /// </summary>
         public int playerNumber = 1,computerNumber = 1;

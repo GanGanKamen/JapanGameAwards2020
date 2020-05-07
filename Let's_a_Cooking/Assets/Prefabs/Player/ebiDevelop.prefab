@@ -204,6 +204,7 @@ GameObject:
   - component: {fileID: 2128107329363381657}
   - component: {fileID: 4479837848373791946}
   - component: {fileID: 1489201272166241167}
+  - component: {fileID: 6626410273865131183}
   - component: {fileID: 3844710139208619389}
   m_Layer: 0
   m_Name: ebiDevelop
@@ -220,11 +221,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2128107329363381656}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -5.17, y: 7.68, z: -33.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7833259288611724176}
   - {fileID: 3789123603381715181}
+  - {fileID: 2145306625588699937}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -242,7 +244,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 0
   m_CollisionDetection: 2
 --- !u!114 &1489201272166241167
 MonoBehaviour:
@@ -256,16 +258,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b2f24c6e7ef524409c06c1026695495, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _skinnedMeshRenderer: {fileID: 2484488461429338661}
-  _RareMaterial: {fileID: 0}
-  playerNumber: 0
-  foodType: 0
-  _centerPoint: {fileID: 967193702390513020}
+  _foodSkinnedMeshRenderer: {fileID: 2484488461429338661}
+  _foodMeshRenderer: {fileID: 0}
+  _foodNormalGraphic: {fileID: 2100000, guid: e4e6277cc55c3ae4bb46a09b8f5547a8, type: 2}
+  _centerPoint: {fileID: 7833259288611724176}
+  _foodPositionForCamera: {fileID: 2145306625588699937}
   _rigidbody: {fileID: 4479837848373791946}
+  _foodLayerInStartArea:
+    serializedVersion: 2
+    m_Bits: 1024
+--- !u!114 &6626410273865131183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2128107329363381656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90fa1534537676a40b25bf29b6b34575, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   _capsuleCollider: {fileID: 5670369316466324488}
   _foodAnimator: {fileID: 9120880134355479713}
-  _shrimpNormalGraphic: {fileID: 2100000, guid: e4e6277cc55c3ae4bb46a09b8f5547a8,
-    type: 2}
   _shrimpHead: {fileID: 4485098196317645658}
 --- !u!114 &3844710139208619389
 MonoBehaviour:
@@ -410,7 +425,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4485098196317645658}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 5918af64a2913cc4ca1a5798de62b5e5, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -505,6 +520,36 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.03149593, y: -0.038828917, z: 0}
     m_Extent: {x: 0.14786293, y: 0.08261333, z: 0.041896753}
   m_DirtyAABB: 0
+--- !u!1 &4878709703877813535
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2145306625588699937}
+  m_Layer: 0
+  m_Name: AdjustCameraRotationObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2145306625588699937
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4878709703877813535}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2128107329363381657}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4916868342576074026
 GameObject:
   m_ObjectHideFlags: 0
@@ -543,7 +588,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4916868342576074026}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 5918af64a2913cc4ca1a5798de62b5e5, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.02836456
@@ -634,8 +679,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1140233157897976292}
   - component: {fileID: 2484488461429338661}
-  - component: {fileID: 7682015478539897405}
-  - component: {fileID: 6398423587818177028}
   m_Layer: 0
   m_Name: polySurface2
   m_TagString: Untagged
@@ -716,33 +759,6 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.10672636, y: -0.029443594, z: 0}
     m_Extent: {x: 0.15332891, y: 0.057391837, z: 0.04570474}
   m_DirtyAABB: 0
---- !u!136 &7682015478539897405
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7357744358427165647}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  m_Radius: 0.032950148
-  m_Height: 0.4048395
-  m_Direction: 0
-  m_Center: {x: 0.0800741, y: 0.02437584, z: 0.4925181}
---- !u!65 &6398423587818177028
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7357744358427165647}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.32873818, y: 0.07288198, z: 0.06723059}
-  m_Center: {x: 0.098665126, y: 0.015896635, z: 0.48871648}
 --- !u!1 &8291686876855394125
 GameObject:
   m_ObjectHideFlags: 0

@@ -6,6 +6,7 @@
     public enum StageGameState
     {
         Preparation,
+        FinishFoodInstantiate,//プレイヤーの生成終了
         Play,
         Finish
     }
@@ -33,5 +34,15 @@
         AngleMode,/// 角度の決定中
         ShottingMode,/// ショット中
         ShotEndMode///ショット終了
+    }
+    /// <summary>
+    /// 食材の種類 初期値はえびにする
+    /// </summary>
+    public enum FoodType
+    {
+        Shrimp,
+        Egg,
+        Chicken,
+        Sausage
     }
 }

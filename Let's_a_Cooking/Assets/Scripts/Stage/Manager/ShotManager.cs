@@ -88,12 +88,7 @@ namespace Cooking.Stage
                         _shotPower = ChangeShotPower(_shotParameter.MinShotPower, _shotParameter.MaxShotPower, 2 * Mathf.Abs(_shotParameter.MaxShotPower - _shotParameter.MinShotPower), _shotPower);//速度ログ 5 20 (差15のとき)→ 30  差の倍速で算出   
                         if (!TurnManager.Instance.IsAITurn)
                         {
-                            //左クリックされた時に呼び出される
-                            //if (!PreventTouchInputCollision.Instance.ShotInvalid[(int)PreventTouchInputCollision.ButtonName.ShotButton] && TouchInput.GetTouchPhase() == TouchInfo.Down)
-                            //{
-                            //}
                             #region デバッグコード スペースを押すと最大パワーで飛ぶ
-
                             //#if UNITY_EDITOR
                             if (Input.GetKeyDown(KeyCode.Space))
                             {
@@ -177,7 +172,23 @@ namespace Cooking.Stage
                 case ShotState.ShottingMode:
                     {
                         PredictLineManager.Instance.DestroyPredictLine();
-                        TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].PlayerAnimatioManage(false);
+                        if (!TurnManager.Instance.IsAITurn)
+                        {
+                            switch (TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].FoodType)
+                            {
+                                case FoodType.Shrimp:
+                                    TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].PlayerAnimatioManage(false);
+                                    break;
+                                case FoodType.Egg:
+                                    break;
+                                case FoodType.Chicken:
+                                    break;
+                                case FoodType.Sausage:
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
                         TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].PlayerPointProperty.ResetGetPointBool();
                     }
                     break;
@@ -188,11 +199,14 @@ namespace Cooking.Stage
                     break;
             }
         }
-        public void StopShotPowerMeter()
+        /// <summary>
+        /// ショット状態へ移動
+        /// </summary>
+        public void ShotStart()
         {
-            ChangeShotState(ShotState.ShottingMode);
-            CameraManager.Instance.SetCameraLocalPosition();
+            CameraManager.Instance.SetCameraPositionNearPlayer();
             Shot(transform.forward * _shotPower);
+            ChangeShotState(ShotState.ShottingMode);
         }
         /// <summary>
         ///食材に力を加える処理
