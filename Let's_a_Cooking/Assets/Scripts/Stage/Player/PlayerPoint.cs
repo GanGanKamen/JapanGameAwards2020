@@ -37,10 +37,11 @@ namespace Cooking.Stage
         /// </summary>
         enum GetPointOnTouch
         {
-            DirtDish,
+            DirtDish,//減点
             Bubble,
             Seasoning,
-            RareSeasoning
+            RareSeasoning,
+            Cut
         }
         /// <summary>
         /// 自分自身のステータス レア調味料を持つかどうかはStageSceneが判定するからいらない予定

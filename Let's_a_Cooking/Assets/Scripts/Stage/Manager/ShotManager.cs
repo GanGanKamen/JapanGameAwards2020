@@ -43,10 +43,24 @@ namespace Cooking.Stage
         /// ショット時に力を加えるため用 アクティブな食材の持つRigidbody
         /// </summary>
         private Rigidbody _shotRigidbody;
+        private int _rigidbodyConstraintsIndex = 0;
+        /// <summary>
+        /// 0番目から順に止める
+        /// </summary>
+        private RigidbodyConstraints[] _rigidbodyConstraints = {RigidbodyConstraints.FreezeRotationX , RigidbodyConstraints.FreezeRotationY , RigidbodyConstraints.FreezeRotationZ };
+        /// <summary>
+        /// 時間経過で回転を止める
+        /// </summary>
+        private float _timeCounterForFreezeRotation = 0.0f;
+        /// <summary>
+        /// 1つのRotationを止めるまでの時間 いくつめを止めるのかによって時間を分ける
+        /// </summary>
+        private float[] _freezeOneOfRotationTime = { 1 , 0.5f ,0.25f };
+        private TurnManager _turnManager = null;
 
         #region インスタンスへのstaticなアクセスポイント
         /// <summary>
-        /// このクラスのインスタンスを取得。
+        /// このクラスのインスタンスを取得
         /// </summary>
         public static ShotManager Instance
         {
@@ -55,7 +69,7 @@ namespace Cooking.Stage
         static ShotManager _instance = null;
 
         /// <summary>
-        /// Start()より先に実行。
+        /// Start()より先に実行
         /// </summary>
         private void Awake()
         {
@@ -67,6 +81,7 @@ namespace Cooking.Stage
         void Start()
         {
             _shotPower = _shotParameter.MinShotPower;
+            _turnManager = TurnManager.Instance;
         }
 
         // Update is called once per frame
@@ -78,7 +93,7 @@ namespace Cooking.Stage
 				case ShotState.WaitMode:
                     break;
                 case ShotState.AngleMode:
-                    if (!TurnManager.Instance.IsAITurn)
+                    if (!_turnManager.IsAITurn)
                     {
                         if (TouchInput.GetTouchPhase() == TouchInfo.Moved)
                         {
@@ -86,7 +101,7 @@ namespace Cooking.Stage
                             transform.eulerAngles = new Vector3(eulerAngle.x, eulerAngle.y, 0);
                         }
                         _shotPower = ChangeShotPower(_shotParameter.MinShotPower, _shotParameter.MaxShotPower, 2 * Mathf.Abs(_shotParameter.MaxShotPower - _shotParameter.MinShotPower), _shotPower);//速度ログ 5 20 (差15のとき)→ 30  差の倍速で算出   
-                        if (!TurnManager.Instance.IsAITurn)
+                        if (!_turnManager.IsAITurn)
                         {
                             #region デバッグコード スペースを押すと最大パワーで飛ぶ
                             //#if UNITY_EDITOR
@@ -102,9 +117,55 @@ namespace Cooking.Stage
                     break;
                 case ShotState.ShottingMode:
                     {
-                        ///食材が止まった + 落下・ゴール待機時間が終わったら、ショット終了
-                        if (_shotRigidbody.velocity.magnitude < 0.0001f)//&& StageSceneManager.Instance.FoodStateOnGameProperty == StageSceneManager.FoodStateOnGame.ShotEnd)
-                            ChangeShotState(ShotState.ShotEndMode);
+                        switch (_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].FoodType)
+                        {
+                            case FoodType.Shrimp:
+                                ///食材が止まった + 落下・ゴール待機時間が終わったら、ショット終了
+                                if (_shotRigidbody.velocity.magnitude < 0.0001f)
+                                    ChangeShotState(ShotState.ShotEndMode);
+                                break;
+                            case FoodType.Egg:
+                                {
+                                    ///食材が止まった + 落下・ゴール待機時間が終わったら、ショット終了
+                                    if (_shotRigidbody.velocity.magnitude < 0.01f)
+                                    {
+                                        _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].FreezeAllRotations();
+                                        ChangeShotState(ShotState.ShotEndMode);
+                                        //すべての回転を止める前に移動が止まる可能性もある
+                                        _rigidbodyConstraintsIndex = 0;
+                                    }
+                                    //地面で転がっている = y方向の速度の大きさが一定より小さい この時間を測定する
+                                    else if (Mathf.Abs(_shotRigidbody.velocity.y ) < 0.01f)
+                                    {
+                                        //3(大きさ)になったら終了
+                                        if (_rigidbodyConstraintsIndex == _rigidbodyConstraints.Length)
+                                        {
+                                            _rigidbodyConstraintsIndex = 0;
+                                            break;
+                                        }
+                                        _timeCounterForFreezeRotation = WaitForEggFreezeRotation(_freezeOneOfRotationTime[_rigidbodyConstraintsIndex], _timeCounterForFreezeRotation);
+                                        //時間を数え終わるとカウンターは0になり、再度カウントスタート
+                                        if (_timeCounterForFreezeRotation == 0)
+                                        {
+                                            _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].FreezeRotation(_rigidbodyConstraints[_rigidbodyConstraintsIndex]);
+                                            _rigidbodyConstraintsIndex++;
+                                        }
+                                    }
+                                }
+                                break;
+                            case FoodType.Chicken:
+                                ///食材が止まった + 落下・ゴール待機時間が終わったら、ショット終了
+                                if (_shotRigidbody.velocity.magnitude < 0.0001f)
+                                    ChangeShotState(ShotState.ShotEndMode);
+                                break;
+                            case FoodType.Sausage:
+                                ///食材が止まった + 落下・ゴール待機時間が終わったら、ショット終了
+                                if (_shotRigidbody.velocity.magnitude < 0.0001f)
+                                    ChangeShotState(ShotState.ShotEndMode);
+                                break;
+                            default:
+                                break;
+                        }
                     }
                     break;
                 case ShotState.ShotEndMode:
@@ -172,14 +233,14 @@ namespace Cooking.Stage
                 case ShotState.ShottingMode:
                     {
                         PredictLineManager.Instance.DestroyPredictLine();
-                        if (!TurnManager.Instance.IsAITurn)
                         {
-                            switch (TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].FoodType)
+                            switch (_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].FoodType)
                             {
                                 case FoodType.Shrimp:
-                                    TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].PlayerAnimatioManage(false);
+                                    _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].PlayerAnimatioManage(false);
                                     break;
                                 case FoodType.Egg:
+                                    _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].OriginalFoodProperty.egg.FlagReset();
                                     break;
                                 case FoodType.Chicken:
                                     break;
@@ -189,7 +250,7 @@ namespace Cooking.Stage
                                     break;
                             }
                         }
-                        TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].PlayerPointProperty.ResetGetPointBool();
+                        _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].PlayerPointProperty.ResetGetPointBool();
                     }
                     break;
                 case ShotState.ShotEndMode:
@@ -205,6 +266,8 @@ namespace Cooking.Stage
         public void ShotStart()
         {
             CameraManager.Instance.SetCameraPositionNearPlayer();
+            //固定解除
+            _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].UnlockFreezeRotation();
             Shot(transform.forward * _shotPower);
             ChangeShotState(ShotState.ShottingMode);
         }
@@ -237,6 +300,21 @@ namespace Cooking.Stage
             Shot(aIShotPower);
             ChangeShotState(ShotState.ShottingMode);
             UIManager.Instance.ChangeUI("ShottingMode");
+        }
+        /// <summary>
+        /// 一定時間経過で卵の回転を止めていく それまで待機 戻り値は保存しておくこと 数え終わると0を返す
+        /// </summary>
+        /// <param name="waitTime">待つ時間</param>
+        /// <param name="waitTimeCounter">カウント変数</param>
+        /// <returns></returns>
+        private float WaitForEggFreezeRotation(float waitTime, float waitTimeCounter)
+        {
+            waitTimeCounter += Time.deltaTime;
+            if (waitTimeCounter > waitTime)
+            {
+                return 0;
+            }
+            return waitTimeCounter;
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Cooking.Stage
             get { return _shotPowerGageSprites; }
         }
         private Sprite[] _shotPowerGageSprites = null;
-        [SerializeField] private Sprite[] _shotButtonSprites;
+        [SerializeField] private Sprite[] _shotButtonSprites = null;
         enum ShotButtonSprite
         {
             Normal,Touched

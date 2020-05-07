@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Cooking
 {
     /// <summary>列挙型に変換して成功したかどうかを返し 例外処理を警告するメソッドのクラス</summary>
-    public class EnumParseMethod : MonoBehaviour
+    public static class EnumParseMethod
     {
         /// <summary>
         /// 指定された文字列を列挙型に変換して成功したかどうかを返す 例外処理警告ができるメソッド

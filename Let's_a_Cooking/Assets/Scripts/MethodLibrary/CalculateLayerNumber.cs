@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 /// <summary>
 /// 2進数レイヤーから10進数のレイヤー番号に変換
 /// </summary>

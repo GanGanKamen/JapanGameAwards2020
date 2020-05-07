@@ -52,9 +52,13 @@ namespace Cooking.Stage
         //[SerializeField]
         private float zoomScalingValue;  //マウスホイールのスクロール数を定義
         /// <summary>
-        /// ズーム縮小による最大のプレイヤーからの距離
+        /// ズーム縮小俯瞰による最大のプレイヤーからの距離
         /// </summary>
-        [SerializeField] private float _zoomLimitYPositionFromPlayer = 50;
+        [SerializeField] private float _zoomLimitYPositionFromPlayerAbove = 50;
+        /// <summary>
+        /// ズーム縮小横視点による最大のプレイヤーからの距離
+        /// </summary>
+        [SerializeField] private float _zoomLimitPositionFromPlayerSide = 20;
         //[SerializeField] Transform cameraPositionOnShotting;
         #region インスタンスへのstaticなアクセスポイント
         /// <summary>
@@ -104,7 +108,7 @@ namespace Cooking.Stage
                             newTopCameraPos.z -= (touchPosition.y) / 100;   //y座標のマウスの移動量を計算
                             topCam.transform.position = newTopCameraPos;   //マウスの移動量/100を代入
                         }
-                        //入力準備ができてからの入力であることを示す変数に代入
+                        //入力準備ができてからの入力であることを示す変数に代入 俯瞰から始まるのでupside限定の処理
                         else if (TouchInput.GetTouchPhase() == TouchInfo.Down)
                         {
                             _isTouchOnGamePlay = true;
@@ -123,10 +127,10 @@ namespace Cooking.Stage
                                 topCam.transform.position = new Vector3(topCameraPosition.x, playerPosition.y, topCameraPosition.z);
                             }
                             //上限
-                            else if (topCam.transform.position.y >=  playerPosition.y + _zoomLimitYPositionFromPlayer)
+                            else if (topCam.transform.position.y >=  playerPosition.y + _zoomLimitYPositionFromPlayerAbove)
                             {
                                 var topCameraPosition = topCam.transform.position;
-                                topCam.transform.position = new Vector3(topCameraPosition.x, playerPosition.y + _zoomLimitYPositionFromPlayer, topCameraPosition.z);
+                                topCam.transform.position = new Vector3(topCameraPosition.x, playerPosition.y + _zoomLimitYPositionFromPlayerAbove, topCameraPosition.z);
                             }
                         }
                     }
@@ -153,11 +157,33 @@ namespace Cooking.Stage
                             sideCam.transform.localPosition = newSideCameraPos;   //マウスの移動量/100を代入
                         }
                         zoomScalingValue = CameraZoomScaling.GetCameraZoomScalingValue();   //マウスホイールの回転量を格納
-                        //マウスホイールが入力されたら
+
+                        //マウスホイールが入力されたら y z二つの値を加算
                         if (zoomScalingValue != 0)
                         {
-                            sideCam.transform.position += sideCam.transform.forward * zoomScalingValue * -4;       //マウスホイールの回転をカメラの前後方向に代入
+                            var playerPosition = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].transform.localPosition + new Vector3(0, 0, 0); //約プレイヤーの大きさ分加算
+                            var sideCamPosition = sideCam.transform.localPosition;      //マウスホイールの回転をカメラの前後方向に代入
+                            sideCamPosition += sideCam.transform.forward * zoomScalingValue * -3;
+                            sideCam.transform.localPosition = sideCamPosition;
+                            //下限
+                            //if (sideCam.transform.position.x <= playerPosition.x )
+                            //{
+                            //    var sideCameraPosition = sideCam.transform.position;
+                            //    sideCam.transform.position = new Vector3(sideCameraPosition.x, playerPosition.y, sideCameraPosition.z);
+                            //
+                            //上限かどうかを判断(未完)
+                            if (sideCamPosition.x <= playerPosition.x - _zoomLimitPositionFromPlayerSide)
+                            {
+                                var sideCameraPosition = sideCam.transform.position;
+                                sideCam.transform.position = new Vector3(playerPosition.x - _zoomLimitPositionFromPlayerSide, sideCameraPosition.y, sideCameraPosition.z);
+                            }
+                            else
+                            {
+                                sideCam.transform.localPosition = sideCamPosition;
+                            }
+                            Debug.Log(sideCam.transform.localPosition);
                         }
+
                     }
                     break;
                 default:
