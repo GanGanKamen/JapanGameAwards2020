@@ -121,7 +121,7 @@ namespace Cooking.Stage
             _bubble = Instantiate(_bubblePrefab);
             _bubbleRigidbody = _bubble.GetComponent<Rigidbody>();
             _bubbleLimitPosition = new Vector3[] { referencePoint, referencePoint + _bubbleInstantiateZone.transform.localScale };
-            _bubble.transform.position = new Vector3(GetRandomFloat(_bubbleLimitPosition[(int)LimitValue.Min].x, _bubbleLimitPosition[(int)LimitValue.Max].x), GetRandomFloat(_bubbleLimitPosition[(int)LimitValue.Min].y, _bubbleLimitPosition[(int)LimitValue.Max].y), GetRandomFloat(_bubbleLimitPosition[(int)LimitValue.Min].z, _bubbleLimitPosition[(int)LimitValue.Max].z));
+            _bubble.transform.position = new Vector3(Cooking.Random.GetRandomFloat(_bubbleLimitPosition[(int)LimitValue.Min].x, _bubbleLimitPosition[(int)LimitValue.Max].x), Cooking.Random.GetRandomFloat(_bubbleLimitPosition[(int)LimitValue.Min].y, _bubbleLimitPosition[(int)LimitValue.Max].y), Cooking.Random.GetRandomFloat(_bubbleLimitPosition[(int)LimitValue.Min].z, _bubbleLimitPosition[(int)LimitValue.Max].z));
             ChangeBubbleSpeedVectorDirection();
         }
 
@@ -156,8 +156,8 @@ namespace Cooking.Stage
         }
         private void ChangeBubbleSpeedVectorDirection()
         {
-            _speedVectorOfBubble = new Vector3(GetRandomFloat(-_maxSpeedOfBubble, _maxSpeedOfBubble), GetRandomFloat(-_maxSpeedOfBubble, _maxSpeedOfBubble), GetRandomFloat(-_maxSpeedOfBubble, _maxSpeedOfBubble));
-            _changeDirectionTimeOfBubble = GetRandomFloat(1, 5);
+            _speedVectorOfBubble = new Vector3(Cooking.Random.GetRandomFloat(-_maxSpeedOfBubble, _maxSpeedOfBubble), Cooking.Random.GetRandomFloat(-_maxSpeedOfBubble, _maxSpeedOfBubble), Cooking.Random.GetRandomFloat(-_maxSpeedOfBubble, _maxSpeedOfBubble));
+            _changeDirectionTimeOfBubble = Cooking.Random.GetRandomFloat(1, 5);
             _changeDirectionTimeCounterOfBubble = 0;
         }
         public void AppearRareSeasoning()
@@ -169,7 +169,7 @@ namespace Cooking.Stage
         /// </summary>
         public void WaterManager()
         {
-            var seedId = GetRandomInt(_water.Length);
+            var seedId = Cooking.Random.GetRandomInt(_water.Length);
             for (int i = 0; i < _water.Length; i++)
             {
                 if (seedId == i)
@@ -197,7 +197,7 @@ namespace Cooking.Stage
                 if (_seasonings[i] == null )
                 {
                     ///  x / (10)%の確率で再出現
-                    if (GetRandomInt(10) < 3)
+                    if (Cooking.Random.GetRandomInt(10) < 3)
                     {
                         var newSeasoning = Instantiate(_seasoningPrefab);
                         newSeasoning.transform.position = _instantiateSeasoningPoint[i];
@@ -206,22 +206,5 @@ namespace Cooking.Stage
                 }
             }
         }
-        /// <summary>
-        /// 最小値0から指定した範囲のint乱数発生
-        /// </summary>
-        /// <returns></returns>
-        private int GetRandomInt(int rangeOfSeedFromZero)
-        {
-            return Random.Range(0, rangeOfSeedFromZero);
-        }
-        /// <summary>
-        /// 最小値から最大値の間でfloat乱数発生
-        /// </summary>
-        /// <returns></returns>
-        private float GetRandomFloat(float min , float max)
-        {
-            return Random.Range (min, max);
-        }
     }
-
 }

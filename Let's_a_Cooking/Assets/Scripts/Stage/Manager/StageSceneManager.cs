@@ -5,6 +5,11 @@ using System.Linq;
 
 namespace Cooking.Stage
 {
+    public enum LayerList
+    {
+        FoodLayerInStartArea,
+        Kitchen
+    }
     public class StageSceneManager : MonoBehaviour
     {
         public StageGameState GameState
@@ -58,11 +63,9 @@ namespace Cooking.Stage
         /// やがて演出時間と同期
         /// </summary>
         private float _waitTimeNormal = 1f;
-        private float _waitTimeCounterNormal = 0;
         private float _waitTimeOnFall = 2f;
-        private float _waitTimeCounterOnFall = 0;
         private float _waitTimeOnGoal = 2f;
-        private float _waitTimeCounterOnGoal = 0;
+        private float _waitTimeCounterOnShotEnd = 0;
         /// <summary>
         /// ゲーム開始時の座標を示すオブジェクト
         /// </summary>
@@ -87,7 +90,7 @@ namespace Cooking.Stage
         /// </summary>
         public enum FoodStateOnGame
         {
-            Normal, Falled, Goal, ShotEnd
+            Normal, Falled, Goal, WaitForFoodStop ,ShotEnd
         }
         /// <summary>
         /// ゲーム上でのアクティブプレイヤーの状態 Normal Falled Goal
@@ -101,6 +104,24 @@ namespace Cooking.Stage
         /// ヒエラルキー整頓用の食材の親オブジェクト
         /// </summary>
         [SerializeField] Transform _foodPositionsParent = null;
+        /// <summary>
+        /// LayerList[0]FoodLayerInStartArea,[1]Kitchen intとして参照 GetStringLayerName()はstring
+        /// </summary>
+        public LayerMask[] LayerListProperty
+        {
+            get { return _layerList; }
+        }
+        [SerializeField,Header("[0]FoodLayerInStartArea, [1]Kitchen stringとして使うものリスト")]
+        private LayerMask[] _layerList = null;
+        /// <summary>
+        /// stringとしてレイヤーを参照
+        /// </summary>
+        /// <param name="layerList"></param>
+        /// <returns></returns>
+        public string GetStringLayerName(LayerMask layerList)
+        {
+            return LayerMask.LayerToName(CalculateLayerNumber.ChangeSingleLayerNumberFromLayerValue(layerList));
+        }
 
         /// <summary>
         /// 選ばれた食材に応じてプレイヤーを生成するために選んだ文字列保存 食材を選ぶ際のマウスクリックで呼ばれる
@@ -172,11 +193,12 @@ namespace Cooking.Stage
                     break;
                 case StageGameState.Play:
                     {
-                        if (TurnManager.Instance.TurnNumber > _turnNumberOnGameEnd)
+                        if (_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].FalledFoodStateOnStartProperty == FalledFoodStateOnStart.OnStart)
                         {
-                            _gameState = StageGameState.Finish;
-                            UIManager.Instance.ChangeUI("Finish");
+                            _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].SetShotPointOnFoodCenter();
+                            PredictLineManager.Instance.SetPredictLineInstantiatePosition(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].CenterPoint.position);
                         }
+                        IsGameEnd();
                     }
                     break;
                 case StageGameState.Finish:
@@ -227,14 +249,27 @@ namespace Cooking.Stage
                             }
                             else if (ShotManager.Instance.ShotModeProperty == ShotState.ShotEndMode)
                             {
-                                _waitTimeCounterNormal = WaitForShotEndTIme(_waitTimeNormal, _waitTimeCounterNormal);//UI表示時間分だけ処理を待機
+                                _waitTimeCounterOnShotEnd = WaitForShotEndTIme(_waitTimeNormal, _waitTimeCounterOnShotEnd);//UI表示時間分だけ処理を待機
                             }
                             break;
                         case FoodStateOnGame.Falled:
-                            _waitTimeCounterOnFall = WaitForShotEndTIme(_waitTimeOnFall, _waitTimeCounterOnFall);//UI表示時間分だけ処理を待機
+                            _waitTimeCounterOnShotEnd = WaitForShotEndTIme(_waitTimeOnFall, _waitTimeCounterOnShotEnd);//UI表示時間分だけ処理を待機
                             break;
                         case FoodStateOnGame.Goal:
-                            _waitTimeCounterOnGoal = WaitForShotEndTIme(_waitTimeOnGoal, _waitTimeCounterOnGoal);//UI表示時間分だけ処理を待機
+                            _waitTimeCounterOnShotEnd = WaitForShotEndTIme(_waitTimeOnGoal, _waitTimeCounterOnShotEnd);//UI表示時間分だけ処理を待機
+                            break;
+                        case FoodStateOnGame.WaitForFoodStop:
+                            //プレイヤーが止まるまで待機
+                            if (ShotManager.Instance.ShotModeProperty == ShotState.ShotEndMode)
+                            {
+                                _foodStateOnGame = FoodStateOnGame.ShotEnd;
+                                //落下してたらスタートへ戻す
+                                if (_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].IsFall)
+                                {
+                                    var startPoint = GetPlayerStartPoint(_turnManager.GetPlayerNumberFromActivePlayerIndex(_turnManager.ActivePlayerIndex) - 1);
+                                    _turnManager.ResetPlayerOnStartPoint(startPoint, _turnManager.ActivePlayerIndex);
+                                }
+                            }
                             break;
                         case FoodStateOnGame.ShotEnd:
                             _foodStateOnGame = FoodStateOnGame.Normal;
@@ -252,6 +287,19 @@ namespace Cooking.Stage
                     break;
             }
         }
+
+        public bool IsGameEnd()
+        {
+            if (_turnManager.TurnNumber > _turnNumberOnGameEnd)
+            {
+                _gameState = StageGameState.Finish;
+                UIManager.Instance.ChangeUI("Finish");
+                return true;
+            }
+            else
+            return false;
+        }
+
         /// <summary>
         /// プレイヤーを生成してTurnManagerに情報を渡す どの種類の食材を生成するのかという情報が必要
         /// </summary>
@@ -271,10 +319,13 @@ namespace Cooking.Stage
                 }
                 else
                 {
-                    //仮の値を入れる
-                    FoodType aIFoodType = FoodType.Shrimp;
-                    //文字列に変換後、正しい値を代入
-                    aIFoodType = EnumParseMethod.TryParseAndDebugAssertFormatAndReturnResult(_chooseFoodNames[playerNumber], true, aIFoodType);
+                    //乱数でつくるるものを決める
+                    var foodid = Random.GetRandomInt(4);
+                    if (foodid == 2)//ささみ動かない
+                    {
+                        foodid = 3;
+                    }
+                    FoodType aIFoodType = (FoodType)System.Enum.ToObject(typeof(FoodType),foodid);
                     InitializePlayerData(playerNumber, aIFoodType, true);
                 }
             }
@@ -309,18 +360,7 @@ namespace Cooking.Stage
             waitTimeCounter += Time.deltaTime;
             if (waitTimeCounter > waitTime)
             {
-                switch (_foodStateOnGame)
-                {
-                    case FoodStateOnGame.Falled:
-                        var startPoint = GetPlayerStartPoint(_turnManager.GetPlayerNumberFromActivePlayerIndex(_turnManager.ActivePlayerIndex) - 1);
-                        _turnManager.ResetPlayerOnStartPoint( startPoint, _turnManager.ActivePlayerIndex);
-                        break;
-                    case FoodStateOnGame.Goal:
-                        break;
-                    default:
-                        break;
-                }
-                _foodStateOnGame = FoodStateOnGame.ShotEnd;
+                _foodStateOnGame = FoodStateOnGame.WaitForFoodStop;
                 return 0;
             }
             return waitTimeCounter;
@@ -373,7 +413,7 @@ namespace Cooking.Stage
             if (isAI)
             {
                 var nextAI = Instantiate(ChooseInstantiatePrefab(foodType, isAI)).GetComponent<FoodStatus>();
-                return Instantiate(_aIPrefabs[0]).GetComponentInChildren<FoodStatus>();
+                return nextAI;
             }
             else
             {

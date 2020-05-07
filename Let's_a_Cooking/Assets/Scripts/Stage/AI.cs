@@ -7,15 +7,9 @@ namespace Cooking.Stage
     public class AI : FoodStatus
     {
         /// <summary>
-        /// 射出するオブジェクト
-        /// </summary>
-        public GameObject ThrowingObject;
-
-        /// <summary>
         /// 射出角度
         /// </summary>
-        [SerializeField, Range(0F, 90F)]
-        private float ThrowingAngle = 0;
+        private float ThrowingAngle = 45;
 
         float rad, x, y, speed;
 
@@ -28,7 +22,7 @@ namespace Cooking.Stage
             //実験用コード
             //StartCoroutine(Shooting(GameObject.FindGameObjectWithTag("Finish")));
             //射出
-           rid = ThrowingObject.GetComponent<Rigidbody>();
+           rid = GetComponent<Rigidbody>();
         }
 
         //private void Update()

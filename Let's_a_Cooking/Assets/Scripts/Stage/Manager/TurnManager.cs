@@ -102,7 +102,7 @@ namespace Cooking.Stage
         /// <param name="playerNumberIndex"></param>
         public float AIDecideOrderValue(int playerNumberIndex)
         {
-            _orderPower[playerNumberIndex] = Random.Range(70.0f, 95.0f);
+            _orderPower[playerNumberIndex] = Random.GetRandomFloat(70.0f, 95.0f);
             return _orderPower[playerNumberIndex];
         }
 
@@ -238,7 +238,7 @@ namespace Cooking.Stage
                     //10ターン目が終わったら終了(SceneManager)
                 case StageGameState.Play:
                     {
-                        if (_foodStatuses[_activePlayerIndex].IsFoodInStartArea)
+                        if (_foodStatuses[_activePlayerIndex].IsFoodInStartArea && !_foodStatuses[_activePlayerIndex].IsFall)
                         {
                             var playerNumber = GetPlayerNumberFromActivePlayerIndex(_activePlayerIndex) - 1;
                             var startPoint = StageSceneManager.Instance.GetPlayerStartPoint(playerNumber);
@@ -250,9 +250,6 @@ namespace Cooking.Stage
                         else if (_foodStatuses[_activePlayerIndex].IsGoal)
                         {
                             StageSceneManager.Instance.AddPlayerPointToList(_activePlayerIndex);
-                            var foodType = _foodStatuses[_activePlayerIndex].FoodType;
-                            var playerNumber = GetPlayerNumberFromActivePlayerIndex(_activePlayerIndex) - 1;
-                            StageSceneManager.Instance.InitializePlayerData(playerNumber, foodType, _isAITurn);
                         }
                         //次のプレイヤーに順番を回す
                         _activePlayerIndex++;
@@ -313,6 +310,8 @@ namespace Cooking.Stage
             //順巡り処理(0へ初期化)が終わった後にチェック
             CheckNextPlayerAI();
             _foodStatuses[_activePlayerIndex].ResetFallAndGoalFlag();
+            if(_foodStatuses[_activePlayerIndex].FoodType != FoodType.Egg)
+                _foodStatuses[_activePlayerIndex].UnlockFreezeRotation();
             UIManager.Instance.ResetUIMode();
             SetObjectsPositionForNextPlayer(_activePlayerIndex);
             CheckPlayerAnimationPlay();
@@ -324,12 +323,13 @@ namespace Cooking.Stage
         /// </summary>
         private void CheckPlayerAnimationPlay()
         {
-            if (!_isAITurn)
+            //if (!_isAITurn)
             {
                 switch (_foodStatuses[_activePlayerIndex].FoodType)
                 {
                     case FoodType.Shrimp:
                         _foodStatuses[_activePlayerIndex].PlayerAnimatioManage(true);
+                        //位置変更予定
                         _foodStatuses[_activePlayerIndex].SetShotPointOnFoodCenter();
                         break;
                     case FoodType.Egg:
@@ -364,7 +364,7 @@ namespace Cooking.Stage
         public void ResetPlayerOnStartPoint(Vector3 startPoint , int playerIndex)
         {
             _foodStatuses[playerIndex].ReStart(startPoint);
-            _foodStatuses[playerIndex].Rigidbody.velocity = Vector3.zero;
+            _foodStatuses[playerIndex].StopFoodVelocity();
             switch (_foodStatuses[playerIndex].FoodType)
             {
                 case FoodType.Shrimp:

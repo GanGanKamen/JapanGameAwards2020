@@ -1098,6 +1098,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3b7e5c6a43aa22458eba52e317ca26a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _foodSkinnedMeshRenderer: {fileID: 0}
+  _foodMeshRenderer: {fileID: 0}
+  _foodNormalGraphic: {fileID: 0}
 --- !u!33 &7130540699677245981
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1145,7 +1148,6 @@ MonoBehaviour:
   breakMaterials:
   - {fileID: 2100000, guid: f463f022ab93a054d9735b74d3e8a62e, type: 2}
   - {fileID: 2100000, guid: d9bc07306162b7742ad01d209fb1bf5f, type: 2}
-  breakCount: 0
 --- !u!4 &7223428458496318134
 Transform:
   m_ObjectHideFlags: 0
@@ -1318,13 +1320,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b2f24c6e7ef524409c06c1026695495, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPoint: {fileID: 0}
-  playerNumber: 0
-  foodType: 0
-  shotPoint: {fileID: 0}
-  _skinnedMeshRenderer: {fileID: 0}
-  _ebiBlack: {fileID: 0}
-  _ebi: {fileID: 0}
+  _foodSkinnedMeshRenderer: {fileID: 0}
+  _foodMeshRenderer: {fileID: 0}
+  _foodNormalGraphic: {fileID: 0}
+  _centerPoint: {fileID: 0}
+  _foodPositionForCamera: {fileID: 0}
+  _rigidbody: {fileID: 0}
+  _foodLayerInStartArea:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!4 &9090961197994906295
 Transform:
   m_ObjectHideFlags: 0

@@ -38,13 +38,26 @@ namespace Cooking.Stage
         /// </summary>
         public void FallOffShrimpHead()
         {
+            //頭が取れているとき、不正に呼ばれてしまったとき用
+            if (_isHeadFallOff)
+            {
+                return;
+            }
+            _isHeadFallOff = true;
+            ChangeComponentInfoOnHeadFallOff();
+        }
+        /// <summary>
+        /// 頭が取れたときにコンポーネント情報を変更
+        /// </summary>
+        private void ChangeComponentInfoOnHeadFallOff()
+        {
             _shrimpHead.transform.parent = null;
             _shrimpHead.AddComponent<Rigidbody>();
-            _isHeadFallOff = true;
             var center = _capsuleCollider.center;
             _capsuleCollider.center = new Vector3(center.x, center.y, -0.1008767f);
             _capsuleCollider.height = 0.3048875f;
         }
+
         public void AnimationManage(bool isEnable)
         {
             _foodAnimator.enabled = isEnable;

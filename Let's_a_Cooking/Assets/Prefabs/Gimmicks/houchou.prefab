@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3510828507853032097}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: houchou
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -47,7 +47,7 @@ GameObject:
   - component: {fileID: 1229430048736879146}
   - component: {fileID: 5005831693808643063}
   - component: {fileID: 1767184067500385903}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Knife
   m_TagString: Knife
   m_Icon: {fileID: 0}
@@ -177,7 +177,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1925347404334050225}
   - component: {fileID: 5481194466664334830}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: E
   m_TagString: Untagged
   m_Icon: {fileID: 0}

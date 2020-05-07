@@ -48,10 +48,6 @@ namespace Cooking.Stage
         private int _destroyIndex = 0;
         private Vector3 _instantiatePosition;
         /// <summary>
-        /// レイ判定を行うレイヤー
-        /// </summary>
-        [SerializeField] LayerMask _rayCollisionLayer = 0;
-        /// <summary>
         /// ヒエラルキー整頓用の親オブジェクト
         /// </summary>
         [SerializeField] GameObject _predictLinesParent = null;
@@ -210,7 +206,7 @@ namespace Cooking.Stage
             RaycastHit hit; //原点 方向
             Ray ray = new Ray(originPoint, direction);
             //Kitchenレイヤーとレイ判定を行う
-            if (Physics.Raycast(ray, out hit, rayLength, _rayCollisionLayer))
+            if (Physics.Raycast(ray, out hit, rayLength, StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]))
             {
                 _predictShotPoint.transform.position = hit.point;
                 return true;
