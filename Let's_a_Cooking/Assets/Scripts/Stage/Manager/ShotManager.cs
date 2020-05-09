@@ -237,14 +237,17 @@ namespace Cooking.Stage
                             switch (_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].FoodType)
                             {
                                 case FoodType.Shrimp:
+                                    _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].CollisionFlagReset();
                                     _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].PlayerAnimatioManage(false);
                                     break;
                                 case FoodType.Egg:
-                                    _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].OriginalFoodProperty.egg.FlagReset();
+                                    _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].CollisionFlagReset();
                                     break;
                                 case FoodType.Chicken:
+                                    _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].CollisionFlagReset();
                                     break;
                                 case FoodType.Sausage:
+                                    _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].CollisionFlagReset();
                                     break;
                                 default:
                                     break;

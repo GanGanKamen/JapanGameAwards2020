@@ -60,7 +60,25 @@ namespace Cooking.Stage
 
         public void AnimationManage(bool isEnable)
         {
-            _foodAnimator.enabled = isEnable;
+            if (isEnable)
+            {
+                _foodAnimator.enabled = isEnable;
+            }
+            else
+            {
+                StartCoroutine(AnimationResetCoroutine());
+            }
+        }
+        /// <summary>
+        /// アニメーションがリセットされるまでに、1フレーム待つ必要がある
+        /// </summary>
+        /// <returns></returns>
+        IEnumerator AnimationResetCoroutine()
+        {
+            var info = _foodAnimator.GetCurrentAnimatorStateInfo(0).fullPathHash;
+            _foodAnimator.Play(info, 0, 0.0f);
+            yield return null;
+            _foodAnimator.enabled = false;
         }
     }
 }

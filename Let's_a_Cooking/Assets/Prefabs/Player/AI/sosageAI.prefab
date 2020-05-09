@@ -261,7 +261,7 @@ GameObject:
   - component: {fileID: 2016240340272796268}
   - component: {fileID: 82174136877882555}
   m_Layer: 0
-  m_Name: sosage 1
+  m_Name: sosageAI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -348,7 +348,7 @@ MonoBehaviour:
   _foodNormalGraphic: {fileID: 2100000, guid: 308e160934eba754590bace925427f21, type: 2}
   _seasoningMaterial: {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
   _centerPoint: {fileID: 8027254333230646750}
-  _foodPositionForCamera: {fileID: 5521851059872774494}
+  _foodPositionNotRotate: {fileID: 5521851059872774494}
   _rigidbody: {fileID: 2016240340272796268}
 --- !u!1 &4767994613271112893
 GameObject:

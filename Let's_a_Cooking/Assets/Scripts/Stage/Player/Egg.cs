@@ -41,22 +41,6 @@ namespace Cooking.Stage
         private GameObject[] shells;
         private int breakCount = 0;
         private bool hasBroken = false;
-        public bool IsFirstCollision
-        {
-            get { return _isFirstCollsion; }
-        }
-        /// <summary>
-        /// ショットによる一回目の衝突のみ割れる スタート地点に帰ってきたとき少し落下する事に注意 
-        /// </summary>
-        private bool _isFirstCollsion = false;
-        /// <summary>
-        /// ショット開始時呼ばれる 割れるようになる
-        /// </summary>
-        public void FlagReset()
-        {
-            _isFirstCollsion = true;
-        }
-
         private void Awake()
         {
             var shellsList = new List<GameObject>();
@@ -76,7 +60,6 @@ namespace Cooking.Stage
             if (!haveSeasoning)
                 eggObject.GetComponent<MeshRenderer>().material = breakMaterials[breakCount];
             breakCount += 1;
-            _isFirstCollsion = false;
         }
         /// <summary>
         /// 卵が割れる

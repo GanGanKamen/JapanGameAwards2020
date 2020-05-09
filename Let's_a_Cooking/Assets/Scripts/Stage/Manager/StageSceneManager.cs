@@ -40,11 +40,10 @@ namespace Cooking.Stage
         }
         #endregion
         /// <summary>
-        /// 重力の大きさが入り 。落下地点を計算するうえで必要 。Foodの重力の値を参照し 。各予測線オブジェクト生成時に渡し 。
-        /// 食材のもつ重力の値は現在1 。この値を変える場合、スクリプトで重力制御をする必要があり 。スケールではなく重さを変えると、ショット時に加えるべき力の量が変わり 。
-        /// 1から変えない想定 。
+        /// 重力加速度の大きさ 落下地点を計算するうえで必要  各予測線オブジェクト生成時に渡す
+        /// 食材のもつ重力の値は現在9.81 。この値を変える場合、スクリプトで重力制御をする必要あり スケールではなく重さを変えると、ショット時に加えるべき力の量が変わり 。
         /// </summary>
-        public readonly float gravityScale = 1;
+        public readonly float gravityAccelerationValue = 9.81f;
         /// <summary>
         /// 初期値Shrimp 選ばれた食材リスト FoodStatus用のenumへ変換
         /// </summary>
@@ -105,7 +104,7 @@ namespace Cooking.Stage
         /// </summary>
         [SerializeField] Transform _foodPositionsParent = null;
         /// <summary>
-        /// LayerList[0]FoodLayerInStartArea,[1]Kitchen intとして参照 GetStringLayerName()はstring
+        /// LayerList[0]FoodLayerInStartArea,[1]Kitchen intとして参照 10進数に変換が必要 GetStringLayerName()はstring
         /// </summary>
         public LayerMask[] LayerListProperty
         {
@@ -305,28 +304,22 @@ namespace Cooking.Stage
         /// </summary>
         private void CreatePlayersOnInitialize()
         {
+            //仮の値を入れる
+            FoodType playerFoodType = FoodType.Shrimp;
+            //文字列に変換後、正しい値を代入                                                  //現状プレイヤーはすべて同じ食材→最初のプレイヤーが選んだ値
+            playerFoodType = EnumParseMethod.TryParseAndDebugAssertFormatAndReturnResult(_chooseFoodNames[0], true, playerFoodType);
             //プレイヤー番号が小さいのがプレイしている人で大きい数字はAI
             for (int playerNumber = 0; playerNumber < GameManager.Instance.PlayerSumNumber; playerNumber++)
             {
                 //プレイヤーを生成
                 if (playerNumber < GameManager.Instance.playerNumber)
                 {
-                    //仮の値を入れる
-                    FoodType playerFoodType = FoodType.Shrimp;
-                    //文字列に変換後、正しい値を代入
-                    playerFoodType = EnumParseMethod.TryParseAndDebugAssertFormatAndReturnResult(_chooseFoodNames[playerNumber], true, playerFoodType);
                     InitializePlayerData(playerNumber, playerFoodType, false);
                 }
                 else
                 {
-                    //乱数でつくるるものを決める
-                    var foodid = Random.GetRandomInt(4);
-                    if (foodid == 2)//ささみ動かない
-                    {
-                        foodid = 3;
-                    }
-                    FoodType aIFoodType = (FoodType)System.Enum.ToObject(typeof(FoodType),foodid);
-                    InitializePlayerData(playerNumber, aIFoodType, true);
+                    //プレイヤーと同じ食材がAIになる
+                    InitializePlayerData(playerNumber, playerFoodType, true);
                 }
             }
             InitializePlayerPointList(GameManager.Instance.PlayerSumNumber);

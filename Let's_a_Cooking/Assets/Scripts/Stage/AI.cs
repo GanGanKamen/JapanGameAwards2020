@@ -43,7 +43,6 @@ namespace Cooking.Stage
 
             // 射出速度を算出
             Vector3 velocity = CalculateVelocity(this.transform.position, targetPosition, angle);
-
             ShotManager.Instance.AIShot(velocity * rid.mass);
         }
 
