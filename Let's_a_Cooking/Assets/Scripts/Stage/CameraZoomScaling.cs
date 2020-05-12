@@ -49,7 +49,7 @@ namespace Cooking.Stage
                     }
                     if (touch1.phase == TouchPhase.Moved && touch2.phase == TouchPhase.Moved)
                     {
-                        // タッチ位置の移動後、長さを再測し、前回の距離からの相対値を取る。
+                        // タッチ位置の移動後、長さを再測し、前回の距離からの相対値を取る
                         float newTouchDistance = Vector2.Distance(touch1.position, touch2.position);
                         //差分計算
                         float deltaDistance = _touchDistanceOnZoomStart - newTouchDistance;

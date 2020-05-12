@@ -6,7 +6,7 @@
     public enum StageGameState
     {
         Preparation,
-        FinishFoodInstantiate,//プレイヤーの生成終了
+        FinishFoodInstantiateAndPlayerInOrder,//プレイヤーの生成終了
         Play,
         Finish
     }

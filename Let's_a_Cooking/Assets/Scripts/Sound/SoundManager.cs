@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,88 +7,193 @@ namespace Cooking
 {
     public class SoundManager : MonoBehaviour
     {
-        public static void IntroLoopPlay(AudioSource introSource, AudioSource loopSource) //イントロ付きループ再生
+        private SoundParameter _soundParameter;
+        private List<AudioSource> _audioSourcesList = new List<AudioSource>();
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void CreateInstance()
         {
-            //イントロ部分のオーディオソードとループ部分のオーディオソースを用意する
-            introSource.loop = false;
-            introSource.Play();
-            loopSource.loop = true;
-            loopSource.PlayScheduled(AudioSettings.dspTime - 0.1f + introSource.clip.length);
+            var obj = new GameObject("SoundManager");
+            obj.AddComponent<SoundManager>();
+            DontDestroyOnLoad(obj);
         }
 
-        public static void IntroLoopPlay(AudioSource introSource, AudioSource loopSource, float OptionVolume) //ゲームオプションの音量調節
+        /// <summary>
+        /// このクラスのインスタンスを取得
+        /// </summary>
+        public static SoundManager Instance
         {
-            introSource.loop = false;
-            introSource.Play();
-            loopSource.loop = true;
-            loopSource.PlayScheduled(AudioSettings.dspTime - 0.1f + introSource.clip.length);
+            get
+            {
+                return instance;
+            }
+        }
+        private static SoundManager instance = null;
+
+        /// <summary>
+        /// Start()の実行より先行して処理したい内容を記述
+        /// </summary>
+        void Awake()
+        {
+            // 初回作成時
+            if (instance == null)
+            {
+                instance = this;
+                // シーンをまたいで削除されないように設定
+                DontDestroyOnLoad(gameObject);
+            }
+            // 2個目以降の作成時
+            else
+            {
+                Destroy(gameObject);
+            }
+
+            _soundParameter = Resources.Load<SoundParameter>("ScriptableObjects/SoundParameter");
+            if (_soundParameter == null)
+            {
+                Debug.LogAssertion("SoundParameterがScriptableObjects/SoundParameterに見当たりません");
+                return;
+            }
+            var audioSourceParent = this.transform;
+            for (var i = 0; i < _soundParameter.soundInformations.Length; ++i)
+            {
+                var param = _soundParameter.soundInformations[i];
+                var clip = Resources.Load<AudioClip>("Sounds/" + param.soundEffect.ToString());
+                var obj = new GameObject("Sound_" + param.soundEffect.ToString());
+                var audioSource = obj.AddComponent<AudioSource>();
+                audioSource.clip = clip;
+                obj.transform.SetParent(audioSourceParent);
+                _audioSourcesList.Add(audioSource);
+            }
+        }
+        /// <summary>
+        /// 指定したSEを再生
+        /// </summary>
+        /// <param name="soundEffectID"></param>
+        public void PlaySE(SoundEffectID soundEffectID)
+        {
+            var soundInfo = _soundParameter.soundInformations[(int)soundEffectID];
+            if (soundInfo.is3DSound)
+            {
+                Debug.LogAssertion ("2Dサウンドではありません。Play3DSEメソッドを使用してください");
+            }
+            if (soundInfo.loop)
+            {
+                SoundPlayer.PlaySE(_audioSourcesList[(int)soundEffectID],  _soundParameter.soundInformations[(int)soundEffectID]);
+            }
+            else
+            {
+                SoundPlayer.PlaySEOneTime(_audioSourcesList[(int)soundEffectID], _audioSourcesList[(int)soundEffectID].clip, _soundParameter.soundInformations[(int)soundEffectID].volume);
+            }
+        }
+        /// <summary>
+        /// 指定した3DSEの再生
+        /// </summary>
+        /// <param name="soundEffectID"></param>
+        /// <param name="transform"></param>
+        public void Play3DSE(SoundEffectID soundEffectID , Transform transform)
+        {
+            var soundInfo = _soundParameter.soundInformations[(int)soundEffectID];
+            if (!soundInfo.is3DSound)
+            {
+                Debug.LogAssertion("3Dサウンドではありません。PlaySEメソッドを使用してください");
+            }
+            if (soundInfo.loop)
+            {
+                SoundPlayer.PlaySE(_audioSourcesList[(int)soundEffectID], _soundParameter.soundInformations[(int)soundEffectID]);
+            }
+            SoundPlayer.Play3DSEOneTime(_audioSourcesList[(int)soundEffectID].clip,transform);
+        }
+        #region テストコード
+#if UNITY_EDITOR
+        [ContextMenu("TestPlaySound")]
+        private void TestPlaySound()
+        {
+            StartCoroutine(OnTestPlaySound());
         }
 
-        public static void SwitchBGM(AudioSource preBGM, AudioSource newBgm, float time) //現在再生中のBGMをフェードアウトで新しいBGMに切り替える
+        private IEnumerator OnTestPlaySound()
         {
-            GameObject fadeObj = new GameObject();
-            fadeObj.AddComponent<Cooking.Sound.BGMFade>();
-            Cooking.Sound.BGMFade fade = fadeObj.GetComponent<Cooking.Sound.BGMFade>();
-            fade.preBGM = preBGM;
-            fade.nextBGM = newBgm;
-            fade.fadeTime = time;
+            foreach (SoundEffectID soundID in Enum.GetValues(typeof(SoundEffectID)))
+            {
+                PlaySE(soundID);
+                Debug.Log(soundID);
+                float time = 0;
+                while (time < 2)
+                {
+                    if (Input.GetKeyDown(KeyCode.Return))
+                    {                     
+                        break;//スキップ
+                    }
+                    time += Time.deltaTime;
+                    yield return null;
+                }
+            }
+        }
+        [ContextMenu("TestPlaySoundGetNumber")]
+        private void TestPlaySoundGetNumber()
+        {
+            StartCoroutine(OnTestPlaySoundGetNumber());
         }
 
-        public static void SwitchBGM(AudioSource preBGM, AudioSource newBgm, float time, float OptionVolume) //ゲームオプションの音量調節
+        private IEnumerator OnTestPlaySoundGetNumber()
         {
-            GameObject fadeObj = new GameObject();
-            fadeObj.AddComponent<Cooking.Sound.BGMFade>();
-            Cooking.Sound.BGMFade fade = fadeObj.GetComponent<Cooking.Sound.BGMFade>();
-            fade.preBGM = preBGM;
-            fade.nextBGM = newBgm;
-            fade.fadeTime = time;
-            fade.optionVolume = OptionVolume;
+            string input = "";
+            SoundEffectID soundEffectID = SoundEffectID.battle_start0;
+            Debug.Log("番号を入力");
+            while (true)
+            {
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                   //変換成功したら再生 未完成
+                   if( EnumParseMethod.TryParseAndDebugAssertFormat(input, false,out soundEffectID))
+                    PlaySE(soundEffectID);
+                    input = "";
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha0))
+                {
+                    input += "0";
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha1))
+                {
+                    input += "1";
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha2))
+                {
+                    input += "2";
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha3))
+                {
+                    input += "3";
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha4))
+                {
+                    input += "4";
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha5))
+                {
+                    input += "5";
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha6))
+                {
+                    input += "6";
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha7))
+                {
+                    input += "7";
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha8))
+                {
+                    input += "8";
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha9))
+                {
+                    input += "9";
+                }
+                Debug.Log(input);
+                yield return null;
+            }
         }
-
-        public static void SwitchBGM(AudioSource preBGM, AudioSource newBgmIntro, AudioSource newBGMLoop, float time) //フェードアウトからのイントロ付きループ再生
-        {
-            GameObject fadeObj = new GameObject();
-            fadeObj.AddComponent<Cooking.Sound.BGMFade>();
-            Cooking.Sound.BGMFade fade = fadeObj.GetComponent<Cooking.Sound.BGMFade>();
-            fade.preBGM = preBGM;
-            fade.introBGM = newBgmIntro;
-            fade.nextBGM = newBGMLoop;
-            fade.fadeTime = time;
-        }
-
-        public static void SwitchBGM(AudioSource preBGM, AudioSource newBgmIntro, AudioSource newBGMLoop, float time, float OptionVolume)
-        {
-            GameObject fadeObj = new GameObject();
-            fadeObj.AddComponent<Cooking.Sound.BGMFade>();
-            Cooking.Sound.BGMFade fade = fadeObj.GetComponent<Cooking.Sound.BGMFade>();
-            fade.preBGM = preBGM;
-            fade.introBGM = newBgmIntro;
-            fade.nextBGM = newBGMLoop;
-            fade.fadeTime = time;
-            fade.optionVolume = OptionVolume;
-        }
-
-        public static void PlayBGM(AudioSource audioSource)
-        {
-            audioSource.Play();
-        }
-
-        public static void PlayBGM(AudioSource audioSource, float OptionVolume) //ゲームオプションの音量調節に適応するBGM再生
-        {
-            audioSource.volume = OptionVolume;
-            audioSource.Play();
-        }
-
-        public static void PlaySEOneTime(AudioSource audioSource, AudioClip clip)
-        {
-            audioSource.PlayOneShot(clip);
-        }
-
-        public static void PlaySEOneTime(AudioSource audioSource, AudioClip clip, float OptionVolume) //ゲームオプションの音量調節に適応するSE再生
-        {
-            audioSource.volume = OptionVolume;
-            audioSource.PlayOneShot(clip);
-        }
+#endif
+        #endregion
     }
 }
-

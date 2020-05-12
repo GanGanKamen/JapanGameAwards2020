@@ -12,7 +12,7 @@ namespace Cooking.Stage
         /// <summary>
         /// レイキャストにより算出される落下地点に至るまでの時間
         /// </summary>
-        public float FallTime
+        public static float FallTime
         {
             get { return _fallTime; }
         }
@@ -21,17 +21,17 @@ namespace Cooking.Stage
         /// レイキャストによる落下地点の予測 見つからないときは0ベクトル
         /// </summary>
         /// <param name="predictStartPoint">予測開始地点</param>
-        /// <param name="maxShotSpeedVector">最大パワーの速度ベクトル</param>
+        /// <param name="firstSpeedVector">初速度ベクトル</param>
         /// <returns></returns>
-        public static Vector3 PredictFallPointByRayCast(Vector3 predictStartPoint , Vector3 maxShotSpeedVector)
+        public static Vector3 PredictFallPointByRayCast(Vector3 predictStartPoint , Vector3 firstSpeedVector)
         {
             int i = 1;//累積誤差発生を防ぐためのインクリメント変数
             //レイによる落下地点予測 無限ループ防止目的で 滞空時間100秒制限
             for (float flyTime = 0f; flyTime < 30; i++)
             {
-                Vector3 originPoint = predictStartPoint + new Vector3(maxShotSpeedVector.x * flyTime, CalculateYposition(maxShotSpeedVector, flyTime), maxShotSpeedVector.z * flyTime);
+                Vector3 originPoint = predictStartPoint + new Vector3(firstSpeedVector.x * flyTime, CalculateYposition(firstSpeedVector, flyTime), firstSpeedVector.z * flyTime);
                 flyTime = i / 200f; //累積誤差の発生を防ぐ 精度を決める変数 精度上げると処理が重い
-                Vector3 endPoint = predictStartPoint + new Vector3(maxShotSpeedVector.x * flyTime, CalculateYposition(maxShotSpeedVector, flyTime), maxShotSpeedVector.z * flyTime);
+                Vector3 endPoint = predictStartPoint + new Vector3(firstSpeedVector.x * flyTime, CalculateYposition(firstSpeedVector, flyTime), firstSpeedVector.z * flyTime);
                 //終点 - 始点で方向ベクトルを算出
                 var direction = endPoint - originPoint;
                 //レイを飛ばして当たった場所を保存
@@ -83,7 +83,7 @@ namespace Cooking.Stage
             ///レイの長さ
             float rayLength = direction.magnitude;
             //Rayが当たったオブジェクトの情報を入れる箱
-            RaycastHit hit; //原点 方向
+            RaycastHit hit;    //原点        方向
             Ray ray = new Ray(originPoint, direction);
             //Kitchenレイヤーとレイ判定を行う
             if (Physics.Raycast(ray, out hit, rayLength, StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]))
