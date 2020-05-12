@@ -155,6 +155,7 @@ namespace Cooking.Stage
             //this.transform.LookAt(targetObject.transform);
             yield return new WaitForSeconds(2f);
             ThrowingBall(targetObject);
+            EffectManager.Instance.InstantiateEffect(TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].transform.position, EffectManager.EffectPrefabID.Food_Jump);
             ///止まるまでAIのターン
             while (true)
             {

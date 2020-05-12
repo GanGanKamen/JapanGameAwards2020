@@ -75,6 +75,7 @@ namespace Cooking.Stage
         ///あわ発生領域の2端(x.y.zの最小値と最大値)の座標 この2点の間の座標に発生させる
         /// </summary>
         Vector3[] _bubbleLimitPosition;
+
         enum LimitValue
         {
             Min,Max
@@ -88,6 +89,7 @@ namespace Cooking.Stage
         /// </summary>
         private Vector3[] _instantiateSeasoningPoint;
         [SerializeField] GameObject _seasoningPrefab = null;
+        [SerializeField] GameObject rareSeasoningEffect;
         // Start is called before the first frame update
         void Start()
         {
@@ -163,6 +165,7 @@ namespace Cooking.Stage
         public void AppearRareSeasoning()
         {
             _rareSeasoning.SetActive(true);
+            rareSeasoningEffect.SetActive(true);
         }
         /// <summary>
         /// ターンが変わるときに水が出なくなる場所を制御

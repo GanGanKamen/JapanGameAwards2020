@@ -293,6 +293,10 @@ namespace Cooking.Stage
                 _shotStrength = ShotStrength.Powerful;
             }
             PlayShotSound();
+
+            //ココ ("Effects/")
+            EffectManager.Instance.InstantiateEffect(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].transform.position, EffectManager.EffectPrefabID.Food_Jump);
+
             CameraManager.Instance.SetCameraPositionNearPlayer();
             //固定解除
             _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].UnlockFreezeRotation();

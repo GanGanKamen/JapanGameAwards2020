@@ -269,6 +269,14 @@ namespace Cooking.Stage
             //=================
             #region//食材共通処理
             //=================
+            if (ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode)
+            {
+                if (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerValue(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]) && collision.gameObject.tag != "Wall")
+                {
+                    EffectManager.Instance.InstantiateEffect(collision.contacts[0].point, EffectManager.EffectPrefabID.Food_Grounded);
+                }
+
+            }
             if (collision.gameObject.tag == "Floor")
             {
                 _isFall = true;
@@ -331,6 +339,7 @@ namespace Cooking.Stage
         {
             if (other.tag == "Finish")
             {
+                EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Splash);
                 _isGoal = true;
             }
             else if (other.tag == "Water")
@@ -340,6 +349,8 @@ namespace Cooking.Stage
             // とりあえず調味料はトリガーで
             else if (other.tag == "Seasoning")
             {
+                EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Seasoning_Hit);
+                EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Seasoning).parent = GetComponent<FoodStatus>().FoodPositionNotRotate.transform;
                 ChangeMaterial(other.gameObject.GetComponent<MeshRenderer>().material , _foodType);
                 Destroy(other.gameObject);
             }
@@ -350,6 +361,7 @@ namespace Cooking.Stage
             }
             else if (other.tag == "Bubble")
             {
+                EffectManager.Instance.InstantiateEffect(other.transform.position, EffectManager.EffectPrefabID.Foam_Break);
                 Destroy(other.gameObject);
             }
             else if (other.tag == "StartArea")// && !_isFoodInStartArea)//落下後復帰想定
