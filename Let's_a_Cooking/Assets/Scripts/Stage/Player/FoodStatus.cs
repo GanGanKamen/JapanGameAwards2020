@@ -81,6 +81,16 @@ namespace Cooking.Stage
             get { return _rigidbody; }
         }
         [SerializeField] private Rigidbody _rigidbody = null;
+        /// <summary>
+        /// 物理挙動を制御
+        /// </summary>
+        enum PhysicsState
+        {
+            Other,ShotFly, WallBound,FirstBound
+        }
+        PhysicsState _physicsState = PhysicsState.Other;
+        private float _firstFlyTime = 0.1f;
+        private float _firstFlyTimeCounter;
         public bool IsFoodInStartArea
         {
             get { return _isFoodInStartArea; }
@@ -111,9 +121,11 @@ namespace Cooking.Stage
         /// <summary>
         /// ショット開始時呼ばれる 衝突後跳ねる挙動を制御 卵は割れるようになる
         /// </summary>
-        public void CollisionFlagReset()
+        public void CollisionValueReset()
         {
             _isFirstCollision = true;
+            _firstFlyTimeCounter = 0;
+            _physicsState = PhysicsState.Other;
         }
 
         /// <summary>
@@ -157,8 +169,47 @@ namespace Cooking.Stage
         void Update()
         {
            _foodPositionNotRotate.transform.position = this.transform.position;
-            //_foodPositionOnlyYRotate.transform.eulerAngles = new Vector3(0, this.transform.eulerAngles.y, 0);
-            //Debug.Log(_rigidbody.velocity.normalized);
+        }
+        private void FixedUpdate()
+        {
+            switch (_foodType)
+            {
+                case FoodType.Shrimp:
+                    switch (_physicsState)
+                    {
+                        case PhysicsState.Other:
+                            break;
+                        case PhysicsState.ShotFly:
+                            break;
+                        case PhysicsState.WallBound:
+                            //OnCollisionEnterで得るベクトルを必要に応じて代入？いらないかも
+                            break;
+                        case PhysicsState.FirstBound:
+                            _firstFlyTimeCounter += Time.deltaTime;
+                            if (_firstFlyTimeCounter >= _firstFlyTime)
+                            {
+                                _physicsState = PhysicsState.Other;
+                            }
+                            var velocity = _rigidbody.velocity;
+                            //衝突前の速度ベクトル
+                            var speedVector = PredictFoodPhysics.PredictFirstBoundSpeedVecor(ShotManager.Instance.transform.forward * ShotManager.Instance.ShotPower * 0.75f);
+                            velocity.x = speedVector.x;
+                            velocity.z = speedVector.z;
+                            _rigidbody.velocity = velocity;
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case FoodType.Egg:
+                    break;
+                case FoodType.Chicken:
+                    break;
+                case FoodType.Sausage:
+                    break;
+                default:
+                    break;
+            }
         }
         private void OnCollisionEnter(Collision collision)
         {
@@ -247,26 +298,21 @@ namespace Cooking.Stage
                 case FoodType.Shrimp:
                     if (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerValue(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]) && collision.gameObject.tag != "Wall")
                     {
-                        if (_isFirstCollision && !TurnManager.Instance.IsAITurn)
+                        if (_isFirstCollision && !TurnManager.Instance.IsAITurn )
                         {
-                            var velocity = _rigidbody.velocity;
-                            Debug.Log(velocity);
-                            //跳ねる
-                            //velocity.x = _foodPositionNotRotate.transform.forward.x * ShotManager.Instance.ShotPower / 1.2f;
-                            //if (_rigidbody.velocity.y < 0)
-                            //velocity.y = -_foodPositionNotRotate.transform.forward.y * ShotManager.Instance.ShotPower / 3;
-                            //velocity.z = _foodPositionNotRotate.transform.forward.z * ShotManager.Instance.ShotPower / 1.2f;
-                            //_rigidbody.velocity = velocity;
-                            //跳ねる 未完成
-                            //velocity.x = PredictFoodPhysics.PredictFirstBoundSpeedVecor(ShotManager.Instance.transform.forward * ShotManager.Instance.ShotPower).x * 2;
-                            //velocity.y = PredictFoodPhysics.PredictFirstBoundSpeedVecor(ShotManager.Instance.transform.forward * ShotManager.Instance.ShotPower).y / 0.5f;
-                            //velocity.z = 100;//PredictFoodPhysics.PredictFirstBoundSpeedVecor(ShotManager.Instance.transform.forward * ShotManager.Instance.ShotPower).z * 2;
-                            _rigidbody.velocity = velocity;
                             _isFirstCollision = false;
+                            //小さいジャンプでは代入しない
+                            if(PredictFoodPhysics.FallTime > 0.5f)
+                            _physicsState = PhysicsState.FirstBound;
                         }
+                        //else if (_physicsState == PhysicsState.FirstBound)
+                        //{
+                        //    _physicsState = PhysicsState.Other;
+                        //}
                     }
                     else if(collision.gameObject.tag == "Wall")
                     {
+                        Debug.Log(_rigidbody.velocity);
                         _isFirstCollision = false;
                     }
                     break;

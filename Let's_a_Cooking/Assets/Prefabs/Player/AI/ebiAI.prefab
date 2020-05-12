@@ -292,7 +292,6 @@ MonoBehaviour:
   _seasoningMaterial: {fileID: 0}
   _centerPoint: {fileID: 7833259288611724176}
   _foodPositionNotRotate: {fileID: 2145306625588699937}
-  _foodPositionOnlyYRotate: {fileID: 6254816993136189548}
   _rigidbody: {fileID: 4479837848373791946}
 --- !u!1 &2242279690130351718
 GameObject:

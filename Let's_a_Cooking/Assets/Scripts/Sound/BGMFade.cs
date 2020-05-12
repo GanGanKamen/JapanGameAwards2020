@@ -39,7 +39,7 @@ namespace Cooking.Sound
                 preBGM.Stop();
                 if (introBGM != null)
                 {
-                    SoundManager.IntroLoopPlay(introBGM, nextBGM, optionVolume);
+                    SoundPlayer.IntroLoopPlay(introBGM, nextBGM, optionVolume);
                 }
                 else
                 {

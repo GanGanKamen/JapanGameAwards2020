@@ -187,7 +187,7 @@ namespace Cooking.Stage
                         CreatePlayersOnInitialize();
                     }
                     break;
-                case StageGameState.FinishFoodInstantiate:
+                case StageGameState.FinishFoodInstantiateAndPlayerInOrder:
                     _gameState = StageGameState.Play;
                     break;
                 case StageGameState.Play:
@@ -304,10 +304,8 @@ namespace Cooking.Stage
         /// </summary>
         private void CreatePlayersOnInitialize()
         {
-            //仮の値を入れる
-            FoodType playerFoodType = FoodType.Shrimp;
-            //文字列に変換後、正しい値を代入                                                  //現状プレイヤーはすべて同じ食材→最初のプレイヤーが選んだ値
-            playerFoodType = EnumParseMethod.TryParseAndDebugAssertFormatAndReturnResult(_chooseFoodNames[0], true, playerFoodType);
+            //仮の値を入れて変換した値を取得
+            FoodType playerFoodType = GetFoodType(FoodType.Shrimp);
             //プレイヤー番号が小さいのがプレイしている人で大きい数字はAI
             for (int playerNumber = 0; playerNumber < GameManager.Instance.PlayerSumNumber; playerNumber++)
             {
@@ -323,24 +321,32 @@ namespace Cooking.Stage
                 }
             }
             InitializePlayerPointList(GameManager.Instance.PlayerSumNumber);
-            _gameState = StageGameState.FinishFoodInstantiate;
+            //プレイヤーの並び替えが行われる
+            _gameState = StageGameState.FinishFoodInstantiateAndPlayerInOrder;
         }
+
+        public FoodType GetFoodType(FoodType foodType )
+        {
+            //文字列に変換後、正しい値を代入                                                  //現状プレイヤーはすべて同じ食材→最初のプレイヤーが選んだ値
+            return EnumParseMethod.TryParseAndDebugAssertFormatAndReturnResult(_chooseFoodNames[0], true, foodType);
+        }
+
         /// <summary>
-        /// プレイヤーの情報を初期化 TurnManagerとプレイヤー個人が持つ情報 生成時に呼ばれる
+        /// プレイヤーの情報を初期化 TurnManagerとプレイヤー個人が持つ情報 生成時に呼ばれる 初期化時はこの後順番を並び替える
         /// </summary>
-        /// <param name="playerNumber">プレイヤーの番号</param>
+        /// <param name="foodStatusIndex">FoodStatusにセットするプレイヤーのindex番号(単なる番号ではない)初期化時はまだ番号に順番の意味はない</param>
         /// <param name="playerFoodType">食材の種類</param>
         /// <param name="isAI">AIかどうか</param>
-        public void InitializePlayerData(int playerNumber, FoodType playerFoodType ,bool isAI)
+        public void InitializePlayerData(int foodStatusIndex, FoodType playerFoodType ,bool isAI)
         {
             //次の食材を生成
             FoodStatus playerStatus = InstantiateNextFood(playerFoodType, isAI);
             //foodStatus配列に登録
-            _turnManager.SetFoodStatusValue(playerNumber, playerStatus);
+            _turnManager.SetFoodStatusValue(foodStatusIndex, playerStatus);
             //食材の種類を食材に渡す
             playerStatus.SetFoodTypeOnInitialize(playerFoodType);
             //Position初期化 スタート地点へ配置
-            _turnManager.ResetPlayerOnStartPoint(GetPlayerStartPoint(playerNumber), playerNumber);
+            _turnManager.ResetPlayerOnStartPoint(GetPlayerStartPoint(foodStatusIndex), foodStatusIndex);
             //親子関係初期化
             playerStatus.SetParentObject(_foodPositionsParent);
         }
