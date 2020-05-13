@@ -22,7 +22,7 @@ namespace Cooking.Stage
         }
         private void OnCollisionEnter(Collision collision)
         {
-            if (collision.gameObject.tag == "Floor")
+            if (collision.gameObject.tag == TagList.Floor.ToString())
             {
                 //_isFall = true;
             }
@@ -35,16 +35,16 @@ namespace Cooking.Stage
         }
         private void OnTriggerEnter(Collider other)
         {
-            //if (other.tag == "Finish")
+            //if (other.tag == TagList.Finish.ToString())
             //{
             //    _isGoal = true;
             //}
-            //if (other.tag == "Water")
+            //if (other.tag == TagList.Water.ToString())
             //{
             //    CleanSeasoning(_skinnedMeshRenderer, _ebi);
             //}
             ///// とりあえず調味料はトリガーで
-            //else if (other.tag == "Seasoning")
+            //else if (other.tag == TagList.Seasoning.ToString())
             //{
             //    GetSeasoning(_skinnedMeshRenderer, _ebiBlack);
             //    Destroy(other.gameObject);

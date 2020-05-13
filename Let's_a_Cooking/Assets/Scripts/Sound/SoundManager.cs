@@ -86,11 +86,11 @@ namespace Cooking
             }
         }
         /// <summary>
-        /// 指定した3DSEの再生
+        /// 指定した3DSEの再生 座標はTransformとは限らない(collision.contact[0].point)→Vector3
         /// </summary>
-        /// <param name="soundEffectID"></param>
-        /// <param name="transform"></param>
-        public void Play3DSE(SoundEffectID soundEffectID , Transform transform)
+        /// <param name="soundEffectID">種類</param>
+        /// <param name="position">座標はTransformとは限らない</param>
+        public void Play3DSE(SoundEffectID soundEffectID , Vector3 position)
         {
             var soundInfo = _soundParameter.soundInformations[(int)soundEffectID];
             if (!soundInfo.is3DSound)
@@ -101,7 +101,7 @@ namespace Cooking
             {
                 SoundPlayer.PlaySE(_audioSourcesList[(int)soundEffectID], _soundParameter.soundInformations[(int)soundEffectID]);
             }
-            SoundPlayer.Play3DSEOneTime(_audioSourcesList[(int)soundEffectID].clip,transform);
+            SoundPlayer.Play3DSEOneTime(_audioSourcesList[(int)soundEffectID].clip,position);
         }
         #region テストコード
 #if UNITY_EDITOR

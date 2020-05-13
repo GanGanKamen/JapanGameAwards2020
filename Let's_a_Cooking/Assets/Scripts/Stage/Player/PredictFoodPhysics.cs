@@ -18,12 +18,13 @@ namespace Cooking.Stage
         }
         private static float _fallTime = 0;
         /// <summary>
-        /// レイキャストによる落下地点の予測 見つからないときは0ベクトル
+        /// レイキャストによる落下地点の予測 見つからないときは0ベクトルまたはnull
         /// </summary>
+        /// <typeparam name="T">Vector3 または GameObject 落下地点の欲しい情報を指定</typeparam>
         /// <param name="predictStartPoint">予測開始地点</param>
         /// <param name="firstSpeedVector">初速度ベクトル</param>
         /// <returns></returns>
-        public static Vector3 PredictFallPointByRayCast(Vector3 predictStartPoint , Vector3 firstSpeedVector)
+        public static T PredictFallPointByRayCast <T> (Vector3 predictStartPoint, Vector3 firstSpeedVector)
         {
             int i = 1;//累積誤差発生を防ぐためのインクリメント変数
             //レイによる落下地点予測 無限ループ防止目的で 滞空時間100秒制限
@@ -34,21 +35,53 @@ namespace Cooking.Stage
                 Vector3 endPoint = predictStartPoint + new Vector3(firstSpeedVector.x * flyTime, CalculateYposition(firstSpeedVector, flyTime), firstSpeedVector.z * flyTime);
                 //終点 - 始点で方向ベクトルを算出
                 var direction = endPoint - originPoint;
-                //レイを飛ばして当たった場所を保存
-                var fallPoint = CastRayOnKitchen(originPoint, direction);
                 //レイを可視化
                 Debug.DrawRay(originPoint, direction, Color.red, 0.2f);
-                if (fallPoint != Vector3.zero)
+                if (typeof(T) == typeof(GameObject))
                 {
-                    _fallTime = flyTime;
-                    return fallPoint;
+                    GameObject FallPointGameObject = GetGameObjectByCastRayOnKitchen(originPoint, direction);
+                    if (FallPointGameObject != null)
+                    {
+                        _fallTime = flyTime;
+                        return (T)(object)FallPointGameObject;
+                    }
+                    if (flyTime > 29.9f)
+                    {
+                        Debug.Log("当たっていない");
+                    }
                 }
-                if (flyTime > 29.9f)
+                else if (typeof(T) == typeof(Vector3))
                 {
-                    Debug.Log("当たっていない");
+                    //レイを飛ばして当たった場所を保存
+                    Vector3 fallPoint = CastRayOnKitchen(originPoint, direction);
+                    if (fallPoint != Vector3.zero)
+                    {
+                        _fallTime = flyTime;
+                        return (T)(object)fallPoint;
+                    }
+                    if (flyTime > 29.9f)
+                    {
+                        Debug.Log("当たっていない");
+                    }
+                }
+                else
+                {
+                    Debug.LogAssertion("指定した型が想定と異なります");
                 }
             }
-            return Vector3.zero;
+            if (typeof(T) == typeof(GameObject))
+            {
+                return (T)(object)null;
+            }
+            else if (typeof(T) == typeof(Vector3))
+            {
+                return (T)(object)Vector3.zero;
+            }
+            else
+            {
+                Debug.LogAssertion("指定した型が想定と異なります");
+                return (T)(object)null;
+            }
         }
         /// <summary>
         /// 最初に衝突した時の跳ねる方向の速度ベクトル(理論値)を算出(OnCollisionEnterでは食材の回転で実行値が安定しなかったため)
@@ -91,6 +124,20 @@ namespace Cooking.Stage
                 return hit.point;
             }
             return Vector3.zero;
+        }
+        private static GameObject GetGameObjectByCastRayOnKitchen(Vector3 originPoint, Vector3 direction)
+        {
+            ///レイの長さ
+            float rayLength = direction.magnitude;
+            //Rayが当たったオブジェクトの情報を入れる箱
+            RaycastHit hit;    //原点        方向
+            Ray ray = new Ray(originPoint, direction);
+            //Kitchenレイヤーとレイ判定を行う
+            if (Physics.Raycast(ray, out hit, rayLength, StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]))
+            {
+                return hit.transform.gameObject;
+            }
+            return null;
         }
         #endregion
     }

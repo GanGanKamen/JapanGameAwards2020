@@ -16,13 +16,9 @@ namespace Cooking.Stage
         enum ButtonName
         {
             None,
-            Shrimp,
-            Egg,
-            Chicken,
-            Sausage,
-            LookDownMode,
-            FrontMode,
-            SideMode,
+            Easy,Normal,Hard,
+            Shrimp,Egg,Chicken,Sausage,
+            LookDownMode,FrontMode,SideMode,
             ShottingMode,
             CancelButton
         }
@@ -41,34 +37,51 @@ namespace Cooking.Stage
         public void OnTouch(Button button)
         {
             EnumParseMethod.TryParseAndDebugAssertFormat(button.name, true,out _buttonName);
+            //仮の値 一部のボタンの名前で使用
+            ScreenState afterScreenState = ScreenState.InitializeChoose;
             //アクティブボタン特定のための情報 UIの状態を取得
             switch (_uIManager.MainUIStateProperty)
             {
-                case ScreenState.ChooseFood:
+                case ScreenState.InitializeChoose:
                     switch (_buttonName)
                     {
                         case ButtonName.None:
                             Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", _uIManager.MainUIStateProperty.ToString());
                             break;
+                        case ButtonName.Easy:
+                            //index++; 複数プレイヤー対応→TurnManager
+                            StageSceneManager.Instance.SetChooseFoodNames(_buttonName.ToString());
+                            _uIManager.ChangeUI(ScreenState.InitializeChoose);
+                            break;
+                        case ButtonName.Normal:
+                            //index++; 複数プレイヤー対応→TurnManager
+                            StageSceneManager.Instance.SetChooseFoodNames(_buttonName.ToString());
+                            _uIManager.ChangeUI(ScreenState.InitializeChoose);
+                            break;
+                        case ButtonName.Hard:
+                            //index++; 複数プレイヤー対応→TurnManager
+                            StageSceneManager.Instance.SetChooseFoodNames(_buttonName.ToString());
+                            _uIManager.ChangeUI(ScreenState.InitializeChoose);
+                            break;
                         case ButtonName.Shrimp:
                             //index++; 複数プレイヤー対応→TurnManager
                             StageSceneManager.Instance.SetChooseFoodNames(_buttonName.ToString());
-                            _uIManager.ChangeUI("DecideOrder");
+                            _uIManager.ChangeUI(ScreenState.DecideOrder);
                             break;
                         case ButtonName.Egg:
                             //index++; 複数プレイヤー対応→TurnManager
                             StageSceneManager.Instance.SetChooseFoodNames(_buttonName.ToString());
-                            _uIManager.ChangeUI("DecideOrder");
+                            _uIManager.ChangeUI(ScreenState.DecideOrder);
                             break;
                         case ButtonName.Chicken:
                             //index++; 複数プレイヤー対応→TurnManager
                             StageSceneManager.Instance.SetChooseFoodNames(_buttonName.ToString());
-                            _uIManager.ChangeUI("DecideOrder");
+                            _uIManager.ChangeUI(ScreenState.DecideOrder);
                             break;
                         case ButtonName.Sausage:
                             //index++; 複数プレイヤー対応→TurnManager
                             StageSceneManager.Instance.SetChooseFoodNames(_buttonName.ToString());
-                            _uIManager.ChangeUI("DecideOrder");
+                            _uIManager.ChangeUI(ScreenState.DecideOrder);
                             break;
                         default:
                             break;
@@ -95,22 +108,24 @@ namespace Cooking.Stage
                     }
                     break;
                 case ScreenState.FrontMode:
+                    //一部のボタンの名前で使用
+                    afterScreenState = EnumParseMethod.TryParseAndDebugAssertFormatAndReturnResult(_buttonName.ToString(), true, afterScreenState);
                     switch (_buttonName)
                     {
                         case ButtonName.None:
                             Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", _uIManager.MainUIStateProperty.ToString());
                             break;
                         case ButtonName.LookDownMode:
-                            _uIManager.ChangeUI(_buttonName.ToString());
+                            _uIManager.ChangeUI(afterScreenState);
                             break;
                         case ButtonName.SideMode:
-                            _uIManager.ChangeUI(_buttonName.ToString());
+                            _uIManager.ChangeUI(afterScreenState);
                             break;
                         case ButtonName.ShottingMode:
                             var _turnManager = TurnManager.Instance;
                            // _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].PlayerAnimatioManage(false);
                             _uIManager.PlayModeUI.ChangeShotButtonTouched(true);
-                            StartCoroutine(ShotButtonWait());
+                            StartCoroutine(ShotButtonWait(afterScreenState));
                             //パワーメーターを停止して待機させる
                             ShotManager.Instance.ChangeShotState(ShotState.WaitMode);
                             break;
@@ -119,32 +134,36 @@ namespace Cooking.Stage
                     }
                     break;
                 case ScreenState.SideMode:
+                    //一部のボタンの名前で使用
+                    afterScreenState = EnumParseMethod.TryParseAndDebugAssertFormatAndReturnResult(_buttonName.ToString(), true, afterScreenState);
                     switch (_buttonName)
                     {
                         case ButtonName.None:
                             Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", _uIManager.MainUIStateProperty.ToString());
                             break;
                         case ButtonName.LookDownMode:
-                            _uIManager.ChangeUI(_buttonName.ToString());
+                            _uIManager.ChangeUI(afterScreenState);
                             break;
                         case ButtonName.FrontMode:
-                            _uIManager.ChangeUI(_buttonName.ToString());
+                            _uIManager.ChangeUI(afterScreenState);
                             break;
                         default:
                             break;
                     }
                     break;
                 case ScreenState.LookDownMode:
+                    //一部のボタンの名前で使用
+                    afterScreenState = EnumParseMethod.TryParseAndDebugAssertFormatAndReturnResult(_buttonName.ToString(), true, afterScreenState);
                     switch (_buttonName)
                     {
                         case ButtonName.None:
                             Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", _uIManager.MainUIStateProperty.ToString());
                             break;
                         case ButtonName.FrontMode:
-                            _uIManager.ChangeUI(_buttonName.ToString());
+                            _uIManager.ChangeUI(afterScreenState);
                             break;
                         case ButtonName.SideMode:
-                            _uIManager.ChangeUI(_buttonName.ToString());
+                            _uIManager.ChangeUI(afterScreenState);
                             break;
                         default:
                             break;
@@ -186,10 +205,10 @@ namespace Cooking.Stage
                     break;
             }
         }
-        IEnumerator ShotButtonWait()
+        IEnumerator ShotButtonWait(ScreenState afterScreenState )
         {
             yield return new WaitForSeconds(_shotButtonWaitTime);
-            _uIManager.ChangeUI(_buttonName.ToString());
+            _uIManager.ChangeUI(afterScreenState);
         }
 
     }

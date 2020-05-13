@@ -89,6 +89,10 @@ namespace Cooking.Stage
             Other,ShotFly, WallBound,FirstBound
         }
         PhysicsState _physicsState = PhysicsState.Other;
+        /// <summary>
+        /// 飛行時間の実効値 物に当たるとリセット
+        /// </summary>
+        private float _flyTime = 0.0f;
         private float _firstFlyTime = 0.1f;
         private float _firstFlyTimeCounter;
         public bool IsFoodInStartArea
@@ -121,11 +125,13 @@ namespace Cooking.Stage
         /// <summary>
         /// ショット開始時呼ばれる 衝突後跳ねる挙動を制御 卵は割れるようになる
         /// </summary>
-        public void CollisionValueReset()
+        public void FoodStatusReset()
         {
             _isFirstCollision = true;
             _firstFlyTimeCounter = 0;
-            _physicsState = PhysicsState.Other;
+            _flyTime = 0;
+            _physicsState = PhysicsState.ShotFly;
+            FreezeAllRotations();
         }
 
         /// <summary>
@@ -166,9 +172,13 @@ namespace Cooking.Stage
         {
             base.Start();
         }
-        void Update()
+        protected virtual void Update()
         {
            _foodPositionNotRotate.transform.position = this.transform.position;
+            if (ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode)
+            {
+                _flyTime += Time.deltaTime;
+            }
         }
         private void FixedUpdate()
         {
@@ -217,12 +227,12 @@ namespace Cooking.Stage
             switch (_foodType)
             {
                 case FoodType.Shrimp:
-                    if (collision.gameObject.tag == "Wall" && !_food.shrimp.IsHeadFallOff)
+                    if (collision.gameObject.tag == TagList.Wall.ToString() && !_food.shrimp.IsHeadFallOff)
                     {
                         _food.shrimp.FallOffShrimpHead();
                         _playerPoint.TouchWall();
                     }
-                    else if (collision.gameObject.tag == "Knife" && !_food.shrimp.IsHeadFallOff )
+                    else if (collision.gameObject.tag == TagList.Knife.ToString() && !_food.shrimp.IsHeadFallOff )
                     {
                         _food.shrimp.FallOffShrimpHead();
                         _playerPoint.CutFood();
@@ -247,7 +257,7 @@ namespace Cooking.Stage
                     }
                     break;
                 case FoodType.Chicken:
-                    if (collision.gameObject.tag == "Knife" && !_food.chicken.IsCut)
+                    if (collision.gameObject.tag == TagList.Knife.ToString() && !_food.chicken.IsCut)
                     {
                         ChangeMeshRendererCutFood(_food.chicken.CutMeshRenderer , _foodType);
                         _food.chicken.CutChicken();
@@ -255,7 +265,7 @@ namespace Cooking.Stage
                     }
                     break;
                 case FoodType.Sausage:
-                    if (collision.gameObject.tag == "Knife" && !_food.sausage.IsCut)
+                    if (collision.gameObject.tag == TagList.Knife.ToString() && !_food.sausage.IsCut)
                     {
                         ChangeMeshRendererCutFood(_food.sausage.CutMeshRenderer , _foodType);
                         _food.sausage.CutSausage();
@@ -271,13 +281,26 @@ namespace Cooking.Stage
             //=================
             if (ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode)
             {
-                if (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerValue(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]) && collision.gameObject.tag != "Wall")
+                //エフェクト
+                if (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerValue(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]) && collision.gameObject.tag != TagList.Wall.ToString())
                 {
                     EffectManager.Instance.InstantiateEffect(collision.contacts[0].point, EffectManager.EffectPrefabID.Food_Grounded);
                 }
-
+                //サウンド
+                if (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerValue(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]))
+                {
+                    //ぶつかるもので分ける
+                    if (collision.gameObject.tag == TagList.Floor.ToString() )
+                    {
+                        SoundManager.Instance.Play3DSE(SoundEffectID.food_collide0, collision.contacts[0].point);
+                    }
+                    else if (collision.gameObject.tag == TagList.Wall.ToString())
+                    {
+                        SoundManager.Instance.Play3DSE(SoundEffectID.food_collide1, collision.contacts[0].point);
+                    }
+                }
             }
-            if (collision.gameObject.tag == "Floor")
+            if (collision.gameObject.tag == TagList.Floor.ToString())
             {
                 _isFall = true;
             }
@@ -299,18 +322,23 @@ namespace Cooking.Stage
             }
             #endregion
             //=================
-            #region//ステージとの衝突処理 wallは別
+            #region//物理挙動を制御 ステージとの衝突処理 wallは別
             //=======================
             switch (_foodType)
             {
                 case FoodType.Shrimp:
-                    if (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerValue(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]) && collision.gameObject.tag != "Wall")
+                    if (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerValue(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]) && collision.gameObject.tag != TagList.Wall.ToString())
                     {
-                        if (_isFirstCollision && !TurnManager.Instance.IsAITurn )
+                        if (_isFirstCollision && ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode && _flyTime > 0.1f)//アニメーション状態によってはショット開始の瞬間にぶつかるため飛行時間を追加
                         {
                             _isFirstCollision = false;
-                            //小さいジャンプでは代入しない
-                            if(PredictFoodPhysics.FallTime > 0.5f)
+                            if (collision.gameObject.tag != TagList.Towel.ToString() )
+                            {
+                                //回転固定解除
+                                TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].UnlockFreezeRotation();
+                            }
+                            //小さいジャンプでは代入しない 飛んでいる間時間を数える実効値形式へ
+                            if (_flyTime > 0.5f && collision.gameObject.tag != TagList.Towel.ToString())
                             _physicsState = PhysicsState.FirstBound;
                         }
                         //else if (_physicsState == PhysicsState.FirstBound)
@@ -318,10 +346,12 @@ namespace Cooking.Stage
                         //    _physicsState = PhysicsState.Other;
                         //}
                     }
-                    else if(collision.gameObject.tag == "Wall")
+                    else if(collision.gameObject.tag == TagList.Wall.ToString())
                     {
                         Debug.Log(_rigidbody.velocity);
                         _isFirstCollision = false;
+                        //回転固定解除
+                        TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].UnlockFreezeRotation();
                     }
                     break;
                 case FoodType.Egg:
@@ -334,37 +364,39 @@ namespace Cooking.Stage
                     break;
             }
             #endregion
+            //物理挙動変数の初期化
+            _flyTime = 0;
         }
         private void OnTriggerEnter(Collider other)
         {
-            if (other.tag == "Finish")
+            if (other.tag == TagList.Finish.ToString()) 
             {
                 EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Splash);
                 _isGoal = true;
             }
-            else if (other.tag == "Water")
+            else if (other.tag == TagList.Water.ToString())
             {
                 ChangeMaterial(_foodNormalGraphic , _foodType);
             }
             // とりあえず調味料はトリガーで
-            else if (other.tag == "Seasoning")
+            else if (other.tag == TagList.Seasoning.ToString())
             {
                 EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Seasoning_Hit);
                 EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Seasoning).parent = GetComponent<FoodStatus>().FoodPositionNotRotate.transform;
                 ChangeMaterial(other.gameObject.GetComponent<MeshRenderer>().material , _foodType);
                 Destroy(other.gameObject);
             }
-            else if (other.tag == "RareSeasoning")
+            else if (other.tag == TagList.RareSeasoning.ToString())
             {
                 ChangeMaterial(other.gameObject.GetComponent<MeshRenderer>().material , _foodType);
                 Destroy(other.gameObject);
             }
-            else if (other.tag == "Bubble")
+            else if (other.tag == TagList.Bubble.ToString())
             {
                 EffectManager.Instance.InstantiateEffect(other.transform.position, EffectManager.EffectPrefabID.Foam_Break);
                 Destroy(other.gameObject);
             }
-            else if (other.tag == "StartArea")// && !_isFoodInStartArea)//落下後復帰想定
+            else if (other.tag == TagList.StartArea.ToString())// && !_isFoodInStartArea)//落下後復帰想定
             {
                 _isFoodInStartArea = true;
                 SetFoodLayer(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodLayerInStartArea]);
@@ -372,11 +404,18 @@ namespace Cooking.Stage
         }
         private void OnTriggerExit(Collider other)
         {
-            if (other.tag == "StartArea" && _isFoodInStartArea)
+            if (other.tag == TagList.StartArea.ToString() && _isFoodInStartArea)
             {
                 _isFoodInStartArea = false;
                 SetFoodLayer(_foodDefaultLayer);
             }
+        }
+        /// <summary>
+        /// ターン開始時に起き上がる
+        /// </summary>
+        public void ResetPlayerRotation()
+        {
+            transform.eulerAngles = Vector3.zero;
         }
         /// <summary>
         /// ターン開始時に呼ばれる
@@ -466,7 +505,7 @@ namespace Cooking.Stage
             _rigidbody.constraints = _rigidbody.constraints | rigidbodyConstraints;
         }
         /// <summary>
-        /// ショット終了時呼ばれる
+        /// ショット終了時・ショット開始時呼ばれる
         /// </summary>
         public void FreezeAllRotations()
         {

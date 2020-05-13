@@ -118,7 +118,7 @@ namespace Cooking.Stage
                             //#if UNITY_EDITOR
                             if (Input.GetKeyDown(KeyCode.Space))
                             {
-                                UIManager.Instance.ChangeUI("ShottingMode");
+                                UIManager.Instance.ChangeUI(ScreenState.ShottingMode);
                                 Shot(CalculateMaxShotPowerVector());
                             }
                             //#endif
@@ -243,22 +243,19 @@ namespace Cooking.Stage
                     break;
                 case ShotState.ShottingMode:
                     {
+                        _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].FoodStatusReset();
                         PredictLineManager.Instance.DestroyPredictLine();
                         {
                             switch (_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].FoodType)
                             {
                                 case FoodType.Shrimp:
-                                    _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].CollisionValueReset();
                                     _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].PlayerAnimatioManage(false);
                                     break;
                                 case FoodType.Egg:
-                                    _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].CollisionValueReset();
                                     break;
                                 case FoodType.Chicken:
-                                    _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].CollisionValueReset();
                                     break;
                                 case FoodType.Sausage:
-                                    _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].CollisionValueReset();
                                     break;
                                 default:
                                     break;
@@ -273,6 +270,16 @@ namespace Cooking.Stage
                 default:
                     break;
             }
+        }
+        /// <summary>
+        /// 現在のショットの向きを更新 壁反射後
+        /// </summary>
+        /// <param name="shotDirection"></param>
+        /// <param name="shotPower"></param>
+        public void SetShotVector(Vector3 shotDirection , float shotPower)
+        {
+            _shotPower = shotPower;
+            this.transform.forward = shotDirection.normalized;
         }
         /// <summary>
         /// ショット状態へ移動
@@ -293,13 +300,8 @@ namespace Cooking.Stage
                 _shotStrength = ShotStrength.Powerful;
             }
             PlayShotSound();
-
-            //ココ ("Effects/")
             EffectManager.Instance.InstantiateEffect(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].transform.position, EffectManager.EffectPrefabID.Food_Jump);
-
             CameraManager.Instance.SetCameraPositionNearPlayer();
-            //固定解除
-            _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].UnlockFreezeRotation();
             Shot(transform.forward * _shotPower);
             ChangeShotState(ShotState.ShottingMode);
         }
@@ -331,7 +333,7 @@ namespace Cooking.Stage
         {
             Shot(aIShotPower);
             ChangeShotState(ShotState.ShottingMode);
-            UIManager.Instance.ChangeUI("ShottingMode");
+            UIManager.Instance.ChangeUI(ScreenState.ShottingMode);
         }
         /// <summary>
         /// 一定時間経過で卵の回転を止めていく それまで待機 戻り値は保存しておくこと 数え終わると0を返す
@@ -353,10 +355,10 @@ namespace Cooking.Stage
             switch (_shotStrength)
             {
                 case ShotStrength.Weak:
-                    SoundManager.Instance.Play3DSE(SoundEffectID.food_jump0, _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].transform);
+                    SoundManager.Instance.Play3DSE(SoundEffectID.food_jump0, _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].transform.position);
                     break;
                 case ShotStrength.Normal:
-                    SoundManager.Instance.Play3DSE(SoundEffectID.food_jump1, _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].transform);
+                    SoundManager.Instance.Play3DSE(SoundEffectID.food_jump1, _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].transform.position);
                     break;
                 case ShotStrength.Powerful:
                     //速度速すぎて小さく聞こえたため

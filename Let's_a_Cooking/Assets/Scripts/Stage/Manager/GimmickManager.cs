@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -75,7 +76,6 @@ namespace Cooking.Stage
         ///あわ発生領域の2端(x.y.zの最小値と最大値)の座標 この2点の間の座標に発生させる
         /// </summary>
         Vector3[] _bubbleLimitPosition;
-
         enum LimitValue
         {
             Min,Max
@@ -90,6 +90,10 @@ namespace Cooking.Stage
         private Vector3[] _instantiateSeasoningPoint;
         [SerializeField] GameObject _seasoningPrefab = null;
         [SerializeField] GameObject rareSeasoningEffect;
+        /// <summary>
+        /// AIが目標地点とするオブジェクト あわや調味料は数固定とは限らないためリスト
+        /// </summary>
+        private List<GameObject>[] _targetObjectsForAI = new List<GameObject>[Enum.GetValues(typeof(AITargetObjectTags)).Length];
         // Start is called before the first frame update
         void Start()
         {
@@ -100,14 +104,25 @@ namespace Cooking.Stage
         /// </summary>
         private void GameObjectFindAndInitialize()
         {
+            for (int i = 0; i < Enum.GetValues(typeof(AITargetObjectTags)).Length ; i++)
+            {
+                _targetObjectsForAI[i] = new List<GameObject>();
+                //繰り返し変数i番目をenumへ変換し、その文字列を取得
+                string targetObjecString = ((AITargetObjectTags)Enum.ToObject(typeof(AITargetObjectTags), i)).ToString();
+                //仮の値を入れる
+                TagList targetObjectTag = TagList.Finish;
+                //AIのターゲットのタグが、タグリストの中にあるかチェック
+                targetObjectTag = EnumParseMethod.TryParseAndDebugAssertFormatAndReturnResult(targetObjecString, false, targetObjectTag);
+                _targetObjectsForAI[i].AddRange(GameObject.FindGameObjectsWithTag(targetObjectTag.ToString()));
+            }
+            Debug.Log(_targetObjectsForAI[(int)AITargetObjectTags.Seasoning].Count);
             //処理を早くするタグ検索
-            _water = GameObject.FindGameObjectsWithTag("Water");
-            _seasonings = GameObject.FindGameObjectsWithTag("Seasoning");
-            _rareSeasoning = GameObject.FindGameObjectWithTag("RareSeasoning");
-            _bubbleInstantiateZone = GameObject.FindGameObjectWithTag("BubbleZone");
+            _water = GameObject.FindGameObjectsWithTag(TagList.Water.ToString());
+            _seasonings = GameObject.FindGameObjectsWithTag(TagList.Seasoning.ToString());
+            _rareSeasoning = GameObject.FindGameObjectWithTag(TagList.RareSeasoning.ToString());
+            _bubbleInstantiateZone = GameObject.FindGameObjectWithTag(TagList.BubbleZone.ToString());
             _bubbleInstantiateZone.SetActive(false);
-            var towelsAbovePoint = GameObject.FindGameObjectsWithTag("TowelAbovePoint");
-            _targetTowelPositionObjects = new GameObject[towelsAbovePoint.Length];
+            _targetTowelPositionObjects = GameObject.FindGameObjectsWithTag(TagList.TowelAbovePoint.ToString());
             _instantiateSeasoningPoint = new Vector3[_seasonings.Length];
             for (int i = 0; i < _seasonings.Length; i++)
             {

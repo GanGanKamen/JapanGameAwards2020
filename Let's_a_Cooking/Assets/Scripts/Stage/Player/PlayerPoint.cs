@@ -24,10 +24,14 @@ namespace Cooking.Stage
         /// 獲得ポイント
         /// </summary>
         private int _getPoint = 0;
+        public bool IsFirstatowel
+        {
+            get { return _isFirstTowel; }
+        }
         /// <summary>
         /// 初回フラグ
         /// </summary>
-        bool _isFirstWash = true, _isFirstTowel = true;
+        private bool _isFirstWash = true, _isFirstTowel = true;
         /// <summary>
         /// ポイント取得可能フラグ
         /// </summary>
@@ -92,6 +96,8 @@ namespace Cooking.Stage
         /// </summary>
         public void CutFood()
         {
+            EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Point_UP).parent = _foodStatus.FoodPositionNotRotate.transform;
+            SoundManager.Instance.PlaySE(SoundEffectID.point_up);
             _getPoint += 200;
         }
         /// <summary>
@@ -117,7 +123,8 @@ namespace Cooking.Stage
         /// </summary>
         private void TouchSeasoning()
         {
-            EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Point_UP).parent = GetComponent<FoodStatus>().FoodPositionNotRotate.transform;
+            EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Point_UP).parent = _foodStatus.FoodPositionNotRotate.transform;
+            SoundManager.Instance.PlaySE(SoundEffectID.point_up);
             //マイナスを考慮 例 -50 のとき 50点 → 100点
             _getPoint = 2 * Mathf.Abs(_getPoint);
             _canGetPointFlags[(int)GetPointOnTouch.Seasoning] = false;
@@ -136,7 +143,8 @@ namespace Cooking.Stage
         /// </summary>
         private void TouchDirtDish()
         {
-            EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Point_Down).parent = GetComponent<FoodStatus>().FoodPositionNotRotate.transform;
+            EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Point_Down).parent = _foodStatus.FoodPositionNotRotate.transform;
+            SoundManager.Instance.PlaySE(SoundEffectID.point_down);
             _getPoint -= 50;
             if (_firstPoint + _getPoint < 0)
             {
@@ -149,6 +157,8 @@ namespace Cooking.Stage
         /// </summary>
         public void TouchWall()
         {
+            EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Point_UP).parent = _foodStatus.FoodPositionNotRotate.transform;
+            SoundManager.Instance.PlaySE(SoundEffectID.point_up);
             _getPoint += 200;
         }
         /// <summary>
@@ -168,36 +178,38 @@ namespace Cooking.Stage
         /// <returns></returns>
         private void FirstTowelTouch()
         {
+            EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Point_UP).parent = _foodStatus.FoodPositionNotRotate.transform;
+            SoundManager.Instance.PlaySE(SoundEffectID.point_up);
             _getPoint += 50;
             _isFirstTowel = false;
         }
         private void OnTriggerEnter(Collider other)
         {
-            if (other.tag == "Water" && _isFirstWash)
+            if (other.tag == TagList.Water.ToString() && _isFirstWash)
             {
                 FirstWash();
             }
             /// とりあえず調味料はトリガーで
-            else if (other.tag == "Seasoning" && _canGetPointFlags[(int)GetPointOnTouch.Seasoning])
+            else if (other.tag == TagList.Seasoning.ToString() && _canGetPointFlags[(int)GetPointOnTouch.Seasoning])
             {
                 TouchSeasoning();
             }
-            else if (other.tag == "RareSeasoning" && _canGetPointFlags[(int)GetPointOnTouch.RareSeasoning])
+            else if (other.tag == TagList.RareSeasoning.ToString() && _canGetPointFlags[(int)GetPointOnTouch.RareSeasoning])
             {
                 TouchRareSeasoning();
             }
-            else if (other.tag == "Bubble" && _canGetPointFlags[(int)GetPointOnTouch.Bubble])
+            else if (other.tag == TagList.Bubble.ToString() && _canGetPointFlags[(int)GetPointOnTouch.Bubble])
             {
                 TouchBubble();
             }
         }
         private void OnCollisionEnter(Collision collision)
         {
-            if (collision.gameObject.tag == "Towel" && _isFirstTowel)
+            if (collision.gameObject.tag == TagList.Towel.ToString() && _isFirstTowel)
             {
                 FirstTowelTouch();
             }
-            else if (collision.gameObject.tag == "DirtDish" && _canGetPointFlags[(int)GetPointOnTouch.DirtDish])
+            else if (collision.gameObject.tag == TagList.DirtDish.ToString() && _canGetPointFlags[(int)GetPointOnTouch.DirtDish])
             {
                 TouchDirtDish();
             }

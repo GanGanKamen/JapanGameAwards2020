@@ -5,6 +5,10 @@ using UnityEngine.UI;
 
 namespace Cooking.Stage
 {
+    enum InitializeChoose
+    {
+        ChooseFood,ChooseAILevel
+    }
     /// <summary>
     /// ボタン関連はButtonController・PlayMode中以外のUIの制御
     /// </summary>
@@ -22,7 +26,7 @@ namespace Cooking.Stage
             get { return _mainUIState; }
         }
         /// <summary>現在のUIの状態</summary>
-        private ScreenState _mainUIState = ScreenState.ChooseFood;
+        private ScreenState _mainUIState = ScreenState.InitializeChoose;
         /// <summary>
         /// よく使うため変数化
         /// </summary>
@@ -135,7 +139,8 @@ namespace Cooking.Stage
         {
             switch (_mainUIState)
             {
-                case ScreenState.ChooseFood:
+                case ScreenState.InitializeChoose:
+
                     break;
                 case ScreenState.DecideOrder:
                     if (!_invalidInputDecideOrder)
@@ -239,10 +244,10 @@ namespace Cooking.Stage
             switch (_beforeShotScreenState)
             {
                 case ScreenState.FrontMode:
-                    ChangeUI(_beforeShotScreenState.ToString());
+                    ChangeUI(_beforeShotScreenState);
                     break;
                 case ScreenState.SideMode:
-                    ChangeUI(_beforeShotScreenState.ToString());
+                    ChangeUI(_beforeShotScreenState);
                     break;
                 case ScreenState.ShottingMode:
                     _playModeUI.ChangeUIOnTurnStart();
@@ -250,20 +255,19 @@ namespace Cooking.Stage
             }
         }
         /// <summary>
-        /// ボタンによるUIの切り替えを行うメソッド→ボタンのテキストで判別できるようにしたい、継承も利用していきたい publicボタン privateUI切り替えしっかりと分けたい
+        /// ボタンによるUIの切り替えを行うメソッド→ボタンのテキストで判別できるようにstringを引数にしている
         /// </summary>
         /// <param name="afterScreenStateString"></param>文字列で変更後のUIの状態を指定
-        public void ChangeUI(string afterScreenStateString)
+        public void ChangeUI(ScreenState afterScreenStateString)
         {
             //パワーメーターから戻るときに使う
             _beforeShotScreenState = _mainUIState;
-            _stageSceneMainUIs[(int)_mainUIState].SetActive(false);
-            //enum型へ変換 + 変換失敗時に警告
-            EnumParseMethod.TryParseAndDebugAssertFormat(afterScreenStateString, true, out _mainUIState);
+            _stageSceneMainUIs[(int)_beforeShotScreenState].SetActive(false);
+            _mainUIState = afterScreenStateString;
             // ショットの状態を変更→ShotManagerへ
             switch (_mainUIState)
             {
-                case ScreenState.ChooseFood:
+                case ScreenState.InitializeChoose:
                     break;
                 case ScreenState.DecideOrder:
                     var playerNumber = 0;
@@ -340,7 +344,7 @@ namespace Cooking.Stage
             _invalidInputDecideOrder = false;
             if (_turnManager.ActivePlayerIndex == 0)
             {
-                ChangeUI("Start");
+                ChangeUI(ScreenState.Start);
             }
         }
         IEnumerator GameStartUI()
