@@ -200,8 +200,8 @@ namespace Cooking.Stage
                     {
                         if (_changeTopCameraTimeCounter > _changeTopCameraTime)
                         {
-                            frontCam.LookAt = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].FoodPositionForCamera;
-                            frontCam.Follow = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].FoodPositionForCamera;
+                            frontCam.LookAt = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].FoodPositionNotRotate;
+                            frontCam.Follow = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].FoodPositionNotRotate;
                             _changeTopCameraTimeCounter = 0;
                         }
                         else

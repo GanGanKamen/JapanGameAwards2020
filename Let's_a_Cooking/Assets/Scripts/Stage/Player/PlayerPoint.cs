@@ -63,6 +63,7 @@ namespace Cooking.Stage
         {
 
         }
+
         /// <summary>
         /// レア調味料を持ってゴール
         /// </summary>
@@ -116,6 +117,7 @@ namespace Cooking.Stage
         /// </summary>
         private void TouchSeasoning()
         {
+            EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Point_UP).parent = GetComponent<FoodStatus>().FoodPositionNotRotate.transform;
             //マイナスを考慮 例 -50 のとき 50点 → 100点
             _getPoint = 2 * Mathf.Abs(_getPoint);
             _canGetPointFlags[(int)GetPointOnTouch.Seasoning] = false;
@@ -134,6 +136,7 @@ namespace Cooking.Stage
         /// </summary>
         private void TouchDirtDish()
         {
+            EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Point_Down).parent = GetComponent<FoodStatus>().FoodPositionNotRotate.transform;
             _getPoint -= 50;
             if (_firstPoint + _getPoint < 0)
             {

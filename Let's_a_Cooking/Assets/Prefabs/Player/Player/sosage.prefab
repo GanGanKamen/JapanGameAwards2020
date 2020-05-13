@@ -302,7 +302,7 @@ MonoBehaviour:
   _foodNormalGraphic: {fileID: 2100000, guid: 308e160934eba754590bace925427f21, type: 2}
   _seasoningMaterial: {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
   _centerPoint: {fileID: 8027254333230646750}
-  _foodPositionForCamera: {fileID: 5521851059872774494}
+  _foodPositionNotRotate: {fileID: 5521851059872774494}
   _rigidbody: {fileID: 2016240340272796268}
 --- !u!114 &2945226828159695530
 MonoBehaviour:

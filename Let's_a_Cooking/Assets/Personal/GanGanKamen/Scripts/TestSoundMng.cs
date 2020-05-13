@@ -22,6 +22,6 @@ public class TestSoundMng : MonoBehaviour
 
     public void SwitchBGM()
     {
-        Cooking.SoundManager.SwitchBGM(preBGM, newBGM, fadeTime);
+        Cooking.SoundPlayer.SwitchBGM(preBGM, newBGM, fadeTime);
     }
 }

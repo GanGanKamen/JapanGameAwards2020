@@ -1,0 +1,135 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba9279f265331354aad7b95c5115d4fd, type: 3}
+  m_Name: SoundParameter
+  m_EditorClassIdentifier: 
+  soundInformations:
+  - soundEffect: 0
+    volume: 1
+    is3DSound: 1
+    loop: 0
+  - soundEffect: 1
+    volume: 1
+    is3DSound: 1
+    loop: 0
+  - soundEffect: 2
+    volume: 1
+    is3DSound: 1
+    loop: 0
+  - soundEffect: 3
+    volume: 1
+    is3DSound: 0
+    loop: 0
+  - soundEffect: 4
+    volume: 1
+    is3DSound: 1
+    loop: 0
+  - soundEffect: 5
+    volume: 1
+    is3DSound: 0
+    loop: 0
+  - soundEffect: 6
+    volume: 1
+    is3DSound: 0
+    loop: 0
+  - soundEffect: 7
+    volume: 1
+    is3DSound: 1
+    loop: 0
+  - soundEffect: 8
+    volume: 1
+    is3DSound: 1
+    loop: 0
+  - soundEffect: 9
+    volume: 1
+    is3DSound: 1
+    loop: 0
+  - soundEffect: 10
+    volume: 1
+    is3DSound: 1
+    loop: 0
+  - soundEffect: 11
+    volume: 1
+    is3DSound: 1
+    loop: 0
+  - soundEffect: 12
+    volume: 1
+    is3DSound: 0
+    loop: 0
+  - soundEffect: 13
+    volume: 1
+    is3DSound: 0
+    loop: 0
+  - soundEffect: 14
+    volume: 1
+    is3DSound: 0
+    loop: 0
+  - soundEffect: 15
+    volume: 1
+    is3DSound: 0
+    loop: 0
+  - soundEffect: 16
+    volume: 1
+    is3DSound: 0
+    loop: 0
+  - soundEffect: 17
+    volume: 1
+    is3DSound: 0
+    loop: 0
+  - soundEffect: 18
+    volume: 1
+    is3DSound: 0
+    loop: 0
+  - soundEffect: 19
+    volume: 1
+    is3DSound: 0
+    loop: 0
+  - soundEffect: 20
+    volume: 1
+    is3DSound: 0
+    loop: 0
+  - soundEffect: 21
+    volume: 1
+    is3DSound: 0
+    loop: 0
+  - soundEffect: 22
+    volume: 1
+    is3DSound: 0
+    loop: 0
+  - soundEffect: 23
+    volume: 1
+    is3DSound: 0
+    loop: 0
+  - soundEffect: 24
+    volume: 1
+    is3DSound: 0
+    loop: 0
+  - soundEffect: 25
+    volume: 1
+    is3DSound: 0
+    loop: 0
+  - soundEffect: 26
+    volume: 1
+    is3DSound: 0
+    loop: 0
+  - soundEffect: 27
+    volume: 1
+    is3DSound: 1
+    loop: 0
+  - soundEffect: 28
+    volume: 1
+    is3DSound: 1
+    loop: 0
+  - soundEffect: 29
+    volume: 1
+    is3DSound: 1
+    loop: 0

@@ -207,7 +207,7 @@ GameObject:
   - component: {fileID: 3844710139208619389}
   - component: {fileID: 6079500606348613189}
   m_Layer: 0
-  m_Name: ebiDevelop 1
+  m_Name: ebiAI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -227,6 +227,7 @@ Transform:
   - {fileID: 3789123603381715181}
   - {fileID: 2145306625588699937}
   - {fileID: 7833259288611724176}
+  - {fileID: 6254816993136189548}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -290,7 +291,7 @@ MonoBehaviour:
   _foodNormalGraphic: {fileID: 2100000, guid: e4e6277cc55c3ae4bb46a09b8f5547a8, type: 2}
   _seasoningMaterial: {fileID: 0}
   _centerPoint: {fileID: 7833259288611724176}
-  _foodPositionForCamera: {fileID: 2145306625588699937}
+  _foodPositionNotRotate: {fileID: 2145306625588699937}
   _rigidbody: {fileID: 4479837848373791946}
 --- !u!1 &2242279690130351718
 GameObject:
@@ -789,6 +790,36 @@ Transform:
   m_Father: {fileID: 4317075067360883751}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 1.4878691}
+--- !u!1 &8377348757961991243
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6254816993136189548}
+  m_Layer: 0
+  m_Name: GetSpeedVectorObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6254816993136189548
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8377348757961991243}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2128107329363381657}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9185211962531591899
 GameObject:
   m_ObjectHideFlags: 0

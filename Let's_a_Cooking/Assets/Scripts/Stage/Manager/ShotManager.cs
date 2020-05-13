@@ -40,6 +40,17 @@ namespace Cooking.Stage
         }
         private float _shotPower;
         /// <summary>
+        /// ショットの強さで出る音が異なる
+        /// </summary>
+        enum ShotStrength
+        {
+            Weak,Normal,Powerful
+        }
+        /// <summary>
+        /// ショットの強さで出る音が異なる
+        /// </summary>
+        ShotStrength _shotStrength = ShotStrength.Normal;
+        /// <summary>
         /// ショット時に力を加えるため用 アクティブな食材の持つRigidbody
         /// </summary>
         private Rigidbody _shotRigidbody;
@@ -237,14 +248,17 @@ namespace Cooking.Stage
                             switch (_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].FoodType)
                             {
                                 case FoodType.Shrimp:
+                                    _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].CollisionValueReset();
                                     _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].PlayerAnimatioManage(false);
                                     break;
                                 case FoodType.Egg:
-                                    _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].OriginalFoodProperty.egg.FlagReset();
+                                    _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].CollisionValueReset();
                                     break;
                                 case FoodType.Chicken:
+                                    _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].CollisionValueReset();
                                     break;
                                 case FoodType.Sausage:
+                                    _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].CollisionValueReset();
                                     break;
                                 default:
                                     break;
@@ -265,6 +279,24 @@ namespace Cooking.Stage
         /// </summary>
         public void ShotStart()
         {
+            var shotPowerWidth = _shotParameter.MaxShotPower - _shotParameter.MinShotPower;
+            if (_shotPower < shotPowerWidth / 3f + _shotParameter.MinShotPower)
+            {
+                _shotStrength = ShotStrength.Weak;
+            }
+            else if (_shotPower < shotPowerWidth * 2 / 3f + _shotParameter.MinShotPower)
+            {
+                _shotStrength = ShotStrength.Normal;
+            }
+            else
+            {
+                _shotStrength = ShotStrength.Powerful;
+            }
+            PlayShotSound();
+
+            //ココ ("Effects/")
+            EffectManager.Instance.InstantiateEffect(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].transform.position, EffectManager.EffectPrefabID.Food_Jump);
+
             CameraManager.Instance.SetCameraPositionNearPlayer();
             //固定解除
             _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].UnlockFreezeRotation();
@@ -315,6 +347,24 @@ namespace Cooking.Stage
                 return 0;
             }
             return waitTimeCounter;
+        }
+        private void PlayShotSound()
+        {
+            switch (_shotStrength)
+            {
+                case ShotStrength.Weak:
+                    SoundManager.Instance.Play3DSE(SoundEffectID.food_jump0, _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].transform);
+                    break;
+                case ShotStrength.Normal:
+                    SoundManager.Instance.Play3DSE(SoundEffectID.food_jump1, _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].transform);
+                    break;
+                case ShotStrength.Powerful:
+                    //速度速すぎて小さく聞こえたため
+                    SoundManager.Instance.PlaySE(SoundEffectID.food_jump2);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

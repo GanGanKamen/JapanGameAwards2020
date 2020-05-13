@@ -34,16 +34,23 @@ namespace Cooking.Stage
         /// </summary>
         private void ThrowingBall(GameObject targetObject)
         {
-            targetPosition = targetObject.transform.position;
+            if (targetObject == null)
+            {
+                Debug.Log("null");
+                targetObject = StageSceneManager.Instance.Goal;
+            }
+            else
+            {
+                targetPosition = targetObject.transform.position;
+            }
             //ランダム要素
             //seedId = Random.Range(0, 33 - rate);
-            
+
             // 射出角度
             float angle = ThrowingAngle;
 
             // 射出速度を算出
             Vector3 velocity = CalculateVelocity(this.transform.position, targetPosition, angle);
-
             ShotManager.Instance.AIShot(velocity * rid.mass);
         }
 
@@ -119,21 +126,22 @@ namespace Cooking.Stage
                     var distance = CalculateDistance(this.transform.position, seasoning.transform.position);
                     if (Mathf.Pow(distance.x, 2) + Mathf.Pow(distance.y, 2) <= Mathf.Pow(searchDistance, 2))
                     {
+                        Debug.Log(seasoning);
                         return seasoning;
                     }
                 }
             }
-            foreach (var targetTowelPositionObject in GimmickManager.Instance.TargetTowelPositionObjects)
-            {
-                if (targetTowelPositionObject != null)
-                {
-                    var distance = CalculateDistance(this.transform.position, targetTowelPositionObject.transform.position);
-                    if (Mathf.Pow(distance.x, 2) + Mathf.Pow(distance.y, 2) <= Mathf.Pow(searchDistance, 2))
-                    {
-                        return targetTowelPositionObject;
-                    }
-                }
-            }
+            //foreach (var targetTowelPositionObject in GimmickManager.Instance.TargetTowelPositionObjects)
+            //{
+            //    if (targetTowelPositionObject != null)
+            //    {
+            //        var distance = CalculateDistance(this.transform.position, targetTowelPositionObject.transform.position);
+            //        if (Mathf.Pow(distance.x, 2) + Mathf.Pow(distance.y, 2) <= Mathf.Pow(searchDistance, 2))
+            //        {
+            //            return targetTowelPositionObject;
+            //        }
+            //    }
+            //}
             return null;
         }
 
@@ -147,6 +155,7 @@ namespace Cooking.Stage
             //this.transform.LookAt(targetObject.transform);
             yield return new WaitForSeconds(2f);
             ThrowingBall(targetObject);
+            EffectManager.Instance.InstantiateEffect(TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].transform.position, EffectManager.EffectPrefabID.Food_Jump);
             ///止まるまでAIのターン
             while (true)
             {

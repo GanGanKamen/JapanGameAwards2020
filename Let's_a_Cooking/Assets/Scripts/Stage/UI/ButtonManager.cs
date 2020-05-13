@@ -107,6 +107,8 @@ namespace Cooking.Stage
                             _uIManager.ChangeUI(_buttonName.ToString());
                             break;
                         case ButtonName.ShottingMode:
+                            var _turnManager = TurnManager.Instance;
+                           // _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].PlayerAnimatioManage(false);
                             _uIManager.PlayModeUI.ChangeShotButtonTouched(true);
                             StartCoroutine(ShotButtonWait());
                             //パワーメーターを停止して待機させる

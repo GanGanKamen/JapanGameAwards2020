@@ -119,7 +119,7 @@ namespace Cooking.Stage
         }
 
         /// <summary>
-        /// プレイヤーをショット順に並び替える
+        /// プレイヤーをショット順に並び替える その際プレイヤー番号を記憶しておく
         /// </summary>
         private void PlayerInOrder()
         {
@@ -138,18 +138,6 @@ namespace Cooking.Stage
             }
         }
         /// <summary>
-        /// 生成位置はシーン上で指定するので、地面の上にぴったり配置されない恐れあり。プレイヤー座標を参照する際カメラ位置がずれるのを防ぐ
-        /// </summary>
-        /// <returns></returns>
-        IEnumerator WaitForCreatedPlayerStop()
-        {
-            while (StageSceneManager.Instance.GameState == StageGameState.Preparation)//(!_foodStatuses[_activePlayerIndex].OnKitchen)
-            {
-                yield return null;
-            }
-            InitializeTurn();
-        }
-        /// <summary>
         /// 食材生成後に呼ぶ ターン制の初期化
         /// </summary>
         private void InitializeTurn()
@@ -165,15 +153,15 @@ namespace Cooking.Stage
         /// <summary>
         /// foodStatusに登録
         /// </summary>
-        public void SetFoodStatusValue(int playerNumber , FoodStatus playerStatus)
+        public void SetFoodStatusValue(int foodStatusIndex , FoodStatus playerStatus)
         {
-            _foodStatuses[playerNumber] = playerStatus;
+            _foodStatuses[foodStatusIndex] = playerStatus;
         }
 
         // Update is called once per frame
         void Update()
         {
-            if (StageSceneManager.Instance.GameState == StageGameState.FinishFoodInstantiate)
+            if (StageSceneManager.Instance.GameState == StageGameState.FinishFoodInstantiateAndPlayerInOrder)
             {
                 InitializeTurn();
             }
@@ -195,11 +183,11 @@ namespace Cooking.Stage
         /// <summary>
         /// アクティブプレイヤーIndexを渡せば、その要素のプレイヤーが何番のプレイヤーだったかを返す UI表示用に1加算している
         /// </summary>
-        /// <param name="number"></param>
+        /// <param name="activePlayerIndex"></param>
         /// <returns></returns>
-        public int GetPlayerNumberFromActivePlayerIndex(int number)
+        public int GetPlayerNumberFromActivePlayerIndex(int activePlayerIndex)
         {
-            return _playerIndexArray[number] + 1;
+            return _playerIndexArray[activePlayerIndex] + 1;
         }
         /// <summary>
         /// 次のターンのプレイヤーがAIかどうかを確認する プレイヤー作成後とターン切り替え時に呼ばれる
@@ -250,9 +238,11 @@ namespace Cooking.Stage
                         else if (_foodStatuses[_activePlayerIndex].IsGoal)
                         {
                             StageSceneManager.Instance.AddPlayerPointToList(_activePlayerIndex);
+                            StageSceneManager.Instance.InitializePlayerData(_activePlayerIndex, _foodStatuses[_activePlayerIndex].FoodType, _isAITurn);
                         }
                         //次のプレイヤーに順番を回す
                         _activePlayerIndex++;
+                        UpdateGimmickObjects();
                         //次のターンにいくかどうか・ゲーム終了かで処理分岐
                         switch (IsChangeTurn())
                         {
@@ -281,6 +271,14 @@ namespace Cooking.Stage
                 default:
                     break;
             }
+        }
+        /// <summary>
+        /// ギミックの状態を更新
+        /// </summary>
+        private static void UpdateGimmickObjects()
+        {
+            GimmickManager.Instance.WaterManager();
+            GimmickManager.Instance.SeasoningManager();
         }
 
         private AfterChangeTurnState IsChangeTurn()
@@ -350,8 +348,6 @@ namespace Cooking.Stage
         /// <param name="activePlayerIndex"></param>
         private void SetObjectsPositionForNextPlayer(int activePlayerIndex)
         {
-            GimmickManager.Instance.WaterManager();
-            GimmickManager.Instance.SeasoningManager();
             ShotManager.Instance.SetShotManager(_foodStatuses[activePlayerIndex].Rigidbody);
             CameraManager.Instance.SetCameraMoveCenterPosition(_foodStatuses[activePlayerIndex].transform.position);
             PredictLineManager.Instance.SetActivePredictShotPoint(!_isAITurn);
