@@ -58,8 +58,20 @@ namespace Cooking.Stage
         /// <summary>
         /// ズーム縮小横視点による最大のプレイヤーからの距離
         /// </summary>
-        [SerializeField] private float _zoomLimitPositionFromPlayerSide = 20;
+       // [SerializeField] private float _zoomMaxDistanceFromPlayerSide ;
+       // [SerializeField] private float _zoomMinDistanceFromPlayerSide ;
+        private Vector3 _beforePosition;
         //[SerializeField] Transform cameraPositionOnShotting;
+        /// <summary>
+        /// xとzを制限
+        /// </summary>
+        [SerializeField] GameObject _cameraLimitZone = null;
+        Vector3[] _cameraLimitPosition;
+        enum LimitValue
+        {
+            Min, Max
+        }
+
         #region インスタンスへのstaticなアクセスポイント
         /// <summary>
         /// このクラスのインスタンスを取得。
@@ -86,6 +98,8 @@ namespace Cooking.Stage
             _cameraLocalPositions[(int)CameraMode.Front] = (frontCam.transform.localPosition);
             _cameraLocalPositions[(int)CameraMode.Side] = (sideCam.transform.localPosition);
             _cameraLocalRotation = frontCam.transform.localEulerAngles;
+            var referencePoint = _cameraLimitZone.transform.GetChild(0).position;
+            _cameraLimitPosition = new Vector3[] { referencePoint, referencePoint + _cameraLimitZone.transform.localScale };
         }
         // Update is called once per frame
         void Update()
@@ -157,33 +171,34 @@ namespace Cooking.Stage
                             sideCam.transform.localPosition = newSideCameraPos;   //マウスの移動量/100を代入
                         }
                         zoomScalingValue = CameraZoomScaling.GetCameraZoomScalingValue();   //マウスホイールの回転量を格納
-
+                        var direction = _cameraRotateCenter.transform.right;
                         //マウスホイールが入力されたら y z二つの値を加算
                         if (zoomScalingValue != 0)
                         {
-                            var playerPosition = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].transform.localPosition + new Vector3(0, 0, 0); //約プレイヤーの大きさ分加算
+                            var playerPosition = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].CenterPoint .transform.position + new Vector3(0, 0, 0); //約プレイヤーの大きさ分加算
                             var sideCamPosition = sideCam.transform.localPosition;      //マウスホイールの回転をカメラの前後方向に代入
-                            sideCamPosition += sideCam.transform.forward * zoomScalingValue * -3;
-                            sideCam.transform.localPosition = sideCamPosition;
+                            sideCamPosition.x +=  zoomScalingValue * -2;
+                            //sideCam.transform.localPosition = sideCamPosition;
                             //下限
                             //if (sideCam.transform.position.x <= playerPosition.x )
                             //{
                             //    var sideCameraPosition = sideCam.transform.position;
                             //    sideCam.transform.position = new Vector3(sideCameraPosition.x, playerPosition.y, sideCameraPosition.z);
                             //
-                            //上限かどうかを判断(未完)
-                            if (sideCamPosition.x <= playerPosition.x - _zoomLimitPositionFromPlayerSide)
                             {
-                                var sideCameraPosition = sideCam.transform.position;
-                                sideCam.transform.position = new Vector3(playerPosition.x - _zoomLimitPositionFromPlayerSide, sideCameraPosition.y, sideCameraPosition.z);
-                            }
-                            else
-                            {
+                                _beforePosition = sideCam.transform.localPosition;
                                 sideCam.transform.localPosition = sideCamPosition;
-                            }
-                            Debug.Log(sideCam.transform.localPosition);
-                        }
+                                if (sideCam.transform.localPosition.x < -15)
+                                {
+                                    sideCam.transform.localPosition = _beforePosition;
+                                }
+                                else if (sideCam.transform.localPosition.x > -1.8f)
+                                {
+                                    sideCam.transform.localPosition = _beforePosition;
+                                }
 
+                            }
+                        }
                     }
                     break;
                 default:
@@ -213,6 +228,15 @@ namespace Cooking.Stage
                 default:
                     break;
             }
+            #region カメラ移動範囲の制限
+            topCam.transform.position = new Vector3(Mathf.Clamp(topCam.transform.position.x, _cameraLimitPosition[(int)LimitValue.Min].x, _cameraLimitPosition[(int)LimitValue.Max].x),
+                topCam.transform.position.y,
+                Mathf.Clamp(topCam.transform.position.z, _cameraLimitPosition[(int)LimitValue.Min].z, _cameraLimitPosition[(int)LimitValue.Max].z));
+
+            sideCam.transform.position = new Vector3(Mathf.Clamp(sideCam.transform.position.x, _cameraLimitPosition[(int)LimitValue.Min].x, _cameraLimitPosition[(int)LimitValue.Max].x),
+                Mathf.Clamp(sideCam.transform.position.y, _cameraLimitPosition[(int)LimitValue.Min].y, _cameraLimitPosition[(int)LimitValue.Max].y),
+                Mathf.Clamp(sideCam.transform.position.z, _cameraLimitPosition[(int)LimitValue.Min].z, _cameraLimitPosition[(int)LimitValue.Max].z));
+            #endregion
         }
         /// <summary>
         /// EndMode切り替えをUpdateで行い、そのあとのフレームで確実に実行
