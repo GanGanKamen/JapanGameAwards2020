@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4624937271215196856}
   - component: {fileID: 4624937271215196859}
   - component: {fileID: 4624937271215196858}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: RareSeasoning
   m_TagString: Seasoning
   m_Icon: {fileID: 0}

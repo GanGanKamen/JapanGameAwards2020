@@ -88,7 +88,7 @@ namespace Cooking.Stage
                 //予測線を管理。
                 switch (UIManager.Instance.MainUIStateProperty)
                 {
-                    case ScreenState.ChooseFood:
+                    case ScreenState.InitializeChoose:
                         break;
                     case ScreenState.Start:
                         PredictLineManage(maxShotSpeedVector);
@@ -117,7 +117,7 @@ namespace Cooking.Stage
                 ///予測線の挙動
                 switch (UIManager.Instance.MainUIStateProperty)
                 {
-                    case ScreenState.ChooseFood:
+                    case ScreenState.InitializeChoose:
                         break;
                     case ScreenState.Start:
                         //落下地点の変更を予測線にも伝える。
@@ -127,19 +127,22 @@ namespace Cooking.Stage
                     case ScreenState.FrontMode:
                         //落下地点の変更を予測線にも伝える。
                         ChangePredictFallPointOnXZ(maxShotSpeedVector);
-                        _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByRayCast(transform.position ,maxShotSpeedVector);
+                        //落下地点座標を取得
+                        _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByRayCast<Vector3>(transform.position, maxShotSpeedVector);
                         PredictPhysicsManage();
                         break;
                     case ScreenState.SideMode:
                         //落下地点の変更を予測線にも伝える。
                         ChangePredictFallPointOnXZ(maxShotSpeedVector);
-                        _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByRayCast(transform.position, maxShotSpeedVector);
+                        //落下地点座標を取得
+                        _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByRayCast<Vector3>(transform.position, maxShotSpeedVector);
                         PredictPhysicsManage();
                         break;
                     case ScreenState.LookDownMode:
                         //落下地点の変更を予測線にも伝える。
                         ChangePredictFallPointOnXZ(maxShotSpeedVector);
-                        _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByRayCast(transform.position, maxShotSpeedVector);
+                        //落下地点座標を取得
+                        _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByRayCast<Vector3>(transform.position, maxShotSpeedVector);
                         PredictPhysicsManage();
                         break;
                     case ScreenState.ShottingMode:

@@ -82,6 +82,8 @@ namespace Cooking.Stage
             }
             if (eggInObject != null) eggInObject.SetActive(true);
             hasBroken = true;
+            SoundManager.Instance.PlaySE(SoundEffectID.egg_break);
+            SoundManager.Instance.PlaySE(SoundEffectID.egg_app);
             //StartCoroutine(ShellsCoroutine());
         }
 

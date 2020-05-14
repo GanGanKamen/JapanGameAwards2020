@@ -110,10 +110,10 @@ namespace Cooking
         /// 3Dサウンドの再生
         /// </summary>
         /// <param name="clip"></param>
-        /// <param name="transform"></param>
-        public static void Play3DSEOneTime(AudioClip clip , Transform transform)
+        /// <param name="position"></param>
+        public static void Play3DSEOneTime(AudioClip clip , Vector3 position)
         {
-            AudioSource.PlayClipAtPoint(clip, transform.position);
+            AudioSource.PlayClipAtPoint(clip, position);
         }
     }
 }

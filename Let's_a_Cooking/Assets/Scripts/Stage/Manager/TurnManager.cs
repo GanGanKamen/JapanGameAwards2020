@@ -253,6 +253,7 @@ namespace Cooking.Stage
                                 _turnNumber++;
                                 break;
                             case AfterChangeTurnState.GameEnd:
+                                _activePlayerIndex = 0;
                                 //処理終了
                                 return;
                             default:
@@ -275,7 +276,7 @@ namespace Cooking.Stage
         /// <summary>
         /// ギミックの状態を更新
         /// </summary>
-        private static void UpdateGimmickObjects()
+        private void UpdateGimmickObjects()
         {
             GimmickManager.Instance.WaterManager();
             GimmickManager.Instance.SeasoningManager();
@@ -285,8 +286,9 @@ namespace Cooking.Stage
         {
             if (_activePlayerIndex == GameManager.Instance.PlayerSumNumber)
             {
-                if (_turnNumber > StageSceneManager.Instance.TurnNumberOnGameEnd)
+                if (_turnNumber >= StageSceneManager.Instance.TurnNumberOnGameEnd)
                 {
+                    StageSceneManager.Instance.GameEnd();
                     return AfterChangeTurnState.GameEnd;
                 }
                 else
@@ -308,6 +310,7 @@ namespace Cooking.Stage
             //順巡り処理(0へ初期化)が終わった後にチェック
             CheckNextPlayerAI();
             _foodStatuses[_activePlayerIndex].ResetFallAndGoalFlag();
+            _foodStatuses[_activePlayerIndex].ResetPlayerRotation();
             if(_foodStatuses[_activePlayerIndex].FoodType != FoodType.Egg)
                 _foodStatuses[_activePlayerIndex].UnlockFreezeRotation();
             UIManager.Instance.ResetUIMode();

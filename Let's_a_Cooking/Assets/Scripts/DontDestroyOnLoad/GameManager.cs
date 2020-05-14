@@ -17,7 +17,6 @@ namespace Cooking
             obj.AddComponent<GameManager>();
             obj.AddComponent<SceneChanger>();
             obj.AddComponent<DataManager>();
-            DontDestroyOnLoad(obj);
         }
 
         /// <summary>

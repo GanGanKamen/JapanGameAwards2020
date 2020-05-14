@@ -15,7 +15,7 @@
     /// </summary>
     public enum ScreenState
     {
-        ChooseFood,
+        InitializeChoose,
         DecideOrder,
         Start,
         FrontMode,

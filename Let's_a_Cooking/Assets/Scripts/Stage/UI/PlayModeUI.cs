@@ -150,7 +150,7 @@ namespace Cooking.Stage
             ChangeShotButtonTouched(false);
             if (_turnManager.IsAITurn)
             {
-                UIManager.Instance.ChangeUI("FrontMode");
+                UIManager.Instance.ChangeUI(ScreenState.FrontMode);
                 _defaultIsAIImage.SetActive(true);
                 foreach (var shotStartButton in _shotButtons)
                 {
@@ -162,7 +162,7 @@ namespace Cooking.Stage
             ///ショット終了時は見下ろしスタート プレイヤーの時
             else
             {
-                UIManager.Instance.ChangeUI("LookDownMode");
+                UIManager.Instance.ChangeUI(ScreenState.LookDownMode);
                 _defaultIsAIImage.SetActive(false);
                 foreach (var shotStartButton in _shotButtons)
                 {

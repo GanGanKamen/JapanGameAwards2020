@@ -5,10 +5,16 @@ using System.Linq;
 
 namespace Cooking.Stage
 {
+    /// <summary>
+    /// スクリプトで使用するタグ ToString()して用いる
+    /// </summary>
+    public enum TagList
+    {
+       Finish , Floor , Water, Seasoning, Towel, DirtDish, RareSeasoning, Wall, TowelAbovePoint, Knife, Bubble , BubbleZone, StartArea
+    }
     public enum LayerList
     {
-        FoodLayerInStartArea,
-        Kitchen
+        FoodLayerInStartArea,Kitchen
     }
     public class StageSceneManager : MonoBehaviour
     {
@@ -44,6 +50,7 @@ namespace Cooking.Stage
         /// 食材のもつ重力の値は現在9.81 。この値を変える場合、スクリプトで重力制御をする必要あり スケールではなく重さを変えると、ショット時に加えるべき力の量が変わり 。
         /// </summary>
         public readonly float gravityAccelerationValue = 9.81f;
+        private AILevel[] aiLevels; 
         /// <summary>
         /// 初期値Shrimp 選ばれた食材リスト FoodStatus用のenumへ変換
         /// </summary>
@@ -73,7 +80,7 @@ namespace Cooking.Stage
         {
             get { return _goal; }
         }
-       [SerializeField] private GameObject _goal = null;
+        [SerializeField] private GameObject _goal = null;
         /// <summary>
         /// 終了時の書くプレイヤーの合計ポイント
         /// </summary>
@@ -89,7 +96,7 @@ namespace Cooking.Stage
         /// </summary>
         public enum FoodStateOnGame
         {
-            Normal, Falled, Goal, WaitForFoodStop ,ShotEnd
+            Normal, Falled, Goal, WaitForFoodStop, ShotEnd
         }
         /// <summary>
         /// ゲーム上でのアクティブプレイヤーの状態 Normal Falled Goal
@@ -110,7 +117,7 @@ namespace Cooking.Stage
         {
             get { return _layerList; }
         }
-        [SerializeField,Header("[0]FoodLayerInStartArea, [1]Kitchen stringとして使うものリスト")]
+        [SerializeField, Header("[0]FoodLayerInStartArea, [1]Kitchen stringとして使うものリスト")]
         private LayerMask[] _layerList = null;
         /// <summary>
         /// stringとしてレイヤーを参照
@@ -127,8 +134,8 @@ namespace Cooking.Stage
         /// </summary>
         /// <param name="foodName">選ばれた食材の名前</param>
         public void SetChooseFoodNames(string foodName)
-        {           
-            _chooseFoodNames [_turnManager.ActivePlayerIndex] = foodName;
+        {
+            _chooseFoodNames[_turnManager.ActivePlayerIndex] = foodName;
         }
         /// <summary>
         /// 生成するプレハブを選択 戻り値をInstantiateする
@@ -136,7 +143,7 @@ namespace Cooking.Stage
         /// <param name="foodType"></param>
         /// <param name="isAI"></param>
         /// <returns></returns>
-        private GameObject ChooseInstantiatePrefab(FoodType foodType , bool isAI)
+        private GameObject ChooseInstantiatePrefab(FoodType foodType, bool isAI)
         {
             if (isAI)
             {
@@ -166,7 +173,7 @@ namespace Cooking.Stage
             if (_goal == null)
             {
                 Debug.Log("ゴールオブジェクトがセットされていません。タグ検索されました。");
-                GameObject.FindGameObjectWithTag("Finish");
+                GameObject.FindGameObjectWithTag(TagList.Finish.ToString());
             }
             _turnManager = TurnManager.Instance;
             _chooseFoodNames = new string[GameManager.Instance.PlayerSumNumber];
@@ -197,7 +204,6 @@ namespace Cooking.Stage
                             _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].SetShotPointOnFoodCenter();
                             PredictLineManager.Instance.SetPredictLineInstantiatePosition(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].CenterPoint.position);
                         }
-                        IsGameEnd();
                     }
                     break;
                 case StageGameState.Finish:
@@ -222,7 +228,7 @@ namespace Cooking.Stage
             var predictLineController = PredictLineManager.Instance;
             switch (UIManager.Instance.MainUIStateProperty)
             {
-                case ScreenState.ChooseFood:
+                case ScreenState.InitializeChoose:
                     break;
                 case ScreenState.DecideOrder:
                     break;
@@ -287,16 +293,10 @@ namespace Cooking.Stage
             }
         }
 
-        public bool IsGameEnd()
+        public void GameEnd()
         {
-            if (_turnManager.TurnNumber > _turnNumberOnGameEnd)
-            {
-                _gameState = StageGameState.Finish;
-                UIManager.Instance.ChangeUI("Finish");
-                return true;
-            }
-            else
-            return false;
+            _gameState = StageGameState.Finish;
+            UIManager.Instance.ChangeUI(ScreenState.Finish);
         }
 
         /// <summary>
@@ -325,7 +325,7 @@ namespace Cooking.Stage
             _gameState = StageGameState.FinishFoodInstantiateAndPlayerInOrder;
         }
 
-        public FoodType GetFoodType(FoodType foodType )
+        public FoodType GetFoodType(FoodType foodType)
         {
             //文字列に変換後、正しい値を代入                                                  //現状プレイヤーはすべて同じ食材→最初のプレイヤーが選んだ値
             return EnumParseMethod.TryParseAndDebugAssertFormatAndReturnResult(_chooseFoodNames[0], true, foodType);
@@ -337,7 +337,7 @@ namespace Cooking.Stage
         /// <param name="foodStatusIndex">FoodStatusにセットするプレイヤーのindex番号(単なる番号ではない)初期化時はまだ番号に順番の意味はない</param>
         /// <param name="playerFoodType">食材の種類</param>
         /// <param name="isAI">AIかどうか</param>
-        public void InitializePlayerData(int foodStatusIndex, FoodType playerFoodType ,bool isAI)
+        public void InitializePlayerData(int foodStatusIndex, FoodType playerFoodType, bool isAI)
         {
             //次の食材を生成
             FoodStatus playerStatus = InstantiateNextFood(playerFoodType, isAI);
@@ -407,7 +407,7 @@ namespace Cooking.Stage
         /// </summary>
         /// <param name="isAI">AIを生成するかどうか</param>
         /// <returns></returns>
-        public FoodStatus InstantiateNextFood(FoodType foodType , bool isAI)
+        public FoodStatus InstantiateNextFood(FoodType foodType, bool isAI)
         {
             if (isAI)
             {
