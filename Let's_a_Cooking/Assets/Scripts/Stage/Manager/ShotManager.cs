@@ -116,13 +116,25 @@ namespace Cooking.Stage
                         {
                             #region デバッグコード スペースを押すと最大パワーで飛ぶ
                             //#if UNITY_EDITOR
-                            if (Input.GetKeyDown(KeyCode.Space))
+                            if (Input.GetKeyDown(KeyCode.M))
                             {
-                                UIManager.Instance.ChangeUI(ScreenState.ShottingMode);
-                                Shot(CalculateMaxShotPowerVector());
+                                //UIManager.Instance.ChangeUI(ScreenState.ShottingMode);
+                                _shotPower = ShotParameter.MaxShotPower;
+                                MyShot(transform.forward * _shotPower);
                             }
                             //#endif
                             #endregion
+                            #region デバッグコード スペースを押すと最大パワーで飛ぶ
+                            //#if UNITY_EDITOR
+                            if (Input.GetKeyDown(KeyCode.Space))
+                            {
+                                //UIManager.Instance.ChangeUI(ScreenState.ShottingMode);
+                                _shotPower = ShotParameter.MaxShotPower;
+                                Shot(transform.forward);
+                            }
+                            //#endif
+                            #endregion
+
                         }
                     }
                     break;
@@ -140,7 +152,7 @@ namespace Cooking.Stage
                                     ///食材が止まった + 落下・ゴール待機時間が終わったら、ショット終了
                                     if (_shotRigidbody.velocity.magnitude < 0.01f)
                                     {
-                                        _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].FreezeAllRotations();
+                                        _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].FreezeRotation();
                                         ChangeShotState(ShotState.ShotEndMode);
                                         //すべての回転を止める前に移動が止まる可能性もある
                                         _rigidbodyConstraintsIndex = 0;
@@ -302,21 +314,55 @@ namespace Cooking.Stage
             PlayShotSound();
             EffectManager.Instance.InstantiateEffect(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].transform.position, EffectManager.EffectPrefabID.Food_Jump);
             CameraManager.Instance.SetCameraPositionNearPlayer();
-            Shot(transform.forward);
+            //Shot(transform.forward);
+            MyShot(transform.forward);
             ChangeShotState(ShotState.ShottingMode);
         }
         /// <summary>
-        ///食材に力を加える処理
+        /// 力の分解をした発射処理
         /// </summary>
+        /// <param name="direction">方向ベクトル</param>
         private void Shot(Vector3 direction)
         {
             var angle = transform.eulerAngles.x % 90f; //eulerAngleを0~90の範囲内にする
             var horizontalPower = Mathf.Cos(Mathf.Deg2Rad * angle) * _shotPower; 
             var verticalPower = Mathf.Sin(Mathf.Deg2Rad * angle) * _shotPower;
             var initialSpeedVector = new Vector3(direction.x * horizontalPower, direction.y * verticalPower, direction.z * horizontalPower);
+            initialSpeedVector = new Vector3(direction.x , 0 , direction.z) * horizontalPower + new Vector3(0, direction.y, 0) * verticalPower;
             _shotRigidbody.velocity = initialSpeedVector;
+            Debug.Log(initialSpeedVector.y);
+            Debug.Log(_shotRigidbody.velocity.y);
         }
+        /// <summary>
+        /// 速度ベクトルが均一な発射処理
+        /// </summary>
+        /// <param name="direction">方向ベクトル</param>
+        private void MyShot(Vector3 direction)
+        {
+            var initialSpeedVector = direction * _shotPower;
+            _shotRigidbody.velocity = initialSpeedVector;
+            Debug.Log(_shotRigidbody.velocity.magnitude);
+        }
+        /// <summary>
+        /// 力の分解をした発射処理
+        /// </summary>
+        /// <returns></returns>
         public Vector3 CalculateMaxShotPowerVector()
+        {
+            var direction = transform.forward;
+            var angle = transform.eulerAngles.x % 90f; //eulerAngleを0~90の範囲内にする
+            var horizontalPower = Mathf.Cos(Mathf.Deg2Rad * angle) * ShotParameter.MaxShotPower;
+            var verticalPower = Mathf.Sin(Mathf.Deg2Rad * angle) * ShotParameter.MaxShotPower;
+            var initialSpeedVector = new Vector3(direction.x * horizontalPower, direction.y * verticalPower, direction.z * horizontalPower);
+            //Debug.Log(direction);
+            return initialSpeedVector;
+        }
+
+        /// <summary>
+        /// 速度ベクトルが均一な発射処理
+        /// </summary>
+        /// <returns></returns>
+        public Vector3 MyCalculateMaxShotPowerVector()
         {
             return transform.forward * _shotParameter.MaxShotPower;
         }
