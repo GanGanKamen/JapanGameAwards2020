@@ -302,15 +302,18 @@ namespace Cooking.Stage
             PlayShotSound();
             EffectManager.Instance.InstantiateEffect(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].transform.position, EffectManager.EffectPrefabID.Food_Jump);
             CameraManager.Instance.SetCameraPositionNearPlayer();
-            Shot(transform.forward * _shotPower);
+            Shot(transform.forward);
             ChangeShotState(ShotState.ShottingMode);
         }
         /// <summary>
         ///食材に力を加える処理
         /// </summary>
-        private void Shot(Vector3 shotPower)
+        private void Shot(Vector3 direction)
         {
-            var initialSpeedVector = shotPower;
+            var angle = transform.eulerAngles.x % 90f; //eulerAngleを0~90の範囲内にする
+            var horizontalPower = Mathf.Cos(Mathf.Deg2Rad * angle) * _shotPower; 
+            var verticalPower = Mathf.Sin(Mathf.Deg2Rad * angle) * _shotPower;
+            var initialSpeedVector = new Vector3(direction.x * horizontalPower, direction.y * verticalPower, direction.z * horizontalPower);
             _shotRigidbody.velocity = initialSpeedVector;
         }
         public Vector3 CalculateMaxShotPowerVector()
