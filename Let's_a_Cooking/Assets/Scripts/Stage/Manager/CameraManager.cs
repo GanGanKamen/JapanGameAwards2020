@@ -37,6 +37,10 @@ namespace Cooking.Stage
             Side
         }
         CameraMode cameraMode = CameraMode.Wait;
+        /// <summary>
+        /// 見下ろしカメラの角度 少し斜めから見る
+        /// </summary>
+        [SerializeField] float topCameraRotation = 40;
         [SerializeField]
         private CinemachineVirtualCamera topCam = null;
         [SerializeField]
@@ -63,7 +67,7 @@ namespace Cooking.Stage
         private Vector3 _beforePosition;
         //[SerializeField] Transform cameraPositionOnShotting;
         /// <summary>
-        /// xとzを制限
+        /// カメラの移動範囲を制限
         /// </summary>
         [SerializeField] GameObject _cameraLimitZone = null;
         Vector3[] _cameraLimitPosition;
@@ -100,6 +104,7 @@ namespace Cooking.Stage
             _cameraLocalRotation = frontCam.transform.localEulerAngles;
             var referencePoint = _cameraLimitZone.transform.GetChild(0).position;
             _cameraLimitPosition = new Vector3[] { referencePoint, referencePoint + _cameraLimitZone.transform.localScale };
+            _cameraLimitZone.SetActive(false);//消し忘れ防止
         }
         // Update is called once per frame
         void Update()
@@ -229,6 +234,10 @@ namespace Cooking.Stage
                     break;
             }
             #region カメラ移動範囲の制限
+            //frontCam.transform.position = new Vector3(Mathf.Clamp(frontCam.transform.position.x, _cameraLimitPosition[(int)LimitValue.Min].x, _cameraLimitPosition[(int)LimitValue.Max].x),
+            //    frontCam.transform.position.y,
+            //    Mathf.Clamp(frontCam.transform.position.z, _cameraLimitPosition[(int)LimitValue.Min].z, _cameraLimitPosition[(int)LimitValue.Max].z));
+
             topCam.transform.position = new Vector3(Mathf.Clamp(topCam.transform.position.x, _cameraLimitPosition[(int)LimitValue.Min].x, _cameraLimitPosition[(int)LimitValue.Max].x),
                 topCam.transform.position.y,
                 Mathf.Clamp(topCam.transform.position.z, _cameraLimitPosition[(int)LimitValue.Min].z, _cameraLimitPosition[(int)LimitValue.Max].z));
@@ -243,6 +252,12 @@ namespace Cooking.Stage
         /// </summary>
         private void LateUpdate()
         {
+            switch (UIManager.Instance.MainUIStateProperty)
+            {
+                case ScreenState.Start:
+                    CameraTrackReset();//初期化
+                    break;
+            }
             switch (StageSceneManager.Instance.FoodStateOnGameProperty)
             {
                 case StageSceneManager.FoodStateOnGame.ShotEnd:
@@ -270,6 +285,7 @@ namespace Cooking.Stage
         {
             //Frontカメラに切り替える
             cameraMode = CameraMode.Front;
+            frontCam.LookAt = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].CenterPoint; 
         }
         public void OnSide()
         {
@@ -311,7 +327,7 @@ namespace Cooking.Stage
         {
             frontCam.LookAt = null;
             frontCam.Follow = null;
-            topCam.transform.eulerAngles = new Vector3(90, 0, 0);
+            topCam.transform.eulerAngles = new Vector3(topCameraRotation, 0, 0);
         }
     }
 }

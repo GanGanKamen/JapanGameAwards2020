@@ -9,6 +9,6 @@ PhysicMaterial:
   m_Name: Ebi
   dynamicFriction: 3000
   staticFriction: 300
-  bounciness: 0.99
+  bounciness: 0.99999
   frictionCombine: 3
   bounceCombine: 0

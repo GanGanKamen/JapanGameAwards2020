@@ -312,9 +312,14 @@ namespace Cooking.Stage
             _foodStatuses[_activePlayerIndex].ResetFallAndGoalFlag();
             _foodStatuses[_activePlayerIndex].ResetPlayerRotation();
             if(_foodStatuses[_activePlayerIndex].FoodType != FoodType.Egg)
-                _foodStatuses[_activePlayerIndex].UnlockFreezeRotation();
+            {
+                _foodStatuses[_activePlayerIndex].UnlockConstraints();
+                _foodStatuses[_activePlayerIndex].FreezePosition();
+            }
             UIManager.Instance.ResetUIMode();
             SetObjectsPositionForNextPlayer(_activePlayerIndex);
+            //位置変更予定
+            _foodStatuses[_activePlayerIndex].ResetFoodState();
             CheckPlayerAnimationPlay();
             PredictLineManager.Instance.SetPredictLineInstantiatePosition(_foodStatuses[_activePlayerIndex].CenterPoint.position);
         }
@@ -330,8 +335,6 @@ namespace Cooking.Stage
                 {
                     case FoodType.Shrimp:
                         _foodStatuses[_activePlayerIndex].PlayerAnimatioManage(true);
-                        //位置変更予定
-                        _foodStatuses[_activePlayerIndex].SetShotPointOnFoodCenter();
                         break;
                     case FoodType.Egg:
                         break;

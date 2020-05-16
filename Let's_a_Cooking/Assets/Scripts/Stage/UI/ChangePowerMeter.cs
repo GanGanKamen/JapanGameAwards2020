@@ -64,6 +64,11 @@ namespace Cooking.Stage
             {
                 shotPowerGageIndex = 0;
             }
+            //異常値が出ないよう AIがショット先を決められないときに起こりうる
+            else if (shotPowerGageIndex >= shotPowerGageSprites.Length)
+            {
+                shotPowerGageIndex = shotPowerGageSprites.Length - 1;
+            }
             return shotPowerGageSprites[shotPowerGageIndex];
         }
     }

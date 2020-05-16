@@ -9,7 +9,7 @@ public static class CalculateLayerNumber
     /// </summary>
     /// <param name="layerMask"></param>
     /// <returns></returns>
-    public static int ChangeSingleLayerNumberFromLayerValue(LayerMask layerMask)
+    public static int ChangeSingleLayerNumberFromLayerMask(LayerMask layerMask)
     {
         if (layerMask <= 0)
         {

@@ -65,9 +65,6 @@ namespace Cooking.Stage
             get { return _playerPointList; }
         }
         private List<int>[] _playerPointList;
-        /// <summary>
-        /// やがて演出時間と同期
-        /// </summary>
         private float _waitTimeNormal = 1f;
         private float _waitTimeOnFall = 2f;
         private float _waitTimeOnGoal = 2f;
@@ -82,7 +79,7 @@ namespace Cooking.Stage
         }
         [SerializeField] private GameObject _goal = null;
         /// <summary>
-        /// 終了時の書くプレイヤーの合計ポイント
+        /// 終了時の各プレイヤーの合計ポイント
         /// </summary>
         int[] _pointsOnFinish;
         public int TurnNumberOnGameEnd
@@ -107,7 +104,14 @@ namespace Cooking.Stage
         }
         private FoodStateOnGame _foodStateOnGame = FoodStateOnGame.Normal;
         /// <summary>
-        /// ヒエラルキー整頓用の食材の親オブジェクト
+        /// ヒエラルキー整頓用の食材の位置情報を制御するオブジェクト用の親オブジェクト
+        /// </summary>
+        public Transform FoodPositionsParent
+        {
+            get { return _foodPositionsParent; }
+        }
+        /// <summary>
+        /// ヒエラルキー整頓用の食材の位置情報を制御するオブジェクト用の親オブジェクト
         /// </summary>
         [SerializeField] Transform _foodPositionsParent = null;
         /// <summary>
@@ -126,7 +130,7 @@ namespace Cooking.Stage
         /// <returns></returns>
         public string GetStringLayerName(LayerMask layerList)
         {
-            return LayerMask.LayerToName(CalculateLayerNumber.ChangeSingleLayerNumberFromLayerValue(layerList));
+            return LayerMask.LayerToName(CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(layerList));
         }
 
         /// <summary>
@@ -201,7 +205,7 @@ namespace Cooking.Stage
                     {
                         if (_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].FalledFoodStateOnStartProperty == FalledFoodStateOnStart.OnStart)
                         {
-                            _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].SetShotPointOnFoodCenter();
+                            _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].ResetFoodState();
                             PredictLineManager.Instance.SetPredictLineInstantiatePosition(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].CenterPoint.position);
                         }
                     }
