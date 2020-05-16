@@ -120,7 +120,7 @@ namespace Cooking.Stage
                             {
                                 //UIManager.Instance.ChangeUI(ScreenState.ShottingMode);
                                 _shotPower = ShotParameter.MaxShotPower;
-                                MyShot(transform.forward * _shotPower);
+                                SameVelocityMagnitudeShot(transform.forward * _shotPower);
                             }
                             //#endif
                             #endregion
@@ -316,7 +316,7 @@ namespace Cooking.Stage
             CameraManager.Instance.SetCameraPositionNearPlayer();
             ChangeShotState(ShotState.ShottingMode);
             //Shot(transform.forward);
-            MyShot(transform.forward);
+            SameVelocityMagnitudeShot(transform.forward);
         }
         /// <summary>
         /// 力の分解をした発射処理
@@ -337,7 +337,7 @@ namespace Cooking.Stage
         /// 速度ベクトルが均一な発射処理
         /// </summary>
         /// <param name="direction">方向ベクトル</param>
-        private void MyShot(Vector3 direction)
+        private void SameVelocityMagnitudeShot(Vector3 direction)
         {
             var initialSpeedVector = direction * _shotPower;
             _shotRigidbody.velocity = initialSpeedVector;
@@ -362,7 +362,7 @@ namespace Cooking.Stage
         /// 速度ベクトルが均一な発射処理
         /// </summary>
         /// <returns></returns>
-        public Vector3 MyCalculateMaxShotPowerVector()
+        public Vector3 CalculateMaxSameVelocityMagnitudeShotPowerVector()
         {
             return transform.forward * _shotParameter.MaxShotPower;
         }
@@ -382,7 +382,7 @@ namespace Cooking.Stage
         {
             ChangeShotState(ShotState.ShottingMode);
             UIManager.Instance.ChangeUI(ScreenState.ShottingMode);
-            MyShot(aIShotPower);
+            SameVelocityMagnitudeShot(aIShotPower);
         }
         /// <summary>
         /// 一定時間経過で卵の回転を止めていく それまで待機 戻り値は保存しておくこと 数え終わると0を返す
