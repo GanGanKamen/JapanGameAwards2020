@@ -58,7 +58,7 @@ namespace Cooking.Stage
         /// <summary>
         /// 0番目から順に止める
         /// </summary>
-        private RigidbodyConstraints[] _rigidbodyConstraints = {RigidbodyConstraints.FreezeRotationX , RigidbodyConstraints.FreezeRotationY , RigidbodyConstraints.FreezeRotationZ };
+        private RigidbodyConstraints[] _rigidbodyConstraints = { RigidbodyConstraints.FreezeRotationX , RigidbodyConstraints.FreezeRotationY , RigidbodyConstraints.FreezeRotationZ };
         /// <summary>
         /// 時間経過で回転を止める
         /// </summary>
@@ -158,7 +158,7 @@ namespace Cooking.Stage
                                         _rigidbodyConstraintsIndex = 0;
                                     }
                                     //地面で転がっている = y方向の速度の大きさが一定より小さい この時間を測定する
-                                    else if (Mathf.Abs(_shotRigidbody.velocity.y ) < 0.01f)
+                                    else if (Mathf.Abs(_shotRigidbody.velocity.y) < 0.01f)
                                     {
                                         //3(大きさ)になったら終了
                                         if (_rigidbodyConstraintsIndex == _rigidbodyConstraints.Length)
@@ -284,7 +284,7 @@ namespace Cooking.Stage
             }
         }
         /// <summary>
-        /// 現在のショットの向きを更新 壁反射後
+        /// 現在のショットの向きを更新 速度ベクトルはメソッド内で標準化 壁反射後・AI発射時
         /// </summary>
         /// <param name="shotDirection"></param>
         /// <param name="shotPower"></param>
@@ -314,9 +314,9 @@ namespace Cooking.Stage
             PlayShotSound();
             EffectManager.Instance.InstantiateEffect(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].transform.position, EffectManager.EffectPrefabID.Food_Jump);
             CameraManager.Instance.SetCameraPositionNearPlayer();
+            ChangeShotState(ShotState.ShottingMode);
             //Shot(transform.forward);
             MyShot(transform.forward);
-            ChangeShotState(ShotState.ShottingMode);
         }
         /// <summary>
         /// 力の分解をした発射処理
@@ -380,9 +380,9 @@ namespace Cooking.Stage
         /// <param name="aIShotPower"></param>
         public void AIShot(Vector3 aIShotPower)
         {
-            Shot(aIShotPower);
             ChangeShotState(ShotState.ShottingMode);
             UIManager.Instance.ChangeUI(ScreenState.ShottingMode);
+            MyShot(aIShotPower);
         }
         /// <summary>
         /// 一定時間経過で卵の回転を止めていく それまで待機 戻り値は保存しておくこと 数え終わると0を返す
