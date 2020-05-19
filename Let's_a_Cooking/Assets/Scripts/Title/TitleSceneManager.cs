@@ -6,6 +6,7 @@ namespace Cooking.Title
 {
     public class TitleSceneManager : MonoBehaviour
     {
+        [SerializeField] GameObject startButton;
         // Start is called before the first frame update
         void Start()
         {
@@ -25,6 +26,7 @@ namespace Cooking.Title
 
         IEnumerator LoadSceneCoroutine()
         {
+            startButton.SetActive(false);
             yield return new WaitForSeconds(1.0f);
             SceneChanger.LoadSelectingScene(SceneName.SelectStage);
         }
