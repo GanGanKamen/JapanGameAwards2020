@@ -5,7 +5,12 @@ using UnityEngine.SceneManagement;
 
 namespace Cooking
 {
-	public class SceneChanger : MonoBehaviour
+    public enum SceneName
+    {
+        Title, SelectStage, PlayScene
+    }
+
+    public class SceneChanger : MonoBehaviour
 	{
 		// Start is called before the first frame update
 		void Start()
@@ -29,6 +34,11 @@ namespace Cooking
         {
             var sceneName = SceneManager.GetActiveScene().name;
             SceneManager.LoadScene(sceneName);
+        }
+
+        public static void LoadSelectingScene(SceneName sceneName)
+        {
+            SceneManager.LoadScene((int)sceneName);
         }
     }
 

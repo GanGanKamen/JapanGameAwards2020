@@ -165,6 +165,15 @@ namespace Cooking.Stage
             Instantiate(stage);
         }
         /// <summary>
+        /// Selectステージからステージ番号を決める
+        /// </summary>
+        /// <param name="stageIndex"></param>
+        public static void SetLoadStageIndex(int stageIndex)
+        {
+            _stageNumberIndex = stageIndex;
+        }
+
+        /// <summary>
         /// stringとしてレイヤーを参照
         /// </summary>
         /// <param name="layerList"></param>

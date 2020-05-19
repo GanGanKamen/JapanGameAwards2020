@@ -21,6 +21,15 @@ EditorBuildSettings:
     path: Assets/Scenes/Developments/ArchiveScene/PlaySceneOldStage.unity
     guid: 89ed28f66bc62344a8c4dddb0bb04142
   - enabled: 1
+    path: Assets/Scenes/MainScenes/Title.unity
+    guid: 2b4cb3173dc904f4db85e8b14079231b
+  - enabled: 1
+    path: Assets/Scenes/MainScenes/SelectStage.unity
+    guid: 4dcfad80347aebf4eb949042e88499ca
+  - enabled: 1
+    path: Assets/Scenes/MainScenes/PlayScene.unity
+    guid: 4ca99ef54566a424eb998646c13597f0
+  - enabled: 0
     path: Assets/Scenes/Developments/StageHamaguchi/Stage1.unity
     guid: 7e1af97db79e3fa42b975bf9f56fa408
   m_configObjects: {}
