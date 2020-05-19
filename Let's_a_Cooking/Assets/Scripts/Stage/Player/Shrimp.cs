@@ -61,6 +61,9 @@ namespace Cooking.Stage
             _capsuleCollider.height = 0.3048875f;
             _boxCollider.center = new Vector3(0.0003482699f, -0.0001129784f, -0.2698632f);
             _boxCollider.size = new Vector3(0.08083411f, 0.06928827f, 0.2897553f);
+            var isGroundedArea = GetComponent<FoodStatus>()?.IsGroundedArea;
+            isGroundedArea.transform.localPosition = new Vector3(0.008f, -0.156f, -0.115f);
+            isGroundedArea.transform.localScale = new Vector3(0.04075898f, 0.1261869f, 0.33f);
         }
 
         public void AnimationManage(bool isEnable)

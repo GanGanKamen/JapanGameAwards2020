@@ -96,7 +96,8 @@ namespace Cooking.Stage
             {
                 _instantiateSeasoningPoint[i] = _targetObjectsForAI[(int)AITargetObjectTags.Seasoning][i].transform.GetChild(0);
                 //親子関係があると親Destroy時に削除されてしまう
-                _instantiateSeasoningPoint[i].parent = null;
+                _instantiateSeasoningPoint[i].parent = this.transform;
+                _instantiateSeasoningPoint[i].GetComponent<MeshRenderer>().enabled = false;//消し忘れ防止
             }
             //検索後にオフ
             foreach (var rareSeasoning in _targetObjectsForAI[(int)AITargetObjectTags.RareSeasoning])

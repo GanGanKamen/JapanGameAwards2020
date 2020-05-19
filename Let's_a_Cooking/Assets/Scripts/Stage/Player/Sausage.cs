@@ -51,6 +51,9 @@ namespace Cooking.Stage
             _sausageCutOffObject.transform.parent = null;
             var rigidbody = _sausageCutOffObject.AddComponent<Rigidbody>();
             rigidbody.mass = 0.01f;
+            var isGroundedArea = GetComponent<FoodStatus>()?.IsGroundedArea;
+            isGroundedArea.transform.localPosition = new Vector3(-0.016f, -0.07243f, -0.0979f);
+            isGroundedArea.transform.localScale = new Vector3(0.04076f, 0.05391148f, 0.1718356f);
             //必要に応じて力を加える プレイヤーから見て邪魔かも？
             //rigidbody.AddForce(Vector3.right * 100);
         }

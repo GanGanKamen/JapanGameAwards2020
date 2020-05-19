@@ -84,7 +84,8 @@ namespace Cooking.Stage
             hasBroken = true;
             SoundManager.Instance.PlaySE(SoundEffectID.egg_break);
             SoundManager.Instance.PlaySE(SoundEffectID.egg_app);
-            //StartCoroutine(ShellsCoroutine());
+            var isGroundedArea = GetComponent<FoodStatus>()?.IsGroundedArea;
+            isGroundedArea.transform.localPosition = new Vector3(isGroundedArea.transform.localPosition.x, -0.0064f, -isGroundedArea.transform.localPosition.z);
         }
 
         private IEnumerator ShellsCoroutine()

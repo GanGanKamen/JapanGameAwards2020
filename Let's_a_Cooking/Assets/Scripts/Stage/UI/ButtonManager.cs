@@ -31,7 +31,7 @@ namespace Cooking.Stage
             _uIManager = UIManager.Instance;
         }
         /// <summary>
-        /// ボタンを押した際に呼ばれる共通メソッド UIManagerを通して表示画面中のボタンの情報を受け取る
+        /// Buttonの引数において、enumが非対応だったため仕方なくstring使用 ボタンを押した際に呼ばれる共通メソッド UIManagerを通して表示画面中のボタンの情報を受け取る 
         /// </summary>
         /// <param name="button">押されたボタンの情報</param>
         public void OnTouch(Button button)

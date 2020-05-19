@@ -299,6 +299,7 @@ MonoBehaviour:
   _isGroundedArea: {fileID: 2823169578827961852}
   _shrimpFirstBoundPower: 3
   _chickenFirstBoundPower: 1.5
+  _forwardAngle: 60
 --- !u!114 &6626410273865131183
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -311,6 +312,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90fa1534537676a40b25bf29b6b34575, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isGroundedArea: {fileID: 2823169578827961852}
   _capsuleCollider: {fileID: 5670369316466324488}
   _boxCollider: {fileID: 7167404278365877129}
   _foodAnimator: {fileID: 9120880134355479713}

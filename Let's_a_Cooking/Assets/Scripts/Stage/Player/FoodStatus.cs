@@ -116,6 +116,10 @@ namespace Cooking.Stage
         /// ショットによる一回目の衝突のみ割れる スタート地点に帰ってきたとき少し落下する事に注意 リセットは衝突処理の最後にまとめてやる 一定時間で跳ねるようになる=trueになる
         /// </summary>
         private bool _isFryCollision = false;
+        public GameObject IsGroundedArea
+        {
+            get { return _isGroundedArea; }
+        }
         [SerializeField] GameObject _isGroundedArea;
         Vector3[] _isGroundedLimitPosition;
         /// <summary>
@@ -227,9 +231,11 @@ namespace Cooking.Stage
             {
                 var referencePoint = _isGroundedArea.transform.GetChild(0).position;
                 _isGroundedLimitPosition = new Vector3[] { referencePoint, referencePoint + _isGroundedArea.transform.localScale };
+                //_isGroundedArea.transform.parent = _foodPositionNotRotate;
             }
             _difineForwardRollDirectionValue = Mathf.Sin(_forwardAngle * Mathf.Deg2Rad);
-        }
+        
+}
 
         protected override void Start()
         {
@@ -501,6 +507,7 @@ namespace Cooking.Stage
                 default:
                     break;
             }
+            Debug.Log(_isGroundedArea.transform.eulerAngles.z);
             if (_isGroundedArea != null)
             {
                 _isGroundedArea.transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
