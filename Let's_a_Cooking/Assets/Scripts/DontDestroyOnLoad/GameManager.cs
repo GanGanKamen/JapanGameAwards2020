@@ -58,17 +58,29 @@ namespace Cooking
         /// </summary>
         public int PlayerSumNumber
         {
-            get { return playerNumber + computerNumber; }
+            get { return _playerNumber + _computerNumber; }
+        }
+        public int PlayerNumber
+        {
+            get { return _playerNumber; }
+        }
+        public int ComputerNumber
+        {
+            get { return _computerNumber; }
         }
         /// <summary>
         ///プレイヤーの人数が想定を超えないように制御→プロパティ・例外処理
         /// </summary>
-        public int playerNumber = 1,computerNumber = 1;
+        private int _playerNumber = 1,_computerNumber = 1;
+        /// <summary>
+        /// 合計ステージ数:3(2020/5/18)
+        /// </summary>
+        public readonly int sumStageNumber = 3;
 
         // Start is called before the first frame update
         void Start()
         {
-
+            
         }
 
         // Update is called once per frame

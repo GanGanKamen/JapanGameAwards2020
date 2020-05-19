@@ -271,12 +271,12 @@ namespace Cooking.Stage
                     break;
                 case ScreenState.DecideOrder:
                     var playerNumber = 0;
-                    for (int i = 0; i < GameManager.Instance.playerNumber; i++)
+                    for (int i = 0; i < GameManager.Instance.PlayerNumber; i++)
                     {
                         _playerListOrderPower[playerNumber].SetActive(true);
                         playerNumber++;
                     }
-                    for (int i = 0; i < GameManager.Instance.computerNumber; i++)
+                    for (int i = 0; i < GameManager.Instance.ComputerNumber; i++)
                     {
                         DecideOrderPowerOnComputer(playerNumber);
                         playerNumber++;
@@ -351,7 +351,7 @@ namespace Cooking.Stage
         {
             yield return new WaitForSeconds(_startTime);
             _playModeUI.ChangeUIOnTurnStart();
-            _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].ResetFoodState();
+            //_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].ResetFoodState();
             PredictLineManager.Instance.SetPredictLineInstantiatePosition(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].CenterPoint.position);
         }
     }

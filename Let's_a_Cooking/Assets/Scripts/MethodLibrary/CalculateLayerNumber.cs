@@ -5,7 +5,7 @@
 public static class CalculateLayerNumber
 {
     /// <summary>
-    /// 1つのレイヤーをレイヤー番号に変換
+    /// 1つのレイヤーマスクをレイヤー番号に変換
     /// </summary>
     /// <param name="layerMask"></param>
     /// <returns></returns>

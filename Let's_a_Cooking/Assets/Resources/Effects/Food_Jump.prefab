@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 635616892763115722}
   - component: {fileID: 635616892763220330}
   m_Layer: 0
-  m_Name: Jump
+  m_Name: Food_Jump
   m_TagString: FxTemporaire
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -42,7 +42,7 @@ ParticleSystem:
   serializedVersion: 6
   lengthInSec: 0.5
   simulationSpeed: 1
-  stopAction: 0
+  stopAction: 2
   cullingMode: 1
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}

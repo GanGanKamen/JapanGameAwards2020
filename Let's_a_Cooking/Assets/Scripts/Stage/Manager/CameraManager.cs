@@ -69,12 +69,8 @@ namespace Cooking.Stage
         /// <summary>
         /// カメラの移動範囲を制限
         /// </summary>
-        [SerializeField] GameObject _cameraLimitZone = null;
+        GameObject _cameraLimitZone = null;
         Vector3[] _cameraLimitPosition;
-        enum LimitValue
-        {
-            Min, Max
-        }
 
         #region インスタンスへのstaticなアクセスポイント
         /// <summary>
@@ -102,6 +98,8 @@ namespace Cooking.Stage
             _cameraLocalPositions[(int)CameraMode.Front] = (frontCam.transform.localPosition);
             _cameraLocalPositions[(int)CameraMode.Side] = (sideCam.transform.localPosition);
             _cameraLocalRotation = frontCam.transform.localEulerAngles;
+            _cameraLimitZone = GameObject.FindGameObjectWithTag(TagList.CameraZone.ToString());
+            _cameraLimitZone.SetActive(false);
             var referencePoint = _cameraLimitZone.transform.GetChild(0).position;
             _cameraLimitPosition = new Vector3[] { referencePoint, referencePoint + _cameraLimitZone.transform.localScale };
             _cameraLimitZone.SetActive(false);//消し忘れ防止

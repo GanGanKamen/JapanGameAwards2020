@@ -19,7 +19,7 @@ namespace Cooking
             //enum型へ変換 + 変換失敗時に警告
             if (!Enum.TryParse(value, ignoreCase ,out result))
             {
-                Debug.LogFormat("不適切なボタンの名前:{0}が入力されました。", value);
+                Debug.LogFormat("不適切な名前:{0}が入力されました。", value);
                 result = default(T);
                 return false;
             }
@@ -41,7 +41,7 @@ namespace Cooking
             //enum型へ変換 + 変換失敗時に警告
             if (!Enum.TryParse(value, ignoreCase ,out enumValue))
             {
-                Debug.LogFormat("不適切なボタンの名前:{0}が入力されました。", value);
+                Debug.LogFormat("不適切な名前:{0}が入力されました。", value);
                 enumValue = default(T);
                 return enumValue;
             }

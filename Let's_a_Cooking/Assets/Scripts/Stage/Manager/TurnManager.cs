@@ -57,7 +57,7 @@ namespace Cooking.Stage
         {
             get { return _orderPower; }
         }
-       private float[] _orderPower;
+        private float[] _orderPower;
         /// <summary>
         /// ターン終了後の処理分岐用
         /// </summary>
@@ -95,7 +95,7 @@ namespace Cooking.Stage
                 _playerIndexArray[i] = i;
             }
         }
-        
+
         /// <summary>
         /// ショットを打つ順番を決める
         /// </summary>
@@ -130,7 +130,7 @@ namespace Cooking.Stage
                     if (_orderPower[j] < _orderPower[j + 1])
                     {
                         //値とプレイヤーをシンクロさせて入れ替える
-                        ArrayMethod.ChangeArrayValuesFromHighToLow(_orderPower,j);
+                        ArrayMethod.ChangeArrayValuesFromHighToLow(_orderPower, j);
                         ArrayMethod.ChangeArrayValuesFromHighToLow(_foodStatuses, j);
                         ArrayMethod.ChangeArrayValuesFromHighToLow(_playerIndexArray, j);
                     }
@@ -153,7 +153,7 @@ namespace Cooking.Stage
         /// <summary>
         /// foodStatusに登録
         /// </summary>
-        public void SetFoodStatusValue(int foodStatusIndex , FoodStatus playerStatus)
+        public void SetFoodStatusValue(int foodStatusIndex, FoodStatus playerStatus)
         {
             _foodStatuses[foodStatusIndex] = playerStatus;
         }
@@ -178,7 +178,7 @@ namespace Cooking.Stage
             {
                 _turnNumber = 11;
             }
-//#endif
+            //#endif
         }
         /// <summary>
         /// アクティブプレイヤーIndexを渡せば、その要素のプレイヤーが何番のプレイヤーだったかを返す UI表示用に1加算している
@@ -195,7 +195,7 @@ namespace Cooking.Stage
         void CheckNextPlayerAI()
         {
             var aI = _foodStatuses[_activePlayerIndex].GetComponent<AI>();
-            if (aI != null )
+            if (aI != null)
             {
                 _isAITurn = true;
                 aI.TurnAI();
@@ -217,13 +217,13 @@ namespace Cooking.Stage
                         ///次のターン数へ
                         _activePlayerIndex++;
                         ///順番決め終了 このときAI生成されていない AI判定はGetComponentでは不可 アニメーションを入れるなら注意
-                        if (_activePlayerIndex == GameManager.Instance.playerNumber)
+                        if (_activePlayerIndex == GameManager.Instance.PlayerNumber)
                         {
                             _activePlayerIndex = 0;
                         }
                     }
                     break;
-                    //10ターン目が終わったら終了(SceneManager)
+                //10ターン目が終わったら終了(SceneManager)
                 case StageGameState.Play:
                     {
                         if (_foodStatuses[_activePlayerIndex].IsFoodInStartArea && !_foodStatuses[_activePlayerIndex].IsFall)
@@ -232,8 +232,8 @@ namespace Cooking.Stage
                             var startPoint = StageSceneManager.Instance.GetPlayerStartPoint(playerNumber);
                             //スタート地点へ配置
                             ResetPlayerOnStartPoint(startPoint, _activePlayerIndex);
-                            InitializeOnTurnChange();
-                            break;
+                            InitializeOnTurnChange(_activePlayerIndex);
+                            break;//次のプレイヤーに変えずに初期化 このメソッドの終了
                         }
                         else if (_foodStatuses[_activePlayerIndex].IsGoal)
                         {
@@ -259,12 +259,12 @@ namespace Cooking.Stage
                             default:
                                 break;
                         }
-                        InitializeOnTurnChange();
-                        //レア調味料発生
-                        if (StageSceneManager.Instance.TurnNumberOnGameEnd - _turnNumber == 2)//ラスト3ターン
-                        {
-                            GimmickManager.Instance.AppearRareSeasoning();
-                        }
+                        InitializeOnTurnChange(_activePlayerIndex);
+                    }
+                    //レア調味料発生
+                    if (StageSceneManager.Instance.TurnNumberOnGameEnd - _turnNumber == 2)//ラスト3ターン
+                    {
+                        GimmickManager.Instance.AppearRareSeasoning();
                     }
                     break;
                 case StageGameState.Finish:
@@ -305,25 +305,19 @@ namespace Cooking.Stage
         /// <summary>
         /// ターンが変わるときの初期化処理
         /// </summary>
-        private void InitializeOnTurnChange()
+        private void InitializeOnTurnChange(int playerIndex)
         {
             //順巡り処理(0へ初期化)が終わった後にチェック
             CheckNextPlayerAI();
-            _foodStatuses[_activePlayerIndex].ResetFallAndGoalFlag();
-            _foodStatuses[_activePlayerIndex].ResetPlayerRotation();
-            if(_foodStatuses[_activePlayerIndex].FoodType != FoodType.Egg)
-            {
-                _foodStatuses[_activePlayerIndex].UnlockConstraints();
-                _foodStatuses[_activePlayerIndex].FreezePosition();
-            }
+            _foodStatuses[playerIndex].ResetFallAndGoalFlag();
+            _foodStatuses[playerIndex].ResetPlayerRotation();
             UIManager.Instance.ResetUIMode();
-            SetObjectsPositionForNextPlayer(_activePlayerIndex);
+            SetObjectsPositionForNextPlayer(playerIndex);
             //位置変更予定
-            _foodStatuses[_activePlayerIndex].ResetFoodState();
+            _foodStatuses[playerIndex].ResetFoodState();
             CheckPlayerAnimationPlay();
-            PredictLineManager.Instance.SetPredictLineInstantiatePosition(_foodStatuses[_activePlayerIndex].CenterPoint.position);
+            PredictLineManager.Instance.SetPredictLineInstantiatePosition(_foodStatuses[playerIndex].CenterPoint.position);
         }
-
         /// <summary>
         /// プレイヤーのアニメーションを再生するか判断
         /// </summary>
@@ -363,7 +357,7 @@ namespace Cooking.Stage
         /// </summary>
         /// <param name="startPoint">初期位置</param>
         /// <param name="playerIndex">プレイヤー番号</param>
-        public void ResetPlayerOnStartPoint(Vector3 startPoint , int playerIndex)
+        public void ResetPlayerOnStartPoint(Vector3 startPoint, int playerIndex)
         {
             _foodStatuses[playerIndex].ReStart(startPoint);
             _foodStatuses[playerIndex].StopFoodVelocity();

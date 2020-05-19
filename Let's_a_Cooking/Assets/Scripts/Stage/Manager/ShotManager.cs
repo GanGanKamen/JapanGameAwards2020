@@ -116,21 +116,17 @@ namespace Cooking.Stage
                         {
                             #region デバッグコード スペースを押すと最大パワーで飛ぶ
                             //#if UNITY_EDITOR
-                            if (Input.GetKeyDown(KeyCode.M))
-                            {
-                                //UIManager.Instance.ChangeUI(ScreenState.ShottingMode);
-                                _shotPower = ShotParameter.MaxShotPower;
-                                SameVelocityMagnitudeShot(transform.forward * _shotPower);
-                            }
-                            //#endif
-                            #endregion
-                            #region デバッグコード スペースを押すと最大パワーで飛ぶ
-                            //#if UNITY_EDITOR
                             if (Input.GetKeyDown(KeyCode.Space))
                             {
-                                //UIManager.Instance.ChangeUI(ScreenState.ShottingMode);
                                 _shotPower = ShotParameter.MaxShotPower;
-                                Shot(transform.forward);
+                                UIManager.Instance.ChangeUI(ScreenState.ShottingMode);
+                            }
+                            //#endif
+                            //#if UNITY_EDITOR
+                            if (Input.GetKeyDown(KeyCode.M))
+                            {
+                                _shotPower = ShotParameter.MaxShotPower;
+                                UIManager.Instance.ChangeUI(ScreenState.ShottingMode);
                             }
                             //#endif
                             #endregion
@@ -150,9 +146,8 @@ namespace Cooking.Stage
                             case FoodType.Egg:
                                 {
                                     ///食材が止まった + 落下・ゴール待機時間が終わったら、ショット終了
-                                    if (_shotRigidbody.velocity.magnitude < 0.01f)
+                                    if (_shotRigidbody.velocity.magnitude < 0.000001f && _rigidbodyConstraintsIndex >= 1)//衝突した瞬間0のことがある
                                     {
-                                        _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].FreezeRotation();
                                         ChangeShotState(ShotState.ShotEndMode);
                                         //すべての回転を止める前に移動が止まる可能性もある
                                         _rigidbodyConstraintsIndex = 0;
@@ -183,8 +178,29 @@ namespace Cooking.Stage
                                 break;
                             case FoodType.Sausage:
                                 ///食材が止まった + 落下・ゴール待機時間が終わったら、ショット終了
-                                if (_shotRigidbody.velocity.magnitude < 0.0001f)
+                                if (_shotRigidbody.velocity.magnitude < 0.000001f && _rigidbodyConstraintsIndex >= 1)//衝突した瞬間0のことがある
+                                {
                                     ChangeShotState(ShotState.ShotEndMode);
+                                    //すべての回転を止める前に移動が止まる可能性もある
+                                    _rigidbodyConstraintsIndex = 0;
+                                }
+                                //地面で転がっている = y方向の速度の大きさが一定より小さい この時間を測定する
+                                else if (Mathf.Abs(_shotRigidbody.velocity.y) < 0.01f)
+                                {
+                                    //3(大きさ)になったら終了
+                                    if (_rigidbodyConstraintsIndex == _rigidbodyConstraints.Length)
+                                    {
+                                        _rigidbodyConstraintsIndex = 0;
+                                        break;
+                                    }
+                                    _timeCounterForFreezeRotation = WaitForEggFreezeRotation(_freezeOneOfRotationTime[_rigidbodyConstraintsIndex], _timeCounterForFreezeRotation);
+                                    //時間を数え終わるとカウンターは0になり、再度カウントスタート
+                                    if (_timeCounterForFreezeRotation == 0)
+                                    {
+                                        _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].FreezeRotation(_rigidbodyConstraints[_rigidbodyConstraintsIndex]);
+                                        _rigidbodyConstraintsIndex++;
+                                    }
+                                }
                                 break;
                             default:
                                 break;
@@ -341,7 +357,6 @@ namespace Cooking.Stage
         {
             var initialSpeedVector = direction * _shotPower;
             _shotRigidbody.velocity = initialSpeedVector;
-            Debug.Log(_shotRigidbody.velocity.magnitude);
         }
         /// <summary>
         /// 力の分解をした発射処理

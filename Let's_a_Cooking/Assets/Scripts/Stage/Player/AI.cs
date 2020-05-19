@@ -73,7 +73,7 @@ namespace Cooking.Stage
             //射出角度 初期値45度 レイにより障害物判定で変える 加算していき85(=限界角度)でだめなら45度から減少
             float throwingAngle = 45;
             Vector3 velocity,direction;
-            for (int i = 0; throwingAngle <= ShotManager.Instance.ShotParameter.LimitVerticalAngle;i++)
+            for (int i = 0; throwingAngle <= ShotManager.Instance.ShotParameter.LimitVerticalAngle - 10;i++)
             {
                 throwingAngle = 45 + i / 2;
                 direction = CalculateVelocity(this.transform.position, targetPosition, throwingAngle);
@@ -92,7 +92,7 @@ namespace Cooking.Stage
                     if (newTarget.tag == TagList.Towel.ToString())
                     {
                         ShotManager.Instance.SetShotVector(velocity, speed);
-                        ShotManager.Instance.AIShot(velocity * rid.mass);
+                        ShotManager.Instance.AIShot(direction);
                         return;
                     }
                 }
@@ -102,7 +102,7 @@ namespace Cooking.Stage
                 if (targetTagByLayCast == _targetTagByTransform)
                 {
                     ShotManager.Instance.SetShotVector(velocity, speed);
-                    ShotManager.Instance.AIShot(velocity * rid.mass);
+                    ShotManager.Instance.AIShot(direction);
                     return;
                 }
             }
@@ -112,7 +112,7 @@ namespace Cooking.Stage
             // 射出速度を算出
             velocity = direction * speed;
             ShotManager.Instance.SetShotVector(velocity, speed);
-            ShotManager.Instance.AIShot(velocity * rid.mass);
+            ShotManager.Instance.AIShot(direction);
         }
         /// <summary>
         /// 方向取得・初速も計算
@@ -189,7 +189,7 @@ namespace Cooking.Stage
             _targetTagByTransform = AITargetObjectTags.TowelAbovePoint;
             if (GetComponent<PlayerPoint>().IsFirstatowel)
             {
-                foreach (var targetTowelPositionObject in GimmickManager.Instance.TargetTowelPositionObjects)
+                foreach (var targetTowelPositionObject in GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.TowelAbovePoint])
                 {
                     if (targetTowelPositionObject != null)
                     {
@@ -202,7 +202,7 @@ namespace Cooking.Stage
                 }
             }
             _targetTagByTransform = AITargetObjectTags.Seasoning;
-            foreach (var seasoning in GimmickManager.Instance.Seasonings)
+            foreach (var seasoning in GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.Seasoning])
             {
                 if (seasoning != null)
                 {

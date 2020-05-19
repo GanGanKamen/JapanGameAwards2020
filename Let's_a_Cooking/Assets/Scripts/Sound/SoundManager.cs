@@ -74,7 +74,7 @@ namespace Cooking
             var soundInfo = _soundParameter.soundInformations[(int)soundEffectID];
             if (soundInfo.is3DSound)
             {
-                Debug.LogAssertion ("2Dサウンドではありません。Play3DSEメソッドを使用してください");
+                Debug.LogFormat ("{0}は2Dサウンドではありません。Play3DSEメソッドを使用してください", soundEffectID);
             }
             if (soundInfo.loop)
             {
@@ -95,7 +95,7 @@ namespace Cooking
             var soundInfo = _soundParameter.soundInformations[(int)soundEffectID];
             if (!soundInfo.is3DSound)
             {
-                Debug.LogAssertion("3Dサウンドではありません。PlaySEメソッドを使用してください");
+                Debug.LogFormat("{0}は3Dサウンドではありません。PlaySEメソッドを使用してください",soundEffectID);
             }
             if (soundInfo.loop)
             {

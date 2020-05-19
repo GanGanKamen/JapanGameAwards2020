@@ -17,6 +17,8 @@ TagManager:
   - Bubble
   - BubbleZone
   - StartArea
+  - Chair
+  - CameraZone
   layers:
   - Default
   - TransparentFX

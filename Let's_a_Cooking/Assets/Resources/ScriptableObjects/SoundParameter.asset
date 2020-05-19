@@ -23,11 +23,11 @@ MonoBehaviour:
     loop: 0
   - soundEffect: 2
     volume: 1
-    is3DSound: 1
+    is3DSound: 0
     loop: 0
   - soundEffect: 3
     volume: 1
-    is3DSound: 0
+    is3DSound: 1
     loop: 0
   - soundEffect: 4
     volume: 1
@@ -47,7 +47,7 @@ MonoBehaviour:
     loop: 0
   - soundEffect: 8
     volume: 1
-    is3DSound: 1
+    is3DSound: 0
     loop: 0
   - soundEffect: 9
     volume: 1

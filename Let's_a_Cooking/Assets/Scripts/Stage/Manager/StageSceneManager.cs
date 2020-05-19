@@ -10,23 +10,14 @@ namespace Cooking.Stage
     /// </summary>
     public enum TagList
     {
-       Finish , Floor , Water, Seasoning, Towel, DirtDish, RareSeasoning, Wall, TowelAbovePoint, Knife, Bubble , BubbleZone, StartArea
+        Finish, Floor, Water, Seasoning, Towel, DirtDish, RareSeasoning, Wall, TowelAbovePoint, Knife, Bubble, BubbleZone, StartArea, Chair, CameraZone
     }
     public enum LayerList
     {
-        FoodLayerInStartArea,Kitchen
+        FoodLayerInStartArea, Kitchen
     }
     public class StageSceneManager : MonoBehaviour
     {
-        public StageGameState GameState
-        {
-            get { return _gameState; }
-            set
-            {
-                _gameState = value;
-            }
-        }
-        private StageGameState _gameState = StageGameState.Preparation;
         #region インスタンスへのstaticなアクセスポイント
         /// <summary>
         /// このクラスのインスタンスを取得。
@@ -36,21 +27,33 @@ namespace Cooking.Stage
             get { return _instance; }
         }
         static StageSceneManager _instance = null;
-
-        /// <summary>
-        /// Start()より先に実行。
-        /// </summary>
-        private void Awake()
-        {
-            _instance = this;
-        }
         #endregion
+        public StageGameState GameState
+        {
+            get { return _gameState; }
+            set
+            {
+                _gameState = value;
+            }
+        }
+        private StageGameState _gameState = StageGameState.Preparation;
+        /// <summary>この要素番号に従ってステージを生成</summary>
+        public int StageNumberIndex
+        {
+            get { return _stageNumberIndex; }
+        }
+        private static int _stageNumberIndex = 0;
+        /// <summary>
+        /// プレハブからステージを生成する場合はtrue Develop時false
+        /// </summary>
+        /// <remarks>ステージ開発用のシーンではfalseに設定します。</remarks>
+        [SerializeReference] private bool _instantiateStage = true;
         /// <summary>
         /// 重力加速度の大きさ 落下地点を計算するうえで必要  各予測線オブジェクト生成時に渡す
         /// 食材のもつ重力の値は現在9.81 。この値を変える場合、スクリプトで重力制御をする必要あり スケールではなく重さを変えると、ショット時に加えるべき力の量が変わり 。
         /// </summary>
         public readonly float gravityAccelerationValue = 9.81f;
-        private AILevel[] aiLevels; 
+        private AILevel[] aiLevels;
         /// <summary>
         /// 初期値Shrimp 選ばれた食材リスト FoodStatus用のenumへ変換
         /// </summary>
@@ -72,12 +75,12 @@ namespace Cooking.Stage
         /// <summary>
         /// ゲーム開始時の座標を示すオブジェクト
         /// </summary>
-        [SerializeField] Transform _startPositionObject = null;
+        private Transform _startPositionObject = null;
         public GameObject Goal
         {
-            get { return _goal; }
+            get { return _goal ? _goal : GameObject.FindGameObjectWithTag(TagList.Finish.ToString()); ; }
         }
-        [SerializeField] private GameObject _goal = null;
+        private GameObject _goal = null;
         /// <summary>
         /// 終了時の各プレイヤーの合計ポイント
         /// </summary>
@@ -123,6 +126,44 @@ namespace Cooking.Stage
         }
         [SerializeField, Header("[0]FoodLayerInStartArea, [1]Kitchen stringとして使うものリスト")]
         private LayerMask[] _layerList = null;
+
+        private void Awake()
+        {
+            _instance = this;
+            CheckInstantiateStageNumber(_stageNumberIndex);
+            if (_instantiateStage)
+            {
+                InstantiateStage(_stageNumberIndex);
+            }
+        }
+
+        /// <summary>
+        /// セットされているステージ番号が正しいかどうか確認
+        /// </summary>
+        /// <param name="stageNumberIndex">ステージ番号(index)</param>
+        private bool CheckInstantiateStageNumber(int stageNumberIndex)
+        {
+            Debug.AssertFormat(
+    stageNumberIndex >= 0 && stageNumberIndex < GameManager.Instance.sumStageNumber,
+    "不正なStageNo : {0}が指定されました ステージ1を読み込みます。指定番号はindexです", stageNumberIndex);
+            if (stageNumberIndex >= 0 && stageNumberIndex < GameManager.Instance.sumStageNumber)
+            {
+                return true;
+            }
+            // 範囲外のステージ番号が指定された場合
+            else
+            {
+                // 最初のステージを読み込んでエラーをださない
+                _stageNumberIndex = 0;
+                return false;
+            }
+        }
+        private void InstantiateStage(int stageNumber)
+        {
+            // ステージプレハブを読み込む
+            var stage = Resources.Load<GameObject>("Stages/Stage" + stageNumber.ToString());
+            Instantiate(stage);
+        }
         /// <summary>
         /// stringとしてレイヤーを参照
         /// </summary>
@@ -173,12 +214,6 @@ namespace Cooking.Stage
         // Start is called before the first frame update
         void Start()
         {
-            ///タグ検索エラーを防ぐ
-            if (_goal == null)
-            {
-                Debug.Log("ゴールオブジェクトがセットされていません。タグ検索されました。");
-                GameObject.FindGameObjectWithTag(TagList.Finish.ToString());
-            }
             _turnManager = TurnManager.Instance;
             _chooseFoodNames = new string[GameManager.Instance.PlayerSumNumber];
             for (int i = 0; i < _chooseFoodNames.Length; i++)
@@ -203,10 +238,13 @@ namespace Cooking.Stage
                     break;
                 case StageGameState.Play:
                     {
-                        if (_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].FalledFoodStateOnStartProperty == FalledFoodStateOnStart.OnStart)
+                        foreach (var food in _turnManager.FoodStatuses)
                         {
-                            _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].ResetFoodState();
-                            PredictLineManager.Instance.SetPredictLineInstantiatePosition(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].CenterPoint.position);
+                            if (food.FalledFoodStateOnStartProperty == FalledFoodStateOnStart.OnStart)
+                            {
+                                food.ResetFoodState();
+                                //PredictLineManager.Instance.SetPredictLineInstantiatePosition(food.CenterPoint.position);
+                            }
                         }
                     }
                     break;
@@ -314,7 +352,7 @@ namespace Cooking.Stage
             for (int playerNumber = 0; playerNumber < GameManager.Instance.PlayerSumNumber; playerNumber++)
             {
                 //プレイヤーを生成
-                if (playerNumber < GameManager.Instance.playerNumber)
+                if (playerNumber < GameManager.Instance.PlayerNumber)
                 {
                     InitializePlayerData(playerNumber, playerFoodType, false);
                 }
@@ -403,6 +441,10 @@ namespace Cooking.Stage
         /// <param name="playerIndex"></param>
         public Vector3 GetPlayerStartPoint(int playerIndex)
         {
+            if (_startPositionObject == null)
+            {
+                _startPositionObject = GameObject.FindGameObjectWithTag(TagList.StartArea.ToString()).transform;
+            }
             return _startPositionObject.position + new Vector3(0.5f * playerIndex, 0, 0); //プレイヤー番号依存で少しずらして配置
         }
 

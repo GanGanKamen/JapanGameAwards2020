@@ -6,6 +6,7 @@ namespace Cooking.Stage
     public class Shrimp : MonoBehaviour
     {
         [SerializeField] CapsuleCollider _capsuleCollider = null;
+        [SerializeField] BoxCollider _boxCollider = null;
         /// <summary>
         /// このスクリプトに置くかは未定
         /// </summary>
@@ -53,9 +54,13 @@ namespace Cooking.Stage
         {
             _shrimpHead.transform.parent = null;
             _shrimpHead.AddComponent<Rigidbody>();
+            //キッチン＝障害物になる 跳ねる
+            _shrimpHead.layer = CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]);
             var center = _capsuleCollider.center;
             _capsuleCollider.center = new Vector3(center.x, center.y, -0.1008767f);
             _capsuleCollider.height = 0.3048875f;
+            _boxCollider.center = new Vector3(0.0003482699f, -0.0001129784f, -0.2698632f);
+            _boxCollider.size = new Vector3(0.08083411f, 0.06928827f, 0.2897553f);
         }
 
         public void AnimationManage(bool isEnable)
