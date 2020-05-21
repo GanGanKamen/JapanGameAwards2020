@@ -29,6 +29,7 @@ namespace Cooking.Title
             startButton.SetActive(false);
             yield return new WaitForSeconds(1.0f);
             SceneChanger.LoadSelectingScene(SceneName.SelectStage);
+            //Fader.FadeIn(1f, "SelectStage");
         }
     }
 }
