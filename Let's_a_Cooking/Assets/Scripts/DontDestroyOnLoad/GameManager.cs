@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Cooking
 {
@@ -76,7 +77,8 @@ namespace Cooking
         /// 合計ステージ数:3(2020/5/18)
         /// </summary>
         public readonly int sumStageNumber = 3;
-
+        float openingTime = 10.5f;
+        float openingTimeCounter = 0;
         // Start is called before the first frame update
         void Start()
         {
@@ -86,7 +88,15 @@ namespace Cooking
         // Update is called once per frame
         void Update()
         {
-
+            if (SceneManager.GetActiveScene().name == SceneName.OP.ToString())
+            {
+                openingTimeCounter += Time.deltaTime;
+                if (openingTimeCounter > openingTime)
+                {
+                    SceneChanger.LoadSelectingScene(SceneName.Title);
+                    openingTimeCounter = 0;
+                }
+            }
         }
     }
 }
