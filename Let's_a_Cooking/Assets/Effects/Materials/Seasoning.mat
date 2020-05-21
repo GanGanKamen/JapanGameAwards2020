@@ -81,6 +81,7 @@ Material:
     - _Mode: 2
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _Shininess: 0.078125
     - _SmoothnessTextureChannel: 0
     - _SoftParticlesEnabled: 0
     - _SoftParticlesFarFadeDistance: 1
@@ -94,6 +95,8 @@ Material:
     - _Color: {r: 1, g: 0.78068817, b: 0.7311321, a: 1}
     - _ColorAddSubDiff: {r: 0, g: 0, b: 0, a: 0}
     - _EmisColor: {r: 0.2, g: 0.2, b: 0.2, a: 0}
+    - _Emission: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SoftParticleFadeParams: {r: 0, g: 0, b: 0, a: 0}
+    - _SpecColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _TintColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
