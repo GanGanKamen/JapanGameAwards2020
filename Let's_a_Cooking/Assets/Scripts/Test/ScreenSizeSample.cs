@@ -11,6 +11,12 @@ public class ScreenSizeSample : MonoBehaviour
         iOS,
         Android
     }
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void CreateInstance()
+    {
+        //var obj = new GameObject("ScreenSizeSample");
+        //obj.AddComponent<ScreenSizeSample>();
+    }
 
     static public bool isSceneChange; //シーンの切り替えを検出
     static public Platform platform;
