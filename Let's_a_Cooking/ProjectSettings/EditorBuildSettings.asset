@@ -5,21 +5,6 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/Developments/Others/SugawaraPlayScene.unity
-    guid: 9bd9d74c281504542b39f11b40b7dd52
-  - enabled: 0
-    path: Assets/Scenes/Developments/ArchiveScene/0305PlayScene.unity
-    guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 0
-    path: Assets/Scenes/Developments/ArchiveScene/0422HamaguchiPlayScene.unity
-    guid: a1789236a018eb84cb4d8e544bb8e865
-  - enabled: 0
-    path: Assets/Scenes/Developments/ArchiveScene/0409PlayScene.unity
-    guid: f4d53432028cc104ba83b487f67257bf
-  - enabled: 0
-    path: Assets/Scenes/Developments/ArchiveScene/PlaySceneOldStage.unity
-    guid: 89ed28f66bc62344a8c4dddb0bb04142
   - enabled: 1
     path: Assets/Scenes/MainScenes/Title.unity
     guid: 2b4cb3173dc904f4db85e8b14079231b
@@ -29,7 +14,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainScenes/PlayScene.unity
     guid: 4ca99ef54566a424eb998646c13597f0
-  - enabled: 0
-    path: Assets/Scenes/Developments/StageHamaguchi/Stage1.unity
-    guid: 7e1af97db79e3fa42b975bf9f56fa408
   m_configObjects: {}
