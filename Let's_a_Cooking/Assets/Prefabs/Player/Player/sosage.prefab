@@ -371,6 +371,50 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!1 &4643841414210590126
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7897182859257682046}
+  - component: {fileID: 9012111501895328192}
+  m_Layer: 0
+  m_Name: PredictFallPointCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7897182859257682046
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4643841414210590126}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4689672585035630473}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &9012111501895328192
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4643841414210590126}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Size: {x: 0.114613235, y: 0.08475581, z: 0.4383108}
+  m_Center: {x: -0.012284592, y: -0.00064484775, z: -0.00068566203}
 --- !u!1 &4689672585035630470
 GameObject:
   m_ObjectHideFlags: 0
@@ -406,6 +450,7 @@ Transform:
   - {fileID: 5521851059872774494}
   - {fileID: 6937365187480875622}
   - {fileID: 8027254333230646750}
+  - {fileID: 7897182859257682046}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -423,7 +468,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _foodSkinnedMeshRenderer: {fileID: 0}
   _foodMeshRenderer: {fileID: 3961942096213946770}
-  _foodNormalGraphic: {fileID: 2100000, guid: 308e160934eba754590bace925427f21, type: 2}
+  foodNormalGraphic: {fileID: 0}
   _seasoningMaterial: {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
   _centerPoint: {fileID: 8027254333230646750}
   _foodPositionNotRotate: {fileID: 5521851059872774494}
@@ -456,6 +501,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dec085b976e76940a64e01e99945c4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SausageBoxCollider: {fileID: 9012111501895328192}
   _sausageNormal: {fileID: 3370789654296888654}
   _sausageCut: {fileID: 5089718982716691465}
   _sausageCutOffObject: {fileID: 7484323759390296833}

@@ -1,12 +1,17 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 namespace Cooking.Stage
 {
+    public enum CapsuleColliderScaleData
+    {
+        Height,Radius
+    }
     /// <summary>スタート地点＝地面より少し上 で落下するプレイヤーの状態 初期化用</summary>
     public enum FalledFoodStateOnStart
     {
-        Falled,OnStart,Other
+        Falled, OnStart, Other
     }
     /// <summary>
     /// 食材の持つ情報の格納場所。ポイント関連はPlayerPointクラス
@@ -23,9 +28,9 @@ namespace Cooking.Stage
         /// </summary>
         public FoodType FoodType
         {
-            get { return _foodType; }
+            get { return foodType; }
         }
-        private FoodType _foodType = FoodType.Shrimp;
+        protected FoodType foodType = FoodType.Shrimp;
         /// <summary>食材特有の変数 </summary>
         public struct Food
         {
@@ -39,18 +44,18 @@ namespace Cooking.Stage
         /// </summary>
         public Food OriginalFoodProperty
         {
-            get { return _food; }
+            get { return food; }
         }
         /// <summary>
         /// 食材特有の変数
         /// </summary>
-        private Food _food;
+        protected Food food;
         /// <summary>
         /// 食材の中心座標=ショットする際に打つ場所(力点) 指定しないとPivotになる 予測線の開始位置
         /// </summary>
         public Transform CenterPoint
         {
-            get { return _centerPoint ? _centerPoint : this.transform ; }
+            get { return _centerPoint ? _centerPoint : this.transform; }
         }
         /// <summary>
         /// 指定しないとPivotになる 予測線の開始位置
@@ -86,7 +91,7 @@ namespace Cooking.Stage
         /// </summary>
         enum PhysicsState
         {
-            Other,ShotFly, WallBound,FirstBound,ChairBound
+            Other, ShotFly, WallBound, FirstBound, ChairBound
         }
         PhysicsState _physicsState = PhysicsState.Other;
         public bool IsFoodInStartArea
@@ -169,7 +174,7 @@ namespace Cooking.Stage
             _firstBoundTimeCounter = 0;
             _flyTime = 0;
             _physicsState = PhysicsState.ShotFly;
-            switch (_foodType)
+            switch (foodType)
             {
                 case FoodType.Shrimp:
                     //回転のみを止めるためいったん解除でリセット ショット(力を加える)より前に呼ばないといけないことに注意
@@ -188,7 +193,7 @@ namespace Cooking.Stage
                     //回転のみを止めるためいったん解除でリセット ショット(力を加える)より前に呼ばないといけないことに注意
                     UnlockConstraints();
                     FreezeRotation();
-                    _rollPower = ShotManager.Instance.ShotPower/4;
+                    _rollPower = ShotManager.Instance.ShotPower / 4;
                     break;
                 default:
                     break;
@@ -202,21 +207,21 @@ namespace Cooking.Stage
         public void SetFoodTypeOnInitialize(FoodType foodType)
         {
             //if (StageSceneManager.Instance.GameState == StageGameState.Preparation || ShotManager.Instance.ShotModeProperty == ShotState.ShotEndMode)
-            _foodType = foodType;
+            this.foodType = foodType;
             //食材の種類に合わせてコンポーネント取得
-            switch (_foodType)
+            switch (this.foodType)
             {
                 case FoodType.Shrimp:
-                    _food.shrimp = GetComponent<Shrimp>();
+                    food.shrimp = GetComponent<Shrimp>();
                     break;
                 case FoodType.Egg:
-                    _food.egg = GetComponent<Egg>();
+                    food.egg = GetComponent<Egg>();
                     break;
                 case FoodType.Chicken:
-                    _food.chicken = GetComponent<Chicken>();
+                    food.chicken = GetComponent<Chicken>();
                     break;
                 case FoodType.Sausage:
-                    _food.sausage = GetComponent<Sausage>();
+                    food.sausage = GetComponent<Sausage>();
                     break;
                 default:
                     break;
@@ -234,8 +239,8 @@ namespace Cooking.Stage
                 //_isGroundedArea.transform.parent = _foodPositionNotRotate;
             }
             _difineForwardRollDirectionValue = Mathf.Sin(_forwardAngle * Mathf.Deg2Rad);
-        
-}
+
+        }
 
         protected override void Start()
         {
@@ -243,7 +248,7 @@ namespace Cooking.Stage
         }
         protected virtual void Update()
         {
-           _foodPositionNotRotate.transform.position = this.transform.position;
+            _foodPositionNotRotate.transform.position = this.transform.position;
             if (ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode)
             {
                 _flyTime += Time.deltaTime;
@@ -251,7 +256,7 @@ namespace Cooking.Stage
         }
         private void FixedUpdate()
         {
-            switch (_foodType)
+            switch (foodType)
             {
                 case FoodType.Shrimp:
                     switch (_physicsState)
@@ -347,7 +352,7 @@ namespace Cooking.Stage
                             }
                             var velocity = _rigidbody.velocity;
                             //衝突前の速度ベクトル
-                            var speedVector = PredictFoodPhysics.PredictFirstBoundSpeedVecor(ShotManager.Instance.transform.forward * ShotManager.Instance.ShotPower * 0.75f  );
+                            var speedVector = PredictFoodPhysics.PredictFirstBoundSpeedVecor(ShotManager.Instance.transform.forward * ShotManager.Instance.ShotPower * 0.75f);
                             //現在の速度ベクトルの符号と同じかどうかチェックし同じなら代入 壁以外のオブジェクトとぶつかった際に別方向に代入されるのを防ぐ
                             //if (_rigidbody.velocity.x * speedVector.x >= 0 && _rigidbody.velocity.z * speedVector.z >= 0)//符号が同じなら、掛け算の答えは正になり速度の向きは同じ
                             {
@@ -473,7 +478,7 @@ namespace Cooking.Stage
                                 var velocity = _rigidbody.velocity;
                                 _rollPower -= Time.deltaTime;
                                 //衝突前の速度ベクトル
-                                var speedVector = PredictFoodPhysics.PredictFirstBoundSpeedVecor( ShotManager.Instance.transform.forward  * (_rollPower));
+                                var speedVector = PredictFoodPhysics.PredictFirstBoundSpeedVecor(ShotManager.Instance.transform.forward * (_rollPower));
                                 //現在の速度ベクトルの符号と同じかどうかチェックし同じなら代入 壁以外のオブジェクトとぶつかった際に別方向に代入されるのを防ぐ
                                 //if (_rigidbody.velocity.x * speedVector.x >= 0 && _rigidbody.velocity.z * speedVector.z >= 0)//符号が同じなら、掛け算の答えは正になり速度の向きは同じ
                                 {
@@ -507,7 +512,6 @@ namespace Cooking.Stage
                 default:
                     break;
             }
-            Debug.Log(_isGroundedArea.transform.eulerAngles.z);
             if (_isGroundedArea != null)
             {
                 _isGroundedArea.transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
@@ -516,7 +520,7 @@ namespace Cooking.Stage
                 var distanceX = _isGroundedLimitPosition[(int)LimitValue.Max].x - _isGroundedLimitPosition[(int)LimitValue.Min].x;
                 var distanceY = _isGroundedLimitPosition[(int)LimitValue.Max].y - _isGroundedLimitPosition[(int)LimitValue.Min].y;
                 var distanceZ = _isGroundedLimitPosition[(int)LimitValue.Max].z - _isGroundedLimitPosition[(int)LimitValue.Min].z;
-                var touchColliderCount = Physics.OverlapBox(_isGroundedArea.transform.position, new Vector3(distanceX / 2, distanceY / 2, distanceZ / 2),Quaternion.identity, StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]).Length;
+                var touchColliderCount = Physics.OverlapBox(_isGroundedArea.transform.position, new Vector3(distanceX / 2, distanceY / 2, distanceZ / 2), Quaternion.identity, StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]).Length;
                 if (touchColliderCount > 0)
                 {
                     isGrounded = true;
@@ -536,17 +540,17 @@ namespace Cooking.Stage
         private void OnCollisionEnter(Collision collision)
         {
             #region//食材が切られるなど見た目が変わる処理
-            switch (_foodType)
+            switch (foodType)
             {
                 case FoodType.Shrimp:
-                    if (collision.gameObject.tag == TagList.Wall.ToString() && !_food.shrimp.IsHeadFallOff)
+                    if (collision.gameObject.tag == TagList.Wall.ToString() && !food.shrimp.IsHeadFallOff)
                     {
-                        _food.shrimp.FallOffShrimpHead();
+                        food.shrimp.FallOffShrimpHead();
                         _playerPoint.TouchWall();
                     }
-                    else if (collision.gameObject.tag == TagList.Knife.ToString() && !_food.shrimp.IsHeadFallOff )
+                    else if (collision.gameObject.tag == TagList.Knife.ToString() && !food.shrimp.IsHeadFallOff)
                     {
-                        _food.shrimp.FallOffShrimpHead();
+                        food.shrimp.FallOffShrimpHead();
                         _playerPoint.CutFood();
                     }
                     break;
@@ -556,33 +560,33 @@ namespace Cooking.Stage
                     {
                         if (_isFryCollision)
                         {
-                            if (_food.egg.BreakCount >= 2)
+                            if (food.egg.BreakCount >= 2)
                             {
-                                ChangeMeshRendererCrackedEgg(_food.egg.Shells, _food.egg.InsideMeshRenderer);
-                                _food.egg.EggBreak();
+                                ChangeMeshRendererCrackedEgg(food.egg.Shells, food.egg.InsideMeshRenderer);
+                                food.egg.EggBreak();
                             }
                             //ひびが入る ショット中の最初の衝突 調味料がついていないとき
                             else
                             {
-                                _food.egg.EggCollide(IsSeasoningMaterial);
-                                ChangeNormalEggGraphic(_food.egg.BreakMaterials[1]);
+                                food.egg.EggCollide(IsSeasoningMaterial);
+                                ChangeNormalEggGraphic(food.egg.BreakMaterials[1]);
                             }
                         }
                     }
                     break;
                 case FoodType.Chicken:
-                    if (collision.gameObject.tag == TagList.Knife.ToString() && !_food.chicken.IsCut)
+                    if (collision.gameObject.tag == TagList.Knife.ToString() && !food.chicken.IsCut)
                     {
-                        ChangeMeshRendererCutFood(_food.chicken.CutMeshRenderer , _foodType);
-                        _food.chicken.CutChicken();
+                        ChangeMeshRendererCutFood(food.chicken.CutMeshRenderer, foodType);
+                        food.chicken.CutChicken();
                         _playerPoint.CutFood();
                     }
                     break;
                 case FoodType.Sausage:
-                    if (collision.gameObject.tag == TagList.Knife.ToString() && !_food.sausage.IsCut)
+                    if (collision.gameObject.tag == TagList.Knife.ToString() && !food.sausage.IsCut)
                     {
-                        ChangeMeshRendererCutFood(_food.sausage.CutMeshRenderer , _foodType);
-                        _food.sausage.CutSausage();
+                        ChangeMeshRendererCutFood(food.sausage.CutMeshRenderer, foodType);
+                        food.sausage.CutSausage();
                         _playerPoint.CutFood();
                     }
                     break;
@@ -604,7 +608,7 @@ namespace Cooking.Stage
                 if (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]))
                 {
                     //ぶつかるもので分ける
-                    if (collision.gameObject.tag == TagList.Floor.ToString() )
+                    if (collision.gameObject.tag == TagList.Floor.ToString())
                     {
                         SoundManager.Instance.Play3DSE(SoundEffectID.food_collide0, collision.contacts[0].point);
                     }
@@ -642,7 +646,7 @@ namespace Cooking.Stage
             //自分のターンのみ有効
             if (TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex] == this)
             {
-                switch (_foodType)
+                switch (foodType)
                 {
                     case FoodType.Shrimp:
                         if (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]) && collision.gameObject.tag != TagList.Wall.ToString())
@@ -658,7 +662,7 @@ namespace Cooking.Stage
                                     {
                                         //方向を変えない
                                         ShotManager.Instance.SetShotVector(ShotManager.Instance.transform.forward, ShotManager.Instance.ShotPower / 10);
-                                        _rigidbody.AddForce(transform.up * (_shrimpFirstBoundPower ) * (ShotManager.Instance.ShotPower  / (ShotManager.Instance.ShotParameter.MaxShotPower * 2 * _boundCount)), ForceMode.Impulse);
+                                        _rigidbody.AddForce(transform.up * (_shrimpFirstBoundPower) * (ShotManager.Instance.ShotPower / (ShotManager.Instance.ShotParameter.MaxShotPower * 2 * _boundCount)), ForceMode.Impulse);
                                     }
                                     else
                                     {
@@ -795,7 +799,7 @@ namespace Cooking.Stage
             if (_isFryCollision && collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen])
                 && ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode && _flyTime > 0.1f)
             {
-                switch (_foodType)
+                switch (foodType)
                 {
                     case FoodType.Shrimp:
                         if (collision.gameObject.tag != TagList.Wall.ToString())//アニメーション状態によってはショット開始の瞬間にぶつかるため飛行時間を追加
@@ -827,26 +831,26 @@ namespace Cooking.Stage
         }
         private void OnTriggerEnter(Collider other)
         {
-            if (other.tag == TagList.Finish.ToString()) 
+            if (other.tag == TagList.Finish.ToString())
             {
                 EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Splash);
                 _isGoal = true;
             }
             else if (other.tag == TagList.Water.ToString())
             {
-                ChangeMaterial(_foodNormalGraphic , _foodType);
+                ChangeMaterial(foodNormalGraphic, foodType);
             }
             // とりあえず調味料はトリガーで
             else if (other.tag == TagList.Seasoning.ToString())
             {
                 EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Seasoning_Hit);
                 EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Seasoning).parent = GetComponent<FoodStatus>().FoodPositionNotRotate.transform;
-                ChangeMaterial(other.gameObject.GetComponent<MeshRenderer>().material , _foodType);
+                ChangeMaterial(other.gameObject.GetComponent<MeshRenderer>().material, foodType);
                 Destroy(other.gameObject);
             }
             else if (other.tag == TagList.RareSeasoning.ToString())
             {
-                ChangeMaterial(other.gameObject.GetComponent<MeshRenderer>().material , _foodType);
+                ChangeMaterial(other.gameObject.GetComponent<MeshRenderer>().material, foodType);
                 Destroy(other.gameObject);
             }
             else if (other.tag == TagList.Bubble.ToString())
@@ -912,11 +916,11 @@ namespace Cooking.Stage
         /// <param name="isEnable"></param>
         public void PlayerAnimatioManage(bool isEnable)
         {
-            switch (_foodType)
+            switch (foodType)
             {
                 case FoodType.Shrimp:
-                    if (!_food.shrimp.IsHeadFallOff)
-                        _food.shrimp.AnimationManage(isEnable);
+                    if (!food.shrimp.IsHeadFallOff)
+                        food.shrimp.AnimationManage(isEnable);
                     break;
                 case FoodType.Egg:
                     break;
@@ -985,7 +989,7 @@ namespace Cooking.Stage
             //回転の停止以外は禁止 X 16  Z 64の間には回転以外存在しない
             if (rigidbodyConstraints < RigidbodyConstraints.FreezeRotationX || rigidbodyConstraints > RigidbodyConstraints.FreezeRotationZ)
             {
-                Debug.LogAssertionFormat("回転以外を止めるのは禁止 指定されたもの : {0}",rigidbodyConstraints);
+                Debug.LogAssertionFormat("回転以外を止めるのは禁止 指定されたもの : {0}", rigidbodyConstraints);
                 return;
             }
             _rigidbody.constraints = _rigidbody.constraints | rigidbodyConstraints;
@@ -1010,6 +1014,46 @@ namespace Cooking.Stage
         public void UnlockConstraints()
         {
             _rigidbody.constraints = RigidbodyConstraints.None;
+        }
+
+        /// <summary>
+        /// 食材の種類によって変わるコライダーサイズへアクセス たまごは球コライダー二つ分の半径+高さ(Vector2),またはboxcolliderの大きさ(仮素材)
+        /// </summary>
+        /// <typeparam name="T">Vecto3 localScale Vector2 enum CapsuleColliderScaleData (カプセルの高さ,カプセルの半径)</typeparam>
+        /// <returns>Vecto3 localScale Vector2 (カプセルの高さ,カプセルの半径)</returns>
+        public T GetColliderSize<T>() where T : struct
+        {
+            if (typeof(T) == typeof(Vector3) || typeof(T) == typeof(Vector2))
+            {
+                switch (foodType)
+                {
+                    case FoodType.Shrimp:
+                        Vector3 shrimpBoxColliderSize = food.shrimp.shrimpBoxCollider.size * 1.5f;//エビのコライダーの親オブジェクトのlocalscaleを掛け算
+                        return (T)(object)shrimpBoxColliderSize;
+                    case FoodType.Egg:
+                        float eggColliderHeight = food.egg.eggCollider.height * transform.localScale.y / 2;
+                        float eggColliderRadius = food.egg.eggCollider.radius * transform.localScale.y;
+                        return (T)(object)new Vector2(eggColliderHeight,eggColliderRadius);
+                    case FoodType.Chicken:
+                        var size = food.chicken.chickenBoxCollider.size;
+                        //size.x *= transform.localScale.x;
+                        //size.y *= transform.localScale.y;
+                        //size.z *= transform.localScale.z;
+                        Vector3 chickenBoxColliderSize = size;//エビのコライダーの親オブジェクトのlocalscaleを掛け算
+                        return (T)(object)chickenBoxColliderSize;
+                    case FoodType.Sausage:
+                        Vector3 sausageBoxColliderSize = food.sausage.SausageBoxCollider.size;//エビのコライダーの親オブジェクトのlocalscaleを掛け算
+                        return (T)(object)sausageBoxColliderSize;
+                    default:
+                        Debug.Log("_foodTypeがセットされていません");
+                        return default(T);
+                }
+            }
+            else
+            {
+                Debug.Log("型はVector3 または Vector2のどちらかです");
+                return default(T);
+            }
         }
     }
 }

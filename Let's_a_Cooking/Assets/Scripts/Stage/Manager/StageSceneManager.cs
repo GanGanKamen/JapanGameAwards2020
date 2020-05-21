@@ -53,11 +53,11 @@ namespace Cooking.Stage
         /// 食材のもつ重力の値は現在9.81 。この値を変える場合、スクリプトで重力制御をする必要あり スケールではなく重さを変えると、ショット時に加えるべき力の量が変わり 。
         /// </summary>
         public readonly float gravityAccelerationValue = 9.81f;
-        private AILevel[] aiLevels;
+        private AILevel[] _aiLevels;
         /// <summary>
         /// 初期値Shrimp 選ばれた食材リスト FoodStatus用のenumへ変換
         /// </summary>
-        private string[] _chooseFoodNames;
+        private FoodType[] _chooseFoodTypes;
         [SerializeField] GameObject[] _playerPrefabs = new GameObject[System.Enum.GetValues(typeof(FoodType)).Length];
         [SerializeField] GameObject[] _aIPrefabs = new GameObject[System.Enum.GetValues(typeof(FoodType)).Length];
         /// <summary>
@@ -135,6 +135,9 @@ namespace Cooking.Stage
             {
                 InstantiateStage(_stageNumberIndex);
             }
+            #if UNITY_EDITOR
+            PredictFoodPhysics.CreatePredictFoodPhysicsGameObject();
+            #endif
         }
 
         /// <summary>
@@ -182,14 +185,27 @@ namespace Cooking.Stage
         {
             return LayerMask.LayerToName(CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(layerList));
         }
-
+        public void SetAILevel(string selectedAILevel)
+        {
+            var aiLevel = AILevel.Easy;
+            //文字列に変換後、正しい値を代入                                                 
+            EnumParseMethod.TryParseAndDebugAssertFormat(selectedAILevel, true,out aiLevel);
+            //現状AIは同じ強さ
+            for (int aiNumber = 0; aiNumber < _aiLevels.Length; aiNumber++)
+            {
+                _aiLevels[aiNumber] = aiLevel;
+            }            
+        }
         /// <summary>
-        /// 選ばれた食材に応じてプレイヤーを生成するために選んだ文字列保存 食材を選ぶ際のマウスクリックで呼ばれる
+        /// 選ばれた食材に応じてプレイヤーを生成するために選んだ種類を保存 食材を選ぶ際のマウスクリックで呼ばれる
         /// </summary>
         /// <param name="foodName">選ばれた食材の名前</param>
         public void SetChooseFoodNames(string foodName)
         {
-            _chooseFoodNames[_turnManager.ActivePlayerIndex] = foodName;
+            var foodType = FoodType.Shrimp;
+            //文字列に変換後、正しい値を代入                                                  //現状プレイヤーはすべて同じ食材→最初のプレイヤーが選んだ値
+            EnumParseMethod.TryParseAndDebugAssertFormat(foodName, true,out foodType);
+            _chooseFoodTypes[_turnManager.ActivePlayerIndex] = foodType;
         }
         /// <summary>
         /// 生成するプレハブを選択 戻り値をInstantiateする
@@ -224,10 +240,11 @@ namespace Cooking.Stage
         void Start()
         {
             _turnManager = TurnManager.Instance;
-            _chooseFoodNames = new string[GameManager.Instance.PlayerSumNumber];
-            for (int i = 0; i < _chooseFoodNames.Length; i++)
+            _chooseFoodTypes = new FoodType[GameManager.Instance.PlayerSumNumber];
+            _aiLevels = new AILevel[GameManager.Instance.ComputerNumber];
+            for (int i = 0; i < _chooseFoodTypes.Length; i++)
             {
-                _chooseFoodNames[i] = FoodType.Shrimp.ToString();
+                _chooseFoodTypes[i] = FoodType.Shrimp;
             }
         }
 
@@ -355,31 +372,23 @@ namespace Cooking.Stage
         /// </summary>
         private void CreatePlayersOnInitialize()
         {
-            //仮の値を入れて変換した値を取得
-            FoodType playerFoodType = GetFoodType(FoodType.Shrimp);
             //プレイヤー番号が小さいのがプレイしている人で大きい数字はAI
             for (int playerNumber = 0; playerNumber < GameManager.Instance.PlayerSumNumber; playerNumber++)
             {
                 //プレイヤーを生成
                 if (playerNumber < GameManager.Instance.PlayerNumber)
                 {
-                    InitializePlayerData(playerNumber, playerFoodType, false);
+                    InitializePlayerData(playerNumber, _chooseFoodTypes[0], false);//現状同じ種類の食材を生成
                 }
                 else
                 {
                     //プレイヤーと同じ食材がAIになる
-                    InitializePlayerData(playerNumber, playerFoodType, true);
+                    InitializePlayerData(playerNumber, _chooseFoodTypes[0], true);
                 }
             }
             InitializePlayerPointList(GameManager.Instance.PlayerSumNumber);
             //プレイヤーの並び替えが行われる
             _gameState = StageGameState.FinishFoodInstantiateAndPlayerInOrder;
-        }
-
-        public FoodType GetFoodType(FoodType foodType)
-        {
-            //文字列に変換後、正しい値を代入                                                  //現状プレイヤーはすべて同じ食材→最初のプレイヤーが選んだ値
-            return EnumParseMethod.TryParseAndDebugAssertFormatAndReturnResult(_chooseFoodNames[0], true, foodType);
         }
 
         /// <summary>

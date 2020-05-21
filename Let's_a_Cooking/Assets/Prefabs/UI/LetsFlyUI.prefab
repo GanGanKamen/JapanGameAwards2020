@@ -6072,6 +6072,9 @@ MonoBehaviour:
   - {fileID: 2259073736573854874}
   - {fileID: 2259073736345004722}
   - {fileID: 2259073736578957479}
+  _initializeUis:
+  - {fileID: 2259073736644760957}
+  - {fileID: 2259073737496830973}
   _orderGagesOfInteger: {fileID: 2259073736420435849}
   _orderGage: {fileID: 2259073737326844048}
   _orderMeterSpeed: 400

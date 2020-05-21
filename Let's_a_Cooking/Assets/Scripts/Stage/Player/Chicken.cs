@@ -6,6 +6,8 @@ namespace Cooking.Stage
 {
     public class Chicken : MonoBehaviour
     {
+        public BoxCollider chickenBoxCollider = null;
+        [SerializeField] BoxCollider _cutChickenBoxCollider = null;
         /// <summary>
         /// 通常ささみ 切られるとDestroyで切り替わる(複数オブジェクトで構成される)
         /// </summary>

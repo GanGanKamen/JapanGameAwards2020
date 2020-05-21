@@ -125,25 +125,34 @@ namespace Cooking.Stage
                         //PredictPhysicsManage();
                         break;
                     case ScreenState.FrontMode:
-                        //落下地点の変更を予測線にも伝える。
-                        ChangePredictFallPointOnXZ(maxShotSpeedVector);
-                        //落下地点座標を取得
-                        _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByRayCast<Vector3>(transform.position, maxShotSpeedVector);
-                        PredictPhysicsManage();
+                        {
+                            var activeFood = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex];
+                            //落下地点の変更を予測線にも伝える。
+                            ChangePredictFallPointOnXZ(maxShotSpeedVector);
+                            //食材の種類別に落下予測地点座標を取得
+                            GetPredictFallPointByRayCast(maxShotSpeedVector, activeFood);
+                            PredictPhysicsManage();
+                        }
                         break;
                     case ScreenState.SideMode:
-                        //落下地点の変更を予測線にも伝える。
-                        ChangePredictFallPointOnXZ(maxShotSpeedVector);
-                        //落下地点座標を取得
-                        _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByRayCast<Vector3>(transform.position, maxShotSpeedVector);
-                        PredictPhysicsManage();
+                        {
+                            var activeFood = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex];
+                            //落下地点の変更を予測線にも伝える。
+                            ChangePredictFallPointOnXZ(maxShotSpeedVector);
+                            //食材の種類別に落下予測地点座標を取得
+                            GetPredictFallPointByRayCast(maxShotSpeedVector, activeFood);
+                            PredictPhysicsManage();
+                        }
                         break;
                     case ScreenState.LookDownMode:
-                        //落下地点の変更を予測線にも伝える。
-                        ChangePredictFallPointOnXZ(maxShotSpeedVector);
-                        //落下地点座標を取得
-                        _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByRayCast<Vector3>(transform.position, maxShotSpeedVector);
-                        PredictPhysicsManage();
+                        {
+                            var activeFood = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex];
+                            //落下地点の変更を予測線にも伝える。
+                            ChangePredictFallPointOnXZ(maxShotSpeedVector);
+                            //食材の種類別に落下予測地点座標を取得
+                            GetPredictFallPointByRayCast(maxShotSpeedVector, activeFood);
+                            PredictPhysicsManage();
+                        }
                         break;
                     case ScreenState.ShottingMode:
                         break;
@@ -156,6 +165,39 @@ namespace Cooking.Stage
                 }
             }
         }
+        /// <summary>
+        /// 食材の種類別に落下予測地点座標を取得
+        /// </summary>
+        /// <param name="maxShotSpeedVector"></param>
+        /// <param name="activeFood"></param>
+        private void GetPredictFallPointByRayCast(Vector3 maxShotSpeedVector, FoodStatus activeFood)
+        {
+            switch (activeFood.FoodType)
+            {
+                case FoodType.Shrimp:
+                    _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByBoxRayCast<Vector3, Vector3>(transform.position, maxShotSpeedVector, activeFood.FoodType, activeFood.GetColliderSize<Vector3>());
+                    break;
+                case FoodType.Egg:
+                    if (activeFood.OriginalFoodProperty.egg.HasBroken)
+                    {
+                        _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByBoxRayCast<Vector3, Vector3>(transform.position, maxShotSpeedVector, activeFood.FoodType, activeFood.GetColliderSize<Vector3>());
+                    }
+                    else
+                    {
+                        _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByBoxRayCast<Vector3, Vector2>(transform.position, maxShotSpeedVector, activeFood.FoodType, activeFood.GetColliderSize<Vector2>());
+                    }
+                    break;
+                case FoodType.Chicken:
+                    _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByBoxRayCast<Vector3, Vector3>(transform.position, maxShotSpeedVector, activeFood.FoodType, activeFood.GetColliderSize<Vector3>());
+                    break;
+                case FoodType.Sausage:
+                    _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByBoxRayCast<Vector3, Vector3>(transform.position, maxShotSpeedVector, activeFood.FoodType, activeFood.GetColliderSize<Vector3>());
+                    break;
+                default:
+                    break;
+            }
+        }
+
         void FixedUpdate()
         {
         }

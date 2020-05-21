@@ -16,8 +16,8 @@ namespace Cooking.Stage
         enum ButtonName
         {
             None,
-            Easy,Normal,Hard,
-            Shrimp,Egg,Chicken,Sausage,
+            Shrimp, Egg, Chicken, Sausage,
+            Easy, Normal,Hard,
             LookDownMode,FrontMode,SideMode,
             ShottingMode,
             CancelButton
@@ -48,39 +48,39 @@ namespace Cooking.Stage
                         case ButtonName.None:
                             Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", _uIManager.MainUIStateProperty.ToString());
                             break;
-                        case ButtonName.Easy:
-                            //index++; 複数プレイヤー対応→TurnManager
-                            StageSceneManager.Instance.SetChooseFoodNames(_buttonName.ToString());
-                            _uIManager.ChangeUI(ScreenState.InitializeChoose);
-                            break;
-                        case ButtonName.Normal:
-                            //index++; 複数プレイヤー対応→TurnManager
-                            StageSceneManager.Instance.SetChooseFoodNames(_buttonName.ToString());
-                            _uIManager.ChangeUI(ScreenState.InitializeChoose);
-                            break;
-                        case ButtonName.Hard:
-                            //index++; 複数プレイヤー対応→TurnManager
-                            StageSceneManager.Instance.SetChooseFoodNames(_buttonName.ToString());
-                            _uIManager.ChangeUI(ScreenState.InitializeChoose);
-                            break;
                         case ButtonName.Shrimp:
                             //index++; 複数プレイヤー対応→TurnManager
                             StageSceneManager.Instance.SetChooseFoodNames(_buttonName.ToString());
-                            _uIManager.ChangeUI(ScreenState.DecideOrder);
+                            _uIManager.ChangeUI(ScreenState.InitializeChoose);
                             break;
                         case ButtonName.Egg:
                             //index++; 複数プレイヤー対応→TurnManager
                             StageSceneManager.Instance.SetChooseFoodNames(_buttonName.ToString());
-                            _uIManager.ChangeUI(ScreenState.DecideOrder);
+                            _uIManager.ChangeUI(ScreenState.InitializeChoose);
                             break;
                         case ButtonName.Chicken:
                             //index++; 複数プレイヤー対応→TurnManager
                             StageSceneManager.Instance.SetChooseFoodNames(_buttonName.ToString());
-                            _uIManager.ChangeUI(ScreenState.DecideOrder);
+                            _uIManager.ChangeUI(ScreenState.InitializeChoose);
                             break;
                         case ButtonName.Sausage:
                             //index++; 複数プレイヤー対応→TurnManager
                             StageSceneManager.Instance.SetChooseFoodNames(_buttonName.ToString());
+                            _uIManager.ChangeUI(ScreenState.InitializeChoose);
+                            break;
+                        case ButtonName.Easy:
+                            //index++; 複数プレイヤー対応→TurnManager
+                            StageSceneManager.Instance.SetAILevel(_buttonName.ToString());
+                            _uIManager.ChangeUI(ScreenState.DecideOrder);
+                            break;
+                        case ButtonName.Normal:
+                            //index++; 複数プレイヤー対応→TurnManager
+                            StageSceneManager.Instance.SetAILevel(_buttonName.ToString());
+                            _uIManager.ChangeUI(ScreenState.DecideOrder);
+                            break;
+                        case ButtonName.Hard:
+                            //index++; 複数プレイヤー対応→TurnManager
+                            StageSceneManager.Instance.SetAILevel(_buttonName.ToString());
                             _uIManager.ChangeUI(ScreenState.DecideOrder);
                             break;
                         default:

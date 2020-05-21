@@ -1099,6 +1099,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ca93e80c15954b459c73f57ba740218, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eggCollider: {fileID: 8660281700460405959}
   eggObject: {fileID: 965732458141873495}
   eggShells: {fileID: 6807218869223432108}
   eggInObject: {fileID: 4236030385642294273}

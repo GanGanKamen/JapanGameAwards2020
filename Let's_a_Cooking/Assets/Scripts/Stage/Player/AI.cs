@@ -85,7 +85,31 @@ namespace Cooking.Stage
                 }
                 // 射出速度を算出
                 velocity = direction * speed;
-                var newTarget = PredictFoodPhysics.PredictFallPointByRayCast<GameObject>(this.transform.position, velocity);
+                var newTarget = this.gameObject;
+                switch (foodType)
+                {
+                    case FoodType.Shrimp:
+                        newTarget = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject,Vector3>(transform.position, velocity, foodType, GetColliderSize<Vector3>());
+                        break;
+                    case FoodType.Egg:
+                        if (food.egg.HasBroken)
+                        {
+                            newTarget = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject,Vector3>(transform.position, velocity, foodType, GetColliderSize<Vector3>());
+                        }
+                        else
+                        {
+                            newTarget = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject,Vector2>(transform.position, velocity, foodType, GetColliderSize<Vector2>());
+                        }
+                        break;
+                    case FoodType.Chicken:
+                        newTarget = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject,Vector3>(transform.position, velocity, foodType, GetColliderSize<Vector3>());
+                        break;
+                    case FoodType.Sausage:
+                        newTarget = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject,Vector3>(transform.position, velocity, foodType, GetColliderSize<Vector3>());
+                        break;
+                    default:
+                        break;
+                }
                 //タオルの時は、レイによるオブジェクトタグ取得名はTowel であって TowelAbovePointではない 名前異なる
                 if (_targetTagByTransform == AITargetObjectTags.TowelAbovePoint)
                 {

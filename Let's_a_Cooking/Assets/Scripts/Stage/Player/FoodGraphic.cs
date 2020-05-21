@@ -14,7 +14,7 @@ namespace Cooking.Stage
         /// </summary>
         [SerializeField] private SkinnedMeshRenderer _foodSkinnedMeshRenderer = null;
         [SerializeField] private MeshRenderer _foodMeshRenderer = null;
-        [SerializeField] protected Material _foodNormalGraphic = null;
+        [SerializeField] protected Material foodNormalGraphic = null;
         [SerializeField] private Material _seasoningMaterial = null;
         protected virtual void Start()
         {
@@ -127,7 +127,7 @@ namespace Cooking.Stage
             {
                 case FoodType.Chicken:
                     //調味料を持つとき、見た目を引き継ぐ
-                    if (_foodMeshRenderer.material !=  _foodNormalGraphic)
+                    if (_foodMeshRenderer.material !=  foodNormalGraphic)
                     {
                         for (int i = 0; i < meshRenderers.Length; i++)
                         {
@@ -137,7 +137,7 @@ namespace Cooking.Stage
                     break;
                 case FoodType.Sausage:
                     //調味料を持つとき、見た目を引き継ぐ
-                    if (_foodMeshRenderer.material != _foodNormalGraphic)
+                    if (_foodMeshRenderer.material != foodNormalGraphic)
                     {
                         for (int i = 0; i < meshRenderers.Length; i++)
                         {
@@ -173,7 +173,7 @@ namespace Cooking.Stage
         /// </summary>
         protected void ChangeNormalEggGraphic(Material material)
         {
-            _foodNormalGraphic = material;
+            foodNormalGraphic = material;
         }
     }
 }

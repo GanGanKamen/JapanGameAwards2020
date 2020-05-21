@@ -526,6 +526,50 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.03347218, y: 0.011528969, z: 0.0039625405}
   m_Center: {x: -0.0032774918, y: -0.0154109, z: -0.029940356}
+--- !u!1 &6609391175515175231
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2555253195319095105}
+  - component: {fileID: 4303170802765336131}
+  m_Layer: 0
+  m_Name: PredictFallPointCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2555253195319095105
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6609391175515175231}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4869369653726483128}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &4303170802765336131
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6609391175515175231}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Size: {x: 0.09734659, y: 0.10607791, z: 0.7428676}
+  m_Center: {x: -0.0036512688, y: 0.003088832, z: -0.020309627}
 --- !u!1 &7361692856419998054
 GameObject:
   m_ObjectHideFlags: 0
@@ -558,6 +602,50 @@ Transform:
   m_Father: {fileID: 4869369653726483128}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7670574402067843976
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 366060118552419790}
+  - component: {fileID: 8364551148982367986}
+  m_Layer: 0
+  m_Name: PredictFallPointCollider (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &366060118552419790
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7670574402067843976}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4869369653726483128}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &8364551148982367986
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7670574402067843976}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Size: {x: 0.09734659, y: 0.10607791, z: 0.7428676}
+  m_Center: {x: -0.0036512688, y: 0.003088832, z: -0.020309627}
 --- !u!1 &8131787930931259562
 GameObject:
   m_ObjectHideFlags: 0
@@ -770,6 +858,8 @@ Transform:
   - {fileID: 6151370996122192627}
   - {fileID: 6252484424864497305}
   - {fileID: 6460690546192849698}
+  - {fileID: 2555253195319095105}
+  - {fileID: 366060118552419790}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -797,6 +887,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab4f4628b46a25d40be758e3895235cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  chickenBoxCollider: {fileID: 4303170802765336131}
+  _cutChickenBoxCollider: {fileID: 0}
   _chickenNormal: {fileID: 8131787930931259562}
   _chickenCut: {fileID: 7361692856419998054}
   _chickenCutOffObject: {fileID: 6326004220746109810}
@@ -833,7 +925,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _foodSkinnedMeshRenderer: {fileID: 0}
   _foodMeshRenderer: {fileID: 6008054537726418788}
-  _foodNormalGraphic: {fileID: 2100000, guid: 1067ea787cd77e4439e3208600602b03, type: 2}
+  foodNormalGraphic: {fileID: 0}
   _seasoningMaterial: {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
   _centerPoint: {fileID: 6460690546192849698}
   _foodPositionNotRotate: {fileID: 6151370996122192627}

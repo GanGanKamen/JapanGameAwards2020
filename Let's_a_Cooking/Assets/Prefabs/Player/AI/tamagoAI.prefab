@@ -1200,6 +1200,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ca93e80c15954b459c73f57ba740218, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eggCollider: {fileID: 8660281700460405959}
   eggObject: {fileID: 965732458141873495}
   eggShells: {fileID: 6807218869223432108}
   eggInObject: {fileID: 4236030385642294273}
@@ -1223,7 +1224,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _foodSkinnedMeshRenderer: {fileID: 0}
   _foodMeshRenderer: {fileID: 2141837656755319749}
-  _foodNormalGraphic: {fileID: 2100000, guid: c6ed38640616c69499a13ced75108178, type: 2}
+  foodNormalGraphic: {fileID: 0}
   _seasoningMaterial: {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
   _centerPoint: {fileID: 8542194371595293363}
   _foodPositionNotRotate: {fileID: 1531086886213276042}

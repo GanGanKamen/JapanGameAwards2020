@@ -40,6 +40,10 @@ namespace Cooking.Stage
         /// </summary>
         private float _startTime = 1;
 
+        #region ゲーム初期化用変数
+        [SerializeField] private GameObject[] _initializeUis = new GameObject[System.Enum.GetValues(typeof(InitializeChoose)).Length];
+        #endregion
+
         #region 順番決め用変数
         /// <summary>
         /// int版 順番決め用ゲージ
@@ -262,12 +266,16 @@ namespace Cooking.Stage
         {
             //パワーメーターから戻るときに使う
             _beforeShotScreenState = _mainUIState;
-            _stageSceneMainUIs[(int)_beforeShotScreenState].SetActive(false);
+            if(_beforeShotScreenState != afterScreenStateString)
+                _stageSceneMainUIs[(int)_beforeShotScreenState].SetActive(false);
             _mainUIState = afterScreenStateString;
             // ショットの状態を変更→ShotManagerへ
             switch (_mainUIState)
             {
+                //AIの強さ選択 他に初期化処理が追加される可能性を考慮した設計にしたい
                 case ScreenState.InitializeChoose:
+                    _initializeUis[(int)InitializeChoose.ChooseFood].SetActive(false);
+                    _initializeUis[(int)InitializeChoose.ChooseAILevel].SetActive(true);
                     break;
                 case ScreenState.DecideOrder:
                     var playerNumber = 0;

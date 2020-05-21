@@ -14,7 +14,7 @@ namespace Cooking.Stage
         /// 割れているかどうか
         /// </summary>
         public bool HasBroken { get { return hasBroken; } }
-
+        public CapsuleCollider eggCollider = null;
         [SerializeField] private GameObject eggObject = null;
         [SerializeField] private Transform eggShells = null;
         [SerializeField] private GameObject eggInObject = null;
