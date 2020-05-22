@@ -29,13 +29,18 @@ namespace Cooking
             }
 #endif
         }
-
+        /// <summary>
+        /// 現在のシーンを再読み込み
+        /// </summary>
         public static void LoadActiveScene()
         {
             var sceneName = SceneManager.GetActiveScene().name;
             SceneManager.LoadScene(sceneName);
         }
-
+        /// <summary>
+        /// 指定されたシーンを読み込む
+        /// </summary>
+        /// <param name="sceneName">シーンを指定</param>
         public static void LoadSelectingScene(SceneName sceneName)
         {
             SceneManager.LoadScene((int)sceneName);

@@ -211,7 +211,7 @@ namespace Cooking.Stage
         private GameObject DecideTarget(float searchDistance)
         {
             _targetTagByTransform = AITargetObjectTags.TowelAbovePoint;
-            if (GetComponent<PlayerPoint>().IsFirstatowel)
+            if (GetComponent<PlayerPoint>().IsFirstTowel)
             {
                 foreach (var targetTowelPositionObject in GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.TowelAbovePoint])
                 {

@@ -6,7 +6,7 @@ namespace Cooking.Stage
 {
     public enum CapsuleColliderScaleData
     {
-        Height,Radius
+        Height, Radius
     }
     /// <summary>スタート地点＝地面より少し上 で落下するプレイヤーの状態 初期化用</summary>
     public enum FalledFoodStateOnStart
@@ -546,12 +546,12 @@ namespace Cooking.Stage
                     if (collision.gameObject.tag == TagList.Wall.ToString() && !food.shrimp.IsHeadFallOff)
                     {
                         food.shrimp.FallOffShrimpHead();
-                        _playerPoint.TouchWall();
+                        _playerPoint.GetPoint(GetPointType.FallOffShrimpHead);
                     }
                     else if (collision.gameObject.tag == TagList.Knife.ToString() && !food.shrimp.IsHeadFallOff)
                     {
                         food.shrimp.FallOffShrimpHead();
-                        _playerPoint.CutFood();
+                        _playerPoint.GetPoint(GetPointType.FallOffShrimpHead);
                     }
                     break;
                 case FoodType.Egg:
@@ -579,7 +579,7 @@ namespace Cooking.Stage
                     {
                         ChangeMeshRendererCutFood(food.chicken.CutMeshRenderer, foodType);
                         food.chicken.CutChicken();
-                        _playerPoint.CutFood();
+                        _playerPoint.GetPoint(GetPointType.CutFood);
                     }
                     break;
                 case FoodType.Sausage:
@@ -587,7 +587,7 @@ namespace Cooking.Stage
                     {
                         ChangeMeshRendererCutFood(food.sausage.CutMeshRenderer, foodType);
                         food.sausage.CutSausage();
-                        _playerPoint.CutFood();
+                        _playerPoint.GetPoint(GetPointType.CutFood);
                     }
                     break;
                 default:
@@ -597,13 +597,25 @@ namespace Cooking.Stage
             //=================
             #region//食材共通処理
             //=================
-            if (ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode)
+            //自分のターンのみ
+            if (TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex] == this && ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode)
             {
+                //ポイント加算
+                if (collision.gameObject.tag == TagList.Towel.ToString() && _playerPoint.IsFirstTowel)
+                {
+                    _playerPoint.GetPoint(GetPointType.FirstTowelTouch);
+                }
+                else if (collision.gameObject.tag == TagList.DirtDish.ToString() && _playerPoint.CanGetPointFlags[(int)GetPointOnTouch.DirtDish])
+                {
+                    _playerPoint.GetPoint(GetPointType.TouchDirtDish);
+                }
+                //==============================
                 //エフェクト
                 if (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]) && collision.gameObject.tag != TagList.Wall.ToString())
                 {
                     EffectManager.Instance.InstantiateEffect(collision.contacts[0].point, EffectManager.EffectPrefabID.Food_Grounded);
                 }
+                //==============================
                 //サウンド
                 if (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]))
                 {
@@ -838,11 +850,18 @@ namespace Cooking.Stage
             }
             else if (other.tag == TagList.Water.ToString())
             {
+                if (_playerPoint.IsFirstWash)
+                {
+                    _playerPoint.GetPoint(GetPointType.FirstWash);
+                }
                 ChangeMaterial(foodNormalGraphic, foodType);
             }
-            // とりあえず調味料はトリガーで
             else if (other.tag == TagList.Seasoning.ToString())
             {
+                if (_playerPoint.CanGetPointFlags[(int)GetPointOnTouch.Seasoning])
+                {
+                    _playerPoint.GetPoint(GetPointType.TouchSeasoning);
+                }
                 EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Seasoning_Hit);
                 EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Seasoning).parent = GetComponent<FoodStatus>().FoodPositionNotRotate.transform;
                 ChangeMaterial(other.gameObject.GetComponent<MeshRenderer>().material, foodType);
@@ -850,11 +869,19 @@ namespace Cooking.Stage
             }
             else if (other.tag == TagList.RareSeasoning.ToString())
             {
+                if (_playerPoint.CanGetPointFlags[(int)GetPointOnTouch.RareSeasoning])
+                {
+                    _playerPoint.GetPoint(GetPointType.TouchRareSeasoning);
+                }
                 ChangeMaterial(other.gameObject.GetComponent<MeshRenderer>().material, foodType);
                 Destroy(other.gameObject);
             }
             else if (other.tag == TagList.Bubble.ToString())
             {
+                if (_playerPoint.CanGetPointFlags[(int)GetPointOnTouch.Bubble])
+                {
+                    _playerPoint.GetPoint(GetPointType.TouchBubble);
+                }
                 EffectManager.Instance.InstantiateEffect(other.transform.position, EffectManager.EffectPrefabID.Foam_Break);
                 Destroy(other.gameObject);
             }
@@ -1033,7 +1060,7 @@ namespace Cooking.Stage
                     case FoodType.Egg:
                         float eggColliderHeight = food.egg.eggCollider.height * transform.localScale.y / 2;
                         float eggColliderRadius = food.egg.eggCollider.radius * transform.localScale.y;
-                        return (T)(object)new Vector2(eggColliderHeight,eggColliderRadius);
+                        return (T)(object)new Vector2(eggColliderHeight, eggColliderRadius);
                     case FoodType.Chicken:
                         var size = food.chicken.chickenBoxCollider.size;
                         //size.x *= transform.localScale.x;
