@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 8995005209892001146}
   - component: {fileID: 8995005209892001145}
   - component: {fileID: 8995005209892001144}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Seasoning
   m_TagString: Seasoning
   m_Icon: {fileID: 0}

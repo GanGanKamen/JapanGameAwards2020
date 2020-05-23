@@ -1063,9 +1063,9 @@ namespace Cooking.Stage
                         return (T)(object)new Vector2(eggColliderHeight, eggColliderRadius);
                     case FoodType.Chicken:
                         var size = food.chicken.chickenBoxCollider.size;
-                        //size.x *= transform.localScale.x;
-                        //size.y *= transform.localScale.y;
-                        //size.z *= transform.localScale.z;
+                        size.x *= transform.localScale.x;
+                        size.y *= transform.localScale.y;
+                        size.z *= transform.localScale.z;
                         Vector3 chickenBoxColliderSize = size;//エビのコライダーの親オブジェクトのlocalscaleを掛け算
                         return (T)(object)chickenBoxColliderSize;
                     case FoodType.Sausage:
