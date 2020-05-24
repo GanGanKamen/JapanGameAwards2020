@@ -148,6 +148,11 @@ namespace Cooking.Stage
             CheckNextPlayerAI();
             ///ターンを1にセットしてゲーム開始
             _turnNumber = 1;
+            if (_isAITurn)
+            {
+                var aI = _foodStatuses[_activePlayerIndex].GetComponent<AI>();
+                aI.TurnAI();
+            }
         }
 
         /// <summary>

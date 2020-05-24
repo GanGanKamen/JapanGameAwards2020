@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 namespace Cooking.Stage
 {
@@ -135,6 +136,12 @@ namespace Cooking.Stage
         {
             _instance = this;
             CheckInstantiateStageNumber(_stageNumberIndex);
+            //チェック忘れ防止
+            if (!_instantiateStage && SceneManager.GetActiveScene().name == SceneName.PlayScene.ToString())
+            {
+                _instantiateStage = true;
+                Debug.Log("ステージ生成フラグのセット忘れ");
+            }
             if (_instantiateStage)
             {
                 InstantiateStage(_stageNumberIndex);
