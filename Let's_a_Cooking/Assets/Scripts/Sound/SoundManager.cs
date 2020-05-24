@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace Cooking
 {
@@ -58,9 +59,12 @@ namespace Cooking
             {
                 var param = _soundParameter.soundInformations[i];
                 var clip = Resources.Load<AudioClip>("Sounds/" + param.soundEffect.ToString());
+                var mixer = Resources.Load<AudioMixerGroup>("Sounds/GameAudio");
+                var mixerGroup = mixer.audioMixer.FindMatchingGroups("Master/SE");
                 var obj = new GameObject("Sound_" + param.soundEffect.ToString());
                 var audioSource = obj.AddComponent<AudioSource>();
                 audioSource.clip = clip;
+                audioSource.outputAudioMixerGroup = mixerGroup[0];
                 obj.transform.SetParent(audioSourceParent);
                 _audioSourcesList.Add(audioSource);
             }

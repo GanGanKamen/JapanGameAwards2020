@@ -129,6 +129,7 @@ GameObject:
   - component: {fileID: 2259073735948515264}
   - component: {fileID: 2259073735948515270}
   - component: {fileID: 2259073735948515271}
+  - component: {fileID: 7427312421876043814}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -183,7 +184,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 03720a68c080bb3409e81d9c58c55c79, type: 3}
-    m_FontSize: 100
+    m_FontSize: 80
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 0
@@ -194,7 +195,23 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u9D8F\u8089"
+  m_Text: "\u3055\u3055\u307F"
+--- !u!114 &7427312421876043814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2259073735948515265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d11fca4711407f1489f93e1a236fa836, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Texts:
+  - "\u3055\u3055\u307F"
+  - Chicken
+  - "\u96DE\u80F8\u8089"
 --- !u!1 &2259073735966369196
 GameObject:
   m_ObjectHideFlags: 0
@@ -462,6 +479,7 @@ GameObject:
   - component: {fileID: 2259073735979317994}
   - component: {fileID: 2259073735979317992}
   - component: {fileID: 2259073735979317993}
+  - component: {fileID: 7988712925242941076}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -516,7 +534,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 03720a68c080bb3409e81d9c58c55c79, type: 3}
-    m_FontSize: 100
+    m_FontSize: 80
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 0
@@ -528,6 +546,22 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: "\u30BD\u30FC\u30BB\u30FC\u30B8"
+--- !u!114 &7988712925242941076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2259073735979317995}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d11fca4711407f1489f93e1a236fa836, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Texts:
+  - "\u30BD\u30FC\u30BB\u30FC\u30B8"
+  - Sausage
+  - "\u9999\u8178"
 --- !u!1 &2259073736000708386
 GameObject:
   m_ObjectHideFlags: 0
@@ -752,7 +786,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: AI
+  m_Text: CPU
 --- !u!1 &2259073736025478652
 GameObject:
   m_ObjectHideFlags: 0
@@ -1293,7 +1327,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: AI
+  m_Text: CPU
 --- !u!1 &2259073736100898031
 GameObject:
   m_ObjectHideFlags: 0
@@ -1444,7 +1478,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u30D7\u30EC\u30A4\u9806\u756A\u306E\u6C7A\u5B9A"
+  m_Text: "\u884C\u52D5\u306E\u9806\u756A"
 --- !u!1 &2259073736145225260
 GameObject:
   m_ObjectHideFlags: 0
@@ -1743,7 +1777,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: AI
+  m_Text: CPU
 --- !u!1 &2259073736225716269
 GameObject:
   m_ObjectHideFlags: 0
@@ -2541,6 +2575,7 @@ GameObject:
   - component: {fileID: 2259073736405752068}
   - component: {fileID: 2259073736405752090}
   - component: {fileID: 2259073736405752091}
+  - component: {fileID: 6594825456385938755}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -2595,7 +2630,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 03720a68c080bb3409e81d9c58c55c79, type: 3}
-    m_FontSize: 100
+    m_FontSize: 80
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 0
@@ -2607,6 +2642,22 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: "\u3048\u3073"
+--- !u!114 &6594825456385938755
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2259073736405752069}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d11fca4711407f1489f93e1a236fa836, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Texts:
+  - "\u3048\u3073"
+  - Shrimp
+  - "\u8766"
 --- !u!1 &2259073736420435851
 GameObject:
   m_ObjectHideFlags: 0
@@ -2766,6 +2817,7 @@ GameObject:
   - component: {fileID: 2259073736451797486}
   - component: {fileID: 2259073736451797484}
   - component: {fileID: 2259073736451797485}
+  - component: {fileID: 4361647293671661345}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -2834,6 +2886,22 @@ MonoBehaviour:
   m_Text: 'Hard
 
 '
+--- !u!114 &4361647293671661345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2259073736451797487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d11fca4711407f1489f93e1a236fa836, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Texts:
+  - 
+  - 
+  - 
 --- !u!1 &2259073736492313648
 GameObject:
   m_ObjectHideFlags: 0
@@ -4786,6 +4854,7 @@ GameObject:
   - component: {fileID: 2259073736772644397}
   - component: {fileID: 2259073736772644387}
   - component: {fileID: 2259073736772644396}
+  - component: {fileID: 3556750071105761512}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -4851,8 +4920,25 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "AI\u306E\u96E3\u6613\u5EA6\u3092\u9078\u629E\u3057\u3066\u304F\u3060\u3055\u3044
-    ! !"
+  m_Text: "CPU\u306E\u96E3\u6613\u5EA6\u3092\u9078\u629E\u3057\u3066\u304F\u3060\u3055\u3044
+    ! "
+--- !u!114 &3556750071105761512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2259073736772644398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d11fca4711407f1489f93e1a236fa836, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Texts:
+  - "CPU\u306E\u96E3\u6613\u5EA6\u3092\u9078\u629E\u3057\u3066\u304F\u3060\u3055\u3044
+    ! "
+  - Please select the difficulty of CPUl!
+  - " \u8ACB\u9078\u64C7CPU\u7684\u96E3\u5EA6\u7B49\u7D1A\uFF01"
 --- !u!1 &2259073736772939816
 GameObject:
   m_ObjectHideFlags: 0
@@ -6533,7 +6619,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: AI
+  m_Text: CPU
 --- !u!1 &2259073737081810069
 GameObject:
   m_ObjectHideFlags: 0
@@ -6964,7 +7050,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: AI
+  m_Text: CPU
 --- !u!1 &2259073737168211383
 GameObject:
   m_ObjectHideFlags: 0
@@ -7050,6 +7136,7 @@ GameObject:
   - component: {fileID: 2259073737195451815}
   - component: {fileID: 2259073737195451813}
   - component: {fileID: 2259073737195451814}
+  - component: {fileID: 8523176387309194590}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -7116,6 +7203,22 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: "\u98DF\u6750\u3092\u3048\u3089\u3079 ! "
+--- !u!114 &8523176387309194590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2259073737195451808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d11fca4711407f1489f93e1a236fa836, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Texts:
+  - "\u98DF\u6750\u3092\u3048\u3089\u3079 ! "
+  - Choose Your Food!
+  - "\u9078\u64C7\u98DF\u6750\uFF01"
 --- !u!1 &2259073737216750744
 GameObject:
   m_ObjectHideFlags: 0
@@ -7417,7 +7520,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: AI
+  m_Text: CPU
 --- !u!1 &2259073737286343716
 GameObject:
   m_ObjectHideFlags: 0
@@ -7494,7 +7597,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: AI
+  m_Text: CPU
 --- !u!1 &2259073737301056667
 GameObject:
   m_ObjectHideFlags: 0
@@ -9313,6 +9416,7 @@ GameObject:
   - component: {fileID: 2259073737763031315}
   - component: {fileID: 2259073737763031313}
   - component: {fileID: 2259073737763031314}
+  - component: {fileID: 3463836278536693207}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -9367,7 +9471,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 03720a68c080bb3409e81d9c58c55c79, type: 3}
-    m_FontSize: 100
+    m_FontSize: 80
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 0
@@ -9379,6 +9483,22 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: "\u305F\u307E\u3054"
+--- !u!114 &3463836278536693207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2259073737763031324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d11fca4711407f1489f93e1a236fa836, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Texts:
+  - "\u305F\u307E\u3054"
+  - Egg
+  - "\u96DE\u86CB"
 --- !u!1 &2259073737778066473
 GameObject:
   m_ObjectHideFlags: 0
@@ -10207,6 +10327,7 @@ GameObject:
   - component: {fileID: 2259073737856057383}
   - component: {fileID: 2259073737856057381}
   - component: {fileID: 2259073737856057382}
+  - component: {fileID: 6809637225908222938}
   m_Layer: 5
   m_Name: RetryText
   m_TagString: Untagged
@@ -10273,6 +10394,22 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: RETRY TO Touch
+--- !u!114 &6809637225908222938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2259073737856057376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d11fca4711407f1489f93e1a236fa836, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Texts:
+  - "\u30BF\u30C3\u30C1\u3067\u30BF\u30A4\u30C8\u30EB\u753B\u9762\u306B\u623B\u308B"
+  - 
+  - 
 --- !u!1 &2259073737870647204
 GameObject:
   m_ObjectHideFlags: 0
@@ -10926,7 +11063,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: AI
+  m_Text: CPU
 --- !u!1 &2259073738047285720
 GameObject:
   m_ObjectHideFlags: 0
@@ -11080,7 +11217,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: AI
+  m_Text: CPU
 --- !u!1 &2259073738071141015
 GameObject:
   m_ObjectHideFlags: 0
