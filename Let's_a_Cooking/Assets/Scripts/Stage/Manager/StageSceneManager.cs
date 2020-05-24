@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.SceneManagement;
+using System;
 
 namespace Cooking.Stage
 {
@@ -66,8 +67,8 @@ namespace Cooking.Stage
         /// 初期値Shrimp 選ばれた食材リスト FoodStatus用のenumへ変換
         /// </summary>
         private FoodType[] _chooseFoodTypes;
-        [SerializeField] GameObject[] _playerPrefabs = new GameObject[System.Enum.GetValues(typeof(FoodType)).Length];
-        [SerializeField] GameObject[] _aIPrefabs = new GameObject[System.Enum.GetValues(typeof(FoodType)).Length];
+        [SerializeField] GameObject[] _playerPrefabs = new GameObject[Enum.GetValues(typeof(FoodType)).Length];
+        [SerializeField] GameObject[] _aIPrefabs = new GameObject[Enum.GetValues(typeof(FoodType)).Length];
         /// <summary>
         /// 表示用 プレイヤーがゲーム全体で獲得した合計ポイント(食材再スタート前も含む)UIが常に参照する
         /// </summary>
@@ -394,25 +395,26 @@ namespace Cooking.Stage
             _aiShotRange = new float[GameManager.Instance.ComputerNumber][];
             //Resourcesからの読み取り回数を少なくしたい 
             var aIParameter = Resources.Load<AIParameter>("ScriptableObjects/AIParameter");
+            int aiIndex = 0;
             //現状全AIは同じ強さ
-            foreach (var aiLevel in _aiLevels)
+            for (aiIndex = 0; aiIndex < _aiShotRange.Length; aiIndex++)
             {
-                switch (aiLevel)
+                switch (_aiLevels[aiIndex])
                 {
                     case AILevel.Easy:
-                        _aiShotRange[(int)aiLevel] = aIParameter.EasyRandomRange;
+                        _aiShotRange[aiIndex] = aIParameter.EasyRandomRange;
                         break;
                     case AILevel.Normal:
-                        _aiShotRange[(int)aiLevel] = aIParameter.NormalRandomRange;
+                        _aiShotRange[aiIndex] = aIParameter.NormalRandomRange;
                         break;
                     case AILevel.Hard:
-                        _aiShotRange[(int)aiLevel] = aIParameter.HardRandomRange;
+                        _aiShotRange[aiIndex] = aIParameter.HardRandomRange;
                         break;
                     default:
                         break;
                 }
             }
-            int aiIndex = 0;
+            aiIndex = 0;
             //プレイヤー番号が小さいのがプレイしている人で大きい数字はAI
             for (int playerNumber = 0; playerNumber < GameManager.Instance.PlayerSumNumber; playerNumber++)
             {
@@ -425,6 +427,7 @@ namespace Cooking.Stage
                 {
                     //プレイヤーと同じ食材がAIになる
                     InitializePlayerData(playerNumber, _chooseFoodTypes[0], true, _aiShotRange[aiIndex]);
+                    aiIndex++;
                 }
             }
             InitializePlayerPointList(GameManager.Instance.PlayerSumNumber);
