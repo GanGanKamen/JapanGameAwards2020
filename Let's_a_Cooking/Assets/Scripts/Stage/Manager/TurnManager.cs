@@ -198,7 +198,6 @@ namespace Cooking.Stage
             if (aI != null)
             {
                 _isAITurn = true;
-                aI.TurnAI();
             }
             else
             {
@@ -230,14 +229,14 @@ namespace Cooking.Stage
                         {
                             var playerNumber = GetPlayerNumberFromActivePlayerIndex(_activePlayerIndex) - 1;
                             var startPoint = StageSceneManager.Instance.GetPlayerStartPoint(playerNumber);
-                            //スタート地点へ配置
-                            ResetPlayerOnStartPoint(startPoint, _activePlayerIndex);
                             InitializeOnTurnChange(_activePlayerIndex);
                             break;//次のプレイヤーに変えずに初期化 このメソッドの終了
                         }
                         else if (_foodStatuses[_activePlayerIndex].IsGoal)
                         {
                             StageSceneManager.Instance.AddPlayerPointToList(_activePlayerIndex);
+                            //FoodStatusを取り除いて処理量を減らす
+                            Destroy(_foodStatuses[_activePlayerIndex]);
                             StageSceneManager.Instance.InitializePlayerData(_activePlayerIndex, _foodStatuses[_activePlayerIndex].FoodType, _isAITurn);
                         }
                         //次のプレイヤーに順番を回す
@@ -303,7 +302,7 @@ namespace Cooking.Stage
         }
 
         /// <summary>
-        /// ターンが変わるときの初期化処理
+        /// ターンが変わるときの初期化処理 _activePlayerIndexが変化した後に呼ばれる
         /// </summary>
         private void InitializeOnTurnChange(int playerIndex)
         {
@@ -316,7 +315,12 @@ namespace Cooking.Stage
             //位置変更予定
             _foodStatuses[playerIndex].ResetFoodState();
             CheckPlayerAnimationPlay();
-            PredictLineManager.Instance.SetPredictLineInstantiatePosition(_foodStatuses[playerIndex].CenterPoint.position);
+            PredictLineManager.Instance.SetPredictLineInstantiatePosition(_foodStatuses[playerIndex].GroundPoint);
+            if (_isAITurn)
+            {
+                var aI = _foodStatuses[playerIndex].GetComponent<AI>();
+                aI.TurnAI();
+            }
         }
         /// <summary>
         /// プレイヤーのアニメーションを再生するか判断

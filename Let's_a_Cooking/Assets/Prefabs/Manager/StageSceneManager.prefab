@@ -1,0 +1,94 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1904837132220409667
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1904837132220409666}
+  - component: {fileID: 1904837132220409671}
+  m_Layer: 0
+  m_Name: StageSceneManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1904837132220409666
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1904837132220409667}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1904837132498659199}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1904837132220409671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1904837132220409667}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21e240ffad8b3cd4f9f8bcc14f8c7f9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _instantiateStage: 0
+  _playerPrefabs:
+  - {fileID: 2128107329363381656, guid: eae7d126522a4104a8702d41912aa414, type: 3}
+  - {fileID: 7341511688390596188, guid: ebeacf18643c8574a9621f8cc57f2c17, type: 3}
+  - {fileID: 8487068949613764779, guid: a3106b04a938b0249955707de2456287, type: 3}
+  - {fileID: 4689672585035630470, guid: 0872c9ccb44e03a468883e612612a7f1, type: 3}
+  _aIPrefabs:
+  - {fileID: 2128107329363381656, guid: 10e960f08a05ddc4e96d68062d6610e2, type: 3}
+  - {fileID: 7341511688390596188, guid: 69ed20f1f63f6c84795d8fc5eb0083d8, type: 3}
+  - {fileID: 8487068949613764779, guid: 947168d70bf0efd4dbeb7dde6be5fc88, type: 3}
+  - {fileID: 4689672585035630470, guid: b64fd6291fbb23f4f97421f0b45a5a14, type: 3}
+  _turnNumberOnGameEnd: 10
+  _foodPositionsParent: {fileID: 1904837132498659199}
+  _layerList:
+  - serializedVersion: 2
+    m_Bits: 1024
+  - serializedVersion: 2
+    m_Bits: 512
+--- !u!1 &1904837132498659196
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1904837132498659199}
+  m_Layer: 0
+  m_Name: FoodPositionsForCamera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1904837132498659199
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1904837132498659196}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1904837132220409666}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

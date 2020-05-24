@@ -1050,12 +1050,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _foodSkinnedMeshRenderer: {fileID: 0}
   _foodMeshRenderer: {fileID: 2141837656755319749}
-  _foodNormalGraphic: {fileID: 2100000, guid: c6ed38640616c69499a13ced75108178, type: 2}
+  foodNormalGraphic: {fileID: 0}
   _seasoningMaterial: {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
   _centerPoint: {fileID: 8542194371595293363}
   _foodPositionNotRotate: {fileID: 1531086886213276042}
   _rigidbody: {fileID: 4982003582075583499}
-  _isGroundedArea: {fileID: 8903727932121974044}
+  _isGroundedArea: {fileID: 3919790109101497596}
   _shrimpFirstBoundPower: 3
   _chickenFirstBoundPower: 1.5
   _forwardAngle: 60

@@ -27,26 +27,37 @@ namespace Cooking.Stage
         }
         private AILevel _ailevel = AILevel.Easy;
 
-        float rad, x, y, speed;
+        float radius, horizontalDistance, verticalDistance, speed;
 
         Vector3 targetPosition;
 
-        Rigidbody rid;
+        Rigidbody _rigidBody;
         /// <summary>
         /// 座標によって決めたターゲットのタグ
         /// </summary>
         AITargetObjectTags _targetTagByTransform;
+        private float[] _randomRangeOfShotPower = new float[System.Enum.GetValues(typeof(LimitValue)).Length];
         public void SetAILevel(AILevel aILevel)
         {
             _ailevel = aILevel;
+            switch (aILevel)
+            {
+                case AILevel.Easy:
+                    break;
+                case AILevel.Normal:
+                    break;
+                case AILevel.Hard:
+                    break;
+                default:
+                    break;
+            }
         }
 
         protected override void Start()
         {
-            //実験用コード
-            //StartCoroutine(Shooting(GameObject.FindGameObjectWithTag(TagList.Finish.ToString())));
-            //射出
-            rid = GetComponent<Rigidbody>();
+            base.Start();
+            if(_rigidBody == null)
+            _rigidBody = GetComponent<Rigidbody>();
         }
 
         //protected override void Update()
@@ -76,7 +87,7 @@ namespace Cooking.Stage
             for (int i = 0; throwingAngle <= ShotManager.Instance.ShotParameter.LimitVerticalAngle - 10;i++)
             {
                 throwingAngle = 45 + i / 2;
-                direction = CalculateVelocity(this.transform.position, targetPosition, throwingAngle);
+                direction = CalculateVelocity(groundPoint, targetPosition, throwingAngle);
                 //方向取得・初速の大きさも計算
                 //速度の大きさが許容範囲を超えていたらだめ
                 if (speed > ShotManager.Instance.ShotParameter.MaxShotPower)
@@ -89,23 +100,23 @@ namespace Cooking.Stage
                 switch (foodType)
                 {
                     case FoodType.Shrimp:
-                        newTarget = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject,Vector3>(transform.position, velocity, foodType, GetColliderSize<Vector3>());
+                        newTarget = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject,Vector3>(transform.position, velocity, throwingAngle, foodType, GetColliderSize<Vector3>());
                         break;
                     case FoodType.Egg:
                         if (food.egg.HasBroken)
                         {
-                            newTarget = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject,Vector3>(transform.position, velocity, foodType, GetColliderSize<Vector3>());
+                            newTarget = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject, Vector3>(transform.position, velocity, throwingAngle, foodType, GetColliderSize<Vector3>());
                         }
                         else
                         {
-                            newTarget = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject,Vector2>(transform.position, velocity, foodType, GetColliderSize<Vector2>());
+                            newTarget = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject, Vector2>(transform.position, velocity, throwingAngle, foodType, GetColliderSize<Vector2>());
                         }
                         break;
                     case FoodType.Chicken:
-                        newTarget = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject,Vector3>(transform.position, velocity, foodType, GetColliderSize<Vector3>());
+                        newTarget = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject, Vector3>(transform.position, velocity, throwingAngle, foodType, GetColliderSize<Vector3>());
                         break;
                     case FoodType.Sausage:
-                        newTarget = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject,Vector3>(transform.position, velocity, foodType, GetColliderSize<Vector3>());
+                        newTarget = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject, Vector3>(transform.position, velocity, throwingAngle, foodType, GetColliderSize<Vector3>());
                         break;
                     default:
                         break;
@@ -148,12 +159,12 @@ namespace Cooking.Stage
         private Vector3 CalculateVelocity(Vector3 pointA, Vector3 pointB, float angle)
         {
             // 射出角をラジアンに変換
-            rad = angle * Mathf.PI / 180;
+            radius = angle * Mathf.PI / 180;
 
-            x = CalculateDistance(pointA, pointB).x;
-            y = CalculateDistance(pointA, pointB).y;
+            horizontalDistance = CalculateDistance(pointA, pointB).x;
+            verticalDistance = CalculateDistance(pointA, pointB).y;
 
-            speed = Mathf.Sqrt(-Physics.gravity.y * Mathf.Pow(x, 2) / (2 * Mathf.Pow(Mathf.Cos(rad), 2) * (x * Mathf.Tan(rad) + y)));
+            speed = Mathf.Sqrt(-Physics.gravity.y * Mathf.Pow(horizontalDistance, 2) / (2 * Mathf.Pow(Mathf.Cos(radius), 2) * (horizontalDistance * Mathf.Tan(radius) + verticalDistance)));
 
             if (float.IsNaN(speed))
             {
@@ -162,7 +173,7 @@ namespace Cooking.Stage
             }
             else
             {
-                return (new Vector3(pointB.x - pointA.x, x * Mathf.Tan(rad), pointB.z - pointA.z).normalized);
+                return (new Vector3(pointB.x - pointA.x, horizontalDistance * Mathf.Tan(radius), pointB.z - pointA.z).normalized);
             }
         }
 

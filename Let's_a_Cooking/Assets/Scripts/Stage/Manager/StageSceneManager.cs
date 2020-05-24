@@ -126,6 +126,10 @@ namespace Cooking.Stage
         }
         [SerializeField, Header("[0]FoodLayerInStartArea, [1]Kitchen stringとして使うものリスト")]
         private LayerMask[] _layerList = null;
+        /// <summary>
+        /// AIのレベル分ショットパワーのばらつき方を用意
+        /// </summary>
+        private float[][] _randomRangeOfAIShotPower = new float[System.Enum.GetValues(typeof(AILevel)).Length][];
 
         private void Awake()
         {
@@ -268,7 +272,9 @@ namespace Cooking.Stage
                         {
                             if (food.FalledFoodStateOnStartProperty == FalledFoodStateOnStart.OnStart)
                             {
-                                food.ResetFoodState();
+                                food.FinishStartProcessing();
+                                _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].ResetFoodState();
+                                PredictLineManager.Instance.SetPredictLineInstantiatePosition(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].GroundPoint);
                                 //PredictLineManager.Instance.SetPredictLineInstantiatePosition(food.CenterPoint.position);
                             }
                         }
