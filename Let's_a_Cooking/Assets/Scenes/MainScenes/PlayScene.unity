@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -188,6 +188,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: StageSceneManager
       objectReference: {fileID: 0}
+    - target: {fileID: 1904837132220409671, guid: a2133d1f4c460e144a4e3d5f65bcee76,
+        type: 3}
+      propertyPath: _instantiateStage
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a2133d1f4c460e144a4e3d5f65bcee76, type: 3}
 --- !u!1001 &457225829
@@ -256,6 +261,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: LetsFlyUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 2259073736345004722, guid: c17407bd5bc2fb84a9beeb1a89be17dc,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c17407bd5bc2fb84a9beeb1a89be17dc, type: 3}
@@ -333,7 +343,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 43.048405, y: 3535.3508, z: -8.911511e-19, w: 4e-45}
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 2.7200831e+26}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0

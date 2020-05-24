@@ -25,7 +25,7 @@ namespace Cooking.Stage
         /// <summary>
         /// シーン内に食材着地エリアを描画するためのオブジェクトを生成
         /// </summary>
-        public static void CreatePredictFoodPhysicsGameObject()
+        public static void CreatePredictFoodGroundedGameObject()
         {
             var obj = new GameObject("PredictFoodPhysics");
             obj.AddComponent<PredictFoodPhysics>();

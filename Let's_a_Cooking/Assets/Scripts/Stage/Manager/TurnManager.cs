@@ -237,7 +237,7 @@ namespace Cooking.Stage
                             StageSceneManager.Instance.AddPlayerPointToList(_activePlayerIndex);
                             //FoodStatusを取り除いて処理量を減らす
                             Destroy(_foodStatuses[_activePlayerIndex]);
-                            StageSceneManager.Instance.InitializePlayerData(_activePlayerIndex, _foodStatuses[_activePlayerIndex].FoodType, _isAITurn);
+                            StageSceneManager.Instance.InitializePlayerData(_activePlayerIndex, _foodStatuses[_activePlayerIndex].FoodType, _isAITurn , StageSceneManager.Instance.AIShotRange[_activePlayerIndex]);
                         }
                         //次のプレイヤーに順番を回す
                         _activePlayerIndex++;

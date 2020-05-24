@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: AIParameter
   m_EditorClassIdentifier: 
   _hardRandomRange:
-  - 0
-  - 0
+  - 0.95
+  - 1.05
   _normalRandomRange:
-  - 0
-  - 0
+  - 0.7
+  - 1.2
   _easyRandomRange:
-  - 0
-  - 0
+  - 0.5
+  - 1.5

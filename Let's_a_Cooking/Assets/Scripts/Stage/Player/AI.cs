@@ -21,12 +21,6 @@ namespace Cooking.Stage
     }
     public class AI : FoodStatus
     {
-        public AILevel AiLevel
-        {
-            get { return _ailevel; }
-        }
-        private AILevel _ailevel = AILevel.Easy;
-
         float radius, horizontalDistance, verticalDistance, speed;
 
         Vector3 targetPosition;
@@ -37,20 +31,9 @@ namespace Cooking.Stage
         /// </summary>
         AITargetObjectTags _targetTagByTransform;
         private float[] _randomRangeOfShotPower = new float[System.Enum.GetValues(typeof(LimitValue)).Length];
-        public void SetAILevel(AILevel aILevel)
+        public void SetAIShotRange(float[] shotRange)
         {
-            _ailevel = aILevel;
-            switch (aILevel)
-            {
-                case AILevel.Easy:
-                    break;
-                case AILevel.Normal:
-                    break;
-                case AILevel.Hard:
-                    break;
-                default:
-                    break;
-            }
+            _randomRangeOfShotPower = shotRange;
         }
 
         protected override void Start()
@@ -58,6 +41,7 @@ namespace Cooking.Stage
             base.Start();
             if(_rigidBody == null)
             _rigidBody = GetComponent<Rigidbody>();
+            Debug.Log(_randomRangeOfShotPower[0]);
         }
 
         //protected override void Update()
