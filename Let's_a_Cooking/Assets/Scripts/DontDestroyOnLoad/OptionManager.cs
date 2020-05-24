@@ -31,8 +31,7 @@ namespace Cooking
         {
             MenuInit();
             Button_Init();
-            Setdefult();
-            DontDestroyOnLoad(gameObject);           
+            Setdefult();           
         }
 
         // Update is called once per frame

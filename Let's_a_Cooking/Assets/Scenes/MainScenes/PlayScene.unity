@@ -262,11 +262,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: LetsFlyUI
       objectReference: {fileID: 0}
-    - target: {fileID: 2259073736345004722, guid: c17407bd5bc2fb84a9beeb1a89be17dc,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c17407bd5bc2fb84a9beeb1a89be17dc, type: 3}
 --- !u!1 &705507993
@@ -343,7 +338,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 2.7200831e+26}
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 1.647297e-37}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
