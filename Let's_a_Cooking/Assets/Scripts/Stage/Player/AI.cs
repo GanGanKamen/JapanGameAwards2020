@@ -24,7 +24,12 @@ namespace Cooking.Stage
         float radius, horizontalDistance, verticalDistance, speed;
 
         Vector3 targetPosition;
-
+        /// <summary>ターゲット検索の精度を決める変数 大きいほど細かい</summary>
+        private const int _searchAccuracy = 100;
+        /// <summary>ターゲットまでの距離 レイによるチェックで見つからなければ再検索を行う際に使用</summary>
+        float _targetDistance = 25f / _searchAccuracy;
+        /// <summary>レイによるチェックで到達できないと判断されたオブジェクトを格納</summary>
+        private List<GameObject> _ignoreObjects = new List<GameObject>();
         Rigidbody _rigidBody;
         /// <summary>
         /// 座標によって決めたターゲットのタグ
@@ -41,7 +46,6 @@ namespace Cooking.Stage
             base.Start();
             if(_rigidBody == null)
             _rigidBody = GetComponent<Rigidbody>();
-            Debug.Log(_randomRangeOfShotPower[0]);
         }
 
         //protected override void Update()
@@ -50,9 +54,9 @@ namespace Cooking.Stage
         //}
 
         /// <summary>
-        /// ボールを射出する
+        /// 射出する角度を算出
         /// </summary>
-        private void ThrowingBall(GameObject targetObject)
+        private Vector3 DecideShotAngleDirection(GameObject targetObject)
         {
             if (targetObject == null)
             {
@@ -68,7 +72,7 @@ namespace Cooking.Stage
             //射出角度 初期値45度 レイにより障害物判定で変える 加算していき85(=限界角度)でだめなら45度から減少
             float throwingAngle = 45;
             Vector3 velocity,direction;
-            for (int i = 0; throwingAngle <= ShotManager.Instance.ShotParameter.LimitVerticalAngle - 10;i++)
+            for (int i = 0; throwingAngle <= ShotManager.Instance.ShotParameter.LimitVerticalAngle;i++)
             {
                 throwingAngle = 45 + i / 2;
                 direction = CalculateVelocity(groundPoint, targetPosition, throwingAngle);
@@ -110,9 +114,7 @@ namespace Cooking.Stage
                 {
                     if (newTarget.tag == TagList.Towel.ToString())
                     {
-                        ShotManager.Instance.SetShotVector(velocity, speed);
-                        ShotManager.Instance.AIShot(direction);
-                        return;
+                        return direction;
                     }
                 }
                 //Floorに向かってはダメ・狙い通りのタグかどうか
@@ -120,18 +122,13 @@ namespace Cooking.Stage
                 targetTagByLayCast = EnumParseMethod.TryParseAndDebugAssertFormatAndReturnResult(newTarget.tag, false, targetTagByLayCast);
                 if (targetTagByLayCast == _targetTagByTransform)
                 {
-                    ShotManager.Instance.SetShotVector(velocity, speed);
-                    ShotManager.Instance.AIShot(direction);
-                    return;
+                    return direction;
                 }
             }
             //見つからない場合
             Debug.Log("見つからない");
             direction = CalculateVelocity(this.transform.position, targetPosition, 60);
-            // 射出速度を算出
-            velocity = direction * speed;
-            ShotManager.Instance.SetShotVector(velocity, speed);
-            ShotManager.Instance.AIShot(direction);
+            return direction;
         }
         /// <summary>
         /// 方向取得・初速も計算
@@ -176,27 +173,25 @@ namespace Cooking.Stage
         /// </summary>
         public void TurnAI()
         {
-            var targetObject = SearchTargetObject();
-            StartCoroutine(Shooting(targetObject));
+            StartCoroutine(Shooting());
         }
         /// <summary>
         /// ターゲットを探す距離を決めて探す(一定半径範囲内にターゲットがあるかどうかで行動を決める) 見つからなければゴールへ
         /// </summary>
         /// <returns></returns>
-        private GameObject SearchTargetObject()
+        private GameObject SearchTargetObject(int incrementVariable)
         {
-            int i = 25;//累積誤差発生を防ぐためのインクリメント変数
             //半径100メートルでターゲット検索 無限ループ防止目的で距離制限
-            for (float distance = i / 100f; distance < 100; i++)
+            for (; _targetDistance < 100; incrementVariable++)
             {
-                distance = i / 100f; //累積誤差の発生を防ぐ 精度を決める変数 精度上げると処理が重い
-                var target = DecideTarget(distance);
+                _targetDistance = incrementVariable / 100f; //累積誤差の発生を防ぐ 精度を決める変数 精度上げると処理が重い
+                var target = DecideTarget(_targetDistance);
                 if (target != null)
                 {
                     return target;
                 }
             }
-            return StageSceneManager.Instance.Goal;
+            return null;
         }
         /// <summary>
         /// 指定された距離で自分中心に球体の半径を設定し、その範囲の中でターゲットを探す その半径の中で見つからなければnullを返す
@@ -240,11 +235,19 @@ namespace Cooking.Stage
         /// </summary>
         /// <param name="targetObject"></param>
         /// <returns></returns>
-        IEnumerator Shooting(GameObject targetObject)
+        IEnumerator Shooting()
         {
-            //this.transform.LookAt(targetObject.transform);
             yield return new WaitForSeconds(2f);
-            ThrowingBall(targetObject);
+
+            int incrementVariable = (int)(_targetDistance * 100);//累積誤差発生を防ぐためのインクリメント変数 
+            var targetObject = SearchTargetObject(incrementVariable);
+
+            var direction = DecideShotAngleDirection(targetObject);
+            // 射出速度を算出
+            var velocity = direction * speed;
+            ShotManager.Instance.SetShotVector(velocity, speed);
+            ShotManager.Instance.AIShot(direction);
+
             EffectManager.Instance.InstantiateEffect(TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].transform.position, EffectManager.EffectPrefabID.Food_Jump);
             ///止まるまでAIのターン
             while (true)

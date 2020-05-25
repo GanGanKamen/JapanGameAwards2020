@@ -35,7 +35,15 @@ namespace Cooking.Stage
         {
             get { return _rareMaterial; }
         }
-        [SerializeField] private Material _rareMaterial = null;
+        private Material _rareMaterial = null;
+        /// <summary>
+        /// レア調味料を持っているか判定用
+        /// </summary>
+        public Material SeasoningMaterial
+        {
+            get { return _seasoningMaterial; }
+        }
+        private Material _seasoningMaterial = null;
         private float _changeDirectionTimeCounterOfBubble;
         /// <summary>
         /// あわの進行方向を変えるまでにかかる時間(乱数取得)
@@ -71,6 +79,9 @@ namespace Cooking.Stage
         void Start()
         {
             GameObjectFindAndInitialize();
+            //万が一の時の保険条件
+            if (_targetObjectsForAI[(int)AITargetObjectTags.Seasoning].Count > 0)
+                _seasoningMaterial = _targetObjectsForAI[(int)AITargetObjectTags.Seasoning][0].GetComponent<MeshRenderer>().material;
         }
         /// <summary>
         /// オブジェクトを探し、データの初期化を行う
@@ -220,7 +231,7 @@ namespace Cooking.Stage
         private void InstantiateSeasoning(int seasoningIndex , Vector3 newSeasoningPosition)
         {
             ///  x(右辺) / 10(左辺)%の確率で再出現
-            if (Cooking.Random.GetRandomInt(10) < 3)
+            if (Cooking.Random.GetRandomInt(10) < 0)
             {
                 var newSeasoning = Instantiate(_seasoningPrefab);
                 newSeasoning.transform.position = newSeasoningPosition;

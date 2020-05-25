@@ -870,6 +870,7 @@ namespace Cooking.Stage
             {
                 EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Splash);
                 _isGoal = true;
+                FreezeRotation();
             }
             else if (other.tag == TagList.Water.ToString())
             {
@@ -1031,7 +1032,6 @@ namespace Cooking.Stage
             //Kitchenレイヤーとレイ判定を行う
             if (Physics.Raycast(ray, out hit, rayLength, StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]))
             {
-                Debug.Log(hit.point);
                 return hit.point;
             }
             else
