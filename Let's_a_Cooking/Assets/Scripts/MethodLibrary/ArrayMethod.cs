@@ -1,4 +1,6 @@
-﻿namespace Cooking
+﻿using System.Collections.Generic;
+
+namespace Cooking
 {
     /// <summary>
     /// 配列用メソッドを用意
@@ -8,10 +10,22 @@
         /// <summary>
         /// 配列の要素を一つ先の要素と入れ替えて降順にする　floatやComponentを入れ替えることを想定
         /// </summary>
-        /// <typeparam name="T">floatやComponent</typeparam>
+        /// <typeparam name="T">floatやComponentの配列</typeparam>
         /// <param name="values"></param>
         /// <param name="index"></param>
         public static void ChangeArrayValuesFromHighToLow<T>(T[] values, int index)
+        {
+            var tempValue = values[index];
+            values[index] = values[index + 1];
+            values[index + 1] = tempValue;
+        }
+        /// <summary>
+        /// List型配列の要素を一つ先の要素と入れ替えて降順にする　floatやComponentを入れ替えることを想定
+        /// </summary>
+        /// <typeparam name="T">List型配列</typeparam>
+        /// <param name="values"></param>
+        /// <param name="index"></param>
+        public static void ChangeArrayValuesFromHighToLow<T>(List<T> values, int index)
         {
             var tempValue = values[index];
             values[index] = values[index + 1];

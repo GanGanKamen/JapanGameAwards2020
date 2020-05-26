@@ -85,11 +85,11 @@ namespace Cooking.Stage
         /// ゲーム開始時の座標を示すオブジェクト
         /// </summary>
         private Transform _startPositionObject = null;
-        public GameObject Goal
+        public GameObject[] Goal
         {
-            get { return _goal ? _goal : GameObject.FindGameObjectWithTag(TagList.Finish.ToString()); ; }
+            get { return _goal[0] ? _goal : GameObject.FindGameObjectsWithTag(TagList.Finish.ToString()); ; }
         }
-        private GameObject _goal = null;
+        private GameObject[] _goal = null;
         /// <summary>
         /// 終了時の各プレイヤーの合計ポイント
         /// </summary>

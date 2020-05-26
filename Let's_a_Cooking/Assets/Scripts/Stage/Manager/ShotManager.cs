@@ -374,7 +374,7 @@ namespace Cooking.Stage
         }
 
         /// <summary>
-        /// 速度ベクトルが均一な発射処理
+        /// 最大パワーによる初速度ベクトルを算出 速度ベクトルが均一な発射処理
         /// </summary>
         /// <returns></returns>
         public Vector3 CalculateMaxSameVelocityMagnitudeShotPowerVector()
@@ -438,7 +438,6 @@ namespace Cooking.Stage
         /// <returns></returns>
         public float GetShotAngleX()
         {
-
             // 回転角度を取得[-90, 90]で表されるように補正
             var rotationX = transform.eulerAngles.x % 90f;
             if (rotationX == 0)
