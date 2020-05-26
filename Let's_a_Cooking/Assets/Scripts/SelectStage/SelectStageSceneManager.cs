@@ -13,7 +13,7 @@ namespace Cooking.SelectStage
         // Start is called before the first frame update
         void Start()
         {
-
+            
         }
 
         // Update is called once per frame
@@ -31,14 +31,30 @@ namespace Cooking.SelectStage
                 button.enabled = false;
             }
 
-            StartCoroutine(LoadSceneCoroutine());
+            StartCoroutine(LoadSceneCoroutine(SceneName.PlayScene));
             Stage.StageSceneManager.SetLoadStageIndex(stageNumber);
         }
 
-        IEnumerator LoadSceneCoroutine()
+        public void OnReturnButton()
         {
-            yield return new WaitForSeconds(1.0f);
-            SceneChanger.LoadSelectingScene(SceneName.PlayScene);
+            StartCoroutine(LoadSceneCoroutine(SceneName.Title));
+        }
+
+        IEnumerator LoadSceneCoroutine(SceneName sceneName)
+        {
+            if(sceneName == SceneName.PlayScene)
+            {
+                Fader.FadeInAndOut(0.8f, 1.4f, 0.8f);
+                yield return new WaitForSeconds(1.5f);
+                SceneChanger.LoadSelectingScene(SceneName.PlayScene);
+            }
+            else if (sceneName == SceneName.Title)
+            {
+                Fader.FadeInAndOutBlack(0.8f, 1.4f, 0.8f);
+                yield return new WaitForSeconds(1.5f);
+                SceneChanger.LoadSelectingScene(SceneName.Title);
+            }
+
         }
     }
 }

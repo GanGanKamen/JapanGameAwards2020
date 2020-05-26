@@ -70,9 +70,9 @@ public class FadeCanvas : MonoBehaviour
         StartCoroutine(SimpleFadeIn(time));
     }
 
-    public void FadeInAndOut(float fadeIn,float wait,float fadeOut)
+    public void FadeInAndOut(float fadeIn,float wait,float fadeOut, Canvas canvas)
     {
-        StartCoroutine(InAndOutProcess(fadeIn, wait, fadeOut));
+        StartCoroutine(InAndOutProcess(fadeIn, wait, fadeOut, canvas));
     }
 
     private IEnumerator StartFadeOut(float time)
@@ -126,7 +126,7 @@ public class FadeCanvas : MonoBehaviour
         yield break;
     }
 
-    private IEnumerator InAndOutProcess(float fadeIn, float wait, float fadeOut)
+    private IEnumerator InAndOutProcess(float fadeIn, float wait, float fadeOut, Canvas canvas)
     {
         alpha = 0;
         fadeDelta = Time.deltaTime / fadeIn;
@@ -148,7 +148,9 @@ public class FadeCanvas : MonoBehaviour
         {
             yield return null;
         }
-        Destroy(gameObject);
+        //Canvas faderCanvas = fader.GetComponent<Canvas>();
+        canvas.sortingOrder = -100;
+        //Destroy(gameObject);
         yield break;
     }
 }

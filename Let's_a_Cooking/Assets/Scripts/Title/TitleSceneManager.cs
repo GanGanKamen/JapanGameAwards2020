@@ -27,9 +27,9 @@ namespace Cooking.Title
         IEnumerator LoadSceneCoroutine()
         {
             startButton.SetActive(false);
-            yield return new WaitForSeconds(1.0f);
+            Fader.FadeInAndOut(1.5f, 1.0f, 1.5f);
+            yield return new WaitForSeconds(2.0f);
             SceneChanger.LoadSelectingScene(SceneName.SelectStage);
-            //Fader.FadeIn(1f, "SelectStage");
         }
     }
 }
