@@ -46,7 +46,7 @@
         Sausage
     }
     /// <summary>
-    /// エリアの限界値を格納する配列用
+    /// 限界値を格納する配列用
     /// </summary>
     public enum LimitValue
     {

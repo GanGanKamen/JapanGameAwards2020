@@ -10,9 +10,22 @@ namespace Cooking.Test
         [SerializeField] LayerMask kitchen;
         RaycastHit hit;
         float maxPower = 15;
-
+        [SerializeField] GameObject obj = null;
+        string oldName = ""; 
         void OnDrawGizmos()
         {
+            //var objec = Instantiate(obj);
+            //objec.transform.parent = CenterPoint;
+            //Debug.Log(objec.GetComponent<FoodStatus>());
+            //if (oldName == objec.name)
+            //{
+            //    Debug.Log(objec.name);
+            //}
+            //else
+            //{
+            //    oldName = objec.name;
+            //    Debug.Log(objec.name + "1234567890");
+            //}
             var scale = transform.lossyScale.x * 0.5f;
             Vector3 colliderSize = new Vector3(0.08083411f, 0.06928827f, 0.4269782f) * 1.5f;
             int i = 1;//累積誤差発生を防ぐためのインクリメント変数

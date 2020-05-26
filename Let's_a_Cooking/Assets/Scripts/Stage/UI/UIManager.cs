@@ -359,8 +359,6 @@ namespace Cooking.Stage
         {
             yield return new WaitForSeconds(_startTime);
             _playModeUI.ChangeUIOnTurnStart();
-            //_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].ResetFoodState();
-            PredictLineManager.Instance.SetPredictLineInstantiatePosition(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].CenterPoint.position);
         }
     }
 }

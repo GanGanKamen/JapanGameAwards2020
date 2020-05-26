@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.SceneManagement;
+using System;
 
 namespace Cooking.Stage
 {
@@ -53,13 +55,20 @@ namespace Cooking.Stage
         /// 食材のもつ重力の値は現在9.81 。この値を変える場合、スクリプトで重力制御をする必要あり スケールではなく重さを変えると、ショット時に加えるべき力の量が変わり 。
         /// </summary>
         public readonly float gravityAccelerationValue = 9.81f;
+        public AILevel[] AILevels
+        {
+            get { return _aiLevels; }
+        }
+        /// <summary>
+        /// 選択されたAIレベル
+        /// </summary>
         private AILevel[] _aiLevels;
         /// <summary>
         /// 初期値Shrimp 選ばれた食材リスト FoodStatus用のenumへ変換
         /// </summary>
         private FoodType[] _chooseFoodTypes;
-        [SerializeField] GameObject[] _playerPrefabs = new GameObject[System.Enum.GetValues(typeof(FoodType)).Length];
-        [SerializeField] GameObject[] _aIPrefabs = new GameObject[System.Enum.GetValues(typeof(FoodType)).Length];
+        [SerializeField] GameObject[] _playerPrefabs = new GameObject[Enum.GetValues(typeof(FoodType)).Length];
+        [SerializeField] GameObject[] _aIPrefabs = new GameObject[Enum.GetValues(typeof(FoodType)).Length];
         /// <summary>
         /// 表示用 プレイヤーがゲーム全体で獲得した合計ポイント(食材再スタート前も含む)UIが常に参照する
         /// </summary>
@@ -126,18 +135,28 @@ namespace Cooking.Stage
         }
         [SerializeField, Header("[0]FoodLayerInStartArea, [1]Kitchen stringとして使うものリスト")]
         private LayerMask[] _layerList = null;
-
+        public float[][] AIShotRange
+        {
+            get { return _aiShotRange; }
+        }
+        private float[][] _aiShotRange;
         private void Awake()
         {
             _instance = this;
             CheckInstantiateStageNumber(_stageNumberIndex);
+            //チェック忘れ防止
+            if (!_instantiateStage && SceneManager.GetActiveScene().name == SceneName.PlayScene.ToString())
+            {
+                _instantiateStage = true;
+                Debug.Log("ステージ生成フラグのセット忘れ");
+            }
             if (_instantiateStage)
             {
                 InstantiateStage(_stageNumberIndex);
             }
-            #if UNITY_EDITOR
-            PredictFoodPhysics.CreatePredictFoodPhysicsGameObject();
-            #endif
+#if UNITY_EDITOR
+            PredictFoodPhysics.CreatePredictFoodGroundedGameObject();
+#endif
         }
 
         /// <summary>
@@ -175,7 +194,6 @@ namespace Cooking.Stage
         {
             _stageNumberIndex = stageIndex;
         }
-
         /// <summary>
         /// stringとしてレイヤーを参照
         /// </summary>
@@ -189,12 +207,12 @@ namespace Cooking.Stage
         {
             var aiLevel = AILevel.Easy;
             //文字列に変換後、正しい値を代入                                                 
-            EnumParseMethod.TryParseAndDebugAssertFormat(selectedAILevel, true,out aiLevel);
+            EnumParseMethod.TryParseAndDebugAssertFormat(selectedAILevel, true, out aiLevel);
             //現状AIは同じ強さ
             for (int aiNumber = 0; aiNumber < _aiLevels.Length; aiNumber++)
             {
                 _aiLevels[aiNumber] = aiLevel;
-            }            
+            }
         }
         /// <summary>
         /// 選ばれた食材に応じてプレイヤーを生成するために選んだ種類を保存 食材を選ぶ際のマウスクリックで呼ばれる
@@ -204,7 +222,7 @@ namespace Cooking.Stage
         {
             var foodType = FoodType.Shrimp;
             //文字列に変換後、正しい値を代入                                                  //現状プレイヤーはすべて同じ食材→最初のプレイヤーが選んだ値
-            EnumParseMethod.TryParseAndDebugAssertFormat(foodName, true,out foodType);
+            EnumParseMethod.TryParseAndDebugAssertFormat(foodName, true, out foodType);
             _chooseFoodTypes[_turnManager.ActivePlayerIndex] = foodType;
         }
         /// <summary>
@@ -268,7 +286,9 @@ namespace Cooking.Stage
                         {
                             if (food.FalledFoodStateOnStartProperty == FalledFoodStateOnStart.OnStart)
                             {
-                                food.ResetFoodState();
+                                food.FinishStartProcessing();
+                                _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].ResetFoodState();
+                                PredictLineManager.Instance.SetPredictLineInstantiatePosition(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].GroundPoint);
                                 //PredictLineManager.Instance.SetPredictLineInstantiatePosition(food.CenterPoint.position);
                             }
                         }
@@ -372,22 +392,46 @@ namespace Cooking.Stage
         /// </summary>
         private void CreatePlayersOnInitialize()
         {
+            _aiShotRange = new float[GameManager.Instance.ComputerNumber][];
+            //Resourcesからの読み取り回数を少なくしたい 
+            var aIParameter = Resources.Load<AIParameter>("ScriptableObjects/AIParameter");
+            int aiIndex = 0;
+            //現状全AIは同じ強さ
+            for (aiIndex = 0; aiIndex < _aiShotRange.Length; aiIndex++)
+            {
+                switch (_aiLevels[aiIndex])
+                {
+                    case AILevel.Easy:
+                        _aiShotRange[aiIndex] = aIParameter.EasyRandomRange;
+                        break;
+                    case AILevel.Normal:
+                        _aiShotRange[aiIndex] = aIParameter.NormalRandomRange;
+                        break;
+                    case AILevel.Hard:
+                        _aiShotRange[aiIndex] = aIParameter.HardRandomRange;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            aiIndex = 0;
             //プレイヤー番号が小さいのがプレイしている人で大きい数字はAI
             for (int playerNumber = 0; playerNumber < GameManager.Instance.PlayerSumNumber; playerNumber++)
             {
                 //プレイヤーを生成
                 if (playerNumber < GameManager.Instance.PlayerNumber)
                 {
-                    InitializePlayerData(playerNumber, _chooseFoodTypes[0], false);//現状同じ種類の食材を生成
+                    InitializePlayerData(playerNumber, _chooseFoodTypes[0], false, null);//現状同じ種類の食材を生成
                 }
                 else
                 {
                     //プレイヤーと同じ食材がAIになる
-                    InitializePlayerData(playerNumber, _chooseFoodTypes[0], true);
+                    InitializePlayerData(playerNumber, _chooseFoodTypes[0], true, _aiShotRange[aiIndex]);
+                    aiIndex++;
                 }
             }
             InitializePlayerPointList(GameManager.Instance.PlayerSumNumber);
-            //プレイヤーの並び替えが行われる
+            //プレイヤーの並び替えが行われる _aiShotRangeは並び替えていないので注意 (05/24 現状全員同じ難易度)
             _gameState = StageGameState.FinishFoodInstantiateAndPlayerInOrder;
         }
 
@@ -397,10 +441,16 @@ namespace Cooking.Stage
         /// <param name="foodStatusIndex">FoodStatusにセットするプレイヤーのindex番号(単なる番号ではない)初期化時はまだ番号に順番の意味はない</param>
         /// <param name="playerFoodType">食材の種類</param>
         /// <param name="isAI">AIかどうか</param>
-        public void InitializePlayerData(int foodStatusIndex, FoodType playerFoodType, bool isAI)
+        public void InitializePlayerData(int foodStatusIndex, FoodType playerFoodType, bool isAI, float[] shotRange)
         {
             //次の食材を生成
             FoodStatus playerStatus = InstantiateNextFood(playerFoodType, isAI);
+            //AIのショットにかける補正の範囲をセット
+            if (isAI)
+            {
+                var ai = playerStatus.GetComponent<AI>();
+                ai.SetAIShotRange(shotRange);
+            }
             //foodStatus配列に登録
             _turnManager.SetFoodStatusValue(foodStatusIndex, playerStatus);
             //食材の種類を食材に渡す

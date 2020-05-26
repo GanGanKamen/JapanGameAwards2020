@@ -175,23 +175,23 @@ namespace Cooking.Stage
             switch (activeFood.FoodType)
             {
                 case FoodType.Shrimp:
-                    _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByBoxRayCast<Vector3, Vector3>(transform.position, maxShotSpeedVector, activeFood.FoodType, activeFood.GetColliderSize<Vector3>());
+                    _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByBoxRayCast<Vector3, Vector3>(transform.position, maxShotSpeedVector, ShotManager.Instance.GetShotAngleX(), activeFood.FoodType, activeFood.GetColliderSize<Vector3>());
                     break;
                 case FoodType.Egg:
                     if (activeFood.OriginalFoodProperty.egg.HasBroken)
                     {
-                        _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByBoxRayCast<Vector3, Vector3>(transform.position, maxShotSpeedVector, activeFood.FoodType, activeFood.GetColliderSize<Vector3>());
+                        _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByBoxRayCast<Vector3, Vector3>(transform.position, maxShotSpeedVector, ShotManager.Instance.GetShotAngleX(), activeFood.FoodType, activeFood.GetColliderSize<Vector3>());
                     }
                     else
                     {
-                        _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByBoxRayCast<Vector3, Vector2>(transform.position, maxShotSpeedVector, activeFood.FoodType, activeFood.GetColliderSize<Vector2>());
+                        _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByBoxRayCast<Vector3, Vector2>(transform.position, maxShotSpeedVector, ShotManager.Instance.GetShotAngleX(), activeFood.FoodType, activeFood.GetColliderSize<Vector2>());
                     }
                     break;
                 case FoodType.Chicken:
-                    _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByBoxRayCast<Vector3, Vector3>(transform.position, maxShotSpeedVector, activeFood.FoodType, activeFood.GetColliderSize<Vector3>());
+                    _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByBoxRayCast<Vector3, Vector3>(transform.position, maxShotSpeedVector, ShotManager.Instance.GetShotAngleX(), activeFood.FoodType, activeFood.GetColliderSize<Vector3>());
                     break;
                 case FoodType.Sausage:
-                    _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByBoxRayCast<Vector3, Vector3>(transform.position, maxShotSpeedVector, activeFood.FoodType, activeFood.GetColliderSize<Vector3>());
+                    _predictShotPoint.transform.position = PredictFoodPhysics.PredictFallPointByBoxRayCast<Vector3, Vector3>(transform.position, maxShotSpeedVector, ShotManager.Instance.GetShotAngleX(), activeFood.FoodType, activeFood.GetColliderSize<Vector3>());
                     break;
                 default:
                     break;

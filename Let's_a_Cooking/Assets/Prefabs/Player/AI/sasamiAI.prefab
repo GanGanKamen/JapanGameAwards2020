@@ -568,8 +568,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Size: {x: 0.09734659, y: 0.10607791, z: 0.7428676}
-  m_Center: {x: -0.0036512688, y: 0.003088832, z: -0.020309627}
+  m_Size: {x: 0.09734659, y: 0.10607791, z: 0.07606117}
+  m_Center: {x: -0.0036512688, y: 0.003088832, z: -0.0029181556}
 --- !u!1 &7361692856419998054
 GameObject:
   m_ObjectHideFlags: 0
@@ -644,8 +644,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Size: {x: 0.09734659, y: 0.10607791, z: 0.7428676}
-  m_Center: {x: -0.0036512688, y: 0.003088832, z: -0.020309627}
+  m_Size: {x: 0.09734659, y: 0.10607791, z: 0.07606117}
+  m_Center: {x: -0.0036512688, y: 0.003088832, z: -0.0029181556}
 --- !u!1 &8131787930931259562
 GameObject:
   m_ObjectHideFlags: 0
@@ -665,7 +665,7 @@ GameObject:
   - component: {fileID: 793617924018677131}
   - component: {fileID: 3803612474223065537}
   m_Layer: 0
-  m_Name: SasaamiNormal
+  m_Name: SasamiNormal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -930,7 +930,7 @@ MonoBehaviour:
   _centerPoint: {fileID: 6460690546192849698}
   _foodPositionNotRotate: {fileID: 6151370996122192627}
   _rigidbody: {fileID: 498154807235067579}
-  _isGroundedArea: {fileID: 813554079864103386}
+  _isGroundedArea: {fileID: 1147572020009484434}
   _shrimpFirstBoundPower: 3
   _chickenFirstBoundPower: 1.5
   _forwardAngle: 60

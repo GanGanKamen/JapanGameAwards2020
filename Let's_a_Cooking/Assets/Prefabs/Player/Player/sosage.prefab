@@ -473,7 +473,7 @@ MonoBehaviour:
   _centerPoint: {fileID: 8027254333230646750}
   _foodPositionNotRotate: {fileID: 5521851059872774494}
   _rigidbody: {fileID: 2016240340272796268}
-  _isGroundedArea: {fileID: 2783642473950490479}
+  _isGroundedArea: {fileID: 5540966640315155867}
   _shrimpFirstBoundPower: 3
   _chickenFirstBoundPower: 1.5
   _forwardAngle: 60
@@ -502,6 +502,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SausageBoxCollider: {fileID: 9012111501895328192}
+  _cutSausageBoxCollider: {fileID: 0}
   _sausageNormal: {fileID: 3370789654296888654}
   _sausageCut: {fileID: 5089718982716691465}
   _sausageCutOffObject: {fileID: 7484323759390296833}

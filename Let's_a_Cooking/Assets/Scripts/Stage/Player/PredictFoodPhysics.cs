@@ -25,7 +25,7 @@ namespace Cooking.Stage
         /// <summary>
         /// シーン内に食材着地エリアを描画するためのオブジェクトを生成
         /// </summary>
-        public static void CreatePredictFoodPhysicsGameObject()
+        public static void CreatePredictFoodGroundedGameObject()
         {
             var obj = new GameObject("PredictFoodPhysics");
             obj.AddComponent<PredictFoodPhysics>();
@@ -64,15 +64,17 @@ namespace Cooking.Stage
         }
         private static float _fallTime = 0;
         /// <summary>
-        /// boxレイキャストによる落下地点の予測 見つからないときは0ベクトルまたはnull
+        /// box・capsuleレイキャストによる落下地点の予測 見つからないときは0ベクトルまたはnull
         /// </summary>
         /// <typeparam name="T">Vector3 または GameObject 落下地点の欲しい情報を指定</typeparam>
+        /// <typeparam name="U">ボックスレイキャスト→Vector3 3辺の長さの半分 カプセルレイキャスト→Vector2 高さと半径</typeparam>
         /// <param name="predictStartPoint">予測開始地点</param>
         /// <param name="firstSpeedVector">初速度ベクトル</param>
+        /// <param name="shotAngleX">食材を打ち出す地面に対して垂直方向の角度 角度-0 ~ 90に変換後渡す</param>
         /// <param name="foodType">食材の種類</param>
-        /// <param name="colliderSize">コライダーのSize このエリアでboxレイキャストを行う</param>
+        /// <param name="colliderSizeInformation">コライダーのSize情報 このエリアでボックスまたはカプセルなレイキャストを行う</param>
         /// <returns></returns>
-        public static T PredictFallPointByBoxRayCast<T, U>(Vector3 predictStartPoint, Vector3 firstSpeedVector, FoodType foodType, U colliderSizeInformation) where U : struct
+        public static T PredictFallPointByBoxRayCast<T, U>(Vector3 predictStartPoint, Vector3 firstSpeedVector, float shotAngleX , FoodType foodType, U colliderSizeInformation) where U : struct
         {
             //, activeFood.GetColliderSize<Vector3>()
             _foodType = foodType;
@@ -135,6 +137,11 @@ namespace Cooking.Stage
                 }
                 else if (typeof(T) == typeof(Vector3))
                 {
+                    //角度3.88度未満では通常レイによる落下地点を返す 原点が地面なのでflyTimeを何フレームか飛ばす必要がある(理想は1) flyTime一定以下かつ、ぶつかった場合スキップ 開始位置では当たった場所を返せないのがBoxCastの欠点 RayCastを使うのも手 食材によって異なるので調整がさらに必要
+                    if (shotAngleX < 3.88f)//エビの時 さらにカット後は変わる可能性あり
+                    {
+                        return (T)(object)predictStartPoint;
+                    }
                     if (typeof(U) == typeof(Vector3))
                     {
                         //レイを飛ばして当たった場所を保存

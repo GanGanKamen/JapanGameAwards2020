@@ -432,5 +432,24 @@ namespace Cooking.Stage
                     break;
             }
         }
+        /// <summary>
+        /// 食材を打ち出す地面に対して垂直方向の角度を-0 ~ 180に変換して返す
+        /// </summary>
+        /// <returns></returns>
+        public float GetShotAngleX()
+        {
+
+            // 回転角度を取得[-90, 90]で表されるように補正
+            var rotationX = transform.eulerAngles.x % 90f;
+            if (rotationX == 0)
+            {
+                return 0;
+            }
+            else
+            {
+                //角度の測定方向を逆転し 0~90度にして返す
+                return Mathf.Abs(90 - rotationX);
+            }
+        }
     }
 }

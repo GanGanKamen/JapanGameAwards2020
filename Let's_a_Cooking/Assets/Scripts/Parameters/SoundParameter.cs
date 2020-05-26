@@ -24,8 +24,9 @@ namespace Cooking
         timeout,
         winner,
         pot_boiling0, pot_boiling1, pan_frying
+        //後ろに追加しないとデータがずれる
     }
-    [CreateAssetMenu(fileName = "SoundParameter", menuName = "ScriptableObjects/SoundParameter", order = 1)]
+    [CreateAssetMenu(fileName = "SoundParameter", menuName = "ScriptableObjects/SoundParameter", order = 2)]
     public class SoundParameter : ScriptableObject
     {
         [System.Serializable]

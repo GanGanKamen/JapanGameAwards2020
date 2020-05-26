@@ -48,6 +48,13 @@ namespace Cooking.Stage
                     {
                         return;
                     }
+                    //else if (material.mainTexture == GimmickManager.Instance.SeasoningMaterial.mainTexture)
+                    //{
+                    //    //_isRareSeasoningMaterial = true;
+                    //    Debug.Log(12345678);
+                    //    //Debug.Log(GimmickManager.Instance.SeasoningMaterial.te);
+                    //    _foodSkinnedMeshRenderer.material = GimmickManager.Instance.SeasoningMaterial;
+                    //}
                     else if (material == GimmickManager.Instance.RareMaterial)
                     {
                         _isRareSeasoningMaterial = true;

@@ -5,6 +5,17 @@ using UnityEngine;
 namespace Cooking.Stage
 {
     /// <summary>
+    /// bool配列 CanGetPoint用
+    /// </summary>
+    public enum GetPointOnTouch
+    {
+        DirtDish,//減点
+        Bubble,
+        Seasoning,
+        RareSeasoning,
+        Cut
+    }
+    /// <summary>
     /// アクティブプレイヤーのプレイヤーポイント取得のため、ターンコントローラーを経由してポイント取得
     /// </summary>
     public class PlayerPoint : MonoBehaviour
@@ -24,38 +35,55 @@ namespace Cooking.Stage
         /// 獲得ポイント
         /// </summary>
         private int _getPoint = 0;
-        public bool IsFirstatowel
+        public bool IsFirstTowel
         {
             get { return _isFirstTowel; }
+        }
+        public bool IsFirstWash
+        {
+            get { return _isFirstWash; }
         }
         /// <summary>
         /// 初回フラグ
         /// </summary>
         private bool _isFirstWash = true, _isFirstTowel = true;
         /// <summary>
+        /// ポイント取得可能フラグ enum GetPointOnTouch
+        /// </summary>
+        public bool[] CanGetPointFlags
+        {
+            get { return _canGetPointFlags; }
+        }
+        /// <summary>
         /// ポイント取得可能フラグ
         /// </summary>
         bool[] _canGetPointFlags = new bool[Enum.GetValues(typeof(GetPointOnTouch)).Length];
         /// <summary>
-        /// bool配列 CanGetPoint用
-        /// </summary>
-        enum GetPointOnTouch
-        {
-            DirtDish,//減点
-            Bubble,
-            Seasoning,
-            RareSeasoning,
-            Cut
-        }
-        /// <summary>
         /// 自分自身のステータス レア調味料を持つかどうかはStageSceneが判定するからいらない予定
         /// </summary>
         private FoodStatus _foodStatus;
+        PointParameter _pointParameter = null;
+
+        private void Awake()
+        {
+            _pointParameter = Resources.Load<PointParameter>("ScriptableObjects/PointParameter");
+        }
+
+        /// <summary>
+        /// ショット時に呼ばれる アニメーションなどで触れるのでこのタイミング 衝突時ポイント獲得フラグのリセット
+        /// </summary>
+        public void ResetGetPointBool()
+        {
+            for (int i = 0; i < _canGetPointFlags.Length; i++)
+            {
+                _canGetPointFlags[i] = true;
+            }
+        }
 
         private void OnEnable()
         {
             _foodStatus = GetComponent<FoodStatus>();
-            ComponentCheck.CheckNecessaryCopmonent<FoodStatus>(this , true);
+            ComponentCheck.CheckNecessaryCopmonent<FoodStatus>(this, true);
         }
         // Start is called before the first frame update
         void Start()
@@ -67,152 +95,129 @@ namespace Cooking.Stage
         {
 
         }
+        /// <summary>
+        /// ポイントが増減する際に呼ばれる
+        /// </summary>
+        /// <param name="pointType"></param>
+        public void GetPoint(GetPointType pointType)
+        {
+            var pointInformation = _pointParameter.pointInformation[(int)pointType];
+            //音と演出
+            switch (pointInformation.pointOperator)
+            {
+                case PointOperator.Plus:
+                    SoundManager.Instance.PlaySE(SoundEffectID.point_up);
+                    EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Point_UP).parent = _foodStatus.FoodPositionNotRotate.transform;
+                    break;
+                case PointOperator.Minus:
+                    SoundManager.Instance.PlaySE(SoundEffectID.point_down);
+                    EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Point_Down).parent = _foodStatus.FoodPositionNotRotate.transform;
+                    break;
+                case PointOperator.Multiplication:
+                    SoundManager.Instance.PlaySE(SoundEffectID.point_up);
+                    EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Point_UP).parent = _foodStatus.FoodPositionNotRotate.transform;
+                    break;
+                case PointOperator.Division:
+                    SoundManager.Instance.PlaySE(SoundEffectID.point_down);
+                    EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Point_Down).parent = _foodStatus.FoodPositionNotRotate.transform;
+                    break;
+                default:
+                    break;
+            }
+            //ポイントの種類で演算方法が異なる
+            //現状(2020/05/23)レア調味料のみ全ポイントに対して掛け算
+            switch (pointType)
+            {
+                case GetPointType.EggBreaked:
+                    DefaultPointCalculate(pointInformation.pointOperator, pointInformation.pointValue);
+                    break;
+                case GetPointType.EggCracked:
+                    DefaultPointCalculate(pointInformation.pointOperator, pointInformation.pointValue);
+                    break;
+                case GetPointType.TouchSeasoning:
+                    _canGetPointFlags[(int)GetPointOnTouch.Seasoning] = false;
+                    DefaultPointCalculate(pointInformation.pointOperator, pointInformation.pointValue);
+                    break;
+                case GetPointType.TouchRareSeasoning:
+                    _canGetPointFlags[(int)GetPointOnTouch.RareSeasoning] = false;
+                    DefaultPointCalculate(pointInformation.pointOperator, pointInformation.pointValue);
+                    break;
+                case GetPointType.TouchBubble:
+                    _canGetPointFlags[(int)GetPointOnTouch.Bubble] = false;
+                    DefaultPointCalculate(pointInformation.pointOperator, pointInformation.pointValue);
+                    break;
+                case GetPointType.FirstWash:
+                    DefaultPointCalculate(pointInformation.pointOperator, pointInformation.pointValue);
+                    break;
+                case GetPointType.FirstTowelTouch:
+                    _isFirstTowel = false;
+                    DefaultPointCalculate(pointInformation.pointOperator, pointInformation.pointValue);
+                    break;
+                case GetPointType.FallOffShrimpHead:
+                    DefaultPointCalculate(pointInformation.pointOperator, pointInformation.pointValue);
+                    break;
+                case GetPointType.CutFood:
+                    _canGetPointFlags[(int)GetPointOnTouch.Cut] = false;
+                    DefaultPointCalculate(pointInformation.pointOperator, pointInformation.pointValue);
+                    break;
+                case GetPointType.GoalWithRareSeasoning:
+                    DefaultPointCalculate(pointInformation.pointOperator, pointInformation.pointValue);
+                    break;
+                case GetPointType.SeasoningWashAwayed:
+                    DefaultPointCalculate(pointInformation.pointOperator, pointInformation.pointValue);
+                    break;
+                //現状(2020/05/23)レア調味料のみ全ポイントに対して掛け算
+                case GetPointType.RareSeasoningWashAwayed:
+                    break;
+                case GetPointType.TouchDirtDish:
+                    _canGetPointFlags[(int)GetPointOnTouch.DirtDish] = false;
+                    DefaultPointCalculate(pointInformation.pointOperator, pointInformation.pointValue);
+                    break;
+                default:
+                    break;
+            }
+        }
+        /// <summary>
+        /// ポイント演算の基本形 各食材が現在持つものに対して計算 現状(2020/05/23)レア調味料のみ全ポイントに対して掛け算
+        /// </summary>
+        /// <param name="pointOperator">演算子</param>
+        /// <param name="pointValue">獲得ポイント</param>
+        private void DefaultPointCalculate(PointOperator pointOperator, int pointValue)
+        {
+            switch (pointOperator)
+            {
+                case PointOperator.Plus:
+                    _getPoint += pointValue;
+                    break;
+                case PointOperator.Minus:
+                    _getPoint -= pointValue;
+                    //マイナスにはならない
+                    if (_firstPoint + _getPoint < 0)
+                    {
+                        _getPoint = -100;
+                    }
+                    break;
+                //マイナスを考慮していない 例 -50 のとき -100点 _getPoint = 2 * Mathf.Abs(_getPoint);良くない方法
+                case PointOperator.Multiplication:
+                    _getPoint *= pointValue;
+                    break;
+                //マイナスを考慮 例 -50 のとき -50点 → -25点
+                case PointOperator.Division:
+                    _getPoint /= pointValue;
+                    break;
+                default:
+                    break;
+            }
+        }
 
         /// <summary>
         /// レア調味料を持ってゴール
         /// </summary>
-        public void GoalWithRareSeasoning()
+        private void GoalWithRareSeasoning()
         {
-            //マイナスを考慮 例 -50 のとき 50点 → 100点
             _getPoint = 2 * Mathf.Abs(_getPoint);
             _firstPoint = 2 * Mathf.Abs(_getPoint);
-        }
-        /// <summary>
-        /// 調味料が洗い流される
-        /// </summary>
-        public void SeasoningWashAwayed()
-        {
-            _getPoint /= 2;
-        }
-        /// <summary>
-        /// 卵に亀裂が入る
-        /// </summary>
-        public void EggCracked()
-        {
-            _getPoint += 10;
-        }
-        /// <summary>
-        /// 食材が切られたときに呼ばれる 卵は割れたとき
-        /// </summary>
-        public void CutFood()
-        {
-            EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Point_UP).parent = _foodStatus.FoodPositionNotRotate.transform;
-            SoundManager.Instance.PlaySE(SoundEffectID.point_up);
-            _getPoint += 200;
-        }
-        /// <summary>
-        /// ショット時に呼ばれる アニメーションなどで触れるのでこのタイミング 衝突時ポイント獲得フラグのリセット
-        /// </summary>
-        public void ResetGetPointBool()
-        {
-            for (int i = 0; i < _canGetPointFlags.Length; i++)
-            {
-                _canGetPointFlags[i] = true;
-            }
-        }
-        /// <summary>
-        /// あわに触れる
-        /// </summary>
-        private void TouchBubble()
-        {
-            _getPoint += 10;
-            _canGetPointFlags[(int)GetPointOnTouch.Bubble] = false;
-        }
-        /// <summary>
-        /// 調味料に触れる
-        /// </summary>
-        private void TouchSeasoning()
-        {
-            EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Point_UP).parent = _foodStatus.FoodPositionNotRotate.transform;
-            SoundManager.Instance.PlaySE(SoundEffectID.point_up);
-            //マイナスを考慮 例 -50 のとき 50点 → 100点
-            _getPoint = 2 * Mathf.Abs(_getPoint);
-            _canGetPointFlags[(int)GetPointOnTouch.Seasoning] = false;
-        }
-        /// <summary>
-        /// レア調味料に触れる
-        /// </summary>
-        private void TouchRareSeasoning()
-        {
-            //マイナスを考慮 例 -50 のとき 50点 → 100点
-            _getPoint = 2 * Mathf.Abs(_getPoint);
-            _canGetPointFlags[(int)GetPointOnTouch.RareSeasoning] = false;
-        }
-        /// <summary>
-        /// 汚れた皿に触れる
-        /// </summary>
-        private void TouchDirtDish()
-        {
-            EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Point_Down).parent = _foodStatus.FoodPositionNotRotate.transform;
-            SoundManager.Instance.PlaySE(SoundEffectID.point_down);
-            _getPoint -= 50;
-            if (_firstPoint + _getPoint < 0)
-            {
-                _getPoint = -100;
-            }
-            _canGetPointFlags[(int)GetPointOnTouch.DirtDish] = false;
-        }
-        /// <summary>
-        /// 壁に触れる 頭が取れていないことが条件
-        /// </summary>
-        public void TouchWall()
-        {
-            EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Point_UP).parent = _foodStatus.FoodPositionNotRotate.transform;
-            SoundManager.Instance.PlaySE(SoundEffectID.point_up);
-            _getPoint += 200;
-        }
-        /// <summary>
-        /// 初めて水洗い
-        /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        private void FirstWash()
-        {
-            _getPoint += 50;
-            _isFirstWash = false;
-        }
-        /// <summary>
-        /// 初めてタオルに触れる
-        /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        private void FirstTowelTouch()
-        {
-            EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Point_UP).parent = _foodStatus.FoodPositionNotRotate.transform;
-            SoundManager.Instance.PlaySE(SoundEffectID.point_up);
-            _getPoint += 50;
-            _isFirstTowel = false;
-        }
-        private void OnTriggerEnter(Collider other)
-        {
-            if (other.tag == TagList.Water.ToString() && _isFirstWash)
-            {
-                FirstWash();
-            }
-            /// とりあえず調味料はトリガーで
-            else if (other.tag == TagList.Seasoning.ToString() && _canGetPointFlags[(int)GetPointOnTouch.Seasoning])
-            {
-                TouchSeasoning();
-            }
-            else if (other.tag == TagList.RareSeasoning.ToString() && _canGetPointFlags[(int)GetPointOnTouch.RareSeasoning])
-            {
-                TouchRareSeasoning();
-            }
-            else if (other.tag == TagList.Bubble.ToString() && _canGetPointFlags[(int)GetPointOnTouch.Bubble])
-            {
-                TouchBubble();
-            }
-        }
-        private void OnCollisionEnter(Collision collision)
-        {
-            if (collision.gameObject.tag == TagList.Towel.ToString() && _isFirstTowel)
-            {
-                FirstTowelTouch();
-            }
-            else if (collision.gameObject.tag == TagList.DirtDish.ToString() && _canGetPointFlags[(int)GetPointOnTouch.DirtDish])
-            {
-                TouchDirtDish();
-            }
+            //自分が今までに獲得してきたすべてのポイントが倍になる StageSceneManagerに保存中
         }
     }
 }
