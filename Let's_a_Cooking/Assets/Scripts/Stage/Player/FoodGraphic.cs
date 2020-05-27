@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace Cooking.Stage
 {
+    public enum FoodGraphicState
+    {
+        Normal , HaveSeasoning , HaveRareSeasoning
+    }
     /// <summary>
     /// 食材の種類に応じて、調味料などに触れたときの見た目を変更する
     /// </summary>
