@@ -7,8 +7,8 @@ public class Fader : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void InstantateFader()
     {
-        fader = Instantiate(Resources.Load<GameObject>("FadeCanvas"));
-        faderBlack = Instantiate(Resources.Load<GameObject>("FadeCanvasBlack"));
+        fader = Instantiate(Resources.Load<GameObject>("UI/FadeCanvas"));
+        faderBlack = Instantiate(Resources.Load<GameObject>("UI/FadeCanvasBlack"));
 
         DontDestroyOnLoad(fader);
         DontDestroyOnLoad(faderBlack);
