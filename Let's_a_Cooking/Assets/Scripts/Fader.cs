@@ -7,8 +7,11 @@ public class Fader : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void InstantateFader()
     {
-        fader = Instantiate(Resources.Load<GameObject>("FadeCanvas"));
-        faderBlack = Instantiate(Resources.Load<GameObject>("FadeCanvasBlack"));
+        fader = Instantiate(Resources.Load<GameObject>("UI/FadeCanvas"));
+        faderBlack = Instantiate(Resources.Load<GameObject>("UI/FadeCanvasBlack"));
+
+        fader.GetComponent<FadeCanvas>().faderImg.raycastTarget = false;
+        faderBlack.GetComponent<FadeCanvas>().faderImg.raycastTarget = false;
 
         DontDestroyOnLoad(fader);
         DontDestroyOnLoad(faderBlack);
