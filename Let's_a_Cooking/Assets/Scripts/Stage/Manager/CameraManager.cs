@@ -287,22 +287,17 @@ namespace Cooking.Stage
         {
             //オプション画面を想定 オプション中にカメラの状態が変わることも想定(ショット中→トップカメラ(ターンスタート))
             _beforeOptionCameraMode = _cameraMode;
+            _cameraMode = afterCameraMode;
             switch (afterCameraMode)
             {
                 case CameraMode.Wait:
                     break;
                 case CameraMode.Top:
-                    //Topカメラに切り替える
-                    _cameraMode = CameraMode.Top;
                     break;
                 case CameraMode.Front:
-                    //Frontカメラに切り替える
-                    _cameraMode = CameraMode.Front;
                     frontCam.LookAt = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].CenterPoint;
                     break;
                 case CameraMode.Side:
-                    //Sideカメラに切り替える
-                    _cameraMode = CameraMode.Side;
                     break;
                 default:
                     break;
