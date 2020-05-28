@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class FadeCanvas : MonoBehaviour
 {
-    [SerializeField]private Image faderImg;
+    public Image faderImg;
     private float alpha;
     private int fadeSwitch;
     private float fadeDelta;
@@ -77,6 +77,7 @@ public class FadeCanvas : MonoBehaviour
 
     private IEnumerator StartFadeOut(float time)
     {
+        faderImg.raycastTarget = true;
         alpha = 1;
         fadeDelta = Time.deltaTime /time;
         fadeSwitch = 1;
@@ -91,6 +92,7 @@ public class FadeCanvas : MonoBehaviour
 
     private IEnumerator StartFadeIn(float time,string sceneName)
     {
+        faderImg.raycastTarget = true;
         alpha = 0;
         fadeDelta = Time.deltaTime / time;
 
@@ -109,10 +111,12 @@ public class FadeCanvas : MonoBehaviour
             if(icon !=null)icon.rectTransform.Rotate(0, 0, 60f * Time.deltaTime);
             yield return null;
         }
+        faderImg.raycastTarget = false;
     }
 
     private IEnumerator SimpleFadeIn(float time)
     {
+        faderImg.raycastTarget = true;
         alpha = 0;
         fadeDelta = Time.deltaTime / time;
 
@@ -128,6 +132,7 @@ public class FadeCanvas : MonoBehaviour
 
     private IEnumerator InAndOutProcess(float fadeIn, float wait, float fadeOut, Canvas canvas)
     {
+        faderImg.raycastTarget = true;
         alpha = 0;
         fadeDelta = Time.deltaTime / fadeIn;
 
@@ -150,6 +155,7 @@ public class FadeCanvas : MonoBehaviour
         }
         //Canvas faderCanvas = fader.GetComponent<Canvas>();
         canvas.sortingOrder = -100;
+        faderImg.raycastTarget = false;
         //Destroy(gameObject);
         yield break;
     }
