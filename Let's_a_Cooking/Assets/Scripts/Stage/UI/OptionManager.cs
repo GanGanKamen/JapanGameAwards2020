@@ -20,11 +20,7 @@ namespace Cooking
         [SerializeField] private Button engButton;
         [SerializeField] private Button chnButton;
 
-        public UnityEngine.Audio.AudioMixer gameAudio;
-
-        static public int BGM_Volume;
-        static public int SE_Volume;
-        static public Language language;
+        
 
         // Start is called before the first frame update
         void Start()
@@ -42,10 +38,7 @@ namespace Cooking
 
         public void Setdefult()
         {
-            language = GetSystemLanguage();
-            bgmSlider.value = 7;
-            seSlider.value = 7;
-            switch (language)
+            switch (OptionParamater.language)
             {
                 case Language.Japanese:
                     LanguageSwitch(0);
@@ -75,6 +68,8 @@ namespace Cooking
 
         private void MenuInit()
         {
+            bgmSlider.value = OptionParamater.BGM_Volume;
+            seSlider.value = OptionParamater.SE_Volume;
             menuWindow.SetActive(false);
             menuWindowCloseNutton.gameObject.SetActive(false);
             menubutton.gameObject.SetActive(true);
@@ -141,15 +136,15 @@ namespace Cooking
             switch (lan)
             {
                 case 0:
-                    language = Language.Japanese;
+                    OptionParamater.language = Language.Japanese;
                     jpnButton.image.color = Color.yellow;
                     break;
                 case 1:
-                    language = Language.English;
+                    OptionParamater.language = Language.English;
                     engButton.image.color = Color.yellow;
                     break;
                 case 2:
-                    language = Language.Chinese;
+                    OptionParamater.language = Language.Chinese;
                     chnButton.image.color = Color.yellow;
                     break;
             }
@@ -157,30 +152,30 @@ namespace Cooking
 
         private void SetSoundVolume(int min_dB)
         {
-            BGM_Volume = (int)bgmSlider.value;
-            SE_Volume = (int)seSlider.value;
-            bgmText.text = BGM_Volume.ToString();
-            seText.text = SE_Volume.ToString();
+            OptionParamater.BGM_Volume = (int)bgmSlider.value;
+            OptionParamater.SE_Volume = (int)seSlider.value;
+            bgmText.text = OptionParamater.BGM_Volume.ToString();
+            seText.text = OptionParamater.SE_Volume.ToString();
 
             var volDelta = Mathf.Abs(0 - min_dB) / 9;
-            var bgmVol = min_dB + volDelta * BGM_Volume;
-            var seVol = min_dB + volDelta * SE_Volume;
-            if (BGM_Volume == 0)
+            var bgmVol = min_dB + volDelta * OptionParamater.BGM_Volume;
+            var seVol = min_dB + volDelta * OptionParamater.SE_Volume;
+            if (OptionParamater.BGM_Volume == 0)
             {
-                gameAudio.SetFloat("BGMVol", -80);
+                OptionParamater.gameAudio.SetFloat("BGMVol", -80);
             }
             else
             {
-                gameAudio.SetFloat("BGMVol", bgmVol);
+                OptionParamater.gameAudio.SetFloat("BGMVol", bgmVol);
             }
             
-            if(SE_Volume == 0)
+            if(OptionParamater.SE_Volume == 0)
             {
-                gameAudio.SetFloat("SEVol", -80);
+                OptionParamater.gameAudio.SetFloat("SEVol", -80);
             }
             else
             {
-                gameAudio.SetFloat("SEVol", seVol);
+                OptionParamater.gameAudio.SetFloat("SEVol", seVol);
             }
             
         }

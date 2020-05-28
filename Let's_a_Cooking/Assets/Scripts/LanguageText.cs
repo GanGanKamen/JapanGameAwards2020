@@ -7,28 +7,29 @@ namespace Cooking
     public class LanguageText : MonoBehaviour
     {
         [SerializeField] private string[] Texts; //0 日本語,1 英語,2 中国語
-        private Language nowLanguage = OptionManager.language;
+        private Language nowLanguage = OptionParamater.language;
         private UnityEngine.UI.Text mainText;
         // Start is called before the first frame update
         void Start()
         {
-            nowLanguage = OptionManager.language;
+            nowLanguage = OptionParamater.language;
             mainText = GetComponent<UnityEngine.UI.Text>();
+            SetTextLanguage();
         }
 
         // Update is called once per frame
         void Update()
         {
-            if(nowLanguage != OptionManager.language)
+            if(nowLanguage != OptionParamater.language)
             {
                 SetTextLanguage();
-                nowLanguage = OptionManager.language;
+                nowLanguage = OptionParamater.language;
             }
         }
 
         private void SetTextLanguage()
         {
-            switch (OptionManager.language)
+            switch (OptionParamater.language)
             {
                 case Language.Japanese:
                     mainText.text = Texts[0];

@@ -222,7 +222,6 @@ MonoBehaviour:
   jpnButton: {fileID: 2342760738687686531}
   engButton: {fileID: 2342760738755124748}
   chnButton: {fileID: 2342760738384818015}
-  gameAudio: {fileID: 24100000, guid: 924a67ce007bf344ea872ace4040b9a3, type: 2}
 --- !u!1 &129967288332976363
 GameObject:
   m_ObjectHideFlags: 0
@@ -12836,7 +12835,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Texts:
-  - "SE \xB7\u97F3\u91CF"
+  - "SE \u97F3\u91CF"
   - SE Volume
   - "SE \u97F3\u91CF"
 --- !u!1 &2342760738557936355

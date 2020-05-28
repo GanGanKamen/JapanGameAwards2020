@@ -401,7 +401,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 9
   m_WholeNumbers: 1
-  m_Value: 0
+  m_Value: 7
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -905,7 +905,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 9
   m_WholeNumbers: 1
-  m_Value: 0
+  m_Value: 7
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1033,7 +1033,6 @@ MonoBehaviour:
   jpnButton: {fileID: 4006629585964864968}
   engButton: {fileID: 4006629586166914119}
   chnButton: {fileID: 4006629586201685268}
-  gameAudio: {fileID: 24100000, guid: 924a67ce007bf344ea872ace4040b9a3, type: 2}
 --- !u!1 &4006629585220748241
 GameObject:
   m_ObjectHideFlags: 0
@@ -2560,7 +2559,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Texts:
-  - "SE \xB7\u97F3\u91CF"
+  - "SE \u97F3\u91CF"
   - SE Volume
   - "SE \u97F3\u91CF"
 --- !u!1 &4006629586372509864
