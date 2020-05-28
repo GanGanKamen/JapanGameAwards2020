@@ -375,7 +375,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30f5ea41b8f593e48840eb64d119cfbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _preventTouchInputButtons: []
+  _preventTouchInputButtons:
+  - {fileID: 2342760738580143196}
 --- !u!1 &2152634588668467539
 GameObject:
   m_ObjectHideFlags: 0
@@ -1966,6 +1967,7 @@ MonoBehaviour:
   - {fileID: 2259073736573854874}
   - {fileID: 2259073736345004722}
   - {fileID: 2259073736578957479}
+  _optionMenuWindow: {fileID: 485290485}
   _initializeUis:
   - {fileID: 2259073736644760957}
   - {fileID: 2259073737496830973}
@@ -7343,7 +7345,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2259073737081810068
 RectTransform:
   m_ObjectHideFlags: 0

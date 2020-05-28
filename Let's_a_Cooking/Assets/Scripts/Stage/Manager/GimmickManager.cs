@@ -231,7 +231,7 @@ namespace Cooking.Stage
         private void InstantiateSeasoning(int seasoningIndex , Vector3 newSeasoningPosition)
         {
             ///  x(右辺) / 10(左辺)%の確率で再出現
-            if (Cooking.Random.GetRandomInt(10) < 0)
+            if (Cooking.Random.GetRandomInt(20) < 3)
             {
                 var newSeasoning = Instantiate(_seasoningPrefab);
                 newSeasoning.transform.position = newSeasoningPosition;

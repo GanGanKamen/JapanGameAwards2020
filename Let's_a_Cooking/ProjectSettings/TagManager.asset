@@ -19,6 +19,7 @@ TagManager:
   - StartArea
   - Chair
   - CameraZone
+  - NotBeAITarget
   layers:
   - Default
   - TransparentFX

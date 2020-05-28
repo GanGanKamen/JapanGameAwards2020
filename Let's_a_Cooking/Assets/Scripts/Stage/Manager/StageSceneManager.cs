@@ -12,7 +12,7 @@ namespace Cooking.Stage
     /// </summary>
     public enum TagList
     {
-        Finish, Floor, Water, Seasoning, Towel, DirtDish, RareSeasoning, Wall, TowelAbovePoint, Knife, Bubble, BubbleZone, StartArea, Chair, CameraZone
+        Finish, Floor, Water, Seasoning, Towel, DirtDish, RareSeasoning, Wall, TowelAbovePoint, Knife, Bubble, BubbleZone, StartArea, Chair, CameraZone , NotBeAITarget
     }
     public enum LayerList
     {
@@ -87,9 +87,9 @@ namespace Cooking.Stage
         private Transform _startPositionObject = null;
         public GameObject[] Goal
         {
-            get { return _goal[0] ? _goal : GameObject.FindGameObjectsWithTag(TagList.Finish.ToString()); ; }
+            get { return _goals[0] ? _goals : GameObject.FindGameObjectsWithTag(TagList.Finish.ToString()); }
         }
-        private GameObject[] _goal = null;
+        private GameObject[] _goals = null;
         /// <summary>
         /// 終了時の各プレイヤーの合計ポイント
         /// </summary>
@@ -260,6 +260,12 @@ namespace Cooking.Stage
             _turnManager = TurnManager.Instance;
             _chooseFoodTypes = new FoodType[GameManager.Instance.PlayerSumNumber];
             _aiLevels = new AILevel[GameManager.Instance.ComputerNumber];
+            var goals = GameObject.FindGameObjectsWithTag(TagList.Finish.ToString());
+            _goals = new GameObject[goals.Length];
+            for (int i = 0; i < _goals.Length; i++)
+            {
+                _goals[i] = goals[i];
+            }
             for (int i = 0; i < _chooseFoodTypes.Length; i++)
             {
                 _chooseFoodTypes[i] = FoodType.Shrimp;
@@ -584,6 +590,24 @@ namespace Cooking.Stage
         private void ChangeGameState(StageGameState stageGameState)
         {
 
+        }
+        /// <summary>
+        /// オプションメニューを開くときに呼ばれる、各オブジェクトの状態変更メソッド
+        /// </summary>
+        public void OpenOptionMenu()
+        {
+            CameraManager.Instance.ChangeCameraState(CameraMode.Wait);
+            ShotManager.Instance.ChangeShotState(ShotState.WaitMode);
+            UIManager.Instance.ChangeButtonsEnableOnActiveUI(false);
+        }
+        /// <summary>
+        /// オプションメニューを閉じるときに呼ばれる、各オブジェクトの状態変更メソッド
+        /// </summary>
+        public void CloseOptionMenu()
+        {
+            CameraManager.Instance.ReturnOptionMode();
+            ShotManager.Instance.ReturnOptionMode();
+            UIManager.Instance.ChangeButtonsEnableOnActiveUI(true);
         }
     }
 }

@@ -1104,9 +1104,16 @@ namespace Cooking.Stage
                         Vector3 shrimpBoxColliderSize = food.shrimp.shrimpBoxCollider.size * 1.5f;//エビのコライダーの親オブジェクトのlocalscaleを掛け算
                         return (T)(object)shrimpBoxColliderSize;
                     case FoodType.Egg:
-                        float eggColliderHeight = food.egg.eggCollider.height * transform.localScale.y / 2;
-                        float eggColliderRadius = food.egg.eggCollider.radius * transform.localScale.y;
-                        return (T)(object)new Vector2(eggColliderHeight, eggColliderRadius);
+                        if (food.egg.HasBroken)
+                        {
+                            return (T)(object)new Vector3(1, 1,1);
+                        }
+                        else
+                        {
+                            float eggColliderHeight = food.egg.eggCollider.height * transform.localScale.y / 2;
+                            float eggColliderRadius = food.egg.eggCollider.radius * transform.localScale.y;
+                            return (T)(object)new Vector2(eggColliderHeight, eggColliderRadius);
+                        }
                     case FoodType.Chicken:
                         var size = food.chicken.chickenBoxCollider.size;
                         size.x *= transform.localScale.x;
