@@ -19,6 +19,7 @@ namespace Cooking.Stage
             get { return _shotMode; }
         }
         private ShotState _shotMode = ShotState.WaitMode;
+        private ShotState _beforeOptionShotState = ShotState.WaitMode;
         public ShotParameter ShotParameter
         {
             get { return _shotParameter; }
@@ -102,6 +103,8 @@ namespace Cooking.Stage
             {
                 ///スタート時・見下ろしカメラ時・ゲーム終了時を想定
 				case ShotState.WaitMode:
+                    if(UIManager.Instance.OptionMenuWindow.activeInHierarchy)
+                    _shotPower = ChangeShotPower(_shotParameter.MinShotPower, _shotParameter.MaxShotPower, 2 * Mathf.Abs(_shotParameter.MaxShotPower - _shotParameter.MinShotPower), _shotPower);//速度ログ 5 20 (差15のとき)→ 30  差の倍速で算出   
                     break;
                 case ShotState.AngleMode:
                     if (!_turnManager.IsAITurn)
@@ -262,6 +265,7 @@ namespace Cooking.Stage
         /// <param name="shotState"></param>
         public void ChangeShotState(ShotState shotState)
         {
+            _beforeOptionShotState = _shotMode;
             _shotMode = shotState;
             switch (_shotMode)
             {
@@ -298,6 +302,13 @@ namespace Cooking.Stage
                 default:
                     break;
             }
+        }
+        /// <summary>
+        /// オプションからゲーム画面に戻る時呼ばれる
+        /// </summary>
+        public void ReturnOptionMode()
+        {
+            _shotMode = _beforeOptionShotState;
         }
         /// <summary>
         /// 現在のショットの向きを更新 速度ベクトルはメソッド内で標準化 壁反射後・AI発射時

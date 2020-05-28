@@ -6,6 +6,14 @@ using Touches;
 
 namespace Cooking.Stage
 {
+    public enum CameraMode
+    {
+        /// <summary>カメラの移動処理がない Waitに入る前の状態をキープ</summary>
+        Wait,
+        Top,
+        Front,
+        Side
+    }
     /// <summary>
     /// ターン開始時にアクティブなプレイヤーの情報を取得し、そのプレイヤーを追従
     /// </summary>
@@ -29,14 +37,11 @@ namespace Cooking.Stage
         bool _isTouchOnGamePlay;
         /// <summary> 0 == top, 1 == front, 2 == side </summary>
         public int camNo = 0;
-        enum CameraMode
-        {
-            Wait,
-            Top,
-            Front,
-            Side
-        }
-        CameraMode cameraMode = CameraMode.Wait;
+        CameraMode _cameraMode = CameraMode.Wait;
+        /// <summary>
+        /// オプション開く前のカメラの状態
+        /// </summary>
+        CameraMode _beforeOptionCameraMode = CameraMode.Wait;
         /// <summary>
         /// 見下ろしカメラの角度 少し斜めから見る
         /// </summary>
@@ -107,7 +112,7 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
-            switch (cameraMode)
+            switch (_cameraMode)
             {
                 case CameraMode.Wait:
                     break;
@@ -274,21 +279,41 @@ namespace Cooking.Stage
             tempRortation.y = tempShotRotation.y;
             _cameraRotateCenter.eulerAngles = tempRortation;
         }
-        public void OnTop()
+        /// <summary>
+        /// カメラモードを変更
+        /// </summary>
+        /// <param name="afterCameraMode">変更後のカメラの状態</param>
+        public void ChangeCameraState(CameraMode afterCameraMode)
         {
-            //Topカメラに切り替える
-            cameraMode = CameraMode.Top;
+            //オプション画面を想定 オプション中にカメラの状態が変わることも想定(ショット中→トップカメラ(ターンスタート))
+            _beforeOptionCameraMode = _cameraMode;
+            switch (afterCameraMode)
+            {
+                case CameraMode.Wait:
+                    break;
+                case CameraMode.Top:
+                    //Topカメラに切り替える
+                    _cameraMode = CameraMode.Top;
+                    break;
+                case CameraMode.Front:
+                    //Frontカメラに切り替える
+                    _cameraMode = CameraMode.Front;
+                    frontCam.LookAt = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].CenterPoint;
+                    break;
+                case CameraMode.Side:
+                    //Sideカメラに切り替える
+                    _cameraMode = CameraMode.Side;
+                    break;
+                default:
+                    break;
+            }
         }
-        public void OnFront()
+        /// <summary>
+        /// オプションからゲーム画面に戻る時呼ばれる
+        /// </summary>
+        public void ReturnOptionMode()
         {
-            //Frontカメラに切り替える
-            cameraMode = CameraMode.Front;
-            frontCam.LookAt = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].CenterPoint; 
-        }
-        public void OnSide()
-        {
-            //Sideカメラに切り替える
-            cameraMode = CameraMode.Side;
+            _cameraMode = _beforeOptionCameraMode;
         }
         /// <summary>
         /// ショット中に呼ばれる

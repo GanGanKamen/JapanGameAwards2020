@@ -122,10 +122,11 @@ namespace Cooking.Stage
                             _uIManager.ChangeUI(afterScreenState);
                             break;
                         case ButtonName.ShottingMode:
+                            button.enabled = false;
                             var _turnManager = TurnManager.Instance;
                            // _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].PlayerAnimatioManage(false);
                             _uIManager.PlayModeUI.ChangeShotButtonTouched(true);
-                            StartCoroutine(ShotButtonWait(afterScreenState));
+                            StartCoroutine(ShotButtonWait(afterScreenState,button));
                             //パワーメーターを停止して待機させる
                             ShotManager.Instance.ChangeShotState(ShotState.WaitMode);
                             break;
@@ -205,10 +206,11 @@ namespace Cooking.Stage
                     break;
             }
         }
-        IEnumerator ShotButtonWait(ScreenState afterScreenState )
+        IEnumerator ShotButtonWait(ScreenState afterScreenState ,Button button)
         {
             yield return new WaitForSeconds(_shotButtonWaitTime);
             _uIManager.ChangeUI(afterScreenState);
+            button.enabled = true;
         }
 
     }

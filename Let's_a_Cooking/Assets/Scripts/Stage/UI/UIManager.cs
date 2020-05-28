@@ -39,8 +39,19 @@ namespace Cooking.Stage
         /// ゲーム開始にかかる時間
         /// </summary>
         private float _startTime = 1;
+        public GameObject OptionMenuWindow
+        {
+            get { return _optionMenuWindow; }
+        }
+        /// <summary>
+        /// オプションメニューが出ている間は画面タッチ処理は行わない
+        /// </summary>
+       [SerializeField] private GameObject _optionMenuWindow = null;
 
         #region ゲーム初期化用変数
+        /// <summary>
+        /// ゲーム初期化UI ChooseFood,ChooseAILevel
+        /// </summary>
         [SerializeField] private GameObject[] _initializeUis = new GameObject[System.Enum.GetValues(typeof(InitializeChoose)).Length];
         #endregion
 
@@ -144,7 +155,6 @@ namespace Cooking.Stage
             switch (_mainUIState)
             {
                 case ScreenState.InitializeChoose:
-
                     break;
                 case ScreenState.DecideOrder:
                     if (!_invalidInputDecideOrder)
@@ -152,30 +162,37 @@ namespace Cooking.Stage
                         //float スライダー
                         //powerMeterValue = _orderGage.value;
                         //_orderGage.value = ChangeShotPower(_orderMin, _orderMax, _orderMeterSpeed, powerMeterValue);
+                        //オプション画面を開いていても変化する
                         _powerMeterValue = ChangeShotPower(_orderMin, _orderMax, _orderMeterSpeed, _powerMeterValue);
                         //int Image
                         _orderGagesOfInteger.sprite = ChoosePowerMeterUIOfInteger(_powerMeterValue / _orderMax);
                         if (!TurnManager.Instance.IsAITurn)
                         {
-                            if (TouchInput.GetTouchPhase() == TouchInfo.Down)
+                            if (!_optionMenuWindow.activeInHierarchy)
                             {
-                                _invalidInputDecideOrder = true;
-                                //順番を決める数値を決定
-                                //var orderPower = _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _orderGage.value);
-                                var orderPower = _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _powerMeterValue);
-                                _orderPowerTexts[_turnManager.ActivePlayerIndex].text = orderPower.ToString("00.00");
-                                StartCoroutine(WaitOnDecideOrder());
-                            }
-                            else if (Input.GetKeyDown(KeyCode.Space))
-                            {
-                                _invalidInputDecideOrder = true;
-                                //順番を決める数値を決定
-                                //_orderGage.value = 100;
-                                _powerMeterValue = 100;
-                                _orderGagesOfInteger.sprite = ChoosePowerMeterUIOfInteger(_powerMeterValue / _orderMax);
-                                var orderPower = _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _powerMeterValue);
-                                _orderPowerTexts[_turnManager.ActivePlayerIndex].text = orderPower.ToString("00.00");
-                                StartCoroutine(WaitOnDecideOrder());
+                                if (!PreventTouchInputCollision.Instance.TouchInvalid[(int)PreventTouchInputCollision.ButtonName.OptionButton])
+                                {
+                                    if (TouchInput.GetTouchPhase() == TouchInfo.Down)
+                                    {
+                                        _invalidInputDecideOrder = true;
+                                        //順番を決める数値を決定
+                                        //var orderPower = _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _orderGage.value);
+                                        var orderPower = _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _powerMeterValue);
+                                        _orderPowerTexts[_turnManager.ActivePlayerIndex].text = orderPower.ToString("00.00");
+                                        StartCoroutine(WaitOnDecideOrder());
+                                    }
+                                    else if (Input.GetKeyDown(KeyCode.Space))
+                                    {
+                                        _invalidInputDecideOrder = true;
+                                        //順番を決める数値を決定
+                                        //_orderGage.value = 100;
+                                        _powerMeterValue = 100;
+                                        _orderGagesOfInteger.sprite = ChoosePowerMeterUIOfInteger(_powerMeterValue / _orderMax);
+                                        var orderPower = _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _powerMeterValue);
+                                        _orderPowerTexts[_turnManager.ActivePlayerIndex].text = orderPower.ToString("00.00");
+                                        StartCoroutine(WaitOnDecideOrder());
+                                    }
+                                }
                             }
                         }
                     }
@@ -295,15 +312,15 @@ namespace Cooking.Stage
                     break;
                 case ScreenState.FrontMode:
                     ShotManager.Instance.ChangeShotState(ShotState.AngleMode);
-                    CameraManager.Instance.OnFront();
+                    CameraManager.Instance.ChangeCameraState(CameraMode.Front);
                     break;
                 case ScreenState.SideMode:
                     ShotManager.Instance.ChangeShotState(ShotState.WaitMode);
-                    CameraManager.Instance.OnSide();
+                    CameraManager.Instance.ChangeCameraState(CameraMode.Side);
                     break;
                 case ScreenState.LookDownMode:
                     ShotManager.Instance.ChangeShotState(ShotState.WaitMode);
-                    CameraManager.Instance.OnTop();
+                    CameraManager.Instance.ChangeCameraState(CameraMode.Top);
                     break;
                 case ScreenState.ShottingMode:
                     _beforeShotScreenState = ScreenState.ShottingMode;
@@ -359,6 +376,21 @@ namespace Cooking.Stage
         {
             yield return new WaitForSeconds(_startTime);
             _playModeUI.ChangeUIOnTurnStart();
+        }
+        /// <summary>
+        /// UI内にあるボタンを取得し、触れるかどうかの状態を変更 オプション中にUIの状態が変わることも考慮
+        /// </summary>
+        /// <param name="isEnable">触れる true 触れない false</param>
+        public void ChangeButtonsEnableOnActiveUI(bool isEnable)
+        {
+            foreach (var stageSceneMainUI in _stageSceneMainUIs)
+            {
+                Button[] buttons = stageSceneMainUI.GetComponentsInChildren<Button>();
+                foreach (var button in buttons)
+                {
+                    button.enabled = isEnable;
+                }
+            }
         }
     }
 }

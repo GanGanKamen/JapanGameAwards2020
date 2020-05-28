@@ -74,7 +74,7 @@ namespace Cooking.Stage
         /// <param name="foodType">食材の種類</param>
         /// <param name="colliderSizeInformation">コライダーのSize情報 このエリアでボックスまたはカプセルなレイキャストを行う</param>
         /// <returns></returns>
-        public static T PredictFallPointByBoxRayCast<T, U>(Vector3 predictStartPoint, Vector3 firstSpeedVector, float shotAngleX , FoodType foodType, U colliderSizeInformation) where U : struct
+        public static T PredictFallPointByBoxRayCast<T, U>(Vector3 predictStartPoint, Vector3 firstSpeedVector, float shotAngleX, FoodType foodType, U colliderSizeInformation) where U : struct
         {
             //, activeFood.GetColliderSize<Vector3>()
             _foodType = foodType;
@@ -85,19 +85,19 @@ namespace Cooking.Stage
                 Vector3 originPoint = predictStartPoint + new Vector3(firstSpeedVector.x * flyTime, CalculateYposition(firstSpeedVector, flyTime), firstSpeedVector.z * flyTime);
                 flyTime = i / 200f; //累積誤差の発生を防ぐ 精度を決める変数 精度上げると処理が重い
                 Vector3 endPoint = predictStartPoint + new Vector3(firstSpeedVector.x * flyTime, CalculateYposition(firstSpeedVector, flyTime), firstSpeedVector.z * flyTime);
+                Vector3 fallPoint = Vector3.zero;
+                GameObject fallPointGameObject = null;
                 //終点 - 始点で方向ベクトルを算出
                 var direction = endPoint - originPoint;
                 //レイを可視化
-                Debug.DrawRay(originPoint, direction, Color.red, 0.2f);
+                Debug.DrawRay(originPoint, direction, Color.red, 10);//0.2f);
                 if (typeof(T) == typeof(GameObject))
                 {
                     if (typeof(U) == typeof(Vector3))
                     {
-                        GameObject fallPointGameObject = CastFoodSizeRayOnKitchen<GameObject, Vector3>(originPoint, direction, (Vector3)(object)colliderSizeInformation);
+                        fallPoint = CastFoodSizeRayOnKitchen(out fallPointGameObject, originPoint, direction, (Vector3)(object)colliderSizeInformation);
                         if (fallPointGameObject != null)
                         {
-                            //ゲームオブジェクトの場合もシーン上にデバッグ用として落下地点を描画
-                            Vector3 fallPoint = CastFoodSizeRayOnKitchen<Vector3, Vector3>(originPoint, direction, (Vector3)(object)colliderSizeInformation);
                             if (fallPoint != Vector3.zero)
                             {
                                 _fallPoint = fallPoint;
@@ -113,7 +113,7 @@ namespace Cooking.Stage
                     }
                     else if (typeof(U) == typeof(Vector2))
                     {
-                        GameObject fallPointGameObject = CastFoodSizeRayOnKitchen<GameObject, Vector2>(originPoint, direction, (Vector2)(object)colliderSizeInformation);
+                        fallPoint = CastFoodSizeRayOnKitchen(out fallPointGameObject, originPoint, direction, (Vector2)(object)colliderSizeInformation);
                         if (fallPointGameObject != null)
                         {
                             //ゲームオブジェクトの場合もシーン上にデバッグ用として落下地点を描画
@@ -121,11 +121,10 @@ namespace Cooking.Stage
                             ////_capsuleColliderSizeInformation.capuleColliderCenter = originPoint;
                             //_capsuleColliderSizeInformation.radius = capsuleColliderInformation[(int)CapsuleColliderScaleData.Radius];
                             //_capsuleColliderSizeInformation.distanceVector = distanceVector;
-                            //if (fallPoint != Vector3.zero)
-                            //{
-                            //    _fallPoint = fallPoint;
-                            //    _boxColliderSize = (Vector3)(object)colliderSizeInformation;
-                            //}
+                            if (fallPoint != Vector3.zero)
+                            {
+                                _fallPoint = fallPoint;
+                            }
                             _fallTime = flyTime;
                             return (T)(object)fallPointGameObject;
                         }
@@ -145,11 +144,14 @@ namespace Cooking.Stage
                     if (typeof(U) == typeof(Vector3))
                     {
                         //レイを飛ばして当たった場所を保存
-                        Vector3 fallPoint = CastFoodSizeRayOnKitchen<Vector3, Vector3>(originPoint, direction, (Vector3)(object)colliderSizeInformation);
-                        if (fallPoint != Vector3.zero)
+                        fallPoint = CastFoodSizeRayOnKitchen(out fallPointGameObject, originPoint, direction, (Vector3)(object)colliderSizeInformation);
+                        if (fallPointGameObject != null)
                         {
-                            _fallPoint = fallPoint;
-                            _boxColliderSize = (Vector3)(object)colliderSizeInformation;
+                            if (fallPoint != Vector3.zero)
+                            {
+                                _fallPoint = fallPoint;
+                                _boxColliderSize = (Vector3)(object)colliderSizeInformation;
+                            }
                             _fallTime = flyTime;
                             return (T)(object)fallPoint;
                         }
@@ -161,10 +163,13 @@ namespace Cooking.Stage
                     else if (typeof(U) == typeof(Vector2))
                     {
                         //レイを飛ばして当たった場所を保存
-                        Vector3 fallPoint = CastFoodSizeRayOnKitchen<Vector3, Vector2>(originPoint, direction, (Vector2)(object)colliderSizeInformation);
-                        if (fallPoint != Vector3.zero)
+                        fallPoint = CastFoodSizeRayOnKitchen(out fallPointGameObject, originPoint, direction, (Vector2)(object)colliderSizeInformation);
+                        if (fallPointGameObject != null)
                         {
-                            _fallPoint = fallPoint;
+                            if (fallPoint != Vector3.zero)
+                            {
+                                _fallPoint = fallPoint;
+                            }
                             _fallTime = flyTime;
                             return (T)(object)fallPoint;
                         }
@@ -188,6 +193,77 @@ namespace Cooking.Stage
                 Debug.LogAssertion("指定した型が想定と異なります");
                 return default(T);
             }
+        }
+        /// <summary>
+        /// box・capsuleレイキャストによる落下地点の予測 見つからないときは0ベクトルまたはnull
+        /// </summary>
+        /// <typeparam name="T">ボックスレイキャスト→Vector3 3辺の長さの半分 カプセルレイキャスト→Vector2 高さと半径</typeparam>
+        /// <param name="fallPointObject">落下地点のオブジェクトの持つタグ 床判定を行う</param>
+        /// <param name="predictStartPoint">予測開始地点</param>
+        /// <param name="firstSpeedVector">初速度ベクトル</param>
+        /// <param name="shotAngleX">食材を打ち出す地面に対して垂直方向の角度 角度-0 ~ 90に変換後渡す</param>
+        /// <param name="foodType">食材の種類</param>
+        /// <param name="colliderSizeInformation">コライダーのSize情報 このエリアでボックスまたはカプセルなレイキャストを行う</param>
+        /// <returns></returns>
+        public static Vector3 PredictFallPointByBoxRayCast<T>(out GameObject fallPointGameObject, Vector3 predictStartPoint, Vector3 firstSpeedVector, float shotAngleX, FoodType foodType, T colliderSizeInformation) where T : struct
+        {
+            _foodType = foodType;
+            int i = 1;//累積誤差発生を防ぐためのインクリメント変数
+            //レイによる落下地点予測 無限ループ防止目的で 滞空時間100秒制限
+            for (float flyTime = 0f; flyTime < 30; i++)
+            {
+                Vector3 originPoint = predictStartPoint + new Vector3(firstSpeedVector.x * flyTime, CalculateYposition(firstSpeedVector, flyTime), firstSpeedVector.z * flyTime);
+                flyTime = i / 200f; //累積誤差の発生を防ぐ 精度を決める変数 精度上げると処理が重い
+                Vector3 endPoint = predictStartPoint + new Vector3(firstSpeedVector.x * flyTime, CalculateYposition(firstSpeedVector, flyTime), firstSpeedVector.z * flyTime);
+                //終点 - 始点で方向ベクトルを算出
+                var direction = endPoint - originPoint;
+                Vector3 fallPoint = Vector3.zero;
+                //レイを可視化
+                Debug.DrawRay(originPoint, direction, Color.red, 0.2f);
+                if (typeof(T) == typeof(Vector3))
+                {
+                    fallPoint = CastFoodSizeRayOnKitchen(out fallPointGameObject , originPoint, direction, (Vector3)(object)colliderSizeInformation);
+                    if (fallPointGameObject != null)
+                    {
+                        //ゲームオブジェクトの場合もシーン上にデバッグ用として落下地点を描画
+                        fallPoint = CastFoodSizeRayOnKitchen<Vector3, Vector3>(originPoint, direction, (Vector3)(object)colliderSizeInformation);
+                        if (fallPoint != Vector3.zero)
+                        {
+                            _fallPoint = fallPoint;
+                            _boxColliderSize = (Vector3)(object)colliderSizeInformation;
+                        }
+                        _fallTime = flyTime;
+                        return fallPoint;
+                    }
+                    if (flyTime > 29.9f)
+                    {
+                        Debug.Log("当たっていない");
+                    }
+                }
+                else if (typeof(T) == typeof(Vector2))
+                {
+                    fallPoint = CastFoodSizeRayOnKitchen(out fallPointGameObject, originPoint, direction, (Vector2)(object)colliderSizeInformation);
+
+                    if (fallPointGameObject != null)
+                    {
+                        fallPoint = CastFoodSizeRayOnKitchen<Vector3, Vector2>(originPoint, direction, (Vector2)(object)colliderSizeInformation);
+                        if (fallPoint != Vector3.zero)
+                        {
+                            _fallPoint = fallPoint;
+                            //_capsuleColliderSizeInformation = (Vector3)(object)colliderSizeInformation;
+                        }
+                        _fallTime = flyTime;
+                        return fallPoint;
+                    }
+                    if (flyTime > 29.9f)
+                    {
+                        Debug.Log("当たっていない");
+                    }
+                }
+            }
+            fallPointGameObject = null;
+           // Debug.LogAssertion("指定した型が想定と異なります");
+            return default(Vector3);
         }
         /// <summary>
         /// 最初に衝突した時の跳ねる方向の速度ベクトル(理論値)を算出(OnCollisionEnterでは食材の回転で実行値が安定しなかったため)
@@ -238,7 +314,7 @@ namespace Cooking.Stage
                     }
                     else
                     {
-                        Debug.LogAssertion("指定した型が想定と異なります");
+                        //Debug.LogAssertion("指定した型が想定と異なります");
                         return default(T);
                     }
                 }
@@ -266,7 +342,7 @@ namespace Cooking.Stage
                 var distanceFromCapsuleCenterToSphereCenter = capsuleColliderInformation[(int)CapsuleColliderScaleData.Height] - capsuleColliderInformation[(int)CapsuleColliderScaleData.Radius];
                 var distanceVector = new Vector3(0, distanceFromCapsuleCenterToSphereCenter, 0);
                 //Kitchenレイヤーとレイ判定を行う
-                if (Physics.CapsuleCast(originPoint - distanceVector, originPoint + distanceVector, capsuleColliderInformation[(int)CapsuleColliderScaleData.Radius], direction, out hit,  direction.magnitude, StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]))
+                if (Physics.CapsuleCast(originPoint - distanceVector, originPoint + distanceVector, capsuleColliderInformation[(int)CapsuleColliderScaleData.Radius], direction, out hit, direction.magnitude, StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]))
                 {
                     _capsuleColliderSizeInformation.capuleColliderCenter = originPoint;
                     _capsuleColliderSizeInformation.radius = capsuleColliderInformation[(int)CapsuleColliderScaleData.Radius];
@@ -281,7 +357,7 @@ namespace Cooking.Stage
                     }
                     else
                     {
-                        Debug.LogAssertion("指定した型が想定と異なります");
+                        //Debug.LogAssertion("指定した型が想定と異なります");
                         return default(T);
                     }
                 }
@@ -303,8 +379,62 @@ namespace Cooking.Stage
             }
             else
             {
-                Debug.LogAssertion("指定した型が想定と異なります");
+                //Debug.LogAssertion("指定した型が想定と異なります");
                 return default(T);
+            }
+        }
+        /// <summary>
+        /// レイを飛ばしてKitchenレイヤーに当たった座標を返す
+        /// </summary>
+        /// <param name="originPoint"></param>
+        /// <param name="direction"></param>
+        /// <returns>Kitchenレイヤーに当たったかどうか</returns>
+        private static Vector3 CastFoodSizeRayOnKitchen<T>(out GameObject fallPointObject, Vector3 originPoint, Vector3 direction, T ColliderSize) where T : struct
+        {
+            //Rayが当たったオブジェクトの情報を入れる箱
+            RaycastHit hit;    //原点        方向
+            Ray ray = new Ray(originPoint, direction);
+            //ボックス
+            if (typeof(T) == typeof(Vector3))
+            {
+                //Kitchenレイヤーとレイ判定を行う
+                if (Physics.BoxCast(originPoint, (Vector3)(object)ColliderSize * 0.5f, direction, out hit, Quaternion.identity, direction.magnitude, StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]))
+                {
+                    fallPointObject = hit.transform.gameObject ;
+                    return hit.point;
+                }
+                else
+                {
+                    fallPointObject = null;
+                    return originPoint;
+                }
+            }
+            //カプセル
+            else if (typeof(T) == typeof(Vector2))
+            {
+                var capsuleColliderInformation = (Vector2)(object)ColliderSize;
+                var distanceFromCapsuleCenterToSphereCenter = capsuleColliderInformation[(int)CapsuleColliderScaleData.Height] - capsuleColliderInformation[(int)CapsuleColliderScaleData.Radius];
+                var distanceVector = new Vector3(0, distanceFromCapsuleCenterToSphereCenter, 0);
+                //Kitchenレイヤーとレイ判定を行う
+                if (Physics.CapsuleCast(originPoint - distanceVector, originPoint + distanceVector, capsuleColliderInformation[(int)CapsuleColliderScaleData.Radius], direction, out hit, direction.magnitude, StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]))
+                {
+                    _capsuleColliderSizeInformation.capuleColliderCenter = originPoint;
+                    _capsuleColliderSizeInformation.radius = capsuleColliderInformation[(int)CapsuleColliderScaleData.Radius];
+                    _capsuleColliderSizeInformation.distanceVector = distanceVector;
+                    fallPointObject = hit.transform.gameObject;
+                    return hit.point;
+                }
+                else
+                {
+                    fallPointObject = null;
+                    return originPoint;
+                }
+            }
+            else
+            {
+                //Debug.LogAssertion("指定した型が想定と異なります");
+                fallPointObject = null;
+                return originPoint;
             }
         }
         #endregion

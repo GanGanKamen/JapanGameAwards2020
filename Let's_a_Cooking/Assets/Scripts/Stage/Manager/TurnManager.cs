@@ -146,6 +146,11 @@ namespace Cooking.Stage
             PlayerInOrder();
             SetObjectsPositionForNextPlayer(_activePlayerIndex);
             CheckNextPlayerAI();
+            foreach (var foodStatus in _foodStatuses)
+            {
+                if(foodStatus.FoodType == FoodType.Shrimp)
+                foodStatus.FreezePosition();
+            }
             ///ターンを1にセットしてゲーム開始
             _turnNumber = 1;
             if (_isAITurn)
