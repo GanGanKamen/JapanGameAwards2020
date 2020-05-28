@@ -77,7 +77,6 @@ public class FadeCanvas : MonoBehaviour
 
     private IEnumerator StartFadeOut(float time)
     {
-        faderImg.raycastTarget = true;
         alpha = 1;
         fadeDelta = Time.deltaTime /time;
         fadeSwitch = 1;

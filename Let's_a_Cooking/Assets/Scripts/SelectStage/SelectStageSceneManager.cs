@@ -9,8 +9,9 @@ namespace Cooking.SelectStage
     {
         [SerializeField] private Button backButton;
         [SerializeField] private Button goButton;
+        [SerializeField] private Sprite defultImage;
+        [SerializeField] private Sprite selectedImage;
         [SerializeField] private Button[] buttonObjects;
-        [SerializeField] private GameObject[] selectedObjects;
         [SerializeField] private GameObject[] stageViews;
         private int beSelectedNum = 0;
 
@@ -35,7 +36,7 @@ namespace Cooking.SelectStage
             {
                 int j = i;
                 buttonObjects[j].onClick.AddListener(() => SelectStageNumber(j));
-                selectedObjects[j].SetActive(false);
+                buttonObjects[j].image.sprite = defultImage;
                 stageViews[i].SetActive(false);
             }
         }
@@ -43,13 +44,13 @@ namespace Cooking.SelectStage
         public void SelectStageNumber(int stageNumber)
         {
             beSelectedNum = stageNumber;
-            for (int i = 0; i < selectedObjects.Length; i++)
+            for (int i = 0; i < buttonObjects.Length; i++)
             {
-                selectedObjects[i].SetActive(false);
+                buttonObjects[i].image.sprite = defultImage;
                 stageViews[i].SetActive(false);
             }
             stageViews[beSelectedNum].SetActive(true);
-            selectedObjects[beSelectedNum].SetActive(true);
+            buttonObjects[beSelectedNum].image.sprite = selectedImage;
         }
 
         public void GotoStage()
@@ -69,7 +70,6 @@ namespace Cooking.SelectStage
 
         IEnumerator LoadSceneCoroutine(SceneName sceneName)
         {
-            Debug.Log(sceneName);
             if(sceneName == SceneName.PlayScene)
             {
                 Fader.FadeInAndOut(0.8f, 1.4f, 0.8f);

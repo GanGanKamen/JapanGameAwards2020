@@ -525,7 +525,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -700, y: 150}
-  m_SizeDelta: {x: 400, y: 150}
+  m_SizeDelta: {x: 419.2, y: 176.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &244788997
 MonoBehaviour:
@@ -594,13 +594,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.41201383, g: 0.990566, b: 0.36912602, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: -6184050716912831369, guid: 36288a299a43e8641924b2d27017855f,
+    type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -952,7 +953,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &436558178
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1362,7 +1363,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &691072247
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2201,7 +2202,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -700, y: -250}
-  m_SizeDelta: {x: 400, y: 150}
+  m_SizeDelta: {x: 419.2, y: 176.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1367280403
 MonoBehaviour:
@@ -2270,13 +2271,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.41201383, g: 0.990566, b: 0.36912602, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: -6184050716912831369, guid: 36288a299a43e8641924b2d27017855f,
+    type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -2330,7 +2332,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -700, y: -50}
-  m_SizeDelta: {x: 400, y: 150}
+  m_SizeDelta: {x: 419.2, y: 176.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1373492111
 MonoBehaviour:
@@ -2399,13 +2401,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.41201383, g: 0.990566, b: 0.36912602, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: -6184050716912831369, guid: 36288a299a43e8641924b2d27017855f,
+    type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -2467,14 +2470,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   backButton: {fileID: 201203220}
   goButton: {fileID: 338474567}
+  defultImage: {fileID: -6184050716912831369, guid: 36288a299a43e8641924b2d27017855f,
+    type: 3}
+  selectedImage: {fileID: 1688583436801653072, guid: d20be1784fbb7af40b36c860243b36bc,
+    type: 3}
   buttonObjects:
   - {fileID: 244788997}
   - {fileID: 1373492111}
   - {fileID: 1367280403}
-  selectedObjects:
-  - {fileID: 691072246}
-  - {fileID: 436558177}
-  - {fileID: 2054918913}
   stageViews:
   - {fileID: 63192259}
   - {fileID: 1157659395}
@@ -2838,7 +2841,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2054918914
 RectTransform:
   m_ObjectHideFlags: 0
