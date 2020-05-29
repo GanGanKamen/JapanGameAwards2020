@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: NewRenderObjects
   m_EditorClassIdentifier: 
   settings:
-    passTag: RenderObjectsFeature
+    passTag: NewRenderObjects
     Event: 300
     filterSettings:
       RenderQueueType: 0
