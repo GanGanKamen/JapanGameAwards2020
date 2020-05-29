@@ -56,7 +56,14 @@ namespace Cooking.Stage
         /// <summary>
         ///あわ発生領域の2端(x.y.zの最小値と最大値)の座標 この2点の間の座標に発生させる
         /// </summary>
-        Vector3[] _bubbleLimitPosition;
+        public Vector3[] BubbleLimitPosition
+        {
+            get { return _bubbleLimitPosition; }
+        }
+        /// <summary>
+        ///あわ発生領域の2端(x.y.zの最小値と最大値)の座標 この2点の間の座標に発生させる
+        /// </summary>
+        private Vector3[] _bubbleLimitPosition;
         private Vector3 _speedVectorOfBubble;
         [SerializeField] private float _maxSpeedOfBubble = 2f;
         private GameObject _bubbleInstantiateZone;
@@ -78,6 +85,11 @@ namespace Cooking.Stage
         // Start is called before the first frame update
         void Start()
         {
+            for (int i = 1; i <= 10; i++)
+            {
+                var bubble = Instantiate(_bubblePrefab);
+                bubble.transform.position = StageSceneManager.Instance.GetPlayerStartPoint(0) + new Vector3(0,1 ,i * 1);
+            }
             GameObjectFindAndInitialize();
             //万が一の時の保険条件
             if (_targetObjectsForAI[(int)AITargetObjectTags.Seasoning].Count > 0)
@@ -227,7 +239,6 @@ namespace Cooking.Stage
                 }
             }
         }
-
         private void InstantiateSeasoning(int seasoningIndex , Vector3 newSeasoningPosition)
         {
             ///  x(右辺) / 10(左辺)%の確率で再出現

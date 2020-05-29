@@ -173,11 +173,16 @@ namespace Cooking.Stage
         /// </summary>
         RollDirection _rollDirection = RollDirection.Forward;
         private bool isGrounded = false;
+        ///<summary>獲得したあわ 衝突時二重判定を防ぐ</summary>
+        private List<Bubble> _getBubbles = new List<Bubble>();
+        int _getBubbleIndex = 0;
         /// <summary>
         /// ショット開始時呼ばれる 衝突後跳ねる挙動を制御 卵は割れるようになる
         /// </summary>
         public void FoodStatusReset()
         {
+            _getBubbles.Clear();
+            _getBubbleIndex = 0;
             _isFryCollision = true;
             _firstBoundTimeCounter = 0;
             _flyTime = 0;
@@ -553,6 +558,7 @@ namespace Cooking.Stage
             {
                 Debug.Log("接地判定エリア無し");
             }
+            Debug.Log(_getBubbles.Count);
         }
         private void OnCollisionEnter(Collision collision)
         {
@@ -902,11 +908,20 @@ namespace Cooking.Stage
             }
             else if (other.tag == TagList.Bubble.ToString())
             {
-                if (_playerPoint.CanGetPointFlags[(int)GetPointOnTouch.Bubble])
+                var bubble = other.GetComponent<Bubble>();
+                if (_getBubbles.Count > _getBubbleIndex)
                 {
-                    _playerPoint.GetPoint(GetPointType.TouchBubble);
+                    //あわが同じものではないならば コライダーが複数ついているオブジェクトは一回の衝突で複数の判定が呼ばれる。この判定を一回にする
+                    if (_getBubbles[_getBubbleIndex] != bubble )
+                    {
+                        GetBubble(bubble);
+                        _getBubbleIndex++;
+                    }
                 }
-                EffectManager.Instance.InstantiateEffect(other.transform.position, EffectManager.EffectPrefabID.Foam_Break);
+                else
+                {
+                    GetBubble(bubble);
+                }
                 Destroy(other.gameObject);
             }
             else if (other.tag == TagList.StartArea.ToString())// && !_isFoodInStartArea)//落下後復帰想定
@@ -915,6 +930,17 @@ namespace Cooking.Stage
                 SetFoodLayer(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodLayerInStartArea]);
             }
         }
+        /// <summary>
+        /// あわに触れる処理 リストに登録 演出 ポイント獲得
+        /// </summary>
+        /// <param name="bubble"></param>
+        private void GetBubble(Bubble bubble)
+        {
+            EffectManager.Instance.InstantiateEffect(bubble.transform.position, EffectManager.EffectPrefabID.Foam_Break);
+            _playerPoint.GetPoint(GetPointType.TouchBubble);
+            _getBubbles.Add(bubble);
+        }
+
         private void OnTriggerExit(Collider other)
         {
             if (other.tag == TagList.StartArea.ToString() && _isFoodInStartArea)
@@ -1088,11 +1114,10 @@ namespace Cooking.Stage
         {
             _rigidbody.constraints = RigidbodyConstraints.None;
         }
-
         /// <summary>
         /// 食材の種類によって変わるコライダーサイズへアクセス たまごは球コライダー二つ分の半径+高さ(Vector2),またはboxcolliderの大きさ(仮素材)
         /// </summary>
-        /// <typeparam name="T">Vecto3 localScale Vector2 enum CapsuleColliderScaleData (カプセルの高さ,カプセルの半径)</typeparam>
+        /// <typeparam name="T">Vecto3 localScale Vector2 CapsuleColliderScaleData (カプセルの高さ,カプセルの半径)</typeparam>
         /// <returns>Vecto3 localScale Vector2 (カプセルの高さ,カプセルの半径)</returns>
         public T GetColliderSize<T>() where T : struct
         {
