@@ -150,7 +150,7 @@ namespace Cooking.Stage
                     _distances.Add(Vector3.Distance(targetObjectOption.transform.position, this.transform.position));
                 }
             }
-            Debug.Log(_distances.Count);
+           // Debug.Log(_distances.Count);
             if (_distances.Count > 0)
             {
                 //並び替える
@@ -476,7 +476,6 @@ namespace Cooking.Stage
                 {
                     return;
                 }
-
                 //ゴールが届く範囲にない場合、最もゴールに近い場所へ移動
                 //1 垂直方向角度45度(仮)かつ最大パワーで回転させてレイを飛ばす(仮:1度刻み) 落下地点を配列に格納 2 落下地点の中でゴールに近いものを選ぶ 
                 //3条件を加える 自分の近くではない(距離 5未満)、かつ床ではない 4食材の挙動を考慮して床から距離を置く?不要 タグfloorを検出した最後の角度から 仮：プラスマイナス5度以上離れているか確認 
@@ -506,7 +505,6 @@ namespace Cooking.Stage
                     fallPointIndex++;
                 }
                 int minDistanceIndex = System.Array.IndexOf(goalDistanceFromFallPoints, goalDistanceFromFallPoints.Min());
-                Debug.Log(fallPoint[minDistanceIndex]);
                 //最小値に向かって飛ぶ
                 _shotDirection = CalculateVelocity(this.transform.position, fallPoint[minDistanceIndex], verticalAngle);
                 speed = maxShotSpeed;

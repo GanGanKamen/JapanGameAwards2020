@@ -8,7 +8,7 @@ namespace Cooking
     /// <summary>
     /// そのゲームを始める際に読み込むステージ・人数を記録
     /// </summary>
-    public class GameManager : MonoBehaviour
+    public class GameManager : SingletonInstance<GameManager>
     {
         #region シングルトンインスタンス
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -20,37 +20,9 @@ namespace Cooking
             obj.AddComponent<DataManager>();
         }
 
-        /// <summary>
-        /// このクラスのインスタンスを取得
-        /// </summary>
-        public static GameManager Instance
+        protected override void Awake()
         {
-            get
-            {
-                return instance;
-            }
-        }
-        private static GameManager instance = null;
-
-        /// <summary>
-        /// Start()の実行より先行して処理したい内容を記述
-        /// </summary>
-        void Awake()
-        {
-            // 初回作成時
-            if (instance == null)
-            {
-                instance = this;
-                // シーンをまたいで削除されないように設定
-                DontDestroyOnLoad(gameObject);
-                // セーブデータを読み込む
-                //Load();
-            }
-            // 2個目以降の作成時
-            else
-            {
-                Destroy(gameObject);
-            }
+            CreateSingletonInstance(this, true);
         }
 
         #endregion
@@ -79,11 +51,6 @@ namespace Cooking
         public readonly int sumStageNumber = 3;
         float openingTime = 10.5f;
         float openingTimeCounter = 0;
-        // Start is called before the first frame update
-        void Start()
-        {
-            
-        }
 
         // Update is called once per frame
         void Update()

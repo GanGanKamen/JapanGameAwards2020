@@ -123,7 +123,6 @@ namespace Cooking.Stage
                             break;
                         case ButtonName.ShottingMode:
                             button.enabled = false;
-                            var _turnManager = TurnManager.Instance;
                            // _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].PlayerAnimatioManage(false);
                             _uIManager.PlayModeUI.ChangeShotButtonTouched(true);
                             StartCoroutine(ShotButtonWait(afterScreenState,button));

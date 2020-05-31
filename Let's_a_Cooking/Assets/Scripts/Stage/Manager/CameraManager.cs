@@ -17,7 +17,7 @@ namespace Cooking.Stage
     /// <summary>
     /// ターン開始時にアクティブなプレイヤーの情報を取得し、そのプレイヤーを追従
     /// </summary>
-    public class CameraManager : MonoBehaviour
+    public class CameraManager : SingletonInstance<CameraManager>
     {
         /// <summary>
         ///カメラの回転中心の座標情報。frontカメラの親オブジェクトが持つ。食材の中心を軸にカメラを回転させる
@@ -79,20 +79,11 @@ namespace Cooking.Stage
 
         #region インスタンスへのstaticなアクセスポイント
         /// <summary>
-        /// このクラスのインスタンスを取得。
-        /// </summary>
-        public static CameraManager Instance
-        {
-            get { return _instance; }
-        }
-        static CameraManager _instance = null;
-
-        /// <summary>
         /// Start()より先に実行。
         /// </summary>
-        private void Awake()
+        protected override void Awake()
         {
-            _instance = this;
+            CreateSingletonInstance(this, false);
         }
         #endregion
         // Start is called before the first frame update

@@ -32,6 +32,10 @@ namespace Cooking.Stage
         {
             Normal,Touched
         }
+        public Button ShotButton
+        {
+            get { return _shotButtons[0].GetComponent<Button>(); }
+        }
         /// <summary>
         /// AIのターン中はショット開始ボタンは表示しない
         /// </summary>

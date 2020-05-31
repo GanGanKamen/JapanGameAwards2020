@@ -32,6 +32,8 @@
     {
         WaitMode,/// 待機中
         AngleMode,/// 角度の決定中
+///<summary>ショット前待機 パワー変動しない</summary>
+        ShottingWaitMode,
         ShottingMode,/// ショット中
         ShotEndMode///ショット終了
     }

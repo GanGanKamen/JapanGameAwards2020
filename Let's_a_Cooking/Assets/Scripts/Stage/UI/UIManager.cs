@@ -39,10 +39,6 @@ namespace Cooking.Stage
         /// ゲーム開始にかかる時間
         /// </summary>
         private float _startTime = 1;
-        public GameObject OptionMenuWindow
-        {
-            get { return _optionMenuWindow; }
-        }
         /// <summary>
         /// オプションメニューが出ている間は画面タッチ処理は行わない
         /// </summary>

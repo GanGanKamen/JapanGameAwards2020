@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -264,6 +264,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c17407bd5bc2fb84a9beeb1a89be17dc, type: 3}
+--- !u!1 &536671909 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4459457030771045263, guid: 2d9a3fcb572921e489371a589e6d6dce,
+    type: 3}
+  m_PrefabInstance: {fileID: 1242779759}
+  m_PrefabAsset: {fileID: 0}
 --- !u!108 &705507994 stripped
 Light:
   m_CorrespondingSourceObject: {fileID: 4718712731005768783, guid: 0de03fac603e9994eb4ce93014dbe4c7,
@@ -415,15 +421,70 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4459457030771045249, guid: 2d9a3fcb572921e489371a589e6d6dce,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4459457030771045251, guid: 2d9a3fcb572921e489371a589e6d6dce,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 15.57
+      objectReference: {fileID: 0}
+    - target: {fileID: 4459457030771045251, guid: 2d9a3fcb572921e489371a589e6d6dce,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 39.135067
+      objectReference: {fileID: 0}
+    - target: {fileID: 4459457030771045251, guid: 2d9a3fcb572921e489371a589e6d6dce,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -9.45
+      objectReference: {fileID: 0}
+    - target: {fileID: 4459457030771045251, guid: 2d9a3fcb572921e489371a589e6d6dce,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 58.339794
+      objectReference: {fileID: 0}
+    - target: {fileID: 4459457030771045251, guid: 2d9a3fcb572921e489371a589e6d6dce,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 17.651
+      objectReference: {fileID: 0}
+    - target: {fileID: 4459457030771045251, guid: 2d9a3fcb572921e489371a589e6d6dce,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 18.471134
+      objectReference: {fileID: 0}
     - target: {fileID: 6885400799023664860, guid: 2d9a3fcb572921e489371a589e6d6dce,
         type: 3}
       propertyPath: m_BoundingSphereOverride.y
+      value: 2.3510647e-38
+      objectReference: {fileID: 0}
+    - target: {fileID: 6885400799023664860, guid: 2d9a3fcb572921e489371a589e6d6dce,
+        type: 3}
+      propertyPath: m_BoundingSphereOverride.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6885400799023664860, guid: 2d9a3fcb572921e489371a589e6d6dce,
+        type: 3}
+      propertyPath: m_BoundingSphereOverride.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6885400799023664860, guid: 2d9a3fcb572921e489371a589e6d6dce,
+        type: 3}
+      propertyPath: m_BoundingSphereOverride.w
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7732280787423336446, guid: 2d9a3fcb572921e489371a589e6d6dce,
         type: 3}
       propertyPath: m_Name
       value: Stage0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7732280787423336446, guid: 2d9a3fcb572921e489371a589e6d6dce,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7732280787423336447, guid: 2d9a3fcb572921e489371a589e6d6dce,
         type: 3}
@@ -479,6 +540,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8012731769198344092, guid: 2d9a3fcb572921e489371a589e6d6dce,
+        type: 3}
+      propertyPath: _bubbleInstantiateZone
+      value: 
+      objectReference: {fileID: 536671909}
+    - target: {fileID: 8012731769198344092, guid: 2d9a3fcb572921e489371a589e6d6dce,
+        type: 3}
+      propertyPath: _bubbleLimitSumNumber
+      value: 50
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2d9a3fcb572921e489371a589e6d6dce, type: 3}
@@ -759,22 +830,22 @@ PrefabInstance:
     - target: {fileID: 4718712731005768783, guid: 0de03fac603e9994eb4ce93014dbe4c7,
         type: 3}
       propertyPath: m_BoundingSphereOverride.y
-      value: -7.85366e-10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4718712731005768783, guid: 0de03fac603e9994eb4ce93014dbe4c7,
         type: 3}
       propertyPath: m_BoundingSphereOverride.z
-      value: 6.96e-43
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4718712731005768783, guid: 0de03fac603e9994eb4ce93014dbe4c7,
         type: 3}
       propertyPath: m_BoundingSphereOverride.w
-      value: 1.95e-43
+      value: -0.000000003755396
       objectReference: {fileID: 0}
     - target: {fileID: 4718712731005768783, guid: 0de03fac603e9994eb4ce93014dbe4c7,
         type: 3}
       propertyPath: m_BoundingSphereOverride.x
-      value: 4.1287842e+30
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0de03fac603e9994eb4ce93014dbe4c7, type: 3}

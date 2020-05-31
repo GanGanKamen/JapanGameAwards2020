@@ -172,7 +172,7 @@ namespace Cooking.Stage
         /// ソーセージにて転がる方向により転がる時間を変える y成分が大きいとForwardになる 方向ベクトルの性質
         /// </summary>
         RollDirection _rollDirection = RollDirection.Forward;
-        private bool isGrounded = false;
+        private bool _isGrounded = false;
         ///<summary>獲得したあわ 衝突時二重判定を防ぐ</summary>
         private List<Bubble> _getBubbles = new List<Bubble>();
         int _getBubbleIndex = 0;
@@ -283,7 +283,7 @@ namespace Cooking.Stage
                         switch (_physicsState)
                         {
                             case PhysicsState.Other:
-                                if (isGrounded && _flyTime < 0.1f)
+                                if (_isGrounded && _flyTime < 0.1f)
                                 {
                                     var velocity = _rigidbody.velocity;
                                     velocity.x /= 2;
@@ -394,7 +394,7 @@ namespace Cooking.Stage
                         switch (_physicsState)
                         {
                             case PhysicsState.Other:
-                                if (isGrounded && _flyTime < 0.1f)
+                                if (_isGrounded && _flyTime < 0.1f)
                                 {
                                     var velocity = _rigidbody.velocity;
                                     velocity.x /= 2;
@@ -545,20 +545,19 @@ namespace Cooking.Stage
                 var touchColliderCount = Physics.OverlapBox(_isGroundedArea.position, new Vector3(distanceX / 2, distanceY / 2, distanceZ / 2), Quaternion.identity, StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]).Length;
                 if (touchColliderCount > 0)
                 {
-                    isGrounded = true;
+                    _isGrounded = true;
                     if (GetComponent<AI>() == null)
                         Debug.Log("接地");
                 }
                 else
                 {
-                    isGrounded = false;
+                    _isGrounded = false;
                 }
             }
             else
             {
                 Debug.Log("接地判定エリア無し");
             }
-            Debug.Log(_getBubbles.Count);
         }
         private void OnCollisionEnter(Collision collision)
         {
@@ -726,7 +725,7 @@ namespace Cooking.Stage
                             }
                             if (ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode && (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen])) && collision.gameObject.tag != TagList.Wall.ToString())
                             {
-                                if (_rigidbody.velocity.magnitude > 0.1f && _isGroundedArea != null && !isGrounded)
+                                if (_rigidbody.velocity.magnitude > 0.1f && _isGroundedArea != null && !_isGrounded)
                                     ShotManager.Instance.SetShotVector(_rigidbody.velocity, _rigidbody.velocity.magnitude);
                             }
                         }
@@ -751,7 +750,7 @@ namespace Cooking.Stage
                         }
                         if (ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode && (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen])))
                         {
-                            if (_rigidbody.velocity.magnitude > 0.1f && _isGroundedArea != null && !isGrounded)
+                            if (_rigidbody.velocity.magnitude > 0.1f && _isGroundedArea != null && !_isGrounded)
                                 ShotManager.Instance.SetShotVector(_rigidbody.velocity, _rigidbody.velocity.magnitude);
                         }
                         break;
@@ -799,7 +798,7 @@ namespace Cooking.Stage
                             }
                             if (ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode && (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen])))
                             {
-                                if (_rigidbody.velocity.magnitude > 0.1f && _isGroundedArea != null && !isGrounded)
+                                if (_rigidbody.velocity.magnitude > 0.1f && _isGroundedArea != null && !_isGrounded)
                                     ShotManager.Instance.SetShotVector(_rigidbody.velocity, _rigidbody.velocity.magnitude);
                             }
                         }
@@ -824,7 +823,7 @@ namespace Cooking.Stage
                         }
                         if (ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode && (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen])))
                         {
-                            if (_rigidbody.velocity.magnitude > 0.1f && _isGroundedArea != null && !isGrounded)
+                            if (_rigidbody.velocity.magnitude > 0.1f && _isGroundedArea != null && !_isGrounded)
                                 ShotManager.Instance.SetShotVector(_rigidbody.velocity, _rigidbody.velocity.magnitude);
                         }
                         break;
