@@ -19,7 +19,7 @@ namespace Cooking.Stage
             Shrimp, Egg, Chicken, Sausage,
             Easy, Normal,Hard,
             LookDownMode,FrontMode,SideMode,
-            ShottingMode,
+            ShottingWaitMode,
             CancelButton
         }
         private ButtonName _buttonName = ButtonName.None;
@@ -108,26 +108,30 @@ namespace Cooking.Stage
                     }
                     break;
                 case ScreenState.FrontMode:
-                    //一部のボタンの名前で使用
-                    afterScreenState = EnumParseMethod.TryParseAndDebugAssertFormatAndReturnResult(_buttonName.ToString(), true, afterScreenState);
                     switch (_buttonName)
                     {
                         case ButtonName.None:
                             Debug.LogFormat("変換失敗かボタンがありません。画面：{0}", _uIManager.MainUIStateProperty.ToString());
                             break;
                         case ButtonName.LookDownMode:
+                            //一部のボタンの名前で使用
+                            afterScreenState = EnumParseMethod.TryParseAndDebugAssertFormatAndReturnResult(_buttonName.ToString(), true, afterScreenState);
                             _uIManager.ChangeUI(afterScreenState);
                             break;
                         case ButtonName.SideMode:
+                            //一部のボタンの名前で使用
+                            afterScreenState = EnumParseMethod.TryParseAndDebugAssertFormatAndReturnResult(_buttonName.ToString(), true, afterScreenState);
                             _uIManager.ChangeUI(afterScreenState);
                             break;
-                        case ButtonName.ShottingMode:
+                        case ButtonName.ShottingWaitMode:
                             button.enabled = false;
-                           // _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].PlayerAnimatioManage(false);
+                            //一部のボタンの名前で使用
+                            afterScreenState = ScreenState.ShottingMode;
+                            // _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].PlayerAnimatioManage(false);
                             _uIManager.PlayModeUI.ChangeShotButtonTouched(true);
                             StartCoroutine(ShotButtonWait(afterScreenState,button));
                             //パワーメーターを停止して待機させる
-                            ShotManager.Instance.ChangeShotState(ShotState.WaitMode);
+                            ShotManager.Instance.ChangeShotState(ShotState.ShottingWaitMode);
                             break;
                         default:
                             break;

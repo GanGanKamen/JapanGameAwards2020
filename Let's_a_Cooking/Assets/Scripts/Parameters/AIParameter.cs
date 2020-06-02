@@ -2,7 +2,7 @@
 
 namespace Cooking.Stage
 {
-    [CreateAssetMenu(fileName = "AIParameter", menuName = "ScriptableObjects/AIParameter", order = 3)]
+    [CreateAssetMenu(fileName = "AIParameter", menuName = "ScriptableObjects/AIParameter", order = 4)]
     public class AIParameter : ScriptableObject
     {
         readonly private static int arrayLength = System.Enum.GetValues(typeof(LimitValue)).Length;

@@ -192,9 +192,9 @@ namespace Cooking.Stage
                 case PointOperator.Minus:
                     _getPoint -= pointValue;
                     //マイナスにはならない
-                    if (_firstPoint + _getPoint < 0)
+                    if (_getPoint < 0)
                     {
-                        _getPoint = -100;
+                        _getPoint = 0;
                     }
                     break;
                 //マイナスを考慮していない 例 -50 のとき -100点 _getPoint = 2 * Mathf.Abs(_getPoint);良くない方法

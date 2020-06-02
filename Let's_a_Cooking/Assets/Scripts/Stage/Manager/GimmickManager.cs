@@ -74,7 +74,7 @@ namespace Cooking.Stage
         /// <summary>
         /// シーン内に存在しうるあわの数の上限
         /// </summary>
-        [SerializeField]private int _bubbleLimitSumNumber = 50;
+        [SerializeField] private int _bubbleLimitSumNumber = 50;
         /// <summary>
         /// あわが生成されるタイミング 2,8 → 3ターン以内に生成 偶数はターンが切り替わるとき 奇数は後攻のプレイヤーになった時 2で割るとターン数 8 /2 4 4ターン目は含まない
         /// </summary>
@@ -106,9 +106,6 @@ namespace Cooking.Stage
                 _bubbleInstantiateInformation[i].instantiateTiming = GetInitializeInstantiateTiming();
             }
             GameObjectFindAndInitialize();
-            //万が一の時の保険条件
-            if (_targetObjectsForAI[(int)AITargetObjectTags.Seasoning].Count > 0)
-                _seasoningMaterial = _targetObjectsForAI[(int)AITargetObjectTags.Seasoning][0].GetComponent<MeshRenderer>().material;
         }
         /// <summary>
         /// オブジェクトを探し、データの初期化を行う
@@ -129,7 +126,7 @@ namespace Cooking.Stage
             _instantiateSeasoningPoint = new Transform[_targetObjectsForAI[(int)AITargetObjectTags.Seasoning].Count];
             for (int i = 0; i < _targetObjectsForAI[(int)AITargetObjectTags.Seasoning].Count; i++)
             {
-                _instantiateSeasoningPoint[i] = _targetObjectsForAI[(int)AITargetObjectTags.Seasoning][i].transform.GetChild(0);
+                _instantiateSeasoningPoint[i] = _targetObjectsForAI[(int)AITargetObjectTags.Seasoning][i].GetComponent<Seasoning>().InstantiateSeasoningArea;
                 //親子関係があると親Destroy時に削除されてしまう
                 _instantiateSeasoningPoint[i].parent = this.transform;
                 _instantiateSeasoningPoint[i].GetComponent<MeshRenderer>().enabled = false;//消し忘れ防止
@@ -148,18 +145,16 @@ namespace Cooking.Stage
             //シーン内に存在するあわの数に上限を設ける
             if (_bubbles.Count > _bubbleLimitSumNumber)
             {
-                Debug.LogFormat("あわが限界{0}個に達しました",_bubbleLimitSumNumber);
+                Debug.LogFormat("あわが限界{0}個に達しました", _bubbleLimitSumNumber);
                 return;
             }
             for (int i = 0; i < _bubbleInstantiateInformation.Length; i++)
             {
                 _bubbleInstantiateInformation[i].timingCounter++;
-                Debug.Log(_bubbleInstantiateInformation[i].timingCounter);
-                Debug.Log(_bubbleInstantiateInformation[i].instantiateTiming);
                 if (_bubbleInstantiateInformation[i].timingCounter > _bubbleInstantiateInformation[i].instantiateTiming)
                 {
                     var newBubble = Instantiate(_bubblePrefab);
-                    newBubble.transform.position =DecideInstantiatePosition(_bubbleInstantiateInformation[i]);
+                    newBubble.transform.position = DecideInstantiatePosition(_bubbleInstantiateInformation[i]);
                     //生成タイミングを変更
                     _bubbleInstantiateInformation[i].instantiateTiming = GetInitializeInstantiateTiming();
                 }
@@ -244,41 +239,33 @@ namespace Cooking.Stage
                 //各プレイヤー座標で判定
                 foreach (var foodStatus in TurnManager.Instance.FoodStatuses)
                 {
-                    //indexは同期されている
-                    var seasoning = _targetObjectsForAI[(int)AITargetObjectTags.Seasoning][i];
-                    if (seasoning != null)
+                    var referencePoint = _instantiateSeasoningPoint[i].GetChild(0).transform.position;
+                    var instantiateLimitPosition = new Vector3[] { referencePoint, referencePoint + _instantiateSeasoningPoint[i].transform.localScale };
+                    //各プレイヤー座標で判定
+                    var activePlayerPosition = foodStatus.transform.position;
+                    //生成可能であるかをこの後判断 プレイヤーの位置が発生位置とかぶっていて発生するのを防ぐ 内側にいるかどうか
+                    if (activePlayerPosition.x > instantiateLimitPosition[(int)LimitValue.Min].x && activePlayerPosition.x < instantiateLimitPosition[(int)LimitValue.Max].x
+                        && activePlayerPosition.y > instantiateLimitPosition[(int)LimitValue.Min].y && activePlayerPosition.y < instantiateLimitPosition[(int)LimitValue.Max].y
+                        && activePlayerPosition.z > instantiateLimitPosition[(int)LimitValue.Min].z && activePlayerPosition.z < instantiateLimitPosition[(int)LimitValue.Max].z)
                     {
-                        break;//この調味料での確認は不要 次の調味料へ
+                        break;//この調味料を生成しない
                     }
                     else
                     {
-                        var referencePoint = _instantiateSeasoningPoint[i].GetChild(0).transform.position;
-                        var instantiateLimitPosition = new Vector3[] { referencePoint, referencePoint + _instantiateSeasoningPoint[i].transform.localScale };
-                        //各プレイヤー座標で判定
-                        var activePlayerPosition = foodStatus.transform.position;
-                        //生成可能であるかをこの後判断 プレイヤーの位置が発生位置とかぶっていて発生するのを防ぐ 内側にいるかどうか
-                        if (activePlayerPosition.x > instantiateLimitPosition[(int)LimitValue.Min].x && activePlayerPosition.x < instantiateLimitPosition[(int)LimitValue.Max].x
-                            && activePlayerPosition.y > instantiateLimitPosition[(int)LimitValue.Min].y && activePlayerPosition.y < instantiateLimitPosition[(int)LimitValue.Max].y
-                            && activePlayerPosition.z > instantiateLimitPosition[(int)LimitValue.Min].z && activePlayerPosition.z < instantiateLimitPosition[(int)LimitValue.Max].z)
-                        {
-                            break;//この調味料を生成しない
-                        }
-                        else
-                        {
-                            InstantiateSeasoning(i, _instantiateSeasoningPoint[i].position);
-                        }
+                        //indexは同期されている
+                        var seasoning = _targetObjectsForAI[(int)AITargetObjectTags.Seasoning][i].GetComponent<Seasoning>();
+                        SetSeasoningActiveTrue(seasoning);
                     }
                 }
             }
         }
-        private void InstantiateSeasoning(int seasoningIndex, Vector3 newSeasoningPosition)
+
+        private void SetSeasoningActiveTrue(Seasoning seasoning)
         {
             ///  x(右辺) / 10(左辺)%の確率で再出現
             if (Cooking.Random.GetRandomIntFromZero(20) < 3)
             {
-                var newSeasoning = Instantiate(_seasoningPrefab);
-                newSeasoning.transform.position = newSeasoningPosition;
-                _targetObjectsForAI[(int)AITargetObjectTags.Seasoning][seasoningIndex] = newSeasoning;//登録することでAIが検知可能に
+                seasoning.ManageSeasoningActive(true);
             }
         }
     }

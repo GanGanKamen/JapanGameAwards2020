@@ -9,6 +9,7 @@ namespace Cooking
     public class SoundManager : MonoBehaviour
     {
         private SoundParameter _soundParameter;
+        private BGMParameter _bGMParameter;
         private List<AudioSource> _audioSourcesList = new List<AudioSource>();
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void CreateInstance()
@@ -47,11 +48,16 @@ namespace Cooking
             {
                 Destroy(gameObject);
             }
-
             _soundParameter = Resources.Load<SoundParameter>("ScriptableObjects/SoundParameter");
+            _bGMParameter = Resources.Load<BGMParameter>("ScriptableObjects/BGMParameter");
             if (_soundParameter == null)
             {
                 Debug.LogAssertion("SoundParameterがScriptableObjects/SoundParameterに見当たりません");
+                return;
+            }
+            if (_bGMParameter == null)
+            {
+                Debug.LogAssertion("BGMParameterがScriptableObjects/BGMParameterに見当たりません");
                 return;
             }
             var audioSourceParent = this.transform;
@@ -59,6 +65,11 @@ namespace Cooking
             {
                 var param = _soundParameter.soundInformations[i];
                 var clip = Resources.Load<AudioClip>("Sounds/" + param.soundEffect.ToString());
+                if (clip == null)
+                {
+                    Debug.LogFormat("サウンド{0}が見つかりません", param);
+                    continue;
+                }
                 var mixer = Resources.Load<AudioMixerGroup>("Sounds/GameAudio");
                 var mixerGroup = mixer.audioMixer.FindMatchingGroups("Master/SE");
                 var obj = new GameObject("Sound_" + param.soundEffect.ToString());
@@ -78,11 +89,16 @@ namespace Cooking
             var soundInfo = _soundParameter.soundInformations[(int)soundEffectID];
             if (soundInfo.is3DSound)
             {
-                Debug.LogFormat ("{0}は2Dサウンドではありません。Play3DSEメソッドを使用してください", soundEffectID);
+                Debug.LogFormat("{0}は2Dサウンドではありません。Play3DSEメソッドを使用してください", soundEffectID);
+            }
+            if (_audioSourcesList[(int)soundEffectID] == null)
+            {
+                Debug.LogFormat("このサウンド{0}は未設定です。", soundEffectID);
+                return;
             }
             if (soundInfo.loop)
             {
-                SoundPlayer.PlaySE(_audioSourcesList[(int)soundEffectID],  _soundParameter.soundInformations[(int)soundEffectID]);
+                SoundPlayer.PlaySE(_audioSourcesList[(int)soundEffectID], _soundParameter.soundInformations[(int)soundEffectID]);
             }
             else
             {
@@ -94,28 +110,81 @@ namespace Cooking
         /// </summary>
         /// <param name="soundEffectID">種類</param>
         /// <param name="position">座標はTransformとは限らない</param>
-        public void Play3DSE(SoundEffectID soundEffectID , Vector3 position)
+        public void Play3DSE(SoundEffectID soundEffectID, Vector3 position)
         {
             var soundInfo = _soundParameter.soundInformations[(int)soundEffectID];
             if (!soundInfo.is3DSound)
             {
-                Debug.LogFormat("{0}は3Dサウンドではありません。PlaySEメソッドを使用してください",soundEffectID);
+                Debug.LogFormat("{0}は3Dサウンドではありません。PlaySEメソッドを使用してください", soundEffectID);
             }
+            if (_audioSourcesList[(int)soundEffectID] == null)
+            {
+                Debug.LogFormat("このサウンド{0}は未設定です。", soundEffectID);
+                return;
+            }
+            //AudioSourceの位置をtransform.positionに同期させる方法でないと、音量の変化を反映できないので変える必要あり
             if (soundInfo.loop)
             {
                 SoundPlayer.PlaySE(_audioSourcesList[(int)soundEffectID], _soundParameter.soundInformations[(int)soundEffectID]);
             }
-            SoundPlayer.Play3DSEOneTime(_audioSourcesList[(int)soundEffectID].clip,position);
+            SoundPlayer.Play3DSEOneTime(_audioSourcesList[(int)soundEffectID].clip, position);
         }
-        #region テストコード
-#if UNITY_EDITOR
-        [ContextMenu("TestPlaySound")]
-        private void TestPlaySound()
+        public void PlayBGM(BGMID bGMID , AudioSource audioSource)
         {
-            StartCoroutine(OnTestPlaySound());
+            if (audioSource == null)
+            {
+                Debug.LogFormat("このサウンド{0}は未設定です。", bGMID);
+                return;
+            }
+            SoundPlayer.PlayBGM(audioSource);
         }
 
-        private IEnumerator OnTestPlaySound()
+        #region テストコード
+#if UNITY_EDITOR
+        int _bGMIndex = 0;
+        [ContextMenu("TestPlayBGM")]
+        private void TestPlayBGM()
+        {
+            StartCoroutine(OnTestPlayBGM());
+        }
+
+        private IEnumerator OnTestPlayBGM()
+        {
+            foreach (BGMID bGMID in Enum.GetValues(typeof(BGMID)))
+            {
+                var clip = Resources.Load<AudioClip>("BGMs/" + bGMID.ToString());
+                if (clip == null)
+                {
+                    Debug.LogFormat("サウンド{0}が見つかりません", bGMID);
+                    continue;
+                }
+                var obj = new GameObject("BGM_" + bGMID.ToString());
+                var audioSource = obj.AddComponent<AudioSource>();
+                audioSource.clip = clip;
+                PlayBGM(bGMID , audioSource);
+                Debug.Log(bGMID);
+                float time = 0;
+                while (time < 60)
+                {
+                    if (Input.GetKeyDown(KeyCode.Return))
+                    {
+                        audioSource.Stop();
+                        yield return null;//入力を区切るため
+                        break;//スキップ
+                    }
+                    time += Time.deltaTime;
+                    yield return null;
+                }
+            }
+        }
+
+        [ContextMenu("TestPlaySound")]
+        private void TestPlaySESound()
+        {
+            StartCoroutine(OnTestPlaySESound());
+        }
+
+        private IEnumerator OnTestPlaySESound()
         {
             foreach (SoundEffectID soundID in Enum.GetValues(typeof(SoundEffectID)))
             {
@@ -125,7 +194,9 @@ namespace Cooking
                 while (time < 2)
                 {
                     if (Input.GetKeyDown(KeyCode.Return))
-                    {                     
+                    {
+                        _audioSourcesList[(int)soundID].Stop();
+                        yield return null;//入力を区切るため
                         break;//スキップ
                     }
                     time += Time.deltaTime;
@@ -136,10 +207,10 @@ namespace Cooking
         [ContextMenu("TestPlaySoundGetNumber")]
         private void TestPlaySoundGetNumber()
         {
-            StartCoroutine(OnTestPlaySoundGetNumber());
+            StartCoroutine(OnTestPlaySESoundGetNumber());
         }
 
-        private IEnumerator OnTestPlaySoundGetNumber()
+        private IEnumerator OnTestPlaySESoundGetNumber()
         {
             string input = "";
             SoundEffectID soundEffectID = SoundEffectID.battle_start0;
@@ -148,9 +219,9 @@ namespace Cooking
             {
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
-                   //変換成功したら再生 未完成
-                   if( EnumParseMethod.TryParseAndDebugAssertFormat(input, false,out soundEffectID))
-                    PlaySE(soundEffectID);
+                    //変換成功したら再生 未完成
+                    if (EnumParseMethod.TryParseAndDebugAssertFormat(input, false, out soundEffectID))
+                        PlaySE(soundEffectID);
                     input = "";
                 }
                 else if (Input.GetKeyDown(KeyCode.Alpha0))
@@ -192,6 +263,11 @@ namespace Cooking
                 else if (Input.GetKeyDown(KeyCode.Alpha9))
                 {
                     input += "9";
+                }
+                //他の入力はリセットされる
+                else if (Input.anyKeyDown)
+                {
+                    input += "";
                 }
                 Debug.Log(input);
                 yield return null;

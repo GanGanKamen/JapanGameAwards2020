@@ -16,8 +16,11 @@ namespace Cooking.Stage
         /// <summary>
         /// 5/2時点でえびのみSkinnedMeshRenderer
         /// </summary>
-        [SerializeField] private SkinnedMeshRenderer _foodSkinnedMeshRenderer = null;
-        [SerializeField] private MeshRenderer _foodMeshRenderer = null;
+        [SerializeField,Header("エビのみ")] private SkinnedMeshRenderer _foodSkinnedMeshRenderer = null;
+        /// <summary>
+        /// エビ以外はこちら
+        /// </summary>
+        [SerializeField,Header("たまご中身 鶏肉 ソーセージ")] private MeshRenderer _foodMeshRenderer = null;
         [SerializeField] protected Material foodNormalGraphic = null;
         [SerializeField] private Material _seasoningMaterial = null;
         protected virtual void Start()
@@ -44,26 +47,21 @@ namespace Cooking.Stage
         /// </summary>
         protected void ChangeMaterial(Material material , FoodType foodType)
         {
+            var textureList = StageSceneManager.Instance.FoodTextureList;
             switch (foodType)
             {
                 case FoodType.Shrimp:
                     //既に見た目が変化している場合、変化しない
-                    if (_foodSkinnedMeshRenderer.material == material)
+                    if (_foodSkinnedMeshRenderer.material.mainTexture == material.mainTexture)
                     {
+                        Debug.Log("同じ見た目です");
                         return;
                     }
-                    //else if (material.mainTexture == GimmickManager.Instance.SeasoningMaterial.mainTexture)
+                    //レア調味料を持っている状態で通常調味料を取っても変化しない
+                    //else if (material.mainTexture == textureList.)
                     //{
-                    //    //_isRareSeasoningMaterial = true;
-                    //    Debug.Log(12345678);
-                    //    //Debug.Log(GimmickManager.Instance.SeasoningMaterial.te);
-                    //    _foodSkinnedMeshRenderer.material = GimmickManager.Instance.SeasoningMaterial;
+                    //    return;
                     //}
-                    else if (material == GimmickManager.Instance.RareMaterial)
-                    {
-                        _isRareSeasoningMaterial = true;
-                        _foodSkinnedMeshRenderer.material = material;
-                    }
                     else
                     {
                         _isRareSeasoningMaterial = false;

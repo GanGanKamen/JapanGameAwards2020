@@ -29,6 +29,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1904837132498659199}
+  - {fileID: 8543935155430095108}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -62,6 +63,7 @@ MonoBehaviour:
     m_Bits: 1024
   - serializedVersion: 2
     m_Bits: 512
+  _foodTextureList: {fileID: 8505442559873105399}
 --- !u!1 &1904837132498659196
 GameObject:
   m_ObjectHideFlags: 0
@@ -92,3 +94,82 @@ Transform:
   m_Father: {fileID: 1904837132220409666}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4642644845546423298
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8543935155430095108}
+  - component: {fileID: 8505442559873105399}
+  m_Layer: 0
+  m_Name: FoodTextureList
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8543935155430095108
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4642644845546423298}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1904837132220409666}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8505442559873105399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4642644845546423298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a184c5b651fd8d4e800dab69b172faa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  normalTextures:
+  - {fileID: 2800000, guid: f2f26f2285c13094a9eff9e1b68f2122, type: 3}
+  - {fileID: 2800000, guid: 7dc40d2d69b50074c8e882335fb265ee, type: 3}
+  - {fileID: 2800000, guid: ada4ad5553481e54cafc3a87e0af6f86, type: 3}
+  - {fileID: 2800000, guid: 6154bab6f3b6c0449a969dc4c02af01e, type: 3}
+  - {fileID: 2800000, guid: 9acd06000c0fd634ab0d44b9eda75de6, type: 3}
+  seasoningFoodTextures:
+  - {fileID: 2800000, guid: f260634fb84def842aa6e887cb9f6aad, type: 3}
+  - {fileID: 2800000, guid: f260634fb84def842aa6e887cb9f6aad, type: 3}
+  - {fileID: 2800000, guid: f260634fb84def842aa6e887cb9f6aad, type: 3}
+  - {fileID: 2800000, guid: f260634fb84def842aa6e887cb9f6aad, type: 3}
+  - {fileID: 2800000, guid: f260634fb84def842aa6e887cb9f6aad, type: 3}
+  cutFoodTextures:
+  - {fileID: 2800000, guid: f40ae0ecc17ae0c468404b7e16b83721, type: 3}
+  - {fileID: 2800000, guid: 3d8b0c6360da0894aa6d0b206647f101, type: 3}
+  cutSeasoningFoodTextures:
+  - {fileID: 2800000, guid: f260634fb84def842aa6e887cb9f6aad, type: 3}
+  - {fileID: 2800000, guid: f260634fb84def842aa6e887cb9f6aad, type: 3}
+  normalFoodMaterials:
+  - {fileID: 2100000, guid: 31fc6947eb54419438736801343adb64, type: 2}
+  - {fileID: 2100000, guid: c80338811e19af3469afda9c1c21a032, type: 2}
+  - {fileID: 2100000, guid: 33629dfd4a05354428803c5532c38dfd, type: 2}
+  - {fileID: 2100000, guid: c76b1265bb82a6b4baa7520ceb0dd208, type: 2}
+  - {fileID: 2100000, guid: e4e6277cc55c3ae4bb46a09b8f5547a8, type: 2}
+  seasoningFoodMaterials:
+  - {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
+  - {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
+  - {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
+  - {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
+  - {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
+  cutFoodMaterials:
+  - {fileID: 2100000, guid: b96e4fbe5b5e0c942954e7efd3241c37, type: 2}
+  - {fileID: 2100000, guid: 8c450b20df379c1468f3e2ac448487ba, type: 2}
+  cutSeasoningFoodMaterials:
+  - {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
+  - {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}

@@ -150,7 +150,7 @@ namespace Cooking.Stage
                     _distances.Add(Vector3.Distance(targetObjectOption.transform.position, this.transform.position));
                 }
             }
-           // Debug.Log(_distances.Count);
+            // Debug.Log(_distances.Count);
             if (_distances.Count > 0)
             {
                 //並び替える
@@ -494,28 +494,41 @@ namespace Cooking.Stage
                 float[] goalDistanceFromFallPoints = new float[fallPointCount];
                 for (i = 0; horizontalAngle < goalAngle + halfLimitAngle; i++, horizontalAngle = goalAngle + i * incrementValue)
                 {
-                    GetFallPointByRayCast(out fallPointGameObject, goal, maxShotSpeed, shotDirectionY, shotDirectionVector, maxShotSpeedVector, verticalAngle, horizontalAngle, fallPointIndex, fallPoint, goalDistanceFromFallPoints);
+                    GetFallPointByRayCast(out fallPointGameObject, goal, maxShotSpeed, shotDirectionY, maxShotSpeedVector, verticalAngle, horizontalAngle, fallPointIndex, fallPoint, goalDistanceFromFallPoints);
                     fallPointIndex++;
                 }
                 horizontalAngle = goalAngle - 1 * incrementValue;
                 //角度が偶数奇数でずれる可能性があるので上限条件は数
                 for (i = 1; fallPointIndex < fallPointCount; i++, horizontalAngle = goalAngle - i * incrementValue)
                 {
-                    GetFallPointByRayCast(out fallPointGameObject, goal, maxShotSpeed, shotDirectionY, shotDirectionVector, maxShotSpeedVector, verticalAngle, horizontalAngle, fallPointIndex, fallPoint, goalDistanceFromFallPoints);
+                    GetFallPointByRayCast(out fallPointGameObject, goal, maxShotSpeed, shotDirectionY, maxShotSpeedVector, verticalAngle, horizontalAngle, fallPointIndex, fallPoint, goalDistanceFromFallPoints);
                     fallPointIndex++;
                 }
                 int minDistanceIndex = System.Array.IndexOf(goalDistanceFromFallPoints, goalDistanceFromFallPoints.Min());
+                //最終チェックによる改善
+                //AIが落下しそうな場所に飛ばないようにする
+                //方法　最終verticalAngleで maxpowerを大きくする maxpower + 1 ~ 3まで  横で±5度 maxpower固定(仮)
+                //この範囲で床が存在しないかチェックする 床があったら床を検知したところから遠くなるように角度とパワーを調節する パワー上げた結果見つけたらパワー下げる 角度足した結果ならひく 角度引いた結果なら角度足す
+                var checkSpeed = maxShotSpeed;
+                shotDirectionVector = new Vector3(goalVector.x, shotDirectionY, goalVector.z).normalized;
+                for (i = 1; checkSpeed <= maxShotSpeed + 3 ; i++)
+                {
+                    checkSpeed = maxShotSpeed + i / 2;
+                    PredictFoodPhysics.PredictFallPointByBoxRayCast(out fallPointGameObject, transform.position, shotDirectionVector * checkSpeed, verticalAngle, foodType, GetColliderSize<Vector3>());
+
+                }
+
                 //最小値に向かって飛ぶ
                 _shotDirection = CalculateVelocity(this.transform.position, fallPoint[minDistanceIndex], verticalAngle);
                 speed = maxShotSpeed;
             }
         }
 
-        private void GetFallPointByRayCast(out GameObject fallPointGameObject, GameObject goal, float maxShotSpeed, float shotDirectionY, Vector3 shotDirectionVector, Vector3 maxShotSpeedVector, int verticalAngle, int horizontalAngle, int fallPointIndex, Vector3[] fallPoint, float[] goalDistanceFromFallPoints)
+        private void GetFallPointByRayCast(out GameObject fallPointGameObject, GameObject goal, float maxShotSpeed, float shotDirectionY, Vector3 maxShotSpeedVector, int verticalAngle, int horizontalAngle, int fallPointIndex, Vector3[] fallPoint, float[] goalDistanceFromFallPoints)
         {
             var shotDirectionX = Mathf.Cos(horizontalAngle * Mathf.Deg2Rad); // 角度をラジアンへ
             var shotDirectionZ = Mathf.Sin(horizontalAngle * Mathf.Deg2Rad); // 角度をラジアンへ
-            shotDirectionVector = new Vector3(shotDirectionX, shotDirectionY, shotDirectionZ).normalized;
+            var shotDirectionVector = new Vector3(shotDirectionX, shotDirectionY, shotDirectionZ).normalized;
             maxShotSpeedVector = shotDirectionVector * maxShotSpeed;
             var fallPosition = Vector3.zero;
             switch (foodType)

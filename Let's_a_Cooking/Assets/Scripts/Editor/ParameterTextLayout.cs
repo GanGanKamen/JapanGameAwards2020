@@ -14,6 +14,16 @@ namespace Cooking
             base.OnInspectorGUI();
         }
     }
+    [CustomEditor(typeof(BGMParameter))]
+    public class BGMTextLayout : Editor
+    {
+        //OnInspectorGUIでカスタマイズのGUIに変更する
+        public override void OnInspectorGUI()
+        {
+            EditorGUILayout.LabelField("登録されているBGMの種類 : " + Enum.GetValues(typeof(BGMID)).Length.ToString());
+            base.OnInspectorGUI();
+        }
+    }
     [CustomEditor(typeof(PointParameter))]
     public class PointTextLayout : Editor
     {

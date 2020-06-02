@@ -45,6 +45,50 @@ CapsuleCollider:
   m_Height: 0.038858715
   m_Direction: 1
   m_Center: {x: -0.030256707, y: 0.014487279, z: 0.000000006771319}
+--- !u!1 &843118762914735149
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3215929532779333832}
+  - component: {fileID: 90747061554460529}
+  m_Layer: 0
+  m_Name: ParticleKillTriggerArea
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &3215929532779333832
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 843118762914735149}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4689672585035630473}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &90747061554460529
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 843118762914735149}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.114613235, y: 0.08475581, z: 0.4383108}
+  m_Center: {x: -0.012284592, y: -0.00064484775, z: -0.00068566203}
 --- !u!1 &848320288242565177
 GameObject:
   m_ObjectHideFlags: 0
@@ -313,6 +357,7 @@ Transform:
   - {fileID: 6937365187480875622}
   - {fileID: 8027254333230646750}
   - {fileID: 774883345331057355}
+  - {fileID: 3215929532779333832}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -387,6 +432,7 @@ MonoBehaviour:
   _shrimpFirstBoundPower: 3
   _chickenFirstBoundPower: 1.5
   _forwardAngle: 60
+  _isDebugMode: 0
 --- !u!1 &5089718982716691465
 GameObject:
   m_ObjectHideFlags: 0
