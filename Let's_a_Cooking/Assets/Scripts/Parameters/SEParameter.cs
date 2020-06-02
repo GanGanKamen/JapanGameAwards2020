@@ -26,8 +26,8 @@ namespace Cooking
         pot_boiling0, pot_boiling1, pan_frying
         //後ろに追加しないとデータがずれる
     }
-    [CreateAssetMenu(fileName = "SoundParameter", menuName = "ScriptableObjects/SoundParameter", order = 2)]
-    public class SoundParameter : ScriptableObject
+    [CreateAssetMenu(fileName = "SEParameter", menuName = "ScriptableObjects/SEParameter", order = 2)]
+    public class SEParameter : ScriptableObject
     {
         [System.Serializable]
         public struct SoundInformation

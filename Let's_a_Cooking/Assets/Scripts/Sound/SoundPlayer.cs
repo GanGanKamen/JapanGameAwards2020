@@ -96,7 +96,7 @@ namespace Cooking
         /// </summary>
         /// <param name="audioSource"></param>
         /// <param name="soundInformation"></param>
-        public static void PlaySE(AudioSource audioSource,  SoundParameter.SoundInformation soundInformation) //ゲームオプションの音量調節に適応するSE再生
+        public static void PlaySE(AudioSource audioSource,  SEParameter.SoundInformation soundInformation) //ゲームオプションの音量調節に適応するSE再生
         {
             audioSource.volume = soundInformation.volume;
             if (soundInformation.loop)

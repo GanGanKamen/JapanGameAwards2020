@@ -19,7 +19,8 @@ namespace Cooking
             //enum型へ変換 + 変換失敗時に警告
             if (!Enum.TryParse(value, ignoreCase ,out result))
             {
-                Debug.LogFormat("不適切な名前:{0}が入力されました。", value);
+                //重いため、一時的に削除
+                //Debug.LogFormat("不適切な名前:{0}が入力されました。", value);
                 result = default(T);
                 return false;
             }
@@ -29,7 +30,7 @@ namespace Cooking
             }
         }
         /// <summary>
-        /// 指定された文字列を列挙型に変換して返還後の値を返す さらに例外処理警告ができるメソッド
+        /// 指定された文字列を列挙型に変換して返還後の値を返す (一時変数にそのまま代入可能 さらに例外処理警告ができるメソッド
         /// </summary>
         /// <typeparam name="T">列挙型</typeparam>
         /// <param name="value">変換する文字列</param>
@@ -41,7 +42,7 @@ namespace Cooking
             //enum型へ変換 + 変換失敗時に警告
             if (!Enum.TryParse(value, ignoreCase ,out enumValue))
             {
-                Debug.LogFormat("不適切な名前:{0}が入力されました。", value);
+                //Debug.LogFormat("不適切な名前:{0}が入力されました。", value);
                 enumValue = default(T);
                 return enumValue;
             }

@@ -8,15 +8,15 @@ namespace Cooking
 {
     public class SoundManager : MonoBehaviour
     {
-        private SoundParameter _soundParameter;
+        private SEParameter _sEParameter;
         private BGMParameter _bGMParameter;
-        private List<AudioSource> _audioSourcesList = new List<AudioSource>();
+        static private AudioSource _bGMAudioSource;
+        private List<AudioSource> _sEAudioSourcesList = new List<AudioSource>();
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void CreateInstance()
+        private static void Initialize()
         {
             var obj = new GameObject("SoundManager");
             obj.AddComponent<SoundManager>();
-            DontDestroyOnLoad(obj);
         }
 
         /// <summary>
@@ -48,11 +48,11 @@ namespace Cooking
             {
                 Destroy(gameObject);
             }
-            _soundParameter = Resources.Load<SoundParameter>("ScriptableObjects/SoundParameter");
+            _sEParameter = Resources.Load<SEParameter>("ScriptableObjects/SEParameter");
             _bGMParameter = Resources.Load<BGMParameter>("ScriptableObjects/BGMParameter");
-            if (_soundParameter == null)
+            if (_sEParameter == null)
             {
-                Debug.LogAssertion("SoundParameterがScriptableObjects/SoundParameterに見当たりません");
+                Debug.LogAssertion("SoundParameterがScriptableObjects/SEParameterに見当たりません");
                 return;
             }
             if (_bGMParameter == null)
@@ -60,25 +60,43 @@ namespace Cooking
                 Debug.LogAssertion("BGMParameterがScriptableObjects/BGMParameterに見当たりません");
                 return;
             }
-            var audioSourceParent = this.transform;
-            for (var i = 0; i < _soundParameter.soundInformations.Length; ++i)
+            #region BGMオーディオの登録 → シングルトン
+            var bGMAudio = Resources.Load<GameObject>("Sounds/Audio/BGMAudioSource");
+            var bGMGameObject = Instantiate(bGMAudio);
+            bGMGameObject.name = "BGMAudioSource";
+            _bGMAudioSource = bGMGameObject.GetComponent<AudioSource>();
+            DontDestroyOnLoad(_bGMAudioSource);
+            if (_bGMAudioSource == null)
             {
-                var param = _soundParameter.soundInformations[i];
-                var clip = Resources.Load<AudioClip>("Sounds/" + param.soundEffect.ToString());
+                Debug.LogFormat("BGMAUdioSourceが見つかりません");
+            }
+            SceneName sceneName = SceneName.OP;
+            sceneName = EnumParseMethod.TryParseAndDebugAssertFormatAndReturnResult(SceneChanger.activeSceneName, true, sceneName);
+            ChangeBGMOnSceneChange(sceneName);
+            #endregion
+            #region SEオーディオの登録→SEの数だけ用意
+            var audioSourceParent = this.transform;
+            for (var i = 0; i < _sEParameter.soundInformations.Length; ++i)
+            {
+                var param = _sEParameter.soundInformations[i];
+                var clip = Resources.Load<AudioClip>("Sounds/SE/" + param.soundEffect.ToString());
                 if (clip == null)
                 {
                     Debug.LogFormat("サウンド{0}が見つかりません", param);
                     continue;
                 }
-                var mixer = Resources.Load<AudioMixerGroup>("Sounds/GameAudio");
+                var mixer = Resources.Load<AudioMixerGroup>("Sounds/Audio/GameAudio");
                 var mixerGroup = mixer.audioMixer.FindMatchingGroups("Master/SE");
                 var obj = new GameObject("Sound_" + param.soundEffect.ToString());
                 var audioSource = obj.AddComponent<AudioSource>();
                 audioSource.clip = clip;
+                audioSource.loop = param.loop;
+                audioSource.volume = param.volume;
                 audioSource.outputAudioMixerGroup = mixerGroup[0];
                 obj.transform.SetParent(audioSourceParent);
-                _audioSourcesList.Add(audioSource);
+                _sEAudioSourcesList.Add(audioSource);
             }
+            #endregion
         }
         /// <summary>
         /// 指定したSEを再生
@@ -86,23 +104,23 @@ namespace Cooking
         /// <param name="soundEffectID"></param>
         public void PlaySE(SoundEffectID soundEffectID)
         {
-            var soundInfo = _soundParameter.soundInformations[(int)soundEffectID];
+            var soundInfo = _sEParameter.soundInformations[(int)soundEffectID];
             if (soundInfo.is3DSound)
             {
                 Debug.LogFormat("{0}は2Dサウンドではありません。Play3DSEメソッドを使用してください", soundEffectID);
             }
-            if (_audioSourcesList[(int)soundEffectID] == null)
+            if (_sEAudioSourcesList[(int)soundEffectID] == null)
             {
                 Debug.LogFormat("このサウンド{0}は未設定です。", soundEffectID);
                 return;
             }
             if (soundInfo.loop)
             {
-                SoundPlayer.PlaySE(_audioSourcesList[(int)soundEffectID], _soundParameter.soundInformations[(int)soundEffectID]);
+                SoundPlayer.PlaySE(_sEAudioSourcesList[(int)soundEffectID], _sEParameter.soundInformations[(int)soundEffectID]);
             }
             else
             {
-                SoundPlayer.PlaySEOneTime(_audioSourcesList[(int)soundEffectID], _audioSourcesList[(int)soundEffectID].clip, _soundParameter.soundInformations[(int)soundEffectID].volume);
+                SoundPlayer.PlaySEOneTime(_sEAudioSourcesList[(int)soundEffectID], _sEAudioSourcesList[(int)soundEffectID].clip, _sEParameter.soundInformations[(int)soundEffectID].volume);
             }
         }
         /// <summary>
@@ -112,12 +130,12 @@ namespace Cooking
         /// <param name="position">座標はTransformとは限らない</param>
         public void Play3DSE(SoundEffectID soundEffectID, Vector3 position)
         {
-            var soundInfo = _soundParameter.soundInformations[(int)soundEffectID];
+            var soundInfo = _sEParameter.soundInformations[(int)soundEffectID];
             if (!soundInfo.is3DSound)
             {
                 Debug.LogFormat("{0}は3Dサウンドではありません。PlaySEメソッドを使用してください", soundEffectID);
             }
-            if (_audioSourcesList[(int)soundEffectID] == null)
+            if (_sEAudioSourcesList[(int)soundEffectID] == null)
             {
                 Debug.LogFormat("このサウンド{0}は未設定です。", soundEffectID);
                 return;
@@ -125,11 +143,29 @@ namespace Cooking
             //AudioSourceの位置をtransform.positionに同期させる方法でないと、音量の変化を反映できないので変える必要あり
             if (soundInfo.loop)
             {
-                SoundPlayer.PlaySE(_audioSourcesList[(int)soundEffectID], _soundParameter.soundInformations[(int)soundEffectID]);
+                SoundPlayer.PlaySE(_sEAudioSourcesList[(int)soundEffectID], _sEParameter.soundInformations[(int)soundEffectID]);
             }
-            SoundPlayer.Play3DSEOneTime(_audioSourcesList[(int)soundEffectID].clip, position);
+            SoundPlayer.Play3DSEOneTime(_sEAudioSourcesList[(int)soundEffectID].clip, position);
         }
-        public void PlayBGM(BGMID bGMID , AudioSource audioSource)
+        /// <summary>
+        /// BGMAudioSourceにサウンドクリップをセット
+        /// </summary>
+        private bool LoadBGMAudioClip(BGMID bGMID)
+        {
+            var audioClip = Resources.Load<AudioClip>("Sounds/BGM/" + bGMID.ToString());
+            if (audioClip != null)
+            {
+                _bGMAudioSource.clip = audioClip;
+                _bGMAudioSource.volume = _bGMParameter.bGMInformations[(int)bGMID].volume;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private void PlayBGM(BGMID bGMID , AudioSource audioSource)
         {
             if (audioSource == null)
             {
@@ -137,6 +173,45 @@ namespace Cooking
                 return;
             }
             SoundPlayer.PlayBGM(audioSource);
+        }
+        /// <summary>
+        /// 読み込まれるシーンやステージの情報で再生するBGMを変更する
+        /// </summary>
+        /// <param name="loadSceneName"></param>
+        public void ChangeBGMOnSceneChange(SceneName loadSceneName)
+        {
+            switch (loadSceneName)
+            {
+                //Develop用シーンなどその他のシーンはOP曲が流れる
+                case SceneName.OP:
+                    LoadBGMAudioClip(BGMID.title_bgm0);
+                    break;
+                case SceneName.Title:
+                    LoadBGMAudioClip(BGMID.title_bgm1);
+                    break;
+                case SceneName.SelectStage:
+                    LoadBGMAudioClip(BGMID.stage_bgm1);
+                    break;
+                case SceneName.PlayScene:
+                    //遷移前にセットされるステージナンバーのインデックスによって決める
+                    switch (Stage.StageSceneManager.StageNumberIndex)
+                    {
+                        case 0:
+                            LoadBGMAudioClip(BGMID.stage_bgm0);
+                            break;
+                        case 1:
+                            LoadBGMAudioClip(BGMID.stage_bgm1);
+                            break;
+                        case 2:
+                            LoadBGMAudioClip(BGMID.stage_bgm2);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
 
         #region テストコード
@@ -152,23 +227,20 @@ namespace Cooking
         {
             foreach (BGMID bGMID in Enum.GetValues(typeof(BGMID)))
             {
-                var clip = Resources.Load<AudioClip>("BGMs/" + bGMID.ToString());
-                if (clip == null)
+                if(!LoadBGMAudioClip(bGMID))
                 {
                     Debug.LogFormat("サウンド{0}が見つかりません", bGMID);
                     continue;
                 }
                 var obj = new GameObject("BGM_" + bGMID.ToString());
-                var audioSource = obj.AddComponent<AudioSource>();
-                audioSource.clip = clip;
-                PlayBGM(bGMID , audioSource);
+                PlayBGM(bGMID , _bGMAudioSource);
                 Debug.Log(bGMID);
                 float time = 0;
                 while (time < 60)
                 {
                     if (Input.GetKeyDown(KeyCode.Return))
                     {
-                        audioSource.Stop();
+                        _bGMAudioSource.Stop();
                         yield return null;//入力を区切るため
                         break;//スキップ
                     }
@@ -195,7 +267,7 @@ namespace Cooking
                 {
                     if (Input.GetKeyDown(KeyCode.Return))
                     {
-                        _audioSourcesList[(int)soundID].Stop();
+                        _sEAudioSourcesList[(int)soundID].Stop();
                         yield return null;//入力を区切るため
                         break;//スキップ
                     }

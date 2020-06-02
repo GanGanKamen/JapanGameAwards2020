@@ -479,7 +479,7 @@ namespace Cooking.Stage
                 //ゴールが届く範囲にない場合、最もゴールに近い場所へ移動
                 //1 垂直方向角度45度(仮)かつ最大パワーで回転させてレイを飛ばす(仮:1度刻み) 落下地点を配列に格納 2 落下地点の中でゴールに近いものを選ぶ 
                 //3条件を加える 自分の近くではない(距離 5未満)、かつ床ではない 4食材の挙動を考慮して床から距離を置く?不要 タグfloorを検出した最後の角度から 仮：プラスマイナス5度以上離れているか確認 
-                int verticalAngle = 60;//45度は落下確率高い 落下地点のy座標が今いる座標よりそれなりに(仮:1m)低いなら角度を上げる
+                int verticalAngle = 45;//45度は落下確率高い 落下地点のy座標が今いる座標よりそれなりに(仮:1m)低いなら角度を上げる
                 shotDirectionY = Mathf.Sin(verticalAngle * Mathf.Deg2Rad); // 角度をラジアンへ
                 int halfLimitAngle = 90;//全方向では処理が重い
                 const int incrementValue = 1;//角度の増加量
@@ -492,19 +492,24 @@ namespace Cooking.Stage
                 Vector3[] fallPoint = new Vector3[fallPointCount];
                 GameObject fallPointGameObject = null;
                 float[] goalDistanceFromFallPoints = new float[fallPointCount];
-                for (i = 0; horizontalAngle < goalAngle + halfLimitAngle; i++, horizontalAngle = goalAngle + i * incrementValue)
+                //重ければ減らす必要あり
+                for (verticalAngle = 0; verticalAngle <= ShotManager.Instance.ShotParameter.LimitVerticalAngle; verticalAngle++)
                 {
-                    GetFallPointByRayCast(out fallPointGameObject, goal, maxShotSpeed, shotDirectionY, maxShotSpeedVector, verticalAngle, horizontalAngle, fallPointIndex, fallPoint, goalDistanceFromFallPoints);
-                    fallPointIndex++;
-                }
-                horizontalAngle = goalAngle - 1 * incrementValue;
-                //角度が偶数奇数でずれる可能性があるので上限条件は数
-                for (i = 1; fallPointIndex < fallPointCount; i++, horizontalAngle = goalAngle - i * incrementValue)
-                {
-                    GetFallPointByRayCast(out fallPointGameObject, goal, maxShotSpeed, shotDirectionY, maxShotSpeedVector, verticalAngle, horizontalAngle, fallPointIndex, fallPoint, goalDistanceFromFallPoints);
-                    fallPointIndex++;
+                    for (i = 0; horizontalAngle < goalAngle + halfLimitAngle; i++, horizontalAngle = goalAngle + i * incrementValue)
+                    {
+                        GetFallPointByRayCast(out fallPointGameObject, goal, maxShotSpeed, shotDirectionY, maxShotSpeedVector, verticalAngle, horizontalAngle, fallPointIndex, fallPoint, goalDistanceFromFallPoints);
+                        fallPointIndex++;
+                    }
+                    horizontalAngle = goalAngle - 1 * incrementValue;
+                    //角度が偶数奇数でずれる可能性があるので上限条件は数
+                    for (i = 1; fallPointIndex < fallPointCount; i++, horizontalAngle = goalAngle - i * incrementValue)
+                    {
+                        GetFallPointByRayCast(out fallPointGameObject, goal, maxShotSpeed, shotDirectionY, maxShotSpeedVector, verticalAngle, horizontalAngle, fallPointIndex, fallPoint, goalDistanceFromFallPoints);
+                        fallPointIndex++;
+                    }
                 }
                 int minDistanceIndex = System.Array.IndexOf(goalDistanceFromFallPoints, goalDistanceFromFallPoints.Min());
+
                 //最終チェックによる改善
                 //AIが落下しそうな場所に飛ばないようにする
                 //方法　最終verticalAngleで maxpowerを大きくする maxpower + 1 ~ 3まで  横で±5度 maxpower固定(仮)
@@ -515,7 +520,28 @@ namespace Cooking.Stage
                 {
                     checkSpeed = maxShotSpeed + i / 2;
                     PredictFoodPhysics.PredictFallPointByBoxRayCast(out fallPointGameObject, transform.position, shotDirectionVector * checkSpeed, verticalAngle, foodType, GetColliderSize<Vector3>());
-
+                    if (fallPointGameObject.tag == TagList.Floor.ToString())
+                    {
+                        switch (foodType)
+                        {
+                            case FoodType.Shrimp:
+                                checkSpeed = maxShotSpeed - 3;
+                                break;
+                            case FoodType.Egg:
+                                checkSpeed = maxShotSpeed - 2.5f;
+                                break;
+                            case FoodType.Chicken:
+                                checkSpeed = maxShotSpeed - 2;
+                                break;
+                            case FoodType.Sausage:
+                                checkSpeed = maxShotSpeed - 2;
+                                break;
+                            default:
+                                break;
+                        }  
+                        //パワーのチェック終了
+                        break;
+                    }
                 }
 
                 //最小値に向かって飛ぶ

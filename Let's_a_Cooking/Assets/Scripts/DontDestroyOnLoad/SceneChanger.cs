@@ -9,18 +9,33 @@ namespace Cooking
     {
        OP , Title, SelectStage, PlayScene
     }
-
-    public class SceneChanger : MonoBehaviour
+    public class SceneChanger : SingletonInstance<SceneChanger>
 	{
-		// Start is called before the first frame update
-		void Start()
-		{
+        static public string activeSceneName = "";
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void Initialize()
+        {
+            var obj = new GameObject("SceneChanger");
+            obj.AddComponent<SceneChanger>();
+            activeSceneName = SceneManager.GetActiveScene().name;
+            Debug.Log(activeSceneName);
+        }
 
+        protected override void Awake()
+        {
+            CreateSingletonInstance(this, true);
+        }
+
+        // Start is called before the first frame update
+        protected override void Start()
+		{
+            base.Start();
 		}
 
 		// Update is called once per frame
 		void Update()
 		{
+            activeSceneName = SceneManager.GetActiveScene().name;
             ///デバッグ用
 #if UNITY_EDITOR
             if (Input.GetKeyDown(KeyCode.A))
@@ -44,6 +59,8 @@ namespace Cooking
         public static void LoadSelectingScene(SceneName sceneName)
         {
             SceneManager.LoadScene((int)sceneName);
+            //シーンの名前に応じてBGMを変更 ステージごとに再生するBGMを変更
+            SoundManager.Instance.ChangeBGMOnSceneChange(sceneName);
         }
     }
 

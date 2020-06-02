@@ -201,11 +201,11 @@ namespace Cooking.Stage
         /// <param name="fallPointObject">落下地点のオブジェクトの持つタグ 床判定を行う</param>
         /// <param name="predictStartPoint">予測開始地点</param>
         /// <param name="firstSpeedVector">初速度ベクトル</param>
-        /// <param name="shotAngleX">食材を打ち出す地面に対して垂直方向の角度 角度-0 ~ 90に変換後渡す</param>
+        /// <param name="verticalAngle">食材を打ち出す地面に対して垂直方向の角度 eulerAungle.x 角度-0 ~ 90に変換後渡す</param>
         /// <param name="foodType">食材の種類</param>
         /// <param name="colliderSizeInformation">コライダーのSize情報 このエリアでボックスまたはカプセルなレイキャストを行う</param>
         /// <returns></returns>
-        public static Vector3 PredictFallPointByBoxRayCast<T>(out GameObject fallPointGameObject, Vector3 predictStartPoint, Vector3 firstSpeedVector, float shotAngleX, FoodType foodType, T colliderSizeInformation) where T : struct
+        public static Vector3 PredictFallPointByBoxRayCast<T>(out GameObject fallPointGameObject, Vector3 predictStartPoint, Vector3 firstSpeedVector, float verticalAngle, FoodType foodType, T colliderSizeInformation) where T : struct
         {
             _foodType = foodType;
             int i = 1;//累積誤差発生を防ぐためのインクリメント変数

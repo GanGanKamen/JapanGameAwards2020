@@ -16,7 +16,6 @@ namespace Cooking
         {
             var obj = new GameObject("GameManager");
             obj.AddComponent<GameManager>();
-            obj.AddComponent<SceneChanger>();
             obj.AddComponent<DataManager>();
         }
 

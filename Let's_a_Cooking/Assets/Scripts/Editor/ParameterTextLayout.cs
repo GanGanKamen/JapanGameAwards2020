@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 namespace Cooking
 {
-    [CustomEditor(typeof(SoundParameter))]
+    [CustomEditor(typeof(SEParameter))]
     public class SoundTextLayout : Editor
     {
         //OnInspectorGUIでカスタマイズのGUIに変更する

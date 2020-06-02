@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bGMInformations:
   - bgm: 0
-    volume: 0
+    volume: 1
   - bgm: 1
-    volume: 0
+    volume: 1
   - bgm: 2
-    volume: 0
+    volume: 1
   - bgm: 3
-    volume: 0
+    volume: 1
   - bgm: 4
-    volume: 0
+    volume: 1

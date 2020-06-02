@@ -40,7 +40,7 @@ namespace Cooking.Stage
         }
         private StageGameState _gameState = StageGameState.Preparation;
         /// <summary>この要素番号に従ってステージを生成</summary>
-        public int StageNumberIndex
+        static public int StageNumberIndex
         {
             get { return _stageNumberIndex; }
         }
@@ -190,7 +190,7 @@ namespace Cooking.Stage
         }
         private void InstantiateStage(int stageNumber)
         {
-            // ステージプレハブを読み込む
+            // ステージプレハブを読み込
             var stage = Resources.Load<GameObject>("Stages/Stage" + stageNumber.ToString());
             Instantiate(stage);
         }

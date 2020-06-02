@@ -44,7 +44,7 @@ namespace Cooking
 
         private void Init()
         {
-            gameAudio = Resources.Load<UnityEngine.Audio.AudioMixer>("Sounds/GameAudio");
+            gameAudio = Resources.Load<UnityEngine.Audio.AudioMixer>("Sounds/Audio/GameAudio");
             language = GetSystemLanguage();
             BGM_Volume = 7;
             SE_Volume = 7;

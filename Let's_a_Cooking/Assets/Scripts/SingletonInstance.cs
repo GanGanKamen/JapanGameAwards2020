@@ -51,7 +51,7 @@ namespace Cooking
                 Destroy(gameObject);
             }
         }
-        protected void Start()
+        protected virtual void Start()
         {
             if (_instance == null)
             {

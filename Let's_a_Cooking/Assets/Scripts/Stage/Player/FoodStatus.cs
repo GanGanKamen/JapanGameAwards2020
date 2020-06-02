@@ -641,7 +641,7 @@ namespace Cooking.Stage
                 }
                 //==============================
                 //エフェクト
-                if (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]) && collision.gameObject.tag != TagList.Wall.ToString())
+                if (_isFryCollision && collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]) && collision.gameObject.tag != TagList.Wall.ToString())
                 {
                     EffectManager.Instance.InstantiateEffect(collision.contacts[0].point, EffectManager.EffectPrefabID.Food_Grounded);
                 }
@@ -1150,7 +1150,7 @@ namespace Cooking.Stage
                     case FoodType.Egg:
                         if (food.egg.HasBroken)
                         {
-                            return (T)(object)new Vector3(1, 1,1);
+                            return (T)(object)new Vector3(1 , 1 , 1);
                         }
                         else
                         {
