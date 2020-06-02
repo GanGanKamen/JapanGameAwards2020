@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &7937717893915085413
+--- !u!1 &732625582509567357
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,48 +8,77 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6373483555536042102}
-  - component: {fileID: 2677441902936834624}
-  - component: {fileID: 8508608470742744761}
-  - component: {fileID: 1389423097771849183}
-  - component: {fileID: 328866245362389848}
-  - component: {fileID: 4256320772746495927}
-  m_Layer: 9
-  m_Name: DirtDish
-  m_TagString: DirtDish
+  - component: {fileID: 4355428121878355822}
+  m_Layer: 0
+  m_Name: sara02 1
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6373483555536042102
+--- !u!4 &4355428121878355822
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7937717893915085413}
+  m_GameObject: {fileID: 732625582509567357}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.6999999, y: 7.299, z: -17.44}
-  m_LocalScale: {x: 60, y: 31.2, z: 60}
-  m_Children: []
-  m_Father: {fileID: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 6, y: 6, z: 6}
+  m_Children:
+  - {fileID: 5708872477504415474}
+  m_Father: {fileID: 6373483555536042102}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &2677441902936834624
+--- !u!1 &6473588729270979479
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5708872477504415474}
+  - component: {fileID: 8747204007115458233}
+  - component: {fileID: 3604580248791642200}
+  - component: {fileID: 1940862022599997265}
+  m_Layer: 0
+  m_Name: pSphere1
+  m_TagString: DirtDish
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5708872477504415474
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6473588729270979479}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalScale: {x: 10, y: 5.256135, z: 10}
+  m_Children: []
+  m_Father: {fileID: 4355428121878355822}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &8747204007115458233
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7937717893915085413}
-  m_Mesh: {fileID: 2540817853737639666, guid: 08546d02202e83246a7758b5a73d3433, type: 3}
---- !u!23 &8508608470742744761
+  m_GameObject: {fileID: 6473588729270979479}
+  m_Mesh: {fileID: 2540817853737639666, guid: 6680a1f30fc472a4cb2f7c6ddbbd813b, type: 3}
+--- !u!23 &3604580248791642200
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7937717893915085413}
+  m_GameObject: {fileID: 6473588729270979479}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -61,7 +90,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 57307d8f541831a40ad3773e7013a435, type: 2}
+  - {fileID: 2100000, guid: 48b4270cb44aa2a43b9bea20f0459437, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -82,42 +111,47 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!65 &1389423097771849183
+--- !u!65 &1940862022599997265
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7937717893915085413}
+  m_GameObject: {fileID: 6473588729270979479}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.013269582, y: 0.0014290669, z: 0.01822028}
-  m_Center: {x: 0.0000789394, y: 0.00012230748, z: 0.00040199907}
---- !u!65 &328866245362389848
-BoxCollider:
+  m_Size: {x: 0.02, y: 0.0049632266, z: 0.02}
+  m_Center: {x: 0, y: 0.0018893863, z: 4.656613e-10}
+--- !u!1 &7937717893915085413
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6373483555536042102}
+  m_Layer: 9
+  m_Name: DirtDish
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6373483555536042102
+Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7937717893915085413}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Size: {x: 0.011246439, y: 0.0028751406, z: 0.0013195416}
-  m_Center: {x: -0.00013253566, y: 0.0008453472, z: -0.007841763}
---- !u!65 &4256320772746495927
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7937717893915085413}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Size: {x: 0.013269582, y: 0.004176611, z: 0.0021108747}
-  m_Center: {x: 0.0000789394, y: 0.0014960803, z: 0.007454302}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.6999999, y: 7.299, z: -17.44}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 4355428121878355822}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
