@@ -759,9 +759,9 @@ PlayerSettings:
     m_VersionCode: 1
     m_VersionName: 
   apiCompatibilityLevel: 6
-  cloudProjectId: ee6d6e52-4eee-4003-abe3-e22467804819
+  cloudProjectId: 2bf4bf61-6116-4d83-98f7-b3793daabf0c
   framebufferDepthMemorylessMode: 0
-  projectName: Let's_a_Cooking (1)
+  projectName: Let's_a_Cooking
   organizationId: pronama
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
