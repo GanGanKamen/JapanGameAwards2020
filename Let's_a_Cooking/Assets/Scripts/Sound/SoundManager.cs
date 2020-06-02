@@ -212,6 +212,7 @@ namespace Cooking
                 default:
                     break;
             }
+            _bGMAudioSource.Play();
         }
 
         #region テストコード
