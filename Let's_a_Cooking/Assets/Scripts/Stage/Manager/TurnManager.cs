@@ -289,6 +289,7 @@ namespace Cooking.Stage
         {
             GimmickManager.Instance.WaterManager();
             GimmickManager.Instance.SeasoningManager();
+            GimmickManager.Instance.InstantiateBubbles();
         }
 
         private AfterChangeTurnState IsChangeTurn()

@@ -172,12 +172,24 @@ namespace Cooking.Stage
         /// ソーセージにて転がる方向により転がる時間を変える y成分が大きいとForwardになる 方向ベクトルの性質
         /// </summary>
         RollDirection _rollDirection = RollDirection.Forward;
-        private bool isGrounded = false;
+        private bool _isGrounded = false;
+        ///<summary>獲得したあわ 衝突時二重判定を防ぐ</summary>
+        private List<Bubble> _gotBubbles = new List<Bubble>();
+        int _gotBubbleIndex = 0;
+        ///<summary>獲得した調味料 衝突時二重判定を防ぐ</summary
+        private Seasoning _gotSeasoning;
+        /// <summary>
+        /// 衝突した相手の食材 食材衝突時二重判定を防ぐ
+        /// </summary>
+        private FoodStatus _collidedFood;
         /// <summary>
         /// ショット開始時呼ばれる 衝突後跳ねる挙動を制御 卵は割れるようになる
         /// </summary>
         public void FoodStatusReset()
         {
+            _gotBubbles.Clear();
+            _gotBubbleIndex = 0;
+            _gotSeasoning = null;
             _isFryCollision = true;
             _firstBoundTimeCounter = 0;
             _flyTime = 0;
@@ -251,6 +263,7 @@ namespace Cooking.Stage
         protected override void Start()
         {
             base.Start();
+            var seasoning = GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.Seasoning][0].GetComponent<Seasoning>();
             #if !UNITY_EDITOR
             _isGroundedArea.gameObject.GetComponent<MeshRenderer>().enabled = false;
             #endif
@@ -278,7 +291,7 @@ namespace Cooking.Stage
                         switch (_physicsState)
                         {
                             case PhysicsState.Other:
-                                if (isGrounded && _flyTime < 0.1f)
+                                if (_isGrounded && _flyTime < 0.1f)
                                 {
                                     var velocity = _rigidbody.velocity;
                                     velocity.x /= 2;
@@ -389,7 +402,7 @@ namespace Cooking.Stage
                         switch (_physicsState)
                         {
                             case PhysicsState.Other:
-                                if (isGrounded && _flyTime < 0.1f)
+                                if (_isGrounded && _flyTime < 0.1f)
                                 {
                                     var velocity = _rigidbody.velocity;
                                     velocity.x /= 2;
@@ -540,13 +553,13 @@ namespace Cooking.Stage
                 var touchColliderCount = Physics.OverlapBox(_isGroundedArea.position, new Vector3(distanceX / 2, distanceY / 2, distanceZ / 2), Quaternion.identity, StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]).Length;
                 if (touchColliderCount > 0)
                 {
-                    isGrounded = true;
+                    _isGrounded = true;
                     if (GetComponent<AI>() == null)
                         Debug.Log("接地");
                 }
                 else
                 {
-                    isGrounded = false;
+                    _isGrounded = false;
                 }
             }
             else
@@ -720,7 +733,7 @@ namespace Cooking.Stage
                             }
                             if (ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode && (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen])) && collision.gameObject.tag != TagList.Wall.ToString())
                             {
-                                if (_rigidbody.velocity.magnitude > 0.1f && _isGroundedArea != null && !isGrounded)
+                                if (_rigidbody.velocity.magnitude > 0.1f && _isGroundedArea != null && !_isGrounded)
                                     ShotManager.Instance.SetShotVector(_rigidbody.velocity, _rigidbody.velocity.magnitude);
                             }
                         }
@@ -745,7 +758,7 @@ namespace Cooking.Stage
                         }
                         if (ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode && (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen])))
                         {
-                            if (_rigidbody.velocity.magnitude > 0.1f && _isGroundedArea != null && !isGrounded)
+                            if (_rigidbody.velocity.magnitude > 0.1f && _isGroundedArea != null && !_isGrounded)
                                 ShotManager.Instance.SetShotVector(_rigidbody.velocity, _rigidbody.velocity.magnitude);
                         }
                         break;
@@ -793,7 +806,7 @@ namespace Cooking.Stage
                             }
                             if (ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode && (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen])))
                             {
-                                if (_rigidbody.velocity.magnitude > 0.1f && _isGroundedArea != null && !isGrounded)
+                                if (_rigidbody.velocity.magnitude > 0.1f && _isGroundedArea != null && !_isGrounded)
                                     ShotManager.Instance.SetShotVector(_rigidbody.velocity, _rigidbody.velocity.magnitude);
                             }
                         }
@@ -818,7 +831,7 @@ namespace Cooking.Stage
                         }
                         if (ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode && (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen])))
                         {
-                            if (_rigidbody.velocity.magnitude > 0.1f && _isGroundedArea != null && !isGrounded)
+                            if (_rigidbody.velocity.magnitude > 0.1f && _isGroundedArea != null && !_isGrounded)
                                 ShotManager.Instance.SetShotVector(_rigidbody.velocity, _rigidbody.velocity.magnitude);
                         }
                         break;
@@ -866,6 +879,7 @@ namespace Cooking.Stage
         }
         private void OnTriggerEnter(Collider other)
         {
+            var textureList = StageSceneManager.Instance.FoodTextureList;
             if (other.tag == TagList.Finish.ToString())
             {
                 EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Splash);
@@ -878,18 +892,23 @@ namespace Cooking.Stage
                 {
                     _playerPoint.GetPoint(GetPointType.FirstWash);
                 }
-                ChangeMaterial(foodNormalGraphic, foodType);
+                ChangeMaterial(StageSceneManager.Instance.FoodTextureList.normalFoodMaterials[(int)foodType], foodType);
             }
             else if (other.tag == TagList.Seasoning.ToString())
             {
-                if (_playerPoint.CanGetPointFlags[(int)GetPointOnTouch.Seasoning])
+                var touchSeasoning = other.GetComponent<Seasoning>();
+                if (_gotSeasoning != null)
                 {
-                    _playerPoint.GetPoint(GetPointType.TouchSeasoning);
+                    //調味料が同じものではないならば コライダーが複数ついているオブジェクトは一回の衝突で複数の判定が呼ばれる。この判定を一回にする
+                    if (touchSeasoning != _gotSeasoning)
+                    {
+                        GetSeasoning(touchSeasoning, textureList);
+                    }
                 }
-                EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Seasoning_Hit);
-                EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Seasoning).parent = GetComponent<FoodStatus>().FoodPositionNotRotate.transform;
-                ChangeMaterial(other.gameObject.GetComponent<MeshRenderer>().material, foodType);
-                Destroy(other.gameObject);
+                else
+                {
+                    GetSeasoning(touchSeasoning, textureList);
+                }
             }
             else if (other.tag == TagList.RareSeasoning.ToString())
             {
@@ -897,16 +916,24 @@ namespace Cooking.Stage
                 {
                     _playerPoint.GetPoint(GetPointType.TouchRareSeasoning);
                 }
-                ChangeMaterial(other.gameObject.GetComponent<MeshRenderer>().material, foodType);
-                Destroy(other.gameObject);
+                ChangeMaterial(textureList.seasoningFoodMaterials[(int)foodType], foodType);
             }
             else if (other.tag == TagList.Bubble.ToString())
             {
-                if (_playerPoint.CanGetPointFlags[(int)GetPointOnTouch.Bubble])
+                var bubble = other.GetComponent<Bubble>();
+                if (_gotBubbles.Count > _gotBubbleIndex)
                 {
-                    _playerPoint.GetPoint(GetPointType.TouchBubble);
+                    //あわが同じものではないならば コライダーが複数ついているオブジェクトは一回の衝突で複数の判定が呼ばれる。この判定を一回にする
+                    if (_gotBubbles[_gotBubbleIndex] != bubble )
+                    {
+                        GetBubble(bubble);
+                        _gotBubbleIndex++;
+                    }
                 }
-                EffectManager.Instance.InstantiateEffect(other.transform.position, EffectManager.EffectPrefabID.Foam_Break);
+                else
+                {
+                    GetBubble(bubble);
+                }
                 Destroy(other.gameObject);
             }
             else if (other.tag == TagList.StartArea.ToString())// && !_isFoodInStartArea)//落下後復帰想定
@@ -914,6 +941,24 @@ namespace Cooking.Stage
                 _isFoodInStartArea = true;
                 SetFoodLayer(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodLayerInStartArea]);
             }
+        }
+        private void GetSeasoning(Seasoning seasoning , FoodTextureList textureList)
+        {
+            _gotSeasoning = seasoning;
+            EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Seasoning_Hit);
+            //調味料パーティクルは付着しない
+            //EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Seasoning).parent = FoodPositionNotRotate.transform;
+            ChangeMaterial(textureList.seasoningFoodMaterials[(int)foodType], foodType);
+        }
+        /// <summary>
+        /// あわに触れる処理 リストに登録 演出 ポイント獲得
+        /// </summary>
+        /// <param name="bubble"></param>
+        private void GetBubble(Bubble bubble)
+        {
+            EffectManager.Instance.InstantiateEffect(bubble.transform.position, EffectManager.EffectPrefabID.Foam_Break);
+            _playerPoint.GetPoint(GetPointType.TouchBubble);
+            _gotBubbles.Add(bubble);
         }
         private void OnTriggerExit(Collider other)
         {
@@ -1088,11 +1133,10 @@ namespace Cooking.Stage
         {
             _rigidbody.constraints = RigidbodyConstraints.None;
         }
-
         /// <summary>
         /// 食材の種類によって変わるコライダーサイズへアクセス たまごは球コライダー二つ分の半径+高さ(Vector2),またはboxcolliderの大きさ(仮素材)
         /// </summary>
-        /// <typeparam name="T">Vecto3 localScale Vector2 enum CapsuleColliderScaleData (カプセルの高さ,カプセルの半径)</typeparam>
+        /// <typeparam name="T">Vecto3 localScale Vector2 CapsuleColliderScaleData (カプセルの高さ,カプセルの半径)</typeparam>
         /// <returns>Vecto3 localScale Vector2 (カプセルの高さ,カプセルの半径)</returns>
         public T GetColliderSize<T>() where T : struct
         {

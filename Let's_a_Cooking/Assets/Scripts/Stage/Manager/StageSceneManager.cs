@@ -140,6 +140,14 @@ namespace Cooking.Stage
             get { return _aiShotRange; }
         }
         private float[][] _aiShotRange;
+        /// <summary>
+        /// 食材のMaterialとTextureの情報
+        /// </summary>
+        public FoodTextureList FoodTextureList
+        {
+            get { return _foodTextureList; }
+        }
+        [SerializeField] private FoodTextureList _foodTextureList;
         private void Awake()
         {
             _instance = this;
@@ -372,6 +380,14 @@ namespace Cooking.Stage
                             break;
                         case FoodStateOnGame.ShotEnd:
                             _foodStateOnGame = FoodStateOnGame.Normal;
+                            foreach (var seasoningObject in GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.Seasoning])
+                            {
+                                var seasoning = seasoningObject.GetComponent<Seasoning>();
+                                if (seasoning.IsEmittingStopped)
+                                {
+                                    seasoning.ManageSeasoningActive(false);
+                                }                                
+                            }
                             _turnManager.ChangeTurn();
                             break;
                         default:

@@ -11,6 +11,10 @@ namespace Cooking.Stage
         /// このスクリプトに置くかは未定
         /// </summary>
         [SerializeField] Animator _foodAnimator = null;
+        /// <summary>
+        /// 触れたパーティクルをなくすトリガーエリア
+        /// </summary>
+        public CapsuleCollider particleKillTriggerArea;
         #region グラフィック関連変数
         [SerializeField] private GameObject _shrimpHead = null;
         /// <summary>

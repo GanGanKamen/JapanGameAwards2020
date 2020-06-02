@@ -5321,7 +5321,7 @@ GameObject:
   - component: {fileID: 2259073736754504296}
   - component: {fileID: 2259073736754504297}
   m_Layer: 5
-  m_Name: ShottingMode
+  m_Name: ShottingWaitMode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -103,7 +103,6 @@ namespace Cooking.Stage
             {
                 ///スタート時・見下ろしカメラ時・ゲーム終了時を想定
 				case ShotState.WaitMode:
-                    if(UIManager.Instance.OptionMenuWindow.activeInHierarchy)
                     _shotPower = ChangeShotPower(_shotParameter.MinShotPower, _shotParameter.MaxShotPower, 2 * Mathf.Abs(_shotParameter.MaxShotPower - _shotParameter.MinShotPower), _shotPower);//速度ログ 5 20 (差15のとき)→ 30  差の倍速で算出   
                     break;
                 case ShotState.AngleMode:
@@ -133,9 +132,10 @@ namespace Cooking.Stage
                             }
                             //#endif
                             #endregion
-
                         }
                     }
+                    break;
+                case ShotState.ShottingWaitMode:
                     break;
                 case ShotState.ShottingMode:
                     {

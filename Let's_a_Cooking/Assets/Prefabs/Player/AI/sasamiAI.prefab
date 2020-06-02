@@ -613,12 +613,12 @@ GameObject:
   - component: {fileID: 366060118552419790}
   - component: {fileID: 8364551148982367986}
   m_Layer: 0
-  m_Name: PredictFallPointCollider (1)
+  m_Name: ParticleKillTriggerArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &366060118552419790
 Transform:
   m_ObjectHideFlags: 0
@@ -641,8 +641,8 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7670574402067843976}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
+  m_IsTrigger: 1
+  m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 0.09734659, y: 0.10607791, z: 0.07606117}
   m_Center: {x: -0.0036512688, y: 0.003088832, z: -0.0029181556}
@@ -934,3 +934,4 @@ MonoBehaviour:
   _shrimpFirstBoundPower: 3
   _chickenFirstBoundPower: 1.5
   _forwardAngle: 60
+  _isDebugMode: 0

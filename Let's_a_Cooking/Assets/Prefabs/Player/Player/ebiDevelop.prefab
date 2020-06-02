@@ -258,6 +258,7 @@ Transform:
   - {fileID: 2145306625588699937}
   - {fileID: 7833259288611724176}
   - {fileID: 5534655366300813806}
+  - {fileID: 1467231950698410212}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -315,6 +316,7 @@ MonoBehaviour:
   shrimpBoxCollider: {fileID: 7167404278365877129}
   capsuleCollider: {fileID: 5670369316466324488}
   _foodAnimator: {fileID: 9120880134355479713}
+  particleKillTriggerArea: {fileID: 4725977080354604951}
   _shrimpHead: {fileID: 4485098196317645658}
 --- !u!114 &3844710139208619389
 MonoBehaviour:
@@ -728,6 +730,51 @@ CapsuleCollider:
   m_Height: 0.44553217
   m_Direction: 2
   m_Center: {x: -0.00071251893, y: -0.0072917044, z: -0.010317465}
+--- !u!1 &5384825453546512336
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1467231950698410212}
+  - component: {fileID: 4725977080354604951}
+  m_Layer: 0
+  m_Name: ParticleKillTriggerArea
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1467231950698410212
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5384825453546512336}
+  m_LocalRotation: {x: -0.08715578, y: 0, z: 0, w: 0.9961947}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2128107329363381657}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: -10, y: 0, z: 0}
+--- !u!136 &4725977080354604951
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5384825453546512336}
+  m_Material: {fileID: 13400000, guid: 5918af64a2913cc4ca1a5798de62b5e5, type: 2}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.06950064
+  m_Height: 0.63131434
+  m_Direction: 2
+  m_Center: {x: -0.0007125139, y: -0.024682462, z: -0.03604597}
 --- !u!1 &5571464681444340550
 GameObject:
   m_ObjectHideFlags: 0
