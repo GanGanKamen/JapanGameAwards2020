@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4355428121878355822}
   m_Layer: 0
   m_Name: sara02 1
-  m_TagString: DirtDish
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 1940862022599997265}
   m_Layer: 0
   m_Name: pSphere1
-  m_TagString: Untagged
+  m_TagString: DirtDish
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
