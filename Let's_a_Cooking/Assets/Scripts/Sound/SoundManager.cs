@@ -11,6 +11,10 @@ namespace Cooking
         private SEParameter _sEParameter;
         private BGMParameter _bGMParameter;
         static private AudioSource _bGMAudioSource;
+        public List<AudioSource> SEAudioSourcesList
+        {
+            get { return _sEAudioSourcesList; }
+        }
         private List<AudioSource> _sEAudioSourcesList = new List<AudioSource>();
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Initialize()
@@ -125,6 +129,15 @@ namespace Cooking
             }
         }
         /// <summary>
+        /// 指定されたSEを停止
+        /// </summary>
+        /// <param name="soundEffectID"></param>
+        public void StopSE(SoundEffectID soundEffectID)
+        {
+            _sEAudioSourcesList[(int)soundEffectID].Stop();
+        }
+
+        /// <summary>
         /// 指定した3DSEの再生 座標はTransformとは限らない(collision.contact[0].point)→Vector3
         /// </summary>
         /// <param name="soundEffectID">種類</param>
@@ -188,8 +201,11 @@ namespace Cooking
                     break;
                 case SceneName.Title:
                     LoadBGMAudioClip(BGMID.title_bgm0);
+                    _bGMAudioSource.Play();
                     break;
                 case SceneName.SelectStage:
+                    if(_bGMAudioSource.isPlaying)
+                    _bGMAudioSource.Stop();
                     break;
                 case SceneName.PlayScene:
                     //遷移前にセットされるステージナンバーのインデックスによって決める
@@ -197,12 +213,15 @@ namespace Cooking
                     {
                         case 0:
                             LoadBGMAudioClip(BGMID.stage_bgm0);
+                            _bGMAudioSource.Play();
                             break;
                         case 1:
                             LoadBGMAudioClip(BGMID.stage_bgm1);
+                            _bGMAudioSource.Play();
                             break;
                         case 2:
                             LoadBGMAudioClip(BGMID.stage_bgm2);
+                            _bGMAudioSource.Play();
                             break;
                         default:
                             break;
@@ -211,7 +230,6 @@ namespace Cooking
                 default:
                     break;
             }
-            _bGMAudioSource.Play();
         }
 
         #region テストコード

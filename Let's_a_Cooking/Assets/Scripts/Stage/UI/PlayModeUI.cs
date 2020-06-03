@@ -90,10 +90,18 @@ namespace Cooking.Stage
                         {
                             if (shotPowerRate <= 0)//上昇し始める
                             {
+                                if (SoundManager.Instance.SEAudioSourcesList[(int)SoundEffectID.power_move1].isPlaying)
+                                {
+                                    SoundManager.Instance.StopSE(SoundEffectID.power_move1);
+                                }
                                 SoundManager.Instance.PlaySE(SoundEffectID.power_move0);
                             }
                             else if (shotPowerRate >= 1)//下降し始める
                             {
+                                if (SoundManager.Instance.SEAudioSourcesList[(int)SoundEffectID.power_move0].isPlaying)
+                                {
+                                    SoundManager.Instance.StopSE(SoundEffectID.power_move0);
+                                }
                                 SoundManager.Instance.PlaySE(SoundEffectID.power_move1);
                             }
                         }
