@@ -7,7 +7,7 @@ namespace Cooking.Stage
     public class Sausage : MonoBehaviour
     {
         public BoxCollider SausageBoxCollider = null;
-        [SerializeField] BoxCollider _cutSausageBoxCollider = null;
+        public BoxCollider cutSausageBoxCollider = null;
         /// <summary>
         /// 通常ソーセージ 切られるとDestroyで切り替わる(複数オブジェクトで構成される)
         /// </summary>

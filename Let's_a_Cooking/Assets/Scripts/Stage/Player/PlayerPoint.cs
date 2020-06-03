@@ -79,21 +79,10 @@ namespace Cooking.Stage
                 _canGetPointFlags[i] = true;
             }
         }
-
         private void OnEnable()
         {
             _foodStatus = GetComponent<FoodStatus>();
             ComponentCheck.CheckNecessaryCopmonent<FoodStatus>(this, true);
-        }
-        // Start is called before the first frame update
-        void Start()
-        {
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
         }
         /// <summary>
         /// ポイントが増減する際に呼ばれる

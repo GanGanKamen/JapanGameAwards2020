@@ -8,6 +8,14 @@ namespace Cooking.Stage
         public BoxCollider shrimpBoxCollider = null;
         [SerializeField] CapsuleCollider capsuleCollider = null;
         /// <summary>
+        /// 頭が取れた後のコライダーの大きさをシーン上で確認しながら変更するため
+        /// </summary>
+        public BoxCollider shrimpFallHeadBoxCollider = null;
+        /// <summary>
+        /// 頭が取れた後のコライダーの大きさをシーン上で確認しながら変更するため
+        /// </summary>
+        [SerializeField] CapsuleCollider fallHeadCapsuleCollider = null;
+        /// <summary>
         /// このスクリプトに置くかは未定
         /// </summary>
         [SerializeField] Animator _foodAnimator = null;

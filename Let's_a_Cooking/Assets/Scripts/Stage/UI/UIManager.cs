@@ -370,6 +370,8 @@ namespace Cooking.Stage
         }
         IEnumerator GameStartUI()
         {
+            //シーンの名前に応じてBGMを変更 ステージごとに再生するBGMを変更
+            SoundManager.Instance.ChangeBGMOnSceneName(SceneName.PlayScene);
             yield return new WaitForSeconds(_startTime);
             _playModeUI.ChangeUIOnTurnStart();
         }

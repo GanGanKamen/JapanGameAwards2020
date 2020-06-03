@@ -20,6 +20,7 @@ namespace Cooking.Stage
         /// あわの進行方向を変えるまでにかかる時間(乱数取得)
         /// </summary>
         private float _changeDirectionTimeOfBubble;
+        [SerializeField] private GameObject _childBubbleZoneObject = null;
         /// <summary>
         ///あわ移動許容範囲の2端(x.y.zの最小値と最大値)の座標 この2点の間の座標に発生させる
         /// </summary>
@@ -29,6 +30,10 @@ namespace Cooking.Stage
         {
             _bubbleRigidbody = GetComponent<Rigidbody>();
             ChangeBubbleSpeedVectorDirection();
+            if (_childBubbleZoneObject.activeInHierarchy)
+            {
+                GetBubbleLimitZone(_childBubbleZoneObject.transform);
+            }
         }
 
         // Update is called once per frame
@@ -59,7 +64,7 @@ namespace Cooking.Stage
             }
             else
             {
-                Debug.Log("あわが限界エリアを検知できませんでした。");
+                Debug.LogFormat("あわが限界エリアを検知できませんでした。{0}",transform.position);
             }
             _bubbleRigidbody.velocity = _speedVectorOfBubble;
         }
@@ -78,12 +83,23 @@ namespace Cooking.Stage
             _changeDirectionTimeOfBubble = Cooking.Random.GetRandomFloat(1, 5);
             _changeDirectionTimeCounterOfBubble = 0;
         }
+        private void GetBubbleLimitZone(Transform bubbleZoneTransform)
+        {
+            var referencePoint = bubbleZoneTransform.GetChild(0).position;
+            _bubbleLimitPosition = new Vector3[] { referencePoint, referencePoint + bubbleZoneTransform.localScale };
+            if (_childBubbleZoneObject != null)
+            {
+                //親子関係を切って位置を固定させる
+                _childBubbleZoneObject.transform.parent = null;
+                _childBubbleZoneObject.SetActive(false);
+            }
+            Debug.Log(bubbleZoneTransform.gameObject);
+        }
         private void OnTriggerEnter(Collider other)
         {
             if (other.tag == TagList.BubbleZone.ToString())
             {
-                var referencePoint = other.transform.GetChild(0).position;
-                _bubbleLimitPosition = new Vector3[] { referencePoint, referencePoint + other.transform.localScale };
+                GetBubbleLimitZone(other.transform);
             }
         }
         private void OnTriggerExit(Collider other)

@@ -33,28 +33,28 @@ namespace Cooking.Stage
         /// <summary>
         /// シーン内に食材着地エリアを描画
         /// </summary>
-        void OnDrawGizmos()
-        {
-            Gizmos.color = Color.red;
-            switch (_foodType)
-            {
-                case FoodType.Shrimp:
-                    Gizmos.DrawWireCube(_fallPoint, _boxColliderSize);
-                    break;
-                case FoodType.Egg:
-                    Gizmos.DrawWireSphere(_capsuleColliderSizeInformation.capuleColliderCenter + _capsuleColliderSizeInformation.distanceVector, _capsuleColliderSizeInformation.radius);
-                    Gizmos.DrawWireSphere(_capsuleColliderSizeInformation.capuleColliderCenter - _capsuleColliderSizeInformation.distanceVector, _capsuleColliderSizeInformation.radius);
-                    break;
-                case FoodType.Chicken:
-                    Gizmos.DrawWireCube(_fallPoint, _boxColliderSize);
-                    break;
-                case FoodType.Sausage:
-                    Gizmos.DrawWireCube(_fallPoint, _boxColliderSize);
-                    break;
-                default:
-                    break;
-            }
-        }
+        //void OnDrawGizmos()
+        //{
+        //    Gizmos.color = Color.red;
+        //    switch (_foodType)
+        //    {
+        //        case FoodType.Shrimp:
+        //            Gizmos.DrawWireCube(_fallPoint, _boxColliderSize);
+        //            break;
+        //        case FoodType.Egg:
+        //            Gizmos.DrawWireSphere(_capsuleColliderSizeInformation.capuleColliderCenter + _capsuleColliderSizeInformation.distanceVector, _capsuleColliderSizeInformation.radius);
+        //            Gizmos.DrawWireSphere(_capsuleColliderSizeInformation.capuleColliderCenter - _capsuleColliderSizeInformation.distanceVector, _capsuleColliderSizeInformation.radius);
+        //            break;
+        //        case FoodType.Chicken:
+        //            Gizmos.DrawWireCube(_fallPoint, _boxColliderSize);
+        //            break;
+        //        case FoodType.Sausage:
+        //            Gizmos.DrawWireCube(_fallPoint, _boxColliderSize);
+        //            break;
+        //        default:
+        //            break;
+        //    }
+        //}
         /// <summary>
         /// レイキャストにより算出される落下地点に至るまでの時間
         /// </summary>

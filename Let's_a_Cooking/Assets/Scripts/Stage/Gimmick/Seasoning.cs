@@ -14,10 +14,13 @@ namespace Cooking.Stage
             get { return _rareEffect; }
         }
         [SerializeField] private GameObject _rareEffect;
-        public bool IsRareSeasoning
-        {
-            get { return _isRareSeasoning; }
-        }
+        /// <summary>
+        /// 残り3ターンでレアになるかどうか
+        /// </summary>
+        //public bool IsRareSeasoning
+        //{
+        //    get { return _isRareSeasoning; }
+        //}
         /// <summary>
         /// 残り3ターンでレアになるかどうか
         /// </summary>
@@ -77,6 +80,10 @@ namespace Cooking.Stage
             if (other.GetComponent<FoodStatus>() != null && !_isEmittingStopped)
             {
                 _seasoningParticleSystem.Stop(false, ParticleSystemStopBehavior.StopEmitting);
+                if (_rareEffect.activeInHierarchy)
+                {
+                    _rareEffect.GetComponent<ParticleSystem>().Stop(false, ParticleSystemStopBehavior.StopEmitting);
+                }
                 _isEmittingStopped = true;
             }
         }

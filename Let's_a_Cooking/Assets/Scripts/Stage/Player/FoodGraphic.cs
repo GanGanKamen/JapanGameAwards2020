@@ -8,6 +8,11 @@ namespace Cooking.Stage
     {
         Normal , HaveSeasoning , HaveRareSeasoning
     }
+    public enum ShrimpParts
+    {
+        ///<summary>しっぽは頭が取れた後の本体となる</summary>
+        Tail, Head
+    }
     /// <summary>
     /// 食材の種類に応じて、調味料などに触れたときの見た目を変更する
     /// </summary>
@@ -16,7 +21,7 @@ namespace Cooking.Stage
         /// <summary>
         /// 5/2時点でえびのみSkinnedMeshRenderer
         /// </summary>
-        [SerializeField,Header("エビのみ")] private SkinnedMeshRenderer _foodSkinnedMeshRenderer = null;
+        [SerializeField,Header("エビのみ")] protected SkinnedMeshRenderer[] foodSkinnedMeshRenderer = null;
         /// <summary>
         /// エビ以外はこちら
         /// </summary>
@@ -52,7 +57,7 @@ namespace Cooking.Stage
             {
                 case FoodType.Shrimp:
                     //既に見た目が変化している場合、変化しない
-                    if (_foodSkinnedMeshRenderer.material.mainTexture == material.mainTexture)
+                    if (foodSkinnedMeshRenderer[(int)ShrimpParts.Tail].material.mainTexture == material.mainTexture)
                     {
                         Debug.Log("同じ見た目です");
                         return;
@@ -65,7 +70,10 @@ namespace Cooking.Stage
                     else
                     {
                         _isRareSeasoningMaterial = false;
-                        _foodSkinnedMeshRenderer.material = material;
+                        foreach (var skinnedMeshRenderer in foodSkinnedMeshRenderer)
+                        {
+                            skinnedMeshRenderer.material = material;
+                        }
                     }
                     break;
                 case FoodType.Egg:

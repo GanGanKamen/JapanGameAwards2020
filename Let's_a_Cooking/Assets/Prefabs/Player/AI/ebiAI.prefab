@@ -337,6 +337,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shrimpBoxCollider: {fileID: 7167404278365877129}
   capsuleCollider: {fileID: 5670369316466324488}
+  shrimpFallHeadBoxCollider: {fileID: 0}
+  fallHeadCapsuleCollider: {fileID: 0}
   _foodAnimator: {fileID: 9120880134355479713}
   particleKillTriggerArea: {fileID: 7455387044025859874}
   _shrimpHead: {fileID: 4485098196317645658}
@@ -364,7 +366,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6865a81d3964e3d4f8db92a50faabc6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _foodSkinnedMeshRenderer: {fileID: 2484488461429338661}
+  foodSkinnedMeshRenderer:
+  - {fileID: 2484488461429338661}
+  - {fileID: 3539933133951713088}
   _foodMeshRenderer: {fileID: 0}
   foodNormalGraphic: {fileID: 0}
   _seasoningMaterial: {fileID: 0}

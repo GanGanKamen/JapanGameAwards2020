@@ -43,7 +43,7 @@ namespace Cooking
         /// <summary>
         ///プレイヤーの人数が想定を超えないように制御→プロパティ・例外処理
         /// </summary>
-        private int _playerNumber = 1,_computerNumber = 1;
+        private int _playerNumber = 1,_computerNumber = 3;
         /// <summary>
         /// 合計ステージ数:3(2020/5/18)
         /// </summary>

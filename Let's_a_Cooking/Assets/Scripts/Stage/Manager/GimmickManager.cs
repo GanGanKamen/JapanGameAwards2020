@@ -84,6 +84,9 @@ namespace Cooking.Stage
         /// </summary>
         private Transform[] _instantiateSeasoningPoint;
         [SerializeField] GameObject _seasoningPrefab = null;
+        /// <summary>
+        /// ビンに付いてる星エフェクト
+        /// </summary>
         [SerializeField] GameObject _rareSeasoningEffect;
         public List<GameObject>[] TargetObjectsForAI
         {
@@ -208,8 +211,9 @@ namespace Cooking.Stage
             foreach (var rareSeasoning in _targetObjectsForAI[(int)AITargetObjectTags.RareSeasoning])
             {
                 rareSeasoning.SetActive(true);
+                rareSeasoning.GetComponent<Seasoning>().ManageRareSeasoning(true);
             }
-            _rareSeasoningEffect.SetActive(true);
+            //_rareSeasoningEffect.SetActive(true);
         }
         /// <summary>
         /// ターンが変わるときに水が出なくなる場所を制御
@@ -254,7 +258,10 @@ namespace Cooking.Stage
                     {
                         //indexは同期されている
                         var seasoning = _targetObjectsForAI[(int)AITargetObjectTags.Seasoning][i].GetComponent<Seasoning>();
-                        SetSeasoningActiveTrue(seasoning);
+                        if (!seasoning.gameObject.activeInHierarchy)
+                        {
+                            SetSeasoningActiveTrue(seasoning);
+                        }
                     }
                 }
             }
@@ -262,9 +269,12 @@ namespace Cooking.Stage
 
         private void SetSeasoningActiveTrue(Seasoning seasoning)
         {
-            ///  x(右辺) / 10(左辺)%の確率で再出現
-            if (Cooking.Random.GetRandomIntFromZero(20) < 3)
+            var seed = Cooking.Random.GetRandomIntFromZero(20);
+            Debug.Log(seed);
+            //  x(右辺) / 10(左辺)%の確率で再出現
+            if (seed < 0)
             {
+                Debug.Log("生成");
                 seasoning.ManageSeasoningActive(true);
             }
         }

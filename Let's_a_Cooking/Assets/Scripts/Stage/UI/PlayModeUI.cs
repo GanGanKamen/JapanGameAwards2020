@@ -44,6 +44,10 @@ namespace Cooking.Stage
         [SerializeField] private Text _turnNumberText = null;
         [SerializeField] private Text _playerNumberTextOnPlay = null;
         [SerializeField] private Text _pointNumberTextOnPlay = null;
+        /// <summary>
+        /// 集中線
+        /// </summary>
+        [SerializeField] private GameObject _shottingLines = null;
         [SerializeField] private GameObject _falledImage = null;
         [SerializeField] private GameObject _goalImage = null;
         #endregion
@@ -81,6 +85,18 @@ namespace Cooking.Stage
 
                         //intバージョン shotPowerをゲージに反映
                         _shotPowerGagesOfInteger.sprite = ChoosePowerMeterUIOfInteger(shotPowerRate);
+                        //ウェイト中には音は再度なりはじめることはない
+                        if (ShotManager.Instance.ShotModeProperty == ShotState.AngleMode)
+                        {
+                            if (shotPowerRate <= 0)//上昇し始める
+                            {
+                                SoundManager.Instance.PlaySE(SoundEffectID.power_move0);
+                            }
+                            else if (shotPowerRate >= 1)//下降し始める
+                            {
+                                SoundManager.Instance.PlaySE(SoundEffectID.power_move1);
+                            }
+                        }
                     }
                     UpdatePointText();
                     break;

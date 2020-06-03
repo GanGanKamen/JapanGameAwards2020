@@ -46,7 +46,14 @@ namespace Cooking.Stage
         List<GameObject> _targetObjectOptions = new List<GameObject>();
         /// <summary>各ターゲットと自分との距離を算出して格納</summary>
         List<float> _distances = new List<float>();
-
+        enum NearFallFloorAngle
+        {
+            None, Left, Right
+        }
+        enum NearFallFloorPower
+        {
+            None, Strong, Weak
+        }
         public void SetAIShotRange(float[] shotRange)
         {
             _randomRangeOfShotPower = shotRange;
@@ -67,7 +74,7 @@ namespace Cooking.Stage
             _targetObjectOptions.Clear();
             _distances.Clear();
             _targetDistance = _initializeTargetDistanceValue;
-            StartCoroutine(Shooting());
+            StartCoroutine(DecideShotTarget());
         }
 
         /// <summary>
@@ -75,7 +82,7 @@ namespace Cooking.Stage
         /// </summary>
         /// <param name="targetObject"></param>
         /// <returns></returns>
-        IEnumerator Shooting()
+        IEnumerator DecideShotTarget()
         {
             GetTargetObjects();
             yield return new WaitForSeconds(2f);
@@ -99,8 +106,6 @@ namespace Cooking.Stage
                         _targetObjectOptions.RemoveAt(0);
                         _distances.RemoveAt(0);
                     }
-                    //Debug.Log(canShot);
-                    //yield return null;
                 }
             }
             float aiShotPower = 0;
@@ -383,7 +388,24 @@ namespace Cooking.Stage
                     }
                 }
             }
-            _targetTagByTransform = AITargetObjectTags.Seasoning;
+            switch (foodType)
+            {
+                case FoodType.Shrimp:
+                    if (foodSkinnedMeshRenderer[(int)ShrimpParts.Tail].material.mainTexture == StageSceneManager.Instance.FoodTextureList.normalTextures[(int)FoodType.Shrimp])
+                    {
+                        _targetTagByTransform = AITargetObjectTags.Seasoning;
+                    }
+                    break;
+                case FoodType.Egg:
+
+                    break;
+                case FoodType.Chicken:
+                    break;
+                case FoodType.Sausage:
+                    break;
+                default:
+                    break;
+            }
             foreach (var seasoning in GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.Seasoning])
             {
                 if (seasoning != null)
@@ -479,44 +501,82 @@ namespace Cooking.Stage
                 //ゴールが届く範囲にない場合、最もゴールに近い場所へ移動
                 //1 垂直方向角度45度(仮)かつ最大パワーで回転させてレイを飛ばす(仮:1度刻み) 落下地点を配列に格納 2 落下地点の中でゴールに近いものを選ぶ 
                 //3条件を加える 自分の近くではない(距離 5未満)、かつ床ではない 4食材の挙動を考慮して床から距離を置く?不要 タグfloorを検出した最後の角度から 仮：プラスマイナス5度以上離れているか確認 
-                int verticalAngle = 45;//45度は落下確率高い 落下地点のy座標が今いる座標よりそれなりに(仮:1m)低いなら角度を上げる
-                shotDirectionY = Mathf.Sin(verticalAngle * Mathf.Deg2Rad); // 角度をラジアンへ
-                int halfLimitAngle = 90;//全方向では処理が重い
                 const int incrementValue = 1;//角度の増加量
                 var goalVectorXZ = new Vector2(goalVector.x, goalVector.z).normalized;
                 int goalAngle = (int)(Mathf.Asin(goalVectorXZ.y) * Mathf.Rad2Deg);//水平面におけるゴールへのベクトルと、ワールドx軸と平行な平面のなす角度
                 int horizontalAngle = goalAngle;
-                int fallPointIndex = 0;
-                int fallPointCount = (int)((halfLimitAngle * 2) / incrementValue);
-                Debug.Log(fallPointCount);
-                Vector3[] fallPoint = new Vector3[fallPointCount];
-                GameObject fallPointGameObject = null;
-                float[] goalDistanceFromFallPoints = new float[fallPointCount];
-                //重ければ減らす必要あり
-                for (verticalAngle = 0; verticalAngle <= ShotManager.Instance.ShotParameter.LimitVerticalAngle; verticalAngle++)
+                //重ければ配列へ fallPointCount  (int)((halfLimitAngle * 2) / incrementValue); これをさらにVerticalAngle分用意する 
+                List<Vector3> fallPoint = new List<Vector3>();
+                List<float> goalDistanceFromFallPoints = new List<float>();
+                int verticalAngle = 45;//45度は落下確率高い 落下地点のy座標が今いる座標よりそれなりに(仮:1m)低いなら角度を上げる
+                shotDirectionY = Mathf.Sin(verticalAngle * Mathf.Deg2Rad); // 角度をラジアンへ
+                List<Vector3> maxSpeedVector = new List<Vector3>();
+                StartCoroutine(DecideVerticalAngleCoroutine( goal, maxShotSpeed,  incrementValue, goalAngle, horizontalAngle, fallPoint, goalDistanceFromFallPoints,maxSpeedVector));
+            }
+        }
+        /// <summary>
+        /// 落下地点の座標を得る・オブジェクトのタグを得る・角度を決める
+        /// </summary>
+        /// <param name="verticalAngle"></param>
+        /// <param name="goal"></param>
+        /// <param name="maxShotSpeed"></param>
+        /// <param name="i"></param>
+        /// <param name="shotDirectionY"></param>
+        /// <param name="maxShotSpeedVector"></param>
+        /// <param name="halfLimitAngle"></param>
+        /// <param name="incrementValue"></param>
+        /// <param name="goalAngle"></param>
+        /// <param name="horizontalAngle"></param>
+        /// <param name="fallPointIndex"></param>
+        /// <param name="fallPointCount"></param>
+        /// <param name="fallPoint"></param>
+        /// <param name="fallPointGameObject"></param>
+        /// <param name="goalDistanceFromFallPoints"></param>
+        /// <returns></returns>
+        IEnumerator DecideVerticalAngleCoroutine(GameObject goal, float maxShotSpeed, int incrementValue, int goalAngle, int horizontalAngle, List<Vector3> fallPoint, List<float> goalDistanceFromFallPoints , List<Vector3>maxSpeedVector)
+        {
+            GameObject fallPointGameObject = null;
+            var goalVector = (goal.transform.position - transform.position).normalized;
+            //重ければ減らす必要あり
+            int i = 0;
+            int halfLimitAngle = 90;//全方向では処理が重い
+            int fallPointCount = (int)((halfLimitAngle * 2) / incrementValue);
+            int fallPointIndex = 0;
+            var verticalAngle = 45;//45度は落下確率高い 落下地点のy座標が今いる座標よりそれなりに(仮:1m)低いなら角度を上げる
+            var shotDirectionY = Mathf.Sin(verticalAngle * Mathf.Deg2Rad); // 角度をラジアンへ
+            for (verticalAngle = 1; verticalAngle <= ShotManager.Instance.ShotParameter.LimitVerticalAngle; verticalAngle++)
+            {
+                for (i = 0; horizontalAngle < goalAngle + halfLimitAngle; i++, horizontalAngle = goalAngle + i * incrementValue)
                 {
-                    for (i = 0; horizontalAngle < goalAngle + halfLimitAngle; i++, horizontalAngle = goalAngle + i * incrementValue)
-                    {
-                        GetFallPointByRayCast(out fallPointGameObject, goal, maxShotSpeed, shotDirectionY, maxShotSpeedVector, verticalAngle, horizontalAngle, fallPointIndex, fallPoint, goalDistanceFromFallPoints);
-                        fallPointIndex++;
-                    }
-                    horizontalAngle = goalAngle - 1 * incrementValue;
-                    //角度が偶数奇数でずれる可能性があるので上限条件は数
-                    for (i = 1; fallPointIndex < fallPointCount; i++, horizontalAngle = goalAngle - i * incrementValue)
-                    {
-                        GetFallPointByRayCast(out fallPointGameObject, goal, maxShotSpeed, shotDirectionY, maxShotSpeedVector, verticalAngle, horizontalAngle, fallPointIndex, fallPoint, goalDistanceFromFallPoints);
-                        fallPointIndex++;
-                    }
+                    GetFallPointByRayCast(goal, maxShotSpeed, shotDirectionY, verticalAngle, horizontalAngle, fallPointIndex, fallPoint, goalDistanceFromFallPoints,maxSpeedVector);
+                    fallPointIndex++;
                 }
-                int minDistanceIndex = System.Array.IndexOf(goalDistanceFromFallPoints, goalDistanceFromFallPoints.Min());
-
+                horizontalAngle = goalAngle - 1 * incrementValue;
+                //角度が偶数奇数でずれる可能性があるので上限条件は数
+                for (i = 1; fallPointIndex < fallPointCount; i++, horizontalAngle = goalAngle - i * incrementValue)
+                {
+                    GetFallPointByRayCast(goal, maxShotSpeed, shotDirectionY, verticalAngle, horizontalAngle, fallPointIndex, fallPoint, goalDistanceFromFallPoints, maxSpeedVector);
+                    fallPointIndex++;
+                }
+                if (verticalAngle % 5 == 0)
+                {
+                    yield return null;
+                }
+            }
+            int minDistanceIndex = goalDistanceFromFallPoints.IndexOf(goalDistanceFromFallPoints.Min());
+            //最終チェックによる改善用変数
+            NearFallFloorAngle nearFallFloorAngle = NearFallFloorAngle.Left;
+            NearFallFloorPower nearFallFloorPower = NearFallFloorPower.Strong;
+            if (fallPointGameObject.tag != TagList.Chair.ToString())
+            {
                 //最終チェックによる改善
                 //AIが落下しそうな場所に飛ばないようにする
                 //方法　最終verticalAngleで maxpowerを大きくする maxpower + 1 ~ 3まで  横で±5度 maxpower固定(仮)
                 //この範囲で床が存在しないかチェックする 床があったら床を検知したところから遠くなるように角度とパワーを調節する パワー上げた結果見つけたらパワー下げる 角度足した結果ならひく 角度引いた結果なら角度足す
                 var checkSpeed = maxShotSpeed;
-                shotDirectionVector = new Vector3(goalVector.x, shotDirectionY, goalVector.z).normalized;
-                for (i = 1; checkSpeed <= maxShotSpeed + 3 ; i++)
+                var shotDirectionVector = new Vector3(goalVector.x, shotDirectionY, goalVector.z).normalized;
+                //パワー増加
+                for (i = 1; checkSpeed <= maxShotSpeed + 3; i++)
                 {
                     checkSpeed = maxShotSpeed + i / 2;
                     PredictFoodPhysics.PredictFallPointByBoxRayCast(out fallPointGameObject, transform.position, shotDirectionVector * checkSpeed, verticalAngle, foodType, GetColliderSize<Vector3>());
@@ -525,37 +585,117 @@ namespace Cooking.Stage
                         switch (foodType)
                         {
                             case FoodType.Shrimp:
-                                checkSpeed = maxShotSpeed - 3;
+                                checkSpeed = maxShotSpeed + (i - 4);
                                 break;
                             case FoodType.Egg:
-                                checkSpeed = maxShotSpeed - 2.5f;
+                                checkSpeed = maxShotSpeed + (i - 3.5f);
                                 break;
                             case FoodType.Chicken:
-                                checkSpeed = maxShotSpeed - 2;
+                                checkSpeed = maxShotSpeed + (i - 3);
                                 break;
                             case FoodType.Sausage:
-                                checkSpeed = maxShotSpeed - 2;
+                                checkSpeed = maxShotSpeed + (i - 3);
                                 break;
                             default:
                                 break;
-                        }  
+                        }
                         //パワーのチェック終了
                         break;
                     }
                 }
+                //パワー減少
+                for (i = 1; checkSpeed >= maxShotSpeed - 3; i++)
+                {
+                    checkSpeed = maxShotSpeed - i / 2;
+                    PredictFoodPhysics.PredictFallPointByBoxRayCast(out fallPointGameObject, transform.position, shotDirectionVector * checkSpeed, verticalAngle, foodType, GetColliderSize<Vector3>());
+                    if (fallPointGameObject.tag == TagList.Floor.ToString())
+                    {
+                        switch (foodType)
+                        {
+                            case FoodType.Shrimp:
+                                checkSpeed = maxShotSpeed - (i - 4);
+                                break;
+                            case FoodType.Egg:
+                                checkSpeed = maxShotSpeed - (i - 3.5f);
+                                break;
+                            case FoodType.Chicken:
+                                checkSpeed = maxShotSpeed - (i - 3);
+                                break;
+                            case FoodType.Sausage:
+                                checkSpeed = maxShotSpeed - (i - 3);
+                                break;
+                            default:
+                                break;
+                        }
+                        //パワーのチェック終了
+                        break;
+                    }
+                }
+                //角度増加
 
+                switch (nearFallFloorPower)
+                {
+                    case NearFallFloorPower.None:
+                        switch (nearFallFloorAngle)
+                        {
+                            case NearFallFloorAngle.None:
+                                break;
+                            case NearFallFloorAngle.Left:
+                                break;
+                            case NearFallFloorAngle.Right:
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case NearFallFloorPower.Strong:
+                        switch (nearFallFloorAngle)
+                        {
+                            case NearFallFloorAngle.None:
+                                break;
+                            case NearFallFloorAngle.Left:
+                                break;
+                            case NearFallFloorAngle.Right:
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case NearFallFloorPower.Weak:
+                        switch (nearFallFloorAngle)
+                        {
+                            case NearFallFloorAngle.None:
+                                break;
+                            case NearFallFloorAngle.Left:
+                                break;
+                            case NearFallFloorAngle.Right:
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                //最小値に向かって飛ぶ
+                _shotDirection = CalculateVelocity(this.transform.position, fallPoint[minDistanceIndex], verticalAngle);
+                speed = checkSpeed;
+            }
+            else
+            {
                 //最小値に向かって飛ぶ
                 _shotDirection = CalculateVelocity(this.transform.position, fallPoint[minDistanceIndex], verticalAngle);
                 speed = maxShotSpeed;
             }
         }
 
-        private void GetFallPointByRayCast(out GameObject fallPointGameObject, GameObject goal, float maxShotSpeed, float shotDirectionY, Vector3 maxShotSpeedVector, int verticalAngle, int horizontalAngle, int fallPointIndex, Vector3[] fallPoint, float[] goalDistanceFromFallPoints)
+        private void GetFallPointByRayCast( GameObject goal, float maxShotSpeed, float shotDirectionY, int verticalAngle, int horizontalAngle, int fallPointIndex, List<Vector3> fallPoint, List<float> goalDistanceFromFallPoints, List<Vector3> maxShotSpeedVectorList)
         {
             var shotDirectionX = Mathf.Cos(horizontalAngle * Mathf.Deg2Rad); // 角度をラジアンへ
             var shotDirectionZ = Mathf.Sin(horizontalAngle * Mathf.Deg2Rad); // 角度をラジアンへ
             var shotDirectionVector = new Vector3(shotDirectionX, shotDirectionY, shotDirectionZ).normalized;
-            maxShotSpeedVector = shotDirectionVector * maxShotSpeed;
+            var maxShotSpeedVector = shotDirectionVector * maxShotSpeed;
+            GameObject fallPointGameObject = null;
             var fallPosition = Vector3.zero;
             switch (foodType)
             {
@@ -566,19 +706,19 @@ namespace Cooking.Stage
                         if (fallPointGameObject.tag == TagList.Floor.ToString() || fallPointGameObject.tag == TagList.NotBeAITarget.ToString())
                         {
                             //使わない
-                            fallPoint[fallPointIndex] = fallPosition;
-                            goalDistanceFromFallPoints[fallPointIndex] = 9999999999;
+                            fallPoint.Add(fallPosition);
+                            goalDistanceFromFallPoints.Add(9999999999);
                         }
                         //いす(クッション部分だけChair)は真ん中(transform.position)オンリーに飛ぶ
                         else if (fallPointGameObject.tag == TagList.Chair.ToString())
                         {
-                            fallPoint[fallPointIndex] = fallPointGameObject.transform.position;
-                            goalDistanceFromFallPoints[fallPointIndex] = Vector3.Distance(goal.transform.position, fallPointGameObject.transform.position);
+                            fallPoint.Add(fallPointGameObject.transform.position);
+                            goalDistanceFromFallPoints.Add(Vector3.Distance(goal.transform.position, fallPointGameObject.transform.position));
                         }
                         else
                         {
-                            fallPoint[fallPointIndex] = fallPosition;
-                            goalDistanceFromFallPoints[fallPointIndex] = Vector3.Distance(goal.transform.position, fallPoint[fallPointIndex]);
+                            fallPoint.Add(fallPosition);
+                            goalDistanceFromFallPoints.Add(Vector3.Distance(goal.transform.position, fallPoint[fallPointIndex]));
                         }
                     }
                     break;
@@ -591,19 +731,19 @@ namespace Cooking.Stage
                             if (fallPointGameObject.tag == TagList.Floor.ToString() || fallPointGameObject.tag == TagList.NotBeAITarget.ToString())
                             {
                                 //使わない
-                                fallPoint[fallPointIndex] = fallPosition;
-                                goalDistanceFromFallPoints[fallPointIndex] = 9999999999;
+                                fallPoint.Add(fallPosition);
+                                goalDistanceFromFallPoints.Add(9999999999);
                             }
                             //いす(クッション部分だけChair)は真ん中(transform.position)オンリーに飛ぶ
                             else if (fallPointGameObject.tag == TagList.Chair.ToString())
                             {
-                                fallPoint[fallPointIndex] = fallPointGameObject.transform.position;
-                                goalDistanceFromFallPoints[fallPointIndex] = Vector3.Distance(goal.transform.position, fallPointGameObject.transform.position);
+                                fallPoint.Add(fallPointGameObject.transform.position);
+                                goalDistanceFromFallPoints.Add(Vector3.Distance(goal.transform.position, fallPointGameObject.transform.position));
                             }
                             else
                             {
-                                fallPoint[fallPointIndex] = fallPosition;
-                                goalDistanceFromFallPoints[fallPointIndex] = Vector3.Distance(goal.transform.position, fallPoint[fallPointIndex]);
+                                fallPoint.Add(fallPosition);
+                                goalDistanceFromFallPoints.Add(Vector3.Distance(goal.transform.position, fallPoint[fallPointIndex]));
                             }
                         }
                     }
@@ -615,19 +755,19 @@ namespace Cooking.Stage
                             if (fallPointGameObject.tag == TagList.Floor.ToString() || fallPointGameObject.tag == TagList.NotBeAITarget.ToString())
                             {
                                 //使わない
-                                fallPoint[fallPointIndex] = fallPosition;
-                                goalDistanceFromFallPoints[fallPointIndex] = 9999999999;
+                                fallPoint.Add(fallPosition);
+                                goalDistanceFromFallPoints.Add(9999999999);
                             }
                             //いす(クッション部分だけChair)は真ん中(transform.position)オンリーに飛ぶ
                             else if (fallPointGameObject.tag == TagList.Chair.ToString())
                             {
-                                fallPoint[fallPointIndex] = fallPointGameObject.transform.position;
-                                goalDistanceFromFallPoints[fallPointIndex] = Vector3.Distance(goal.transform.position, fallPointGameObject.transform.position);
+                                fallPoint.Add(fallPointGameObject.transform.position);
+                                goalDistanceFromFallPoints.Add(Vector3.Distance(goal.transform.position, fallPointGameObject.transform.position));
                             }
                             else
                             {
-                                fallPoint[fallPointIndex] = fallPosition;
-                                goalDistanceFromFallPoints[fallPointIndex] = Vector3.Distance(goal.transform.position, fallPoint[fallPointIndex]);
+                                fallPoint.Add(fallPosition);
+                                goalDistanceFromFallPoints.Add(Vector3.Distance(goal.transform.position, fallPoint[fallPointIndex]));
                             }
                         }
                     }
@@ -639,18 +779,18 @@ namespace Cooking.Stage
                         if (fallPointGameObject.tag == TagList.Floor.ToString() || fallPointGameObject.tag == TagList.NotBeAITarget.ToString())
                         {
                             //使わない
-                            fallPoint[fallPointIndex] = fallPosition;
-                            goalDistanceFromFallPoints[fallPointIndex] = 9999999999;
+                            fallPoint.Add(fallPosition);
+                            goalDistanceFromFallPoints.Add(9999999999);
                         }                        //いす(クッション部分だけChair)は真ん中(transform.position)オンリーに飛ぶ
                         else if (fallPointGameObject.tag == TagList.Chair.ToString())
                         {
-                            fallPoint[fallPointIndex] = fallPointGameObject.transform.position;
-                            goalDistanceFromFallPoints[fallPointIndex] = Vector3.Distance(goal.transform.position, fallPointGameObject.transform.position);
+                            fallPoint.Add(fallPointGameObject.transform.position);
+                            goalDistanceFromFallPoints.Add(Vector3.Distance(goal.transform.position, fallPointGameObject.transform.position));
                         }
                         else
                         {
-                            fallPoint[fallPointIndex] = fallPosition;
-                            goalDistanceFromFallPoints[fallPointIndex] = Vector3.Distance(goal.transform.position, fallPoint[fallPointIndex]);
+                            fallPoint.Add(fallPosition);
+                            goalDistanceFromFallPoints.Add(Vector3.Distance(goal.transform.position, fallPoint[fallPointIndex]));
                         }
                     }
                     break;
@@ -661,18 +801,18 @@ namespace Cooking.Stage
                         if (fallPointGameObject.tag == TagList.Floor.ToString() || fallPointGameObject.tag == TagList.NotBeAITarget.ToString())
                         {
                             //使わない
-                            fallPoint[fallPointIndex] = fallPosition;
-                            goalDistanceFromFallPoints[fallPointIndex] = 9999999999;
+                            fallPoint.Add(fallPosition);
+                            goalDistanceFromFallPoints.Add(9999999999);
                         }                        //いす(クッション部分だけChair)は真ん中(transform.position)オンリーに飛ぶ
                         else if (fallPointGameObject.tag == TagList.Chair.ToString())
                         {
-                            fallPoint[fallPointIndex] = fallPointGameObject.transform.position;
-                            goalDistanceFromFallPoints[fallPointIndex] = Vector3.Distance(goal.transform.position, fallPointGameObject.transform.position);
+                            fallPoint.Add(fallPointGameObject.transform.position);
+                            goalDistanceFromFallPoints.Add(Vector3.Distance(goal.transform.position, fallPointGameObject.transform.position));
                         }
                         else
                         {
-                            fallPoint[fallPointIndex] = fallPosition;
-                            goalDistanceFromFallPoints[fallPointIndex] = Vector3.Distance(goal.transform.position, fallPoint[fallPointIndex]);
+                            fallPoint.Add(fallPosition);
+                            goalDistanceFromFallPoints.Add(Vector3.Distance(goal.transform.position, fallPoint[fallPointIndex]));
                         }
                     }
                     break;

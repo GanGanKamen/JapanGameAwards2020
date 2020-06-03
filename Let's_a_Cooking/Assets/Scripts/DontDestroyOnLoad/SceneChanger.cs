@@ -59,8 +59,11 @@ namespace Cooking
         public static void LoadSelectingScene(SceneName sceneName)
         {
             SceneManager.LoadScene((int)sceneName);
-            //シーンの名前に応じてBGMを変更 ステージごとに再生するBGMを変更
-            SoundManager.Instance.ChangeBGMOnSceneChange(sceneName);
+            if (sceneName == SceneName.Title)
+            {
+                //シーンの名前に応じてBGMを変更 ステージごとに再生するBGMを変更
+                SoundManager.Instance.ChangeBGMOnSceneName(sceneName);
+            }
         }
     }
 

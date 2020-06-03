@@ -67,8 +67,8 @@ namespace Cooking.Stage
         /// <summary>
         /// ズーム縮小横視点による最大のプレイヤーからの距離
         /// </summary>
-       // [SerializeField] private float _zoomMaxDistanceFromPlayerSide ;
-       // [SerializeField] private float _zoomMinDistanceFromPlayerSide ;
+        // [SerializeField] private float _zoomMaxDistanceFromPlayerSide ;
+        // [SerializeField] private float _zoomMinDistanceFromPlayerSide ;
         private Vector3 _beforePosition;
         //[SerializeField] Transform cameraPositionOnShotting;
         /// <summary>
@@ -129,9 +129,9 @@ namespace Cooking.Stage
                         zoomScalingValue = CameraZoomScaling.GetCameraZoomScalingValue();   //マウスホイールの回転量を格納
                         if (zoomScalingValue != 0)
                         {
-                            var playerPosition = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].transform.position + new Vector3(0,1,0); //約プレイヤーの大きさ分加算
+                            var playerPosition = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].transform.position + new Vector3(0, 1, 0); //約プレイヤーの大きさ分加算
                             newTopCameraPos = topCam.transform.position;  //現在のカメラの座標を代入
-                            newTopCameraPos.y = topCam.transform.position.y +  zoomScalingValue;
+                            newTopCameraPos.y = topCam.transform.position.y + zoomScalingValue;
                             topCam.transform.position = newTopCameraPos;       //カメラの座標に代入
                             //下限
                             if (topCam.transform.position.y <= playerPosition.y)
@@ -140,7 +140,7 @@ namespace Cooking.Stage
                                 topCam.transform.position = new Vector3(topCameraPosition.x, playerPosition.y, topCameraPosition.z);
                             }
                             //上限
-                            else if (topCam.transform.position.y >=  playerPosition.y + _zoomLimitYPositionFromPlayerAbove)
+                            else if (topCam.transform.position.y >= playerPosition.y + _zoomLimitYPositionFromPlayerAbove)
                             {
                                 var topCameraPosition = topCam.transform.position;
                                 topCam.transform.position = new Vector3(topCameraPosition.x, playerPosition.y + _zoomLimitYPositionFromPlayerAbove, topCameraPosition.z);
@@ -174,9 +174,9 @@ namespace Cooking.Stage
                         //マウスホイールが入力されたら y z二つの値を加算
                         if (zoomScalingValue != 0)
                         {
-                            var playerPosition = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].CenterPoint .transform.position + new Vector3(0, 0, 0); //約プレイヤーの大きさ分加算
+                            var playerPosition = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].CenterPoint.transform.position + new Vector3(0, 0, 0); //約プレイヤーの大きさ分加算
                             var sideCamPosition = sideCam.transform.localPosition;      //マウスホイールの回転をカメラの前後方向に代入
-                            sideCamPosition.x +=  zoomScalingValue * -2;
+                            sideCamPosition.x += zoomScalingValue * -2;
                             //sideCam.transform.localPosition = sideCamPosition;
                             //下限
                             //if (sideCam.transform.position.x <= playerPosition.x )
@@ -233,7 +233,7 @@ namespace Cooking.Stage
             //    Mathf.Clamp(frontCam.transform.position.z, _cameraLimitPosition[(int)LimitValue.Min].z, _cameraLimitPosition[(int)LimitValue.Max].z));
 
             topCam.transform.position = new Vector3(Mathf.Clamp(topCam.transform.position.x, _cameraLimitPosition[(int)LimitValue.Min].x, _cameraLimitPosition[(int)LimitValue.Max].x),
-                topCam.transform.position.y,
+                Mathf.Clamp(topCam.transform.position.y, _cameraLimitPosition[(int)LimitValue.Min].y, _cameraLimitPosition[(int)LimitValue.Max].y),
                 Mathf.Clamp(topCam.transform.position.z, _cameraLimitPosition[(int)LimitValue.Min].z, _cameraLimitPosition[(int)LimitValue.Max].z));
 
             sideCam.transform.position = new Vector3(Mathf.Clamp(sideCam.transform.position.x, _cameraLimitPosition[(int)LimitValue.Min].x, _cameraLimitPosition[(int)LimitValue.Max].x),

@@ -293,6 +293,7 @@ namespace Cooking.Stage
                     break;
                 case StageGameState.FinishFoodInstantiateAndPlayerInOrder:
                     _gameState = StageGameState.Play;
+
                     break;
                 case StageGameState.Play:
                     {
@@ -301,11 +302,12 @@ namespace Cooking.Stage
                             if (food.FalledFoodStateOnStartProperty == FalledFoodStateOnStart.OnStart)
                             {
                                 food.FinishStartProcessing();
-                                _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].ResetFoodState();
-                                PredictLineManager.Instance.SetPredictLineInstantiatePosition(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].GroundPoint);
+                                food.ResetFoodState();
                                 //PredictLineManager.Instance.SetPredictLineInstantiatePosition(food.CenterPoint.position);
                             }
                         }
+                        //if (_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].FalledFoodStateOnStartProperty == FalledFoodStateOnStart.OnStart)
+                        PredictLineManager.Instance.SetPredictLineInstantiatePosition(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].GroundPoint);
                     }
                     break;
                 case StageGameState.Finish:
@@ -379,7 +381,6 @@ namespace Cooking.Stage
                             }
                             break;
                         case FoodStateOnGame.ShotEnd:
-                            _foodStateOnGame = FoodStateOnGame.Normal;
                             foreach (var seasoningObject in GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.Seasoning])
                             {
                                 var seasoning = seasoningObject.GetComponent<Seasoning>();
@@ -388,7 +389,22 @@ namespace Cooking.Stage
                                     seasoning.ManageSeasoningActive(false);
                                 }                                
                             }
-                            _turnManager.ChangeTurn();
+                            bool isTurnChange = true;
+                            foreach (var foodStatus in _turnManager.FoodStatuses)
+                            {
+                                ///食材が止まるまで待機
+                                if (foodStatus.Rigidbody.velocity.magnitude > 0.0001f)
+                                {
+                                    isTurnChange = false;
+                                    break;
+                                }
+                            }
+                            ///食材が止まるまで待機
+                            if (isTurnChange)
+                            {
+                                _foodStateOnGame = FoodStateOnGame.Normal;
+                                _turnManager.ChangeTurn();
+                            }
                             break;
                         default:
                             break;

@@ -6,6 +6,11 @@ namespace Cooking.Stage
 {
     public class Egg : MonoBehaviour
     {
+        public CapsuleCollider eggCollider = null;
+        /// <summary>
+        ///卵が割れた後のコライダー
+        /// </summary>
+        public BoxCollider insideBoxCollider = null;
         /// <summary>
         /// 割れた回数 ショットによるキッチンとの衝突で増加
         /// </summary>
@@ -14,16 +19,21 @@ namespace Cooking.Stage
         /// 割れているかどうか
         /// </summary>
         public bool HasBroken { get { return hasBroken; } }
-        public CapsuleCollider eggCollider = null;
         [SerializeField] private GameObject eggObject = null;
         [SerializeField] private Transform eggShells = null;
         [SerializeField] private GameObject eggInObject = null;
         [SerializeField] private Transform center = null;
         [SerializeField] private float breakPower = 0;
+        /// <summary>
+        /// ひびの入ったマテリアル
+        /// </summary>
         public Material[] BreakMaterials
         {
             get { return breakMaterials; }
         }
+        /// <summary>
+        /// ひびの入ったマテリアル
+        /// </summary>
         [SerializeField] private Material[] breakMaterials = null; //2種類 Length = 2
         /// <summary>
         /// 割れた後のMeshRenderer 
@@ -33,7 +43,6 @@ namespace Cooking.Stage
             get { return _insideMeshRenderer; }
         }
         [SerializeField] private MeshRenderer _insideMeshRenderer = null;
-
         public GameObject[] Shells
         {
             get { return shells; }
@@ -49,7 +58,6 @@ namespace Cooking.Stage
                 shellsList.Add(child.gameObject);
             }
             shells = shellsList.ToArray();
-
         }
         /// <summary>
         /// 衝突してひびが入る

@@ -281,7 +281,10 @@ namespace Cooking.Stage
                             switch (_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].FoodType)
                             {
                                 case FoodType.Shrimp:
-                                    _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].PlayerAnimatioManage(false);
+                                    foreach (var food in _turnManager.FoodStatuses)
+                                    {
+                                        food.PlayerAnimatioManage(false);
+                                    }
                                     break;
                                 case FoodType.Egg:
                                     break;

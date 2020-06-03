@@ -70,9 +70,10 @@ namespace Cooking
             {
                 Debug.LogFormat("BGMAUdioSourceが見つかりません");
             }
+            _bGMAudioSource.loop = true;
             SceneName sceneName = SceneName.OP;
             sceneName = EnumParseMethod.TryParseAndDebugAssertFormatAndReturnResult(SceneChanger.activeSceneName, true, sceneName);
-            ChangeBGMOnSceneChange(sceneName);
+            ChangeBGMOnSceneName(sceneName);
             #endregion
             #region SEオーディオの登録→SEの数だけ用意
             var audioSourceParent = this.transform;
@@ -178,19 +179,17 @@ namespace Cooking
         /// 読み込まれるシーンやステージの情報で再生するBGMを変更する
         /// </summary>
         /// <param name="loadSceneName"></param>
-        public void ChangeBGMOnSceneChange(SceneName loadSceneName)
+        public void ChangeBGMOnSceneName(SceneName loadSceneName)
         {
             switch (loadSceneName)
             {
                 //Develop用シーンなどその他のシーンはOP曲が流れる
                 case SceneName.OP:
-                    LoadBGMAudioClip(BGMID.title_bgm0);
                     break;
                 case SceneName.Title:
-                    LoadBGMAudioClip(BGMID.title_bgm1);
+                    LoadBGMAudioClip(BGMID.title_bgm0);
                     break;
                 case SceneName.SelectStage:
-                    LoadBGMAudioClip(BGMID.stage_bgm1);
                     break;
                 case SceneName.PlayScene:
                     //遷移前にセットされるステージナンバーのインデックスによって決める
