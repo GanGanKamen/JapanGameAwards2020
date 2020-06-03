@@ -64,6 +64,11 @@ namespace Cooking
                 //シーンの名前に応じてBGMを変更 ステージごとに再生するBGMを変更
                 SoundManager.Instance.ChangeBGMOnSceneName(sceneName);
             }
+            else if (sceneName == SceneName.SelectStage)
+            {
+                //シーンの名前に応じてBGMを変更 ステージごとに再生するBGMを変更
+                SoundManager.Instance.ChangeBGMOnSceneName(sceneName);
+            }
         }
     }
 
