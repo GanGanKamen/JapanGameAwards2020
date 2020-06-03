@@ -171,6 +171,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _maxSpeedOfBubble: 0.4
+  _childBubbleZoneObject: {fileID: 8509034300365856180}
 --- !u!1001 &6849938770327508905
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -265,6 +266,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6a0d8fe6ce2fe2d43be24df95bb1b52a, type: 3}
+--- !u!1 &8509034300365856180 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2961669370795248157, guid: 6a0d8fe6ce2fe2d43be24df95bb1b52a,
+    type: 3}
+  m_PrefabInstance: {fileID: 6849938770327508905}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8509034300365856184 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2961669370795248145, guid: 6a0d8fe6ce2fe2d43be24df95bb1b52a,

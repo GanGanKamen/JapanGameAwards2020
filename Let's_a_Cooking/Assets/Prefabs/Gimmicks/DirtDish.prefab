@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 8747204007115458233}
   - component: {fileID: 3604580248791642200}
   - component: {fileID: 1940862022599997265}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: pSphere1
   m_TagString: DirtDish
   m_Icon: {fileID: 0}
