@@ -475,6 +475,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1151800523249230989, guid: 58ce21ae415346c4484eefdc83367431,
+        type: 3}
+      propertyPath: m_CustomBlends
+      value: 
+      objectReference: {fileID: 11400000, guid: 45cd69428eadbad4b9fe9e0f628a89fc,
+        type: 2}
+    - target: {fileID: 1151800523249230989, guid: 58ce21ae415346c4484eefdc83367431,
+        type: 3}
+      propertyPath: m_DefaultBlend.m_Time
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 58ce21ae415346c4484eefdc83367431, type: 3}
 --- !u!1001 &1876472735

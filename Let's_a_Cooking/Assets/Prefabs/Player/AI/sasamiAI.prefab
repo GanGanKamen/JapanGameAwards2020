@@ -888,6 +888,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chickenBoxCollider: {fileID: 4303170802765336131}
+  chickenCutBoxCollider: {fileID: 0}
   _cutChickenBoxCollider: {fileID: 0}
   _chickenNormal: {fileID: 8131787930931259562}
   _chickenCut: {fileID: 7361692856419998054}
@@ -923,7 +924,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6865a81d3964e3d4f8db92a50faabc6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _foodSkinnedMeshRenderer: {fileID: 0}
+  foodSkinnedMeshRenderer: []
   _foodMeshRenderer: {fileID: 6008054537726418788}
   foodNormalGraphic: {fileID: 0}
   _seasoningMaterial: {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
@@ -934,4 +935,4 @@ MonoBehaviour:
   _shrimpFirstBoundPower: 3
   _chickenFirstBoundPower: 1.5
   _forwardAngle: 60
-  _isDebugMode: 0
+  _isDebugMode: 1

@@ -379,7 +379,7 @@ MonoBehaviour:
   _shrimpFirstBoundPower: 3
   _chickenFirstBoundPower: 1.5
   _forwardAngle: 60
-  _isDebugMode: 0
+  _isDebugMode: 1
 --- !u!1 &2242279690130351718
 GameObject:
   m_ObjectHideFlags: 0

@@ -20,8 +20,14 @@ namespace Cooking
         [SerializeField] private Button engButton;
         [SerializeField] private Button chnButton;
 
-        
+        [SerializeField] private AudioClip openAudio;
+        [SerializeField] private AudioClip closeAudio;
+        [SerializeField] private AudioClip buttonAudio;
+        [SerializeField] private AudioClip overAudio;
 
+        [SerializeField] private bool isTitleScene;
+
+        private AudioSource audioSource;
         // Start is called before the first frame update
         void Start()
         {
@@ -68,8 +74,10 @@ namespace Cooking
 
         private void MenuInit()
         {
+            audioSource = GetComponent<AudioSource>();
             bgmSlider.value = OptionParamater.BGM_Volume;
             seSlider.value = OptionParamater.SE_Volume;
+            SetSoundVolume(-30);
             menuWindow.SetActive(false);
             menuWindowCloseNutton.gameObject.SetActive(false);
             menubutton.gameObject.SetActive(true);
@@ -87,44 +95,35 @@ namespace Cooking
 
         private void BackToTitle()
         {
-            MenuInit();
-            //シーンの切り替え
+            StartCoroutine(LoadSceneCoroutine());
+        }
+
+        IEnumerator LoadSceneCoroutine()
+        {
+            audioSource.PlayOneShot(closeAudio);
+            Fader.FadeInAndOut(1.5f, 1.0f, 1.5f);
+            yield return new WaitForSeconds(2.0f);
+            SceneChanger.LoadSelectingScene(SceneName.Title);
         }
 
         private void MenuOpen()
         {
-            /*
-            if (...) //プレイヤー操作不可能な場合
-            {
-                return;
-            }
-            */
-            Stage.StageSceneManager.Instance.OpenOptionMenu();
+            
+            if (isTitleScene == false) Stage.StageSceneManager.Instance.OpenOptionMenu();                      
             menuWindow.SetActive(true);
             menuWindowCloseNutton.gameObject.SetActive(true);
             menubutton.gameObject.SetActive(false);
-            /*
-            if (GameObject.FindGameObjectWithTag("Player") != null) //Playerの取得
-            {
-                var player = GameObject.FindGameObjectWithTag("Player").GetComponent<...>();
-                //プレイヤー操作不可能にする
-            }
-            */
+            audioSource.PlayOneShot(openAudio);
         }
 
         private void MenuClose()
         {
-            Stage.StageSceneManager.Instance.CloseOptionMenu();
+            if (isTitleScene == false) Stage.StageSceneManager.Instance.CloseOptionMenu();
             menuWindow.SetActive(false);
             menuWindowCloseNutton.gameObject.SetActive(false);
             menubutton.gameObject.SetActive(true);
-            /*
-            if (GameObject.FindGameObjectWithTag("Player") != null)
-            {
-                var player = GameObject.FindGameObjectWithTag("Player").GetComponent<...>();
-                //プレイヤー操作可能にする
-            }
-            */
+            audioSource.PlayOneShot(closeAudio);
+
         }
 
         private void LanguageSwitch(int lan)
@@ -148,6 +147,8 @@ namespace Cooking
                     chnButton.image.color = Color.yellow;
                     break;
             }
+
+            //audioSource.PlayOneShot(buttonAudio);
         }
 
         private void SetSoundVolume(int min_dB)

@@ -33,7 +33,8 @@ namespace Cooking.Title
 
         IEnumerator LoadSceneCoroutine()
         {
-            optionCanvas.SetActive(true);
+            GetComponent<AudioSource>().Play();
+            optionCanvas.SetActive(false);
             startButton.GetComponent<Animator>().SetTrigger("Start");
             startButton.GetComponent<UnityEngine.UI.Button>().enabled = false;
             Fader.FadeInAndOut(1.5f, 1.0f, 1.5f);
