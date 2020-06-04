@@ -315,7 +315,7 @@ namespace Cooking.Stage
                                     }
                                     var velocity = _rigidbody.velocity;
                                     //衝突前の速度ベクトル
-                                    var speedVector = PredictFoodPhysics.PredictFirstBoundSpeedVecor(ShotManager.Instance.transform.forward * ShotManager.Instance.ShotPower * 0.75f);
+                                    var speedVector = ShotManager.Instance.transform.forward * ShotManager.Instance.ShotPower * 0.75f;
                                     //現在の速度ベクトルの符号と同じかどうかチェックし同じなら代入 壁以外のオブジェクトとぶつかった際に別方向に代入されるのを防ぐ
                                     //if (_rigidbody.velocity.x * speedVector.x >= 0 && _rigidbody.velocity.z * speedVector.z >= 0)//符号が同じなら、掛け算の答えは正になり速度の向きは同じ
                                     {
