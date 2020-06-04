@@ -18,7 +18,6 @@ namespace Cooking
             var obj = new GameObject("SceneChanger");
             obj.AddComponent<SceneChanger>();
             activeSceneName = SceneManager.GetActiveScene().name;
-            Debug.Log(activeSceneName);
         }
 
         protected override void Awake()

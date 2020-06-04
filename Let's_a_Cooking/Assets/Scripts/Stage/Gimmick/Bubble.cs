@@ -93,7 +93,6 @@ namespace Cooking.Stage
                 _childBubbleZoneObject.transform.parent = null;
                 _childBubbleZoneObject.SetActive(false);
             }
-            Debug.Log(bubbleZoneTransform.gameObject);
         }
         private void OnTriggerEnter(Collider other)
         {

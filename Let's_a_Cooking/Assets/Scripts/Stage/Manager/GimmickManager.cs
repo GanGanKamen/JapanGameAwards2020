@@ -241,6 +241,7 @@ namespace Cooking.Stage
         {
             for (int i = 0; i < _instantiateSeasoningPoint.Length; i++)
             {
+                bool skip = false;
                 //各プレイヤー座標で判定
                 foreach (var foodStatus in TurnManager.Instance.FoodStatuses)
                 {
@@ -253,17 +254,15 @@ namespace Cooking.Stage
                         && activePlayerPosition.y > instantiateLimitPosition[(int)LimitValue.Min].y && activePlayerPosition.y < instantiateLimitPosition[(int)LimitValue.Max].y
                         && activePlayerPosition.z > instantiateLimitPosition[(int)LimitValue.Min].z && activePlayerPosition.z < instantiateLimitPosition[(int)LimitValue.Max].z)
                     {
+                        skip = true;
                         break;//この調味料を生成しない
                     }
-                    else
-                    {
-                        //indexは同期されている
-                        var seasoning = _targetObjectsForAI[(int)AITargetObjectTags.Seasoning][i].GetComponent<Seasoning>();
-                        if (!seasoning.gameObject.activeInHierarchy)
-                        {
-                            SetSeasoningActiveTrue(seasoning);
-                        }
-                    }
+                }
+                //indexは同期されている
+                var seasoning = _targetObjectsForAI[(int)AITargetObjectTags.Seasoning][i].GetComponent<Seasoning>();
+                if (!seasoning.gameObject.activeInHierarchy && !skip)
+                {
+                    SetSeasoningActiveTrue(seasoning);
                 }
             }
         }
@@ -271,9 +270,8 @@ namespace Cooking.Stage
         private void SetSeasoningActiveTrue(Seasoning seasoning)
         {
             var seed = Cooking.Random.GetRandomIntFromZero(20);
-            Debug.Log(seed);
             //  x(右辺) / 10(左辺)%の確率で再出現
-            if (seed < 2)
+            if (seed < 0)
             {
                 Debug.Log("生成");
                 seasoning.ManageSeasoningActive(true);

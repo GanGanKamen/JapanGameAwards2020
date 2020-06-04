@@ -45,12 +45,12 @@ namespace Cooking.Stage
             {
                 _trailRenderer.emitting = false;
             }
-            destroyTimeCounter += Time.deltaTime;
-            ////管理失敗用
-            if (destroyTimeCounter > _trailRenderer.time)
-            {
-                Destroy(gameObject);
-            }
+            //destroyTimeCounter += Time.deltaTime;
+            //////管理失敗用
+            //if (destroyTimeCounter > _trailRenderer.time)
+            //{
+            //    Destroy(gameObject);
+            //}
         }
     }
     //            今後必要そうなもの 落下地点は発射地点と同じ高さとは限らないため。

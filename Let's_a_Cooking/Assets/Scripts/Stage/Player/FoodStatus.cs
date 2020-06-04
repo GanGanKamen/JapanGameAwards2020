@@ -315,7 +315,7 @@ namespace Cooking.Stage
                                     }
                                     var velocity = _rigidbody.velocity;
                                     //衝突前の速度ベクトル
-                                    var speedVector = ShotManager.Instance.transform.forward * ShotManager.Instance.ShotPower * 0.95f;
+                                    var speedVector = ShotManager.Instance.transform.forward * ShotManager.Instance.ShotPower * 1.05f;
                                     //現在の速度ベクトルの符号と同じかどうかチェックし同じなら代入 壁以外のオブジェクトとぶつかった際に別方向に代入されるのを防ぐ
                                     //if (_rigidbody.velocity.x * speedVector.x >= 0 && _rigidbody.velocity.z * speedVector.z >= 0)//符号が同じなら、掛け算の答えは正になり速度の向きは同じ
                                     {
@@ -554,8 +554,8 @@ namespace Cooking.Stage
                 if (touchColliderCount > 0)
                 {
                     _isGrounded = true;
-                    if (GetComponent<AI>() == null)
-                        Debug.Log("接地");
+                    if (GetComponent<AI>() == null) ;
+                        //Debug.Log("接地");
                 }
                 else
                 {
@@ -564,7 +564,7 @@ namespace Cooking.Stage
             }
             else
             {
-                Debug.Log("接地判定エリア無し");
+                //Debug.Log("接地判定エリア無し");
             }
         }
         IEnumerator AddForce(Vector3 power)
@@ -760,7 +760,7 @@ namespace Cooking.Stage
                                         {
                                             //方向を変えない
                                             ShotManager.Instance.SetShotVector(ShotManager.Instance.transform.forward, ShotManager.Instance.ShotPower /( _boundCount + 1));
-                                            _rigidbody.AddForce(transform.up * _shrimpFirstBoundPower * (ShotManager.Instance.ShotPower / (ShotManager.Instance.ShotParameter.MaxShotPower * 2 * _boundCount)), ForceMode.Impulse);
+                                            _rigidbody.AddForce(transform.up * _shrimpFirstBoundPower * (ShotManager.Instance.ShotPower / (ShotManager.Instance.ShotParameter.MaxShotPower * 1.25f * _boundCount)), ForceMode.Impulse);
                                         }
                                     }
                                     if (_flyTime > _firstBoundTime + 0.4f && collision.gameObject.tag == TagList.Chair.ToString())
@@ -777,7 +777,7 @@ namespace Cooking.Stage
                             else if (collision.gameObject.tag == TagList.Wall.ToString())
                             {
                                 //_isFirstCollision = false;
-                                _rigidbody.AddForce(new Vector3(_rigidbody.velocity.x, 0, _rigidbody.velocity.z) * ShotManager.Instance.ShotPower * 2.5f,ForceMode.Acceleration);
+                                _rigidbody.AddForce(new Vector3(_rigidbody.velocity.x, 0, _rigidbody.velocity.z) * ShotManager.Instance.ShotPower * 2.5f,ForceMode.Force);
                                 //回転固定解除
                                 TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].UnlockConstraints();
                                 ShotManager.Instance.SetShotVector(_rigidbody.velocity, _rigidbody.velocity.magnitude);
