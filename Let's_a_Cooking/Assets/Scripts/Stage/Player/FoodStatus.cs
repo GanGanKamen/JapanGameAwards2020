@@ -627,44 +627,6 @@ namespace Cooking.Stage
             //=================
             #region//食材共通処理
             //=================
-            //自分がアクティブではないとき、相手が食材ならぶっ飛ばされる
-            if (TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex] != this)
-            {
-                var otherFood = collision.gameObject.GetComponent<FoodStatus>();
-                switch (foodType)
-                {
-                    case FoodType.Shrimp:
-                        if (otherFood != null)
-                        {
-                            var shotManager = ShotManager.Instance;
-                            var otherFoodVelocity = otherFood.Rigidbody.velocity.normalized;
-                            var collisionForceVector = new Vector3(otherFoodVelocity.x, Mathf.Sin(10 * Mathf.Deg2Rad), otherFoodVelocity.z).normalized;
-                            if (_boundCount < 2 && shotManager.ShotPower > (shotManager.ShotParameter.MaxShotPower + shotManager.ShotParameter.MinShotPower) / 2f)
-                                _rigidbody.AddForce(collisionForceVector * ShotManager.Instance.ShotPower );//調整中
-                            else
-                                _rigidbody.AddForce(collisionForceVector * ShotManager.Instance.ShotPower / 10);//調整中
-                        }
-                        break;
-                    case FoodType.Egg:
-                        break;
-                    case FoodType.Chicken:
-                        if (otherFood != null)
-                        {
-                            var shotManager = ShotManager.Instance;
-                            var otherFoodVelocity = otherFood.Rigidbody.velocity.normalized;
-                            var collisionForceVector = new Vector3(otherFoodVelocity.x, Mathf.Sin(10 * Mathf.Deg2Rad), otherFoodVelocity.z).normalized;
-                            if (_boundCount < 2 && shotManager.ShotPower > (shotManager.ShotParameter.MaxShotPower + shotManager.ShotParameter.MinShotPower) / 2f)
-                                _rigidbody.AddForce(collisionForceVector * ShotManager.Instance.ShotPower / 3);//調整中
-                            else
-                                _rigidbody.AddForce(collisionForceVector * ShotManager.Instance.ShotPower / 10);//調整中
-                        }
-                        break;
-                    case FoodType.Sausage:
-                        break;
-                    default:
-                        break;
-                }
-            }
             //自分のターンのみ
             if (TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex] == this && ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode)
             {
@@ -723,6 +685,45 @@ namespace Cooking.Stage
             //=================
             #region//物理挙動を制御 ステージとの衝突処理 wallは別
             //=================
+            //自分がアクティブではないとき、相手が食材ならぶっ飛ばされる
+            if (TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex] != this)
+            {
+                var otherFood = collision.gameObject.GetComponent<FoodStatus>();
+                switch (foodType)
+                {
+                    case FoodType.Shrimp:
+                        if (otherFood != null)
+                        {
+                            Debug.Log(678);
+                            var shotManager = ShotManager.Instance;
+                            var otherFoodVelocity = otherFood.Rigidbody.velocity.normalized;
+                            var collisionForceVector = new Vector3(otherFoodVelocity.x, Mathf.Sin(10 * Mathf.Deg2Rad), otherFoodVelocity.z).normalized;
+                            if (_boundCount < 2 && shotManager.ShotPower > (shotManager.ShotParameter.MaxShotPower + shotManager.ShotParameter.MinShotPower) / 2f)
+                                _rigidbody.AddForce(collisionForceVector * ShotManager.Instance.ShotPower);//調整中
+                            else
+                                _rigidbody.AddForce(collisionForceVector * ShotManager.Instance.ShotPower);// / 10);//調整中
+                        }
+                        break;
+                    case FoodType.Egg:
+                        break;
+                    case FoodType.Chicken:
+                        if (otherFood != null)
+                        {
+                            var shotManager = ShotManager.Instance;
+                            var otherFoodVelocity = otherFood.Rigidbody.velocity.normalized;
+                            var collisionForceVector = new Vector3(otherFoodVelocity.x, Mathf.Sin(10 * Mathf.Deg2Rad), otherFoodVelocity.z).normalized;
+                            if (_boundCount < 2 && shotManager.ShotPower > (shotManager.ShotParameter.MaxShotPower + shotManager.ShotParameter.MinShotPower) / 2f)
+                                _rigidbody.AddForce(collisionForceVector * ShotManager.Instance.ShotPower / 3);//調整中
+                            else
+                                _rigidbody.AddForce(collisionForceVector * ShotManager.Instance.ShotPower / 10);//調整中
+                        }
+                        break;
+                    case FoodType.Sausage:
+                        break;
+                    default:
+                        break;
+                }
+            }
             //自分のターンのみ有効
             if (TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex] == this)
             {

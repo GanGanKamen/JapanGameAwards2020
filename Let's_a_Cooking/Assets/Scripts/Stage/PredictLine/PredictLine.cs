@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Touches;
 using UnityEngine;
 
 namespace Cooking.Stage
@@ -23,10 +24,12 @@ namespace Cooking.Stage
         }
         private Rigidbody _rigidbody;
         public float destroyTimeCounter = 0;
+        TrailRenderer _trailRenderer;
         // Start is called before the first frame update
         void OnEnable()
         {
             _rigidbody = GetComponent<Rigidbody>();
+            _trailRenderer = GetComponent<TrailRenderer>();
             //rigidbody.velocity = initialSpeedVector;
         }
 
@@ -38,6 +41,10 @@ namespace Cooking.Stage
             //velocity.x = _predictLines_SpeedVector.x;
             //velocity.z = _predictLines_SpeedVector.z;
             //_rigidbody.velocity = velocity;
+            if (TouchInput.GetTouchPhase() == TouchInfo.Moved)
+            {
+                _trailRenderer.emitting = false;
+            }
         }
 
     }

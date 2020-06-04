@@ -219,7 +219,7 @@ namespace Cooking.Stage
                 var direction = endPoint - originPoint;
                 Vector3 fallPoint = Vector3.zero;
                 //レイを可視化
-                Debug.DrawRay(originPoint, direction, Color.red, 0.2f);
+                //Debug.DrawRay(originPoint, direction, Color.red, 0.2f);
                 if (typeof(T) == typeof(Vector3))
                 {
                     fallPoint = CastFoodSizeRayOnKitchen(out fallPointGameObject , originPoint, direction, (Vector3)(object)colliderSizeInformation);

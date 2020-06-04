@@ -211,6 +211,7 @@ namespace Cooking.Stage
         }
         IEnumerator ShotButtonWait(ScreenState afterScreenState ,Button button)
         {
+            _uIManager.PlayModeUI.SetLinesActive(true);
             yield return new WaitForSeconds(_shotButtonWaitTime);
             _uIManager.ChangeUI(afterScreenState);
             button.enabled = true;

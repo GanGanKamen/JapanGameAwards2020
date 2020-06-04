@@ -79,6 +79,6 @@ MonoBehaviour:
   _predictLines: []
   _predictShotPointPrefab: {fileID: 2482542062037183183, guid: df1ee2ac83e509648b2180c53fc3d69d,
     type: 3}
-  _predictTimeInterval: 0.1
+  _predictTimeInterval: 0.5
   _destroyTime: 0.5
   _predictLinesParent: {fileID: 5384097247893590737}

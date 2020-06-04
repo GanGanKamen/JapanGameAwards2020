@@ -264,12 +264,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c17407bd5bc2fb84a9beeb1a89be17dc, type: 3}
---- !u!1 &536671909 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4459457030771045263, guid: 2d9a3fcb572921e489371a589e6d6dce,
-    type: 3}
-  m_PrefabInstance: {fileID: 1242779759}
-  m_PrefabAsset: {fileID: 0}
 --- !u!108 &705507994 stripped
 Light:
   m_CorrespondingSourceObject: {fileID: 4718712731005768783, guid: 0de03fac603e9994eb4ce93014dbe4c7,
@@ -545,7 +539,7 @@ PrefabInstance:
         type: 3}
       propertyPath: _bubbleInstantiateZone
       value: 
-      objectReference: {fileID: 536671909}
+      objectReference: {fileID: 0}
     - target: {fileID: 8012731769198344092, guid: 2d9a3fcb572921e489371a589e6d6dce,
         type: 3}
       propertyPath: _bubbleLimitSumNumber
@@ -830,22 +824,22 @@ PrefabInstance:
     - target: {fileID: 4718712731005768783, guid: 0de03fac603e9994eb4ce93014dbe4c7,
         type: 3}
       propertyPath: m_BoundingSphereOverride.y
-      value: 0.107421875
+      value: 2.5849394e-26
       objectReference: {fileID: 0}
     - target: {fileID: 4718712731005768783, guid: 0de03fac603e9994eb4ce93014dbe4c7,
         type: 3}
       propertyPath: m_BoundingSphereOverride.z
-      value: 0.0078125
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4718712731005768783, guid: 0de03fac603e9994eb4ce93014dbe4c7,
         type: 3}
       propertyPath: m_BoundingSphereOverride.w
-      value: -0.00390625
+      value: -5.7459326e-10
       objectReference: {fileID: 0}
     - target: {fileID: 4718712731005768783, guid: 0de03fac603e9994eb4ce93014dbe4c7,
         type: 3}
       propertyPath: m_BoundingSphereOverride.x
-      value: 0.109375
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0de03fac603e9994eb4ce93014dbe4c7, type: 3}

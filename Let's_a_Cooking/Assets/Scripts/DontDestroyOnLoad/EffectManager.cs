@@ -18,7 +18,7 @@ namespace Cooking.Stage
             Food_Grounded, Food_Jump,
             Point_Down, Point_UP,
             Seasoning, Seasoning_Hit, Stars,
-            Splash
+            Splash, Slash
         }
 
         #region インスタンスへのstaticなアクセスポイント
@@ -71,11 +71,6 @@ namespace Cooking.Stage
             }
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-            
-        }
         /// <summary>
         /// エフェクトの生成, 座標と種類の指定
         /// </summary>

@@ -199,5 +199,13 @@ namespace Cooking.Stage
                 _shotPowerGagesOfInteger.gameObject.SetActive(true);
             }
         }
+        /// <summary>
+        /// 集中線の管理
+        /// </summary>
+        /// <param name="isActive"></param>
+        public void SetLinesActive(bool isActive)
+        {
+            _shottingLines.SetActive(isActive);
+        }
     }
 }

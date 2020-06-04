@@ -56,6 +56,7 @@ namespace Cooking.Stage
                 return;
             }
             _isHeadFallOff = true;
+            EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Slash).parent = this.transform;
             ChangeComponentInfoOnHeadFallOff();
         }
         /// <summary>

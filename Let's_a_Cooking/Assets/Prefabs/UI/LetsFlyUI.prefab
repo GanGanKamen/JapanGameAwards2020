@@ -4239,6 +4239,7 @@ MonoBehaviour:
   _turnNumberText: {fileID: 2259073737747330912}
   _playerNumberTextOnPlay: {fileID: 2259073736627626859}
   _pointNumberTextOnPlay: {fileID: 2259073736810068530}
+  _shottingLines: {fileID: 1202564749929491167}
   _falledImage: {fileID: 2259073736352304986}
   _goalImage: {fileID: 2259073737081810069}
 --- !u!1 &2259073736610338799

@@ -320,6 +320,7 @@ namespace Cooking.Stage
                     break;
                 case ScreenState.ShottingMode:
                     _beforeShotScreenState = ScreenState.ShottingMode;
+                    _playModeUI.SetLinesActive(false);
                     if (!_turnManager.IsAITurn)
                         ShotManager.Instance.ShotStart();
                     break;
