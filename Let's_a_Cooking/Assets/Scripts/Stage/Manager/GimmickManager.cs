@@ -157,6 +157,7 @@ namespace Cooking.Stage
                 if (_bubbleInstantiateInformation[i].timingCounter > _bubbleInstantiateInformation[i].instantiateTiming)
                 {
                     var newBubble = Instantiate(_bubblePrefab);
+                    _bubbles.Add(newBubble.GetComponent<Bubble>());
                     newBubble.transform.position = DecideInstantiatePosition(_bubbleInstantiateInformation[i]);
                     //生成タイミングを変更
                     _bubbleInstantiateInformation[i].instantiateTiming = GetInitializeInstantiateTiming();
