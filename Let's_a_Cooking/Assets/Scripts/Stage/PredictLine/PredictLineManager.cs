@@ -81,7 +81,7 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
-            if (!TurnManager.Instance.IsAITurn)
+            if (!TurnManager.Instance.IsAITurn )
             {
                 var shotManager = ShotManager.Instance;
                 var maxShotSpeedVector = shotManager.CalculateMaxSameVelocityMagnitudeShotPowerVector();
@@ -241,6 +241,8 @@ namespace Cooking.Stage
                 PredictLine predictLine = InstantiatePredictLine(speedVector);
                 predictLine.transform.parent = _predictLinesParent.transform;
                 ManagePredictLinesList(predictLine);
+                if (_predictLines.Count > 5)
+                    Destroy(predictLine.gameObject);
             }
             else
                 _predictTimeCounter += Time.deltaTime;

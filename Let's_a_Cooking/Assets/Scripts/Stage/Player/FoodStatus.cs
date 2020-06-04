@@ -749,6 +749,8 @@ namespace Cooking.Stage
                                         }
                                         else
                                         {
+                                            //方向を変えない
+                                            ShotManager.Instance.SetShotVector(ShotManager.Instance.transform.forward, ShotManager.Instance.ShotPower /( _boundCount + 1));
                                             _rigidbody.AddForce(transform.up * _shrimpFirstBoundPower * (ShotManager.Instance.ShotPower / (ShotManager.Instance.ShotParameter.MaxShotPower * 2 * _boundCount)), ForceMode.Impulse);
                                         }
                                     }

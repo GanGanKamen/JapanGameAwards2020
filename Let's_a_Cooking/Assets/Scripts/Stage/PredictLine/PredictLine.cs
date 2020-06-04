@@ -45,8 +45,13 @@ namespace Cooking.Stage
             {
                 _trailRenderer.emitting = false;
             }
+            destroyTimeCounter += Time.deltaTime;
+            ////管理失敗用
+            if (destroyTimeCounter > _trailRenderer.time)
+            {
+                Destroy(gameObject);
+            }
         }
-
     }
     //            今後必要そうなもの 落下地点は発射地点と同じ高さとは限らないため。
     //テクスチャの張替えorゾーンの生成→その二つを同時に行う・着地予想地点から飛来してきた方向の逆にレイ飛ばし・着弾予測地点にオブジェクトをおく
