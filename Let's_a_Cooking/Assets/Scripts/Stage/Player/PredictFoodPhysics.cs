@@ -90,7 +90,7 @@ namespace Cooking.Stage
                 //終点 - 始点で方向ベクトルを算出
                 var direction = endPoint - originPoint;
                 //レイを可視化
-                Debug.DrawRay(originPoint, direction, Color.red, 0.5f);
+                Debug.DrawRay(originPoint, direction, Color.green, 0.5f);
                 if (typeof(T) == typeof(GameObject))
                 {
                     if (typeof(U) == typeof(Vector3))
@@ -219,7 +219,7 @@ namespace Cooking.Stage
                 var direction = endPoint - originPoint;
                 Vector3 fallPoint = Vector3.zero;
                 //レイを可視化
-                //Debug.DrawRay(originPoint, direction, Color.red, 0.2f);
+                //Debug.DrawRay(originPoint, direction, Color.green, 0.2f);
                 if (typeof(T) == typeof(Vector3))
                 {
                     fallPoint = CastFoodSizeRayOnKitchen(out fallPointGameObject , originPoint, direction, (Vector3)(object)colliderSizeInformation);
