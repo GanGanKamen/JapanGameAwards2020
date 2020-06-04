@@ -67,7 +67,7 @@ namespace Cooking
 
         private void Update()
         {
-            Debug.Log(language);
+
         }
     }
 }
