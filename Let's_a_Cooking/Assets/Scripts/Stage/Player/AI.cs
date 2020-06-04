@@ -185,7 +185,7 @@ namespace Cooking.Stage
         /// <returns></returns>
         IEnumerator DecideVerticalAngleCoroutine(GameObject goal, float maxShotSpeed, int incrementValue, int goalAngle, int horizontalAngle, List<Vector3> fallPoint, List<float> goalDistanceFromFallPoints, List<Vector3> maxSpeedVector)
         {
-            GameObject fallPointGameObject = null;
+            Debug.Log(76);   GameObject fallPointGameObject = null;
             var goalVector = (goal.transform.position - transform.position).normalized;
             //重ければ減らす必要あり
             int i = 0;
@@ -219,123 +219,123 @@ namespace Cooking.Stage
             //最終チェックによる改善用変数
             NearFallFloorAngle nearFallFloorAngle = NearFallFloorAngle.Left;
             NearFallFloorPower nearFallFloorPower = NearFallFloorPower.Strong;
-            //if (fallPointGameObject.tag != TagList.Chair.ToString())
-            //{
-            //    //最終チェックによる改善
-            //    //AIが落下しそうな場所に飛ばないようにする
-            //    //方法　最終verticalAngleで maxpowerを大きくする maxpower + 1 ~ 3まで  横で±5度 maxpower固定(仮)
-            //    //この範囲で床が存在しないかチェックする 床があったら床を検知したところから遠くなるように角度とパワーを調節する パワー上げた結果見つけたらパワー下げる 角度足した結果ならひく 角度引いた結果なら角度足す
-            //    var checkSpeed = maxShotSpeed;
-            //    var shotDirectionVector = new Vector3(goalVector.x, shotDirectionY, goalVector.z).normalized;
-            //    //パワー増加
-            //    for (i = 1; checkSpeed <= maxShotSpeed + 3; i++)
-            //    {
-            //        checkSpeed = maxShotSpeed + i / 2;
-            //        PredictFoodPhysics.PredictFallPointByBoxRayCast(out fallPointGameObject, transform.position, shotDirectionVector * checkSpeed, verticalAngle, foodType, GetColliderSize<Vector3>());
-            //        if (fallPointGameObject.tag == TagList.Floor.ToString())
-            //        {
-            //            switch (foodType)
-            //            {
-            //                case FoodType.Shrimp:
-            //                    checkSpeed = maxShotSpeed + (i - 4);
-            //                    break;
-            //                case FoodType.Egg:
-            //                    checkSpeed = maxShotSpeed + (i - 3.5f);
-            //                    break;
-            //                case FoodType.Chicken:
-            //                    checkSpeed = maxShotSpeed + (i - 3);
-            //                    break;
-            //                case FoodType.Sausage:
-            //                    checkSpeed = maxShotSpeed + (i - 3);
-            //                    break;
-            //                default:
-            //                    break;
-            //            }
-            //            nearFallFloorPower = NearFallFloorPower.Strong;
-            //            //パワーのチェック終了
-            //            break;
-            //        }
-            //    }
-            //    //パワー減少
-            //    for (i = 1; checkSpeed >= maxShotSpeed - 3; i++)
-            //    {
-            //        checkSpeed = maxShotSpeed - i / 2;
-            //        PredictFoodPhysics.PredictFallPointByBoxRayCast(out fallPointGameObject, transform.position, shotDirectionVector * checkSpeed, verticalAngle, foodType, GetColliderSize<Vector3>());
-            //        if (fallPointGameObject.tag == TagList.Floor.ToString())
-            //        {
-            //            switch (foodType)
-            //            {
-            //                case FoodType.Shrimp:
-            //                    checkSpeed = maxShotSpeed - (i - 4);
-            //                    break;
-            //                case FoodType.Egg:
-            //                    checkSpeed = maxShotSpeed - (i - 3.5f);
-            //                    break;
-            //                case FoodType.Chicken:
-            //                    checkSpeed = maxShotSpeed - (i - 3);
-            //                    break;
-            //                case FoodType.Sausage:
-            //                    checkSpeed = maxShotSpeed - (i - 3);
-            //                    break;
-            //                default:
-            //                    break;
-            //            }
-            //            //パワーのチェック終了
-            //            nearFallFloorPower = NearFallFloorPower.Weak;
-            //            break;
-            //        }
-            //    }
-            //    //角度増加
+            if (fallPointGameObject.tag != TagList.Chair.ToString())
+            {
+                //最終チェックによる改善
+                //AIが落下しそうな場所に飛ばないようにする
+                //方法　最終verticalAngleで maxpowerを大きくする maxpower + 1 ~ 3まで  横で±5度 maxpower固定(仮)
+                //この範囲で床が存在しないかチェックする 床があったら床を検知したところから遠くなるように角度とパワーを調節する パワー上げた結果見つけたらパワー下げる 角度足した結果ならひく 角度引いた結果なら角度足す
+                var checkSpeed = maxShotSpeed;
+                var shotDirectionVector = new Vector3(goalVector.x, shotDirectionY, goalVector.z).normalized;
+                //パワー増加
+                for (i = 1; checkSpeed <= maxShotSpeed + 3; i++)
+                {
+                    checkSpeed = maxShotSpeed + i / 2;
+                    PredictFoodPhysics.PredictFallPointByBoxRayCast(out fallPointGameObject, transform.position, shotDirectionVector * checkSpeed, verticalAngle, foodType, GetColliderSize<Vector3>());
+                    if (fallPointGameObject.tag == TagList.Floor.ToString())
+                    {
+                        switch (foodType)
+                        {
+                            case FoodType.Shrimp:
+                                checkSpeed = maxShotSpeed + (i - 4);
+                                break;
+                            case FoodType.Egg:
+                                checkSpeed = maxShotSpeed + (i - 3.5f);
+                                break;
+                            case FoodType.Chicken:
+                                checkSpeed = maxShotSpeed + (i - 3);
+                                break;
+                            case FoodType.Sausage:
+                                checkSpeed = maxShotSpeed + (i - 3);
+                                break;
+                            default:
+                                break;
+                        }
+                        nearFallFloorPower = NearFallFloorPower.Strong;
+                        //パワーのチェック終了
+                        break;
+                    }
+                }
+                //パワー減少
+                for (i = 1; checkSpeed >= maxShotSpeed - 3; i++)
+                {
+                    checkSpeed = maxShotSpeed - i / 2;
+                    PredictFoodPhysics.PredictFallPointByBoxRayCast(out fallPointGameObject, transform.position, shotDirectionVector * checkSpeed, verticalAngle, foodType, GetColliderSize<Vector3>());
+                    if (fallPointGameObject.tag == TagList.Floor.ToString())
+                    {
+                        switch (foodType)
+                        {
+                            case FoodType.Shrimp:
+                                checkSpeed = maxShotSpeed - (i - 4);
+                                break;
+                            case FoodType.Egg:
+                                checkSpeed = maxShotSpeed - (i - 3.5f);
+                                break;
+                            case FoodType.Chicken:
+                                checkSpeed = maxShotSpeed - (i - 3);
+                                break;
+                            case FoodType.Sausage:
+                                checkSpeed = maxShotSpeed - (i - 3);
+                                break;
+                            default:
+                                break;
+                        }
+                        //パワーのチェック終了
+                        nearFallFloorPower = NearFallFloorPower.Weak;
+                        break;
+                    }
+                }
+                //角度増加
 
-            //    switch (nearFallFloorPower)
-            //    {
-            //        case NearFallFloorPower.None:
-            //            switch (nearFallFloorAngle)
-            //            {
-            //                case NearFallFloorAngle.None:
-            //                    break;
-            //                case NearFallFloorAngle.Left:
-            //                    break;
-            //                case NearFallFloorAngle.Right:
-            //                    break;
-            //                default:
-            //                    break;
-            //            }
-            //            break;
-            //        case NearFallFloorPower.Strong:
-            //            switch (nearFallFloorAngle)
-            //            {
-            //                case NearFallFloorAngle.None:
-            //                    break;
-            //                case NearFallFloorAngle.Left:
-            //                    break;
-            //                case NearFallFloorAngle.Right:
-            //                    break;
-            //                default:
-            //                    break;
-            //            }
-            //            break;
-            //        case NearFallFloorPower.Weak:
-            //            switch (nearFallFloorAngle)
-            //            {
-            //                case NearFallFloorAngle.None:
-            //                    break;
-            //                case NearFallFloorAngle.Left:
-            //                    break;
-            //                case NearFallFloorAngle.Right:
-            //                    break;
-            //                default:
-            //                    break;
-            //            }
-            //            break;
-            //        default:
-            //            break;
-            //    }
-            //    //最小値に向かって飛ぶ
-            //    _shotDirection = CalculateVelocity(this.transform.position, fallPoint[minDistanceIndex], verticalAngle);
-            //    speed = checkSpeed;
-            //}
-            //else
+                switch (nearFallFloorPower)
+                {
+                    case NearFallFloorPower.None:
+                        switch (nearFallFloorAngle)
+                        {
+                            case NearFallFloorAngle.None:
+                                break;
+                            case NearFallFloorAngle.Left:
+                                break;
+                            case NearFallFloorAngle.Right:
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case NearFallFloorPower.Strong:
+                        switch (nearFallFloorAngle)
+                        {
+                            case NearFallFloorAngle.None:
+                                break;
+                            case NearFallFloorAngle.Left:
+                                break;
+                            case NearFallFloorAngle.Right:
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case NearFallFloorPower.Weak:
+                        switch (nearFallFloorAngle)
+                        {
+                            case NearFallFloorAngle.None:
+                                break;
+                            case NearFallFloorAngle.Left:
+                                break;
+                            case NearFallFloorAngle.Right:
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                //最小値に向かって飛ぶ
+                _shotDirection = CalculateVelocity(this.transform.position, fallPoint[minDistanceIndex], 60);
+                speed = checkSpeed;
+            }
+            else
             {
                 //最小値に向かって飛ぶ
                 _shotDirection = CalculateVelocity(this.transform.position, fallPoint[minDistanceIndex], 60);

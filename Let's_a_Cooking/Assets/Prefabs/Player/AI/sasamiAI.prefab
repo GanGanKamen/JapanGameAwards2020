@@ -935,4 +935,4 @@ MonoBehaviour:
   _shrimpFirstBoundPower: 3
   _chickenFirstBoundPower: 1.5
   _forwardAngle: 60
-  _isDebugMode: 1
+  _isDebugMode: 0

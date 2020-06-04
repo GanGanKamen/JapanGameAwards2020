@@ -706,7 +706,7 @@ namespace Cooking.Stage
                         {
                             var shotManager = ShotManager.Instance;
                             var otherFoodVelocity = otherFood.Rigidbody.velocity.normalized;
-                            var collisionForceVector = new Vector3(otherFoodVelocity.x, Mathf.Sin(10 * Mathf.Deg2Rad), otherFoodVelocity.z).normalized;
+                            var collisionForceVector = new Vector3(otherFoodVelocity.x, 0, otherFoodVelocity.z).normalized;
                             if (_boundCount < 2 && shotManager.ShotPower > (shotManager.ShotParameter.MaxShotPower + shotManager.ShotParameter.MinShotPower) / 2f)
                                 StartCoroutine(AddForce(collisionForceVector * ShotManager.Instance.ShotPower));//調整中
                             else

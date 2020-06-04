@@ -86,7 +86,7 @@ namespace Cooking.Stage
                         //intバージョン shotPowerをゲージに反映
                         _shotPowerGagesOfInteger.sprite = ChoosePowerMeterUIOfInteger(shotPowerRate);
                         //ウェイト中には音は再度なりはじめることはない
-                        if (ShotManager.Instance.ShotModeProperty == ShotState.AngleMode)
+                        if (ShotManager.Instance.ShotModeProperty == ShotState.AngleMode && !_turnManager.IsAITurn)
                         {
                             if (shotPowerRate <= 0)//上昇し始める
                             {
