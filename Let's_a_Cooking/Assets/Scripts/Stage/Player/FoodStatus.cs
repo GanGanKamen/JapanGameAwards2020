@@ -315,7 +315,7 @@ namespace Cooking.Stage
                                     }
                                     var velocity = _rigidbody.velocity;
                                     //衝突前の速度ベクトル
-                                    var speedVector = ShotManager.Instance.transform.forward * ShotManager.Instance.ShotPower * 0.75f;
+                                    var speedVector = ShotManager.Instance.transform.forward * ShotManager.Instance.ShotPower * 0.95f;
                                     //現在の速度ベクトルの符号と同じかどうかチェックし同じなら代入 壁以外のオブジェクトとぶつかった際に別方向に代入されるのを防ぐ
                                     //if (_rigidbody.velocity.x * speedVector.x >= 0 && _rigidbody.velocity.z * speedVector.z >= 0)//符号が同じなら、掛け算の答えは正になり速度の向きは同じ
                                     {
@@ -567,6 +567,16 @@ namespace Cooking.Stage
                 Debug.Log("接地判定エリア無し");
             }
         }
+        IEnumerator AddForce(Vector3 power)
+        {
+            float time = 0;
+            while (time < 0.7f)
+            {
+                _rigidbody.AddForce(power,ForceMode.Acceleration);//調整中
+                time += Time.deltaTime;
+                yield return null;
+            }
+        }
         private void OnCollisionEnter(Collision collision)
         {
             #region//食材が切られるなど見た目が変わる処理
@@ -694,12 +704,11 @@ namespace Cooking.Stage
                     case FoodType.Shrimp:
                         if (otherFood != null)
                         {
-                            Debug.Log(678);
                             var shotManager = ShotManager.Instance;
                             var otherFoodVelocity = otherFood.Rigidbody.velocity.normalized;
                             var collisionForceVector = new Vector3(otherFoodVelocity.x, Mathf.Sin(10 * Mathf.Deg2Rad), otherFoodVelocity.z).normalized;
                             if (_boundCount < 2 && shotManager.ShotPower > (shotManager.ShotParameter.MaxShotPower + shotManager.ShotParameter.MinShotPower) / 2f)
-                                _rigidbody.AddForce(collisionForceVector * ShotManager.Instance.ShotPower);//調整中
+                                StartCoroutine(AddForce(collisionForceVector * ShotManager.Instance.ShotPower));//調整中
                             else
                                 _rigidbody.AddForce(collisionForceVector * ShotManager.Instance.ShotPower);// / 10);//調整中
                         }
@@ -732,7 +741,7 @@ namespace Cooking.Stage
                     case FoodType.Shrimp:
                         if (!_isGoal)
                         {
-                            if (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]) && collision.gameObject.tag != TagList.Wall.ToString())
+                            if ((collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]) || collision.gameObject.GetComponent<FoodStatus>() != null) && collision.gameObject.tag != TagList.Wall.ToString())
                             {
                                 if (_isFryCollision && ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode && _flyTime > _firstBoundTime)//アニメーション状態によってはショット開始の瞬間にぶつかるため飛行時間を追加
                                 {
@@ -768,6 +777,7 @@ namespace Cooking.Stage
                             else if (collision.gameObject.tag == TagList.Wall.ToString())
                             {
                                 //_isFirstCollision = false;
+                                _rigidbody.AddForce(new Vector3(_rigidbody.velocity.x, 0, _rigidbody.velocity.z) * ShotManager.Instance.ShotPower * 2.5f,ForceMode.Acceleration);
                                 //回転固定解除
                                 TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].UnlockConstraints();
                                 ShotManager.Instance.SetShotVector(_rigidbody.velocity, _rigidbody.velocity.magnitude);
@@ -885,7 +895,7 @@ namespace Cooking.Stage
             #region //衝突フラグ・変数初期化
             //=================
             //最初の衝突かつショット中かつ一定以上の滞空時間
-            if (_isFryCollision && collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen])
+            if (_isFryCollision &&( (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]) || collision.gameObject.GetComponent<FoodStatus>() != null))
                 && ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode && _flyTime > 0.1f)
             {
                 switch (foodType)
@@ -1141,7 +1151,8 @@ namespace Cooking.Stage
             //Kitchenレイヤーとレイ判定を行う
             if (Physics.Raycast(ray, out hit, rayLength, StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]))
             {
-                return hit.point;
+                return transform.position;
+                //return hit.point;
             }
             else
             {
