@@ -123,9 +123,17 @@ namespace Cooking.Stage
             }
             else
             {
+                float timeCounter = 0;
                 while (!_searchEnd)
                 {
                     Debug.Log(65);
+                    //まれに無限ループ→5秒で抜ける
+                    timeCounter += Time.deltaTime;
+                    if (timeCounter > 5)
+                    {
+                        Debug.Log("探索失敗");
+                        break;
+                    }
                     yield return null;
                 }
             }
@@ -231,7 +239,7 @@ namespace Cooking.Stage
                 for (i = 1; checkSpeed <= maxShotSpeed + 3; i++)
                 {
                     checkSpeed = maxShotSpeed + i / 2;
-                    PredictFoodPhysics.PredictFallPointByBoxRayCast(out fallPointGameObject, transform.position, shotDirectionVector * checkSpeed, verticalAngle, foodType, GetColliderSize<Vector3>());
+                    FindNewTargetByRayCast(verticalAngle, shotDirectionVector * checkSpeed,out fallPointGameObject);
                     if (fallPointGameObject.tag == TagList.Floor.ToString())
                     {
                         switch (foodType)
@@ -260,7 +268,7 @@ namespace Cooking.Stage
                 for (i = 1; checkSpeed >= maxShotSpeed - 3; i++)
                 {
                     checkSpeed = maxShotSpeed - i / 2;
-                    PredictFoodPhysics.PredictFallPointByBoxRayCast(out fallPointGameObject, transform.position, shotDirectionVector * checkSpeed, verticalAngle, foodType, GetColliderSize<Vector3>());
+                    FindNewTargetByRayCast(verticalAngle, shotDirectionVector * checkSpeed, out fallPointGameObject);
                     if (fallPointGameObject.tag == TagList.Floor.ToString())
                     {
                         switch (foodType)
@@ -348,14 +356,33 @@ namespace Cooking.Stage
         {
             if (GetComponent<PlayerPoint>().IsFirstTowel)
                 _targetObjectOptions.AddRange(GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.TowelAbovePoint]);
-            foreach (var seasoning in GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.Seasoning])
+            switch (foodType)
             {
-                Debug.Log(seasoning.activeInHierarchy);
-                //調味料は無い可能性あり   
-                if (seasoning.activeInHierarchy)
-                {
-                    _targetObjectOptions.Add(seasoning);
-                }
+                case FoodType.Shrimp:
+                    if (foodSkinnedMeshRenderer[(int)ShrimpParts.Tail].material.color != StageSceneManager.Instance.FoodTextureList.seasoningMaterial.color)
+                    {
+                        foreach (var seasoning in GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.Seasoning])
+                        {
+                            Debug.Log(seasoning.activeInHierarchy);
+                            //調味料は無い可能性あり   
+                            if (seasoning.activeInHierarchy)
+                            {
+                                _targetObjectOptions.Add(seasoning);
+                            }
+                        }
+                    }
+                    break;
+                case FoodType.Egg:
+                    SearchSeasoning();
+                    break;
+                case FoodType.Chicken:
+                    SearchSeasoning();
+                    break;
+                case FoodType.Sausage:
+                    SearchSeasoning();
+                    break;
+                default:
+                    break;
             }
             if (_targetObjectOptions.Count > 0)
             {
@@ -378,6 +405,22 @@ namespace Cooking.Stage
                             ArrayMethod.ChangeArrayValuesFromHighToLow(_distances, j);
                             ArrayMethod.ChangeArrayValuesFromHighToLow(_targetObjectOptions, j);
                         }
+                    }
+                }
+            }
+        }
+
+        private void SearchSeasoning()
+        {
+            if (_foodMeshRenderer.material.color != StageSceneManager.Instance.FoodTextureList.seasoningMaterial.color)
+            {
+                foreach (var seasoning in GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.Seasoning])
+                {
+                    Debug.Log(seasoning.activeInHierarchy);
+                    //調味料は無い可能性あり   
+                    if (seasoning.activeInHierarchy)
+                    {
+                        _targetObjectOptions.Add(seasoning);
                     }
                 }
             }
@@ -472,31 +515,8 @@ namespace Cooking.Stage
         private bool CastRayByChangingShotAngle(float throwingAngle, Vector3 velocity, Vector3 direction)
         {
             //方向取得・初速の大きさも計算
-            var newTarget = this.gameObject;
-            switch (foodType)
-            {
-                case FoodType.Shrimp:
-                    newTarget = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject, Vector3>(transform.position, velocity, throwingAngle, foodType, GetColliderSize<Vector3>());
-                    break;
-                case FoodType.Egg:
-                    if (food.egg.HasBroken)
-                    {
-                        newTarget = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject, Vector3>(transform.position, velocity, throwingAngle, foodType, GetColliderSize<Vector3>());
-                    }
-                    else
-                    {
-                        newTarget = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject, Vector2>(transform.position, velocity, throwingAngle, foodType, GetColliderSize<Vector2>());
-                    }
-                    break;
-                case FoodType.Chicken:
-                    newTarget = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject, Vector3>(transform.position, velocity, throwingAngle, foodType, GetColliderSize<Vector3>());
-                    break;
-                case FoodType.Sausage:
-                    newTarget = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject, Vector3>(transform.position, velocity, throwingAngle, foodType, GetColliderSize<Vector3>());
-                    break;
-                default:
-                    break;
-            }
+            GameObject newTarget = this.gameObject;
+            FindNewTargetByRayCast(throwingAngle, velocity,out newTarget);
             if (newTarget != null)
             {
                 //タオルの時は、レイによるオブジェクトタグ取得名はTowel であって TowelAbovePointではない 名前異なる
@@ -521,6 +541,38 @@ namespace Cooking.Stage
                 }
             }
             return false;
+        }
+        /// <summary>
+        /// 食材の種類に対応した当たり判定レイキャストを用いて、新たなる標的を探す
+        /// </summary>
+        /// <param name="verticalAngle"></param>
+        /// <param name="firstSpeedVector">初速度ベクトル(方向×大きさ)</param>
+        /// <param name="newTarget"></param>
+        /// <returns></returns>
+        private Vector3 FindNewTargetByRayCast(float verticalAngle, Vector3 firstSpeedVector,out GameObject newTarget)
+        {
+            switch (foodType)
+            {
+                case FoodType.Shrimp:
+                   return PredictFoodPhysics.PredictFallPointByBoxRayCast(out newTarget, transform.position, firstSpeedVector, verticalAngle, foodType, GetColliderSize<Vector3>());
+                case FoodType.Egg:
+                    if (food.egg.HasBroken)
+                    {
+                        return PredictFoodPhysics.PredictFallPointByBoxRayCast(out newTarget, transform.position, firstSpeedVector, verticalAngle, foodType, GetColliderSize<Vector3>());
+                    }
+                    else
+                    {
+                        return PredictFoodPhysics.PredictFallPointByBoxRayCast(out newTarget, transform.position, firstSpeedVector, verticalAngle, foodType, GetColliderSize<Vector2>());
+                    }
+                case FoodType.Chicken:
+                    return PredictFoodPhysics.PredictFallPointByBoxRayCast(out newTarget, transform.position, firstSpeedVector, verticalAngle, foodType, GetColliderSize<Vector3>());
+                case FoodType.Sausage:
+                    return PredictFoodPhysics.PredictFallPointByBoxRayCast(out newTarget, transform.position, firstSpeedVector, verticalAngle, foodType, GetColliderSize<Vector3>());
+                default:
+                    break;
+            }
+            newTarget = null;
+            return Vector3.zero;
         }
 
         /// <summary>
@@ -671,30 +723,7 @@ namespace Cooking.Stage
                         shotDirectionVector = new Vector3(goalVector.x, shotDirectionY, goalVector.z).normalized;
                         maxShotSpeedVector = shotDirectionVector * maxShotSpeed;
                         GameObject fallPointObject = null;
-                        switch (foodType)
-                        {
-                            case FoodType.Shrimp:
-                                fallPointObject = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject, Vector3>(transform.position, maxShotSpeedVector, shotAngleVertical, foodType, GetColliderSize<Vector3>());
-                                break;
-                            case FoodType.Egg:
-                                if (food.egg.HasBroken)
-                                {
-                                    fallPointObject = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject, Vector3>(transform.position, maxShotSpeedVector, shotAngleVertical, foodType, GetColliderSize<Vector3>());
-                                }
-                                else
-                                {
-                                    fallPointObject = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject, Vector2>(transform.position, maxShotSpeedVector, shotAngleVertical, foodType, GetColliderSize<Vector2>());
-                                }
-                                break;
-                            case FoodType.Chicken:
-                                fallPointObject = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject, Vector3>(transform.position, maxShotSpeedVector, shotAngleVertical, foodType, GetColliderSize<Vector3>());
-                                break;
-                            case FoodType.Sausage:
-                                fallPointObject = PredictFoodPhysics.PredictFallPointByBoxRayCast<GameObject, Vector3>(transform.position, maxShotSpeedVector, shotAngleVertical, foodType, GetColliderSize<Vector3>());
-                                break;
-                            default:
-                                break;
-                        }
+                        FindNewTargetByRayCast(shotAngleVertical, maxShotSpeedVector, out fallPointObject);
                         if (fallPointObject.tag == TagList.Finish.ToString())
                         {
                             _shotDirection = shotDirectionVector;
@@ -735,10 +764,10 @@ namespace Cooking.Stage
             var maxShotSpeedVector = shotDirectionVector * maxShotSpeed;
             fallPointGameObject = null;
             var fallPosition = Vector3.zero;
+            fallPosition = FindNewTargetByRayCast(verticalAngle, maxShotSpeedVector, out fallPointGameObject);
             switch (foodType)
             {
                 case FoodType.Shrimp:
-                    fallPosition = PredictFoodPhysics.PredictFallPointByBoxRayCast(out fallPointGameObject, transform.position, maxShotSpeedVector, verticalAngle, foodType, GetColliderSize<Vector3>());
                     if (fallPointGameObject != null)
                     {
                         if (fallPointGameObject.tag == TagList.Floor.ToString() || fallPointGameObject.tag == TagList.NotBeAITarget.ToString())
@@ -763,7 +792,6 @@ namespace Cooking.Stage
                 case FoodType.Egg:
                     if (food.egg.HasBroken)
                     {
-                        fallPosition = PredictFoodPhysics.PredictFallPointByBoxRayCast(out fallPointGameObject, transform.position, maxShotSpeedVector, verticalAngle, foodType, GetColliderSize<Vector3>());
                         if (fallPointGameObject != null)
                         {
                             if (fallPointGameObject.tag == TagList.Floor.ToString() || fallPointGameObject.tag == TagList.NotBeAITarget.ToString())
@@ -787,7 +815,6 @@ namespace Cooking.Stage
                     }
                     else
                     {
-                        fallPosition = PredictFoodPhysics.PredictFallPointByBoxRayCast(out fallPointGameObject, transform.position, maxShotSpeedVector, verticalAngle, foodType, GetColliderSize<Vector2>());
                         if (fallPointGameObject != null)
                         {
                             if (fallPointGameObject.tag == TagList.Floor.ToString() || fallPointGameObject.tag == TagList.NotBeAITarget.ToString())
@@ -811,7 +838,6 @@ namespace Cooking.Stage
                     }
                     break;
                 case FoodType.Chicken:
-                    fallPosition = PredictFoodPhysics.PredictFallPointByBoxRayCast(out fallPointGameObject, transform.position, maxShotSpeedVector, verticalAngle, foodType, GetColliderSize<Vector3>());
                     if (fallPointGameObject != null)
                     {
                         if (fallPointGameObject.tag == TagList.Floor.ToString() || fallPointGameObject.tag == TagList.NotBeAITarget.ToString())
@@ -833,7 +859,6 @@ namespace Cooking.Stage
                     }
                     break;
                 case FoodType.Sausage:
-                    fallPosition = PredictFoodPhysics.PredictFallPointByBoxRayCast(out fallPointGameObject, transform.position, maxShotSpeedVector, verticalAngle, foodType, GetColliderSize<Vector3>());
                     if (fallPointGameObject != null)
                     {
                         if (fallPointGameObject.tag == TagList.Floor.ToString() || fallPointGameObject.tag == TagList.NotBeAITarget.ToString())

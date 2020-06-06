@@ -25,7 +25,7 @@ namespace Cooking.Stage
         /// <summary>
         /// エビ以外はこちら
         /// </summary>
-        [SerializeField,Header("たまご中身 鶏肉 ソーセージ")] private MeshRenderer _foodMeshRenderer = null;
+        [SerializeField,Header("たまご中身 鶏肉 ソーセージ")] protected MeshRenderer _foodMeshRenderer = null;
         [SerializeField] protected Material foodNormalGraphic = null;
         [SerializeField] private Material _seasoningMaterial = null;
         protected virtual void Start()

@@ -27,5 +27,6 @@ namespace Cooking.Stage
         [Header("Chicken 0,Sausage 1")]public Material[] cutFoodMaterials = new Material[System.Enum.GetValues(typeof(CutDifferentTextureFood)).Length];
         /// <summary>Chicken 0,Sausage 1</summary>
         [Header("Chicken 0,Sausage 1")]public Material[] cutSeasoningFoodMaterials = new Material[System.Enum.GetValues(typeof(CutDifferentTextureFood)).Length];
+        [Header("調味料の色は共通でこのmaterialの色")] public Material seasoningMaterial;
     }
 }

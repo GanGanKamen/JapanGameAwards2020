@@ -148,8 +148,26 @@ namespace Cooking.Stage
             CheckNextPlayerAI();
             foreach (var foodStatus in _foodStatuses)
             {
-                if(foodStatus.FoodType == FoodType.Shrimp)
-                foodStatus.FreezePosition();
+                switch (foodStatus.FoodType)
+                {
+                    case FoodType.Shrimp:
+                        foodStatus.FreezePosition();
+                        break;
+                    case FoodType.Egg:
+                        if (!foodStatus.OriginalFoodProperty.egg.HasBroken)
+                        {
+                            foodStatus.FreezeRotation(RigidbodyConstraints.FreezeRotationX);
+                            foodStatus.FreezeRotation(RigidbodyConstraints.FreezeRotationY);
+                            foodStatus.FreezeRotation(RigidbodyConstraints.FreezeRotationZ);
+                        }
+                        break;
+                    case FoodType.Chicken:
+                        break;
+                    case FoodType.Sausage:
+                        break;
+                    default:
+                        break;
+                }
             }
             ///ターンを1にセットしてゲーム開始
             _turnNumber = 1;
@@ -235,6 +253,16 @@ namespace Cooking.Stage
                 //10ターン目が終わったら終了(SceneManager)
                 case StageGameState.Play:
                     {
+                        foreach (var food in _foodStatuses)
+                        {
+                            food.ResetAddedForced();
+                            if (food.FoodType == FoodType.Egg)
+                            {
+                                if (!food.OriginalFoodProperty.egg.HasBroken)
+                                    continue;
+                            }
+                            food.UnlockConstraints();
+                        }
                         if (_foodStatuses[_activePlayerIndex].IsFoodInStartArea && !_foodStatuses[_activePlayerIndex].IsFall)
                         {
                             var playerNumber = GetPlayerNumberFromActivePlayerIndex(_activePlayerIndex) - 1;

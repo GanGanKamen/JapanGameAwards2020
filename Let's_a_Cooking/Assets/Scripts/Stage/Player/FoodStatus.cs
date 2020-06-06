@@ -182,6 +182,16 @@ namespace Cooking.Stage
         /// 衝突した相手の食材 食材衝突時二重判定を防ぐ
         /// </summary>
         private FoodStatus _collidedFood;
+        bool addedForce = false;
+        float addedForceTime = 0;
+        /// <summary>
+        /// ターンが変わるとき、プレイヤー全員で呼ばれる
+        /// </summary>
+        public void ResetAddedForced()
+        {
+            addedForceTime = 0;
+            addedForce = false;
+        }
         /// <summary>
         /// ショット開始時呼ばれる 衝突後跳ねる挙動を制御 卵は割れるようになる
         /// </summary>
@@ -276,6 +286,18 @@ namespace Cooking.Stage
             {
                 _flyTime += Time.deltaTime;
             }
+            if (addedForce && _rigidbody.velocity.magnitude < 0.1f)
+            {
+                FreezeRotation(RigidbodyConstraints.FreezeRotationX);
+                FreezeRotation(RigidbodyConstraints.FreezeRotationY);
+                FreezeRotation(RigidbodyConstraints.FreezeRotationZ);
+            }
+            if (_rigidbody.velocity.magnitude < 0.1f && _boundCount > 0)
+            {
+                FreezeRotation(RigidbodyConstraints.FreezeRotationX);
+                FreezeRotation(RigidbodyConstraints.FreezeRotationY);
+                FreezeRotation(RigidbodyConstraints.FreezeRotationZ);
+            }
         }
         private void FixedUpdate()
         {
@@ -315,7 +337,7 @@ namespace Cooking.Stage
                                     }
                                     var velocity = _rigidbody.velocity;
                                     //衝突前の速度ベクトル
-                                    var speedVector = ShotManager.Instance.transform.forward * ShotManager.Instance.ShotPower * 1.05f;
+                                    var speedVector = ShotManager.Instance.transform.forward * ShotManager.Instance.ShotPower * 1.25f;
                                     //現在の速度ベクトルの符号と同じかどうかチェックし同じなら代入 壁以外のオブジェクトとぶつかった際に別方向に代入されるのを防ぐ
                                     //if (_rigidbody.velocity.x * speedVector.x >= 0 && _rigidbody.velocity.z * speedVector.z >= 0)//符号が同じなら、掛け算の答えは正になり速度の向きは同じ
                                     {
@@ -570,11 +592,76 @@ namespace Cooking.Stage
         IEnumerator AddForce(Vector3 power)
         {
             float time = 0;
-            while (time < 0.7f)
+            switch (foodType)
             {
-                _rigidbody.AddForce(power,ForceMode.Acceleration);//調整中
-                time += Time.deltaTime;
-                yield return null;
+                case FoodType.Shrimp:
+                    while (time < 0.1f)
+                    {
+                        _rigidbody.AddForce(power, ForceMode.Impulse);//調整中
+                        time += Time.deltaTime;
+                        yield return null;
+                        addedForce = true;
+                    }
+                    while (time < 0.7f)
+                    {
+                        time += Time.deltaTime;
+                        yield return null;
+                        FreezeRotation(RigidbodyConstraints.FreezeRotationX);
+                        FreezeRotation(RigidbodyConstraints.FreezeRotationY);
+                        FreezeRotation(RigidbodyConstraints.FreezeRotationZ);
+                    }
+                    break;
+                case FoodType.Egg:
+                    yield return null;
+                    while (_rigidbody.velocity.magnitude > 0.001f)
+                    {
+                        _rigidbody.AddForce(power, ForceMode.Impulse);//調整中
+                        time += Time.deltaTime;
+                        if (time > 1)
+                        {
+                            FreezeRotation(RigidbodyConstraints.FreezeRotationX);
+                            FreezeRotation(RigidbodyConstraints.FreezeRotationY);
+                            FreezeRotation(RigidbodyConstraints.FreezeRotationZ);
+                        }
+                        yield return null;
+                    }
+                    break;
+                case FoodType.Chicken:
+                    while (time < 0.1f)
+                    {
+                        _rigidbody.AddForce(power, ForceMode.Impulse);//調整中
+                        time += Time.deltaTime;
+                        yield return null;
+                        addedForce = true;
+                    }
+                    while (time < 0.7f)
+                    {
+                        time += Time.deltaTime;
+                        yield return null;
+                        FreezeRotation(RigidbodyConstraints.FreezeRotationX);
+                        FreezeRotation(RigidbodyConstraints.FreezeRotationY);
+                        FreezeRotation(RigidbodyConstraints.FreezeRotationZ);
+                    }
+                    break;
+                case FoodType.Sausage:
+                    while (time < 0.1f)
+                    {
+                        _rigidbody.AddForce(power, ForceMode.Impulse);//調整中
+                        time += Time.deltaTime;
+                        yield return null;
+                        addedForce = true;
+                    }
+                    while (time < 0.7f)
+                    {
+                        time += Time.deltaTime;
+                        yield return null;
+                        FreezeRotation(RigidbodyConstraints.FreezeRotationX);
+                        FreezeRotation(RigidbodyConstraints.FreezeRotationY);
+                        FreezeRotation(RigidbodyConstraints.FreezeRotationZ);
+                    }
+                    break;
+                default:
+                    break;
             }
         }
         private void OnCollisionEnter(Collision collision)
@@ -704,30 +791,52 @@ namespace Cooking.Stage
                     case FoodType.Shrimp:
                         if (otherFood != null)
                         {
-                            var shotManager = ShotManager.Instance;
-                            var otherFoodVelocity = otherFood.Rigidbody.velocity.normalized;
+                            var otherFoodVelocity = DecideAddForceAngle(otherFood);
                             var collisionForceVector = new Vector3(otherFoodVelocity.x, 0, otherFoodVelocity.z).normalized;
-                            if (_boundCount < 2 && shotManager.ShotPower > (shotManager.ShotParameter.MaxShotPower + shotManager.ShotParameter.MinShotPower) / 2f)
-                                StartCoroutine(AddForce(collisionForceVector * ShotManager.Instance.ShotPower));//調整中
-                            else
-                                _rigidbody.AddForce(collisionForceVector * ShotManager.Instance.ShotPower);// / 10);//調整中
+                            if (!addedForce)
+                            {
+                                StartCoroutine(AddForce(collisionForceVector * ShotManager.Instance.ShotPower * 0.1f));//調整中
+                                Debug.Log("強くぶっとばす");
+                            }
                         }
                         break;
                     case FoodType.Egg:
-                        break;
-                    case FoodType.Chicken:
                         if (otherFood != null)
                         {
                             var shotManager = ShotManager.Instance;
                             var otherFoodVelocity = otherFood.Rigidbody.velocity.normalized;
-                            var collisionForceVector = new Vector3(otherFoodVelocity.x, Mathf.Sin(10 * Mathf.Deg2Rad), otherFoodVelocity.z).normalized;
-                            if (_boundCount < 2 && shotManager.ShotPower > (shotManager.ShotParameter.MaxShotPower + shotManager.ShotParameter.MinShotPower) / 2f)
-                                _rigidbody.AddForce(collisionForceVector * ShotManager.Instance.ShotPower / 3);//調整中
-                            else
-                                _rigidbody.AddForce(collisionForceVector * ShotManager.Instance.ShotPower / 10);//調整中
+                            var collisionForceVector = new Vector3(otherFoodVelocity.x, 0, otherFoodVelocity.z).normalized;
+                            if (!addedForce)
+                            {
+                                StartCoroutine(AddForce(collisionForceVector * ShotManager.Instance.ShotPower * 0.1f));//調整中
+                                Debug.Log("強くぶっとばす");
+                            }
+                        }
+                        break;
+                    case FoodType.Chicken:
+                        if (otherFood != null)
+                        {
+                            var otherFoodVelocity = DecideAddForceAngle(otherFood);
+                            var collisionForceVector = new Vector3(otherFoodVelocity.x, 0, otherFoodVelocity.z).normalized;
+                            if (!addedForce)
+                            {
+                                StartCoroutine(AddForce(collisionForceVector * ShotManager.Instance.ShotPower * 0.1f));//調整中
+                                Debug.Log("強くぶっとばす");
+                            }
                         }
                         break;
                     case FoodType.Sausage:
+                        if (otherFood != null)
+                        {
+                            var shotManager = ShotManager.Instance;
+                            var otherFoodVelocity = otherFood.Rigidbody.velocity.normalized;
+                            var collisionForceVector = new Vector3(otherFoodVelocity.x, 0, otherFoodVelocity.z).normalized;
+                            if (!addedForce)
+                            {
+                                StartCoroutine(AddForce(collisionForceVector * ShotManager.Instance.ShotPower * 0.1f));//調整中
+                                Debug.Log("強くぶっとばす");
+                            }
+                        }
                         break;
                     default:
                         break;
@@ -759,8 +868,8 @@ namespace Cooking.Stage
                                         else
                                         {
                                             //方向を変えない
-                                            ShotManager.Instance.SetShotVector(ShotManager.Instance.transform.forward, ShotManager.Instance.ShotPower /( _boundCount + 1));
-                                            _rigidbody.AddForce(transform.up * _shrimpFirstBoundPower * (ShotManager.Instance.ShotPower / (ShotManager.Instance.ShotParameter.MaxShotPower * 1.25f * _boundCount)), ForceMode.Impulse);
+                                            ShotManager.Instance.SetShotVector(ShotManager.Instance.transform.forward, ShotManager.Instance.ShotPower /( _boundCount + 0.5f));
+                                            _rigidbody.AddForce(ShotManager.Instance.transform.forward * _shrimpFirstBoundPower * (ShotManager.Instance.ShotPower / (ShotManager.Instance.ShotParameter.MaxShotPower * 0.75f * _boundCount)), ForceMode.Acceleration);
                                         }
                                     }
                                     if (_flyTime > _firstBoundTime + 0.4f && collision.gameObject.tag == TagList.Chair.ToString())
@@ -777,6 +886,7 @@ namespace Cooking.Stage
                             else if (collision.gameObject.tag == TagList.Wall.ToString())
                             {
                                 //_isFirstCollision = false;
+                                if(_boundCount < 1)
                                 _rigidbody.AddForce(new Vector3(_rigidbody.velocity.x, 0, _rigidbody.velocity.z) * ShotManager.Instance.ShotPower * 2.5f,ForceMode.Force);
                                 //回転固定解除
                                 TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].UnlockConstraints();
@@ -800,6 +910,16 @@ namespace Cooking.Stage
                                     TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].UnlockConstraints();
                                     _physicsState = PhysicsState.FirstBound;
                                 }
+                                else
+                                {
+                                    if (foodType == FoodType.Egg && _rigidbody.velocity.magnitude < 0.1f)
+                                    {
+                                        FreezeRotation(RigidbodyConstraints.FreezeRotationX);
+                                        FreezeRotation(RigidbodyConstraints.FreezeRotationY);
+                                        FreezeRotation(RigidbodyConstraints.FreezeRotationZ);
+                                    }
+                                }
+
                             }
                         }
                         else if (collision.gameObject.tag == TagList.Wall.ToString())
@@ -928,6 +1048,35 @@ namespace Cooking.Stage
             }
             #endregion
         }
+
+        private Vector3 DecideAddForceAngle(FoodStatus otherFood)
+        {
+            var shotManager = ShotManager.Instance;
+            var otherFoodVelocity = otherFood.Rigidbody.velocity.normalized;
+            if (Mathf.Abs(otherFoodVelocity.x) > Mathf.Abs(otherFoodVelocity.z))
+            {
+                if (otherFoodVelocity.x > 0)
+                {
+                    return Vector3.right;
+                }
+                else
+                {
+                    return -Vector3.right;
+                }
+            }
+            else
+            {
+                if (otherFoodVelocity.z > 0)
+                {
+                    return Vector3.forward;
+                }
+                else
+                {
+                    return -Vector3.forward;
+                }
+            }
+        }
+
         private void OnTriggerEnter(Collider other)
         {
             var textureList = StageSceneManager.Instance.FoodTextureList;
@@ -1125,7 +1274,8 @@ namespace Cooking.Stage
                     break;
                 case FoodType.Egg:
                     UnlockConstraints();
-                    FreezeRotation();
+                    if (TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex] == this)
+                        FreezeRotation();
                     break;
                 case FoodType.Chicken:
                     UnlockConstraints();
@@ -1143,21 +1293,21 @@ namespace Cooking.Stage
         }
         private Vector3 GetGroundPointUnderCenter(Vector3 originPoint , Vector3 underCenterDirection)
         {
-            float rayLength = 10;
+            //float rayLength = 10;
             //Rayが当たったオブジェクトの情報を入れる箱
-            RaycastHit hit;    //原点        方向
-            Ray ray = new Ray(originPoint, underCenterDirection);
-            Debug.DrawRay(originPoint, underCenterDirection, Color.red, 100);
+            //RaycastHit hit;    //原点        方向
+            //Ray ray = new Ray(originPoint, underCenterDirection);
+            //Debug.DrawRay(originPoint, underCenterDirection, Color.red, 100);
             //Kitchenレイヤーとレイ判定を行う
-            if (Physics.Raycast(ray, out hit, rayLength, StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]))
+            //if (Physics.Raycast(ray, out hit, rayLength, StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]))
             {
                 return transform.position;
                 //return hit.point;
             }
-            else
-            {
-                return transform.position;
-            }
+        //    else
+        //    {
+        //        return transform.position;
+        //    }
         }
         public void SetParentObject(Transform transform)
         {

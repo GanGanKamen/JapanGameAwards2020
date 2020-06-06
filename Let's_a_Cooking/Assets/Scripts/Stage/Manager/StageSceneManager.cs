@@ -305,6 +305,13 @@ namespace Cooking.Stage
                                 food.ResetFoodState();
                                 //PredictLineManager.Instance.SetPredictLineInstantiatePosition(food.CenterPoint.position);
                             }
+                            if (ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode)
+                            {
+                                if (_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex] != food && food.Rigidbody.constraints == RigidbodyConstraints.FreezeRotation)
+                                {
+                                    food.UnlockConstraints();
+                                }
+                            }
                         }
                         //if (_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].FalledFoodStateOnStartProperty == FalledFoodStateOnStart.OnStart)
                         PredictLineManager.Instance.SetPredictLineInstantiatePosition(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].GroundPoint);
@@ -319,7 +326,7 @@ namespace Cooking.Stage
                             case UIManager.FinishUIMode.Score:
                                 break;
                             case UIManager.FinishUIMode.Retry:
-                                SceneChanger.LoadActiveScene();
+                                SceneChanger.LoadSelectingScene(SceneName.Title);
                                 break;
                             default:
                                 break;

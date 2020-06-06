@@ -298,9 +298,11 @@ namespace Cooking.Stage
         /// </summary>
         public void DestroyPredictLine()
         {
-            foreach (var predictLine in _predictLines)
+            //生成しすぎる不具合に対応 06/06
+            var childCount = _predictLinesParent.transform.childCount;
+            for (int i = 0; i < childCount; i++)
             {
-                Destroy(predictLine.gameObject);
+                Destroy(_predictLinesParent.transform.GetChild(i).gameObject);
             }
             _predictLines.Clear();
         }
