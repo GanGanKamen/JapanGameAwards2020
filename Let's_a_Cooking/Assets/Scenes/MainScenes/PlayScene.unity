@@ -262,6 +262,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: LetsFlyUI
       objectReference: {fileID: 0}
+    - target: {fileID: 2259073736345004722, guid: c17407bd5bc2fb84a9beeb1a89be17dc,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c17407bd5bc2fb84a9beeb1a89be17dc, type: 3}
 --- !u!108 &705507994 stripped
