@@ -113,6 +113,11 @@ namespace Cooking.Stage
             get { return _isGoal; }
         }
         private bool _isGoal;
+        public bool IsStart
+        {
+            get { return _isStart; }
+        }
+        private bool _isStart = true;
         public bool IsFirstCollision
         {
             get { return _isFryCollision; }
@@ -261,6 +266,7 @@ namespace Cooking.Stage
             if (_rigidbody == null) _rigidbody = GetComponentInChildren<Rigidbody>();
             _playerPoint = GetComponent<PlayerPoint>();
             _foodDefaultLayer = LayerMask.GetMask(LayerMask.LayerToName(this.gameObject.layer));
+            SetFoodLayer(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodLayerInStartArea]);
             if (_isGroundedArea != null)
             {
                 var referencePoint = _isGroundedArea.GetChild(0).position;
@@ -592,6 +598,7 @@ namespace Cooking.Stage
         IEnumerator AddForce(Vector3 power)
         {
             float time = 0;
+            ShotManager.Instance.SetShotVector(_rigidbody.velocity, ShotManager.Instance.ShotPower);
             switch (foodType)
             {
                 case FoodType.Shrimp:
@@ -727,12 +734,8 @@ namespace Cooking.Stage
             //自分のターンのみ
             if (TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex] == this && ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode)
             {
-                //ポイント加算
-                if (collision.gameObject.tag == TagList.Towel.ToString() && _playerPoint.IsFirstTowel)
-                {
-                    _playerPoint.GetPoint(GetPointType.FirstTowelTouch);
-                }
-                else if (collision.gameObject.tag == TagList.DirtDish.ToString() && _playerPoint.CanGetPointFlags[(int)GetPointOnTouch.DirtDish])
+                //減点は現在ターン中一回
+                if (collision.gameObject.tag == TagList.DirtDish.ToString() && _playerPoint.CanGetPointFlags[(int)GetPointOnTouch.DirtDish])
                 {
                     _playerPoint.GetPoint(GetPointType.TouchDirtDish);
                 }
@@ -1080,6 +1083,11 @@ namespace Cooking.Stage
         private void OnTriggerEnter(Collider other)
         {
             var textureList = StageSceneManager.Instance.FoodTextureList;
+            //ポイント加算
+            if (other.tag == TagList.Towel.ToString() && _playerPoint.IsFirstTowel)
+            {
+                _playerPoint.GetPoint(GetPointType.FirstTowelTouch);
+            }
             if (other.tag == TagList.Finish.ToString())
             {
                 EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Splash);
@@ -1138,8 +1146,8 @@ namespace Cooking.Stage
             }
             else if (other.tag == TagList.StartArea.ToString())// && !_isFoodInStartArea)//落下後復帰想定
             {
-                _isFoodInStartArea = true;
-                SetFoodLayer(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodLayerInStartArea]);
+                //_isFoodInStartArea = true;
+                //SetFoodLayer(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodLayerInStartArea]);
             }
         }
         private void GetSeasoning(Seasoning seasoning , FoodTextureList textureList)

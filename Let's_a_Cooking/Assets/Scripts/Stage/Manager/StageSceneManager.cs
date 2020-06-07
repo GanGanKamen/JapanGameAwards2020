@@ -147,6 +147,11 @@ namespace Cooking.Stage
         {
             get { return _foodTextureList; }
         }
+        public float ChairYPosition
+        {
+            get { return _chairPosition; }
+        }
+        private float _chairPosition;
         [SerializeField] private FoodTextureList _foodTextureList;
         private void Awake()
         {
@@ -262,6 +267,13 @@ namespace Cooking.Stage
                 _playerPointList[i] = new List<int>();
             }
         }
+        /// <summary>
+        /// 落下状態からスタート地点に戻った際に呼ばれる
+        /// </summary>
+        public void ResetFoodStateOnGame()
+        {
+            _foodStateOnGame = FoodStateOnGame.Normal;
+        }
         // Start is called before the first frame update
         void Start()
         {
@@ -278,6 +290,7 @@ namespace Cooking.Stage
             {
                 _chooseFoodTypes[i] = FoodType.Shrimp;
             }
+            _chairPosition = GameObject.FindGameObjectWithTag(TagList.Chair.ToString()).transform.position.y;
         }
 
         // Update is called once per frame
@@ -293,7 +306,6 @@ namespace Cooking.Stage
                     break;
                 case StageGameState.FinishFoodInstantiateAndPlayerInOrder:
                     _gameState = StageGameState.Play;
-
                     break;
                 case StageGameState.Play:
                     {
@@ -384,6 +396,7 @@ namespace Cooking.Stage
                                 {
                                     var startPoint = GetPlayerStartPoint(_turnManager.GetPlayerNumberFromActivePlayerIndex(_turnManager.ActivePlayerIndex) - 1);
                                     _turnManager.ResetPlayerOnStartPoint(startPoint, _turnManager.ActivePlayerIndex);
+                                    _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].ResetFallAndGoalFlag();
                                 }
                             }
                             break;
@@ -399,11 +412,14 @@ namespace Cooking.Stage
                             bool isTurnChange = true;
                             foreach (var foodStatus in _turnManager.FoodStatuses)
                             {
-                                ///食材が止まるまで待機
-                                if (foodStatus.Rigidbody.velocity.magnitude > 0.0001f)
+                                if (!foodStatus.IsGoal)
                                 {
-                                    isTurnChange = false;
-                                    break;
+                                    ///食材が止まるまで待機
+                                    if (foodStatus.Rigidbody.velocity.magnitude > 0.0001f)
+                                    {
+                                        isTurnChange = false;
+                                        break;
+                                    }
                                 }
                             }
                             ///食材が止まるまで待機
@@ -524,29 +540,29 @@ namespace Cooking.Stage
         /// </summary>
         private void FixedUpdate()
         {
-            if (_gameState == StageGameState.Play)
-            {
-                // UI表示のない異常落下にも呼ばれる アニメーション再生中などショット前プレイヤー落下時にsceneManagerに呼ばれる
-                if (_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].IsFall)
-                {
-                    var startPoint = GetPlayerStartPoint(_turnManager.GetPlayerNumberFromActivePlayerIndex(_turnManager.ActivePlayerIndex) - 1);
-                    switch (UIManager.Instance.MainUIStateProperty)
-                    {
-                        case ScreenState.FrontMode:
-                            _turnManager.ResetPlayerOnStartPoint(startPoint, _turnManager.ActivePlayerIndex);
-                            break;
-                        case ScreenState.SideMode:
-                            _turnManager.ResetPlayerOnStartPoint(startPoint, _turnManager.ActivePlayerIndex);
-                            break;
-                        case ScreenState.LookDownMode:
-                            _turnManager.ResetPlayerOnStartPoint(startPoint, _turnManager.ActivePlayerIndex);
-                            break;
-                        default:
-                            break;
-                    }
-                }
+            //if (_gameState == StageGameState.Play)
+            //{
+            //    // UI表示のない異常落下にも呼ばれる アニメーション再生中などショット前プレイヤー落下時にsceneManagerに呼ばれる
+            //    if (_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].IsFall)
+            //    {
+            //        var startPoint = GetPlayerStartPoint(_turnManager.GetPlayerNumberFromActivePlayerIndex(_turnManager.ActivePlayerIndex) - 1);
+            //        switch (UIManager.Instance.MainUIStateProperty)
+            //        {
+            //            case ScreenState.FrontMode:
+            //                _turnManager.ResetPlayerOnStartPoint(startPoint, _turnManager.ActivePlayerIndex);
+            //                break;
+            //            case ScreenState.SideMode:
+            //                _turnManager.ResetPlayerOnStartPoint(startPoint, _turnManager.ActivePlayerIndex);
+            //                break;
+            //            case ScreenState.LookDownMode:
+            //                _turnManager.ResetPlayerOnStartPoint(startPoint, _turnManager.ActivePlayerIndex);
+            //                break;
+            //            default:
+            //                break;
+            //        }
+            //    }
 
-            }
+            //}
         }
         /// <summary>
         /// 指定された元要素番号のプレイヤーのスタート地点を算出

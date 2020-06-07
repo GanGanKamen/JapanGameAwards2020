@@ -189,6 +189,13 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
+            if (Input.GetKeyDown(KeyCode.K))
+            {
+                var playerNumber = GetPlayerNumberFromActivePlayerIndex(_activePlayerIndex) - 1;
+                var startPoint = StageSceneManager.Instance.GetPlayerStartPoint(playerNumber);
+
+                ResetPlayerOnStartPoint(startPoint, _activePlayerIndex);
+            }
             if (StageSceneManager.Instance.GameState == StageGameState.FinishFoodInstantiateAndPlayerInOrder)
             {
                 InitializeTurn();
@@ -233,6 +240,19 @@ namespace Cooking.Stage
             }
         }
         /// <summary>
+        /// 落下したプレイヤーのターンになった時の処理
+        /// </summary>
+        /// <returns></returns>
+        IEnumerator TurnChangeFallPlayer(float waitTime)
+        {
+            yield return new WaitForSeconds(waitTime);
+            var playerNumber = GetPlayerNumberFromActivePlayerIndex(_activePlayerIndex) - 1;
+            var startPoint = StageSceneManager.Instance.GetPlayerStartPoint(playerNumber);
+            ResetPlayerOnStartPoint(startPoint, _activePlayerIndex);
+            InitializeOnTurnChange(_activePlayerIndex);
+            StageSceneManager.Instance.ResetFoodStateOnGame();
+        }
+        /// <summary>
         /// アクティブプレイヤーを入れ替えて、次の人のターンに切り替え
         /// </summary>
         public void ChangeTurn()
@@ -263,10 +283,8 @@ namespace Cooking.Stage
                             }
                             food.UnlockConstraints();
                         }
-                        if (_foodStatuses[_activePlayerIndex].IsFoodInStartArea && !_foodStatuses[_activePlayerIndex].IsFall)
+                        if (_foodStatuses[_activePlayerIndex].IsFoodInStartArea)
                         {
-                            var playerNumber = GetPlayerNumberFromActivePlayerIndex(_activePlayerIndex) - 1;
-                            var startPoint = StageSceneManager.Instance.GetPlayerStartPoint(playerNumber);
                             InitializeOnTurnChange(_activePlayerIndex);
                             break;//次のプレイヤーに変えずに初期化 このメソッドの終了
                         }
@@ -296,7 +314,16 @@ namespace Cooking.Stage
                             default:
                                 break;
                         }
-                        InitializeOnTurnChange(_activePlayerIndex);
+                        if (_foodStatuses[_activePlayerIndex].IsFall)
+                        {
+                            UIManager.Instance.ResetUIMode();
+                            SetObjectsPositionForNextPlayer(_activePlayerIndex);
+                            StartCoroutine(TurnChangeFallPlayer(1.2f));
+                        }
+                        else
+                        {
+                            InitializeOnTurnChange(_activePlayerIndex);
+                        }
                     }
                     //レア調味料発生
                     if (StageSceneManager.Instance.TurnNumberOnGameEnd - _turnNumber == 2)//ラスト3ターン

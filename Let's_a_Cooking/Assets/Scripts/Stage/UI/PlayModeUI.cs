@@ -176,8 +176,13 @@ namespace Cooking.Stage
         public void ChangeUIOnTurnStart()
         {
             ChangeShotButtonTouched(false);
-            if (_turnManager.IsAITurn)
+            if (_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].IsFall)
             {
+                UIManager.Instance.ChangeUI(ScreenState.ShottingMode);
+            }
+            else if (_turnManager.IsAITurn)
+            {
+                _falledImage.SetActive(false);
                 UIManager.Instance.ChangeUI(ScreenState.FrontMode);
                 _defaultIsAIImage.SetActive(true);
                 foreach (var shotStartButton in _shotButtons)
@@ -190,6 +195,7 @@ namespace Cooking.Stage
             ///ショット終了時は見下ろしスタート プレイヤーの時
             else
             {
+                _falledImage.SetActive(false);
                 UIManager.Instance.ChangeUI(ScreenState.LookDownMode);
                 _defaultIsAIImage.SetActive(false);
                 foreach (var shotStartButton in _shotButtons)
