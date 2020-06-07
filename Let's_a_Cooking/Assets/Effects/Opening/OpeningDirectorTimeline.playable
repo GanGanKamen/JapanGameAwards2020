@@ -1870,25 +1870,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     m_MixOutCurve:
       serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -2435,7 +2417,25 @@ MonoBehaviour:
     m_BlendOutDuration: -1
     m_MixInCurve:
       serializedVersion: 2
-      m_Curve: []
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -2510,7 +2510,25 @@ MonoBehaviour:
       m_RotationOrder: 4
     m_MixOutCurve:
       serializedVersion: 2
-      m_Curve: []
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -2546,7 +2564,7 @@ MonoBehaviour:
     exposedName: 2b9e69979d5be054ab768b15f7d71f1d
     defaultValue: {fileID: 0}
   videoClip: {fileID: 32900000, guid: 5aee07363e02b7e4ebf255d47aeb047e, type: 3}
-  mute: 0
+  mute: 1
   loop: 0
   preloadTime: 3
   clipInTime: 0
@@ -3802,10 +3820,10 @@ MonoBehaviour:
   videoPlayer:
     exposedName: 1824999dcf95e0a43a77f12b7676a71a
     defaultValue: {fileID: 0}
-  videoClip: {fileID: 0}
-  mute: 0
-  loop: 1
-  preloadTime: 0.3
+  videoClip: {fileID: 32900000, guid: ccfb91036cb3c714aad6394210318a8a, type: 3}
+  mute: 1
+  loop: 0
+  preloadTime: 3
   clipInTime: 0
 --- !u!114 &4939489146133425185
 MonoBehaviour:
