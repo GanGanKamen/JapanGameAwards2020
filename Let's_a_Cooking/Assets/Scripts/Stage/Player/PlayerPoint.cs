@@ -136,6 +136,7 @@ namespace Cooking.Stage
                     DefaultPointCalculate(pointInformation.pointOperator, pointInformation.pointValue);
                     break;
                 case GetPointType.FirstWash:
+                    _isFirstWash = false;
                     DefaultPointCalculate(pointInformation.pointOperator, pointInformation.pointValue);
                     break;
                 case GetPointType.FirstTowelTouch:

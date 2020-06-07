@@ -271,7 +271,7 @@ namespace Cooking.Stage
         {
             var seed = Cooking.Random.GetRandomIntFromZero(20);
             //  x(右辺) / 10(左辺)%の確率で再出現
-            if (seed < 0)
+            if (seed < 3)
             {
                 Debug.Log("生成");
                 seasoning.ManageSeasoningActive(true);

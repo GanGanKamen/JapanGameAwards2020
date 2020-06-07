@@ -147,11 +147,14 @@ namespace Cooking.Stage
         {
             get { return _foodTextureList; }
         }
+        /// <summary>
+        /// ない時は4を返す
+        /// </summary>
         public float ChairYPosition
         {
             get { return _chairPosition; }
         }
-        private float _chairPosition;
+        private float _chairPosition = 4;
         [SerializeField] private FoodTextureList _foodTextureList;
         private void Awake()
         {
@@ -290,7 +293,11 @@ namespace Cooking.Stage
             {
                 _chooseFoodTypes[i] = FoodType.Shrimp;
             }
-            _chairPosition = GameObject.FindGameObjectWithTag(TagList.Chair.ToString()).transform.position.y;
+            var chair = GameObject.FindGameObjectWithTag(TagList.Chair.ToString());
+            if (chair != null)
+            {
+                _chairPosition = GameObject.FindGameObjectWithTag(TagList.Chair.ToString()).transform.position.y;
+            }
         }
 
         // Update is called once per frame

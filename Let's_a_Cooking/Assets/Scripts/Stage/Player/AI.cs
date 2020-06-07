@@ -266,7 +266,7 @@ namespace Cooking.Stage
             int halfLimitAngle = 90;//全方向では処理が重い
             int fallPointCount = (int)((halfLimitAngle * 2) / incrementValue);
             int fallPointIndex = 0;
-            var verticalAngle = 45;//45度は落下確率高い 落下地点のy座標が今いる座標よりそれなりに(仮:1m)低いなら角度を上げる
+            var verticalAngle = 45;//45度は落下確率高い 落下地点のy座標が今いる座標よりそれなりに(仮:1m)低いなら角度を上げる 
             var shotDirectionY = Mathf.Sin(verticalAngle * Mathf.Deg2Rad); // 角度をラジアンへ
             for (verticalAngle = 20; verticalAngle <= ShotManager.Instance.ShotParameter.LimitVerticalAngle; verticalAngle += 2)
             {
@@ -321,7 +321,7 @@ namespace Cooking.Stage
             //最終チェックによる改善
             //AIが落下しそうな場所に飛ばないようにする
             //方法　最終verticalAngleで maxpowerを大きくする maxpower + 1 ~ 3まで  横で±5度 maxpower固定(仮)
-            //この範囲で床が存在しないかチェックする 床があったら床を検知したところから遠くなるように角度とパワーを調節する  同時にやれば角度の変化は不要
+            //この範囲で床が存在しないかチェックする 床があったら床を検知したところから遠くなるように角度とパワーを調節する  同時にやれば角度の変化は不要 小さい時の落下を作るとしたらスキップになるが現状無し
             //このチェックの結果で最適化されたポジションを目標地点候補の中に入れる
             NearFallFloorPower nearFallFloorPower = NearFallFloorPower.None;
             float maxShotSpeed = ShotManager.Instance.ShotParameter.MaxShotPower;
@@ -453,6 +453,13 @@ namespace Cooking.Stage
             switch (foodType)
             {
                 case FoodType.Shrimp:
+                    if (!food.shrimp.IsHeadFallOff)
+                    {
+                        foreach (var knife in GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.Knife])
+                        {
+                            _targetObjectOptions.Add(knife);
+                        }
+                    }
                     break;
                 case FoodType.Egg:
                     break;

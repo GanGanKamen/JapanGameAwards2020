@@ -40,6 +40,7 @@ namespace Cooking.Stage
         /// AIのターン中はショット開始ボタンは表示しない
         /// </summary>
         [SerializeField] private GameObject[] _shotButtons = null;
+        [SerializeField] private GameObject[] _cameraButtons = null;
         [SerializeField] private GameObject _defaultIsAIImage = null;
         [SerializeField] private Text _turnNumberText = null;
         [SerializeField] private Text _playerNumberTextOnPlay = null;
@@ -189,6 +190,10 @@ namespace Cooking.Stage
                 {
                     shotStartButton.SetActive(false);
                 }
+                foreach (var cameraButton in _cameraButtons)
+                {
+                    cameraButton.SetActive(false);
+                }
                 //現状非表示
                 _shotPowerGagesOfInteger.gameObject.SetActive(false);
             }
@@ -201,6 +206,10 @@ namespace Cooking.Stage
                 foreach (var shotStartButton in _shotButtons)
                 {
                     shotStartButton.SetActive(true);
+                }
+                foreach (var cameraButton in _cameraButtons)
+                {
+                    cameraButton.SetActive(true);
                 }
                 _shotPowerGagesOfInteger.gameObject.SetActive(true);
             }

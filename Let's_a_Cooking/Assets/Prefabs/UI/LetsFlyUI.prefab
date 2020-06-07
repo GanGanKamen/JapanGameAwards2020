@@ -4423,6 +4423,9 @@ MonoBehaviour:
   - {fileID: 21300000, guid: e4083bda7b50f2444b06e861200783e4, type: 3}
   _shotButtons:
   - {fileID: 2259073736754504299}
+  _cameraButtons:
+  - {fileID: 2259073735966369196}
+  - {fileID: 2259073735976863921}
   _defaultIsAIImage: {fileID: 2259073737316308619}
   _turnNumberText: {fileID: 2259073737747330912}
   _playerNumberTextOnPlay: {fileID: 2259073736627626859}
