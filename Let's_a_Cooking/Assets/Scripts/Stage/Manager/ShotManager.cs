@@ -296,7 +296,7 @@ namespace Cooking.Stage
                                     break;
                             }
                         }
-                        _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].PlayerPointProperty.ResetGetPointBool();
+                        //_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].PlayerPointProperty.ResetGetPointBool();
                     }
                     break;
                 case ShotState.ShotEndMode:

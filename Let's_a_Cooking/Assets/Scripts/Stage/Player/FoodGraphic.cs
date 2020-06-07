@@ -28,8 +28,10 @@ namespace Cooking.Stage
         [SerializeField,Header("たまご中身 鶏肉 ソーセージ")] protected MeshRenderer _foodMeshRenderer = null;
         [SerializeField] protected Material foodNormalGraphic = null;
         [SerializeField] private Material _seasoningMaterial = null;
+        FoodTextureList _foodTextureList = null;
         protected virtual void Start()
         {
+            _foodTextureList = StageSceneManager.Instance.FoodTextureList;
         }
         /// <summary>
         /// レア調味料を持っているか
@@ -47,12 +49,36 @@ namespace Cooking.Stage
             get { return _isSeasoningMaterial; }
         }
         private bool _isSeasoningMaterial;
-        /// <summary>
-        /// マテリアルを指定したものに変更
-        /// </summary>
-        protected void ChangeMaterial(Material material , FoodType foodType)
+        protected void ChangeMaterialByWashingFood(FoodType foodType , FoodStatus.Food food)
         {
-            var textureList = StageSceneManager.Instance.FoodTextureList;
+            switch (foodType)
+            {
+                case FoodType.Shrimp:
+                    if (food.shrimp.IsHeadFallOff)
+                    {
+                        foodSkinnedMeshRenderer[(int)ShrimpParts.Tail].material = StageSceneManager.Instance.FoodTextureList.normalFoodMaterials[(int)foodType];
+                    }
+                    else
+                    {
+                        foodSkinnedMeshRenderer[(int)ShrimpParts.Tail].material = StageSceneManager.Instance.FoodTextureList.normalFoodMaterials[(int)foodType];
+                        foodSkinnedMeshRenderer[(int)ShrimpParts.Head].material = StageSceneManager.Instance.FoodTextureList.normalFoodMaterials[System.Enum.GetValues(typeof(FoodType)).Length];//4番目
+                    }
+                    break;
+                case FoodType.Egg:
+                    break;
+                case FoodType.Chicken:
+                    break;
+                case FoodType.Sausage:
+                    break;
+                default:
+                    break;
+            }
+        }
+        /// <summary>
+        /// マテリアルを指定した共通のものに変更
+        /// </summary>
+        protected void ChangeMaterial(Material material , FoodType foodType , FoodStatus.Food food)
+        {
             switch (foodType)
             {
                 case FoodType.Shrimp:
@@ -69,10 +95,16 @@ namespace Cooking.Stage
                     //}
                     else
                     {
-                        _isRareSeasoningMaterial = false;
-                        foreach (var skinnedMeshRenderer in foodSkinnedMeshRenderer)
+                        if (food.shrimp.IsHeadFallOff)
                         {
-                            skinnedMeshRenderer.material = material;
+                            foodSkinnedMeshRenderer[(int)ShrimpParts.Tail].material = material;
+                        }
+                        else
+                        {
+                            foreach (var skinnedMeshRenderer in foodSkinnedMeshRenderer)
+                            {
+                                skinnedMeshRenderer.material = material;
+                            }
                         }
                     }
                     break;
@@ -90,9 +122,15 @@ namespace Cooking.Stage
                     }
                     else
                     {
-                        _isRareSeasoningMaterial = false;
                         _isSeasoningMaterial = true;
-                        _foodMeshRenderer.material = material;
+                        if (food.egg.HasBroken)
+                        {
+                            food.egg.InsideMeshRenderer.material = material;
+                        }
+                        else
+                        {
+                            _foodMeshRenderer.material = material;
+                        }
                     }
                     break;
                 case FoodType.Chicken:
@@ -108,8 +146,14 @@ namespace Cooking.Stage
                     }
                     else
                     {
-                        _isRareSeasoningMaterial = false;
-                        _foodMeshRenderer.material = material;
+                        if (food.chicken.IsCut)
+                        {
+                            food.chicken.CutMeshRenderer[0].material = material;
+                        }
+                        else
+                        {
+                            _foodMeshRenderer.material = material;
+                        }
                     }
                     break;
                 case FoodType.Sausage:
@@ -125,8 +169,14 @@ namespace Cooking.Stage
                     }
                     else
                     {
-                        _isRareSeasoningMaterial = false;
-                        _foodMeshRenderer.material = material;
+                        if (food.sausage.IsCut)
+                        {
+                            food.chicken.CutMeshRenderer[0].material = material;
+                        }
+                        else
+                        {
+                            _foodMeshRenderer.material = material;
+                        }
                     }
                     break;
                 default:
@@ -144,46 +194,44 @@ namespace Cooking.Stage
             {
                 case FoodType.Chicken:
                     //調味料を持つとき、見た目を引き継ぐ
-                    if (_foodMeshRenderer.material !=  foodNormalGraphic)
+                    if (_foodMeshRenderer.material.color ==  _foodTextureList.seasoningMaterial.color)
                     {
                         for (int i = 0; i < meshRenderers.Length; i++)
                         {
-                            meshRenderers[i].material = _foodMeshRenderer.material;
+                            meshRenderers[i].material = _foodTextureList.seasoningMaterial;
                         }
                     }
                     break;
                 case FoodType.Sausage:
                     //調味料を持つとき、見た目を引き継ぐ
-                    if (_foodMeshRenderer.material != foodNormalGraphic)
+                    if (_foodMeshRenderer.material.color == _foodTextureList.seasoningMaterial.color)
                     {
                         for (int i = 0; i < meshRenderers.Length; i++)
                         {
-                            meshRenderers[i].material = _foodMeshRenderer.sharedMaterial;
+                            meshRenderers[i].material = _foodTextureList.seasoningMaterial;
                         }
                     }
                     break;
                 default:
                     break;
             }
-            //最初がプレイヤーとしてアクティブなmeshRenderer
-            _foodMeshRenderer = meshRenderers[0];
         }
         /// <summary>
         ///  食材の見た目変更で、参照するMeshRendererが変わる 卵の殻がmarterialを引き継ぐ Destroyより前に実行
         /// </summary>
         /// <param name="meshRenderers"></param>
         /// <param name="eggInsideRenderer"></param>
-        protected void ChangeMeshRendererCrackedEgg(GameObject[] shells, MeshRenderer eggInsideRenderer)
+        protected void ChangeEggMeshRenderers(GameObject[] shells, MeshRenderer eggInsideRenderer)
         {
-            if (_isSeasoningMaterial)
+            if (_foodMeshRenderer.material.color == _foodTextureList.seasoningMaterial.color)
             {
                 for (int i = 0; i < shells.Length; i++)
                 {
                     var meshRenderer = shells[i].GetComponent<MeshRenderer>();
                     meshRenderer.material = _seasoningMaterial;
                 }
+                eggInsideRenderer.material = _foodTextureList.seasoningMaterial;
             }
-            _foodMeshRenderer = eggInsideRenderer;
         }
         /// <summary>
         /// ひびが割れるときに変更

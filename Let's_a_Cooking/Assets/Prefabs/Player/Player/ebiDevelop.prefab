@@ -300,7 +300,7 @@ MonoBehaviour:
   _foodPositionNotRotate: {fileID: 2145306625588699937}
   _rigidbody: {fileID: 4479837848373791946}
   _isGroundedArea: {fileID: 6192125350965717799}
-  _shrimpFirstBoundPower: 3
+  _shrimpFirstBoundPower: 4
   _chickenFirstBoundPower: 1.5
   _forwardAngle: 60
 --- !u!114 &6626410273865131183

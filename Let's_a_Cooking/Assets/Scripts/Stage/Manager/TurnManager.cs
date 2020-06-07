@@ -282,6 +282,7 @@ namespace Cooking.Stage
                                     continue;
                             }
                             food.UnlockConstraints();
+                            food.PlayerPointProperty.ResetGetPointBool();
                         }
                         if (_foodStatuses[_activePlayerIndex].IsFoodInStartArea)
                         {
