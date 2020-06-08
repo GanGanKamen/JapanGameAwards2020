@@ -751,6 +751,23 @@ namespace Cooking.Stage
             //自分のターンのみ
             if (TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex] == this && ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode)
             {
+                //相手の調味料を奪う
+                //=============================
+                var otherFood = collision.gameObject.GetComponent<FoodStatus>(); //相手は食材
+                if (otherFood != null && rareSeasoningEffect == null)//自分にレア調味料があるときは起きない
+                {
+                    var otherFoodColor = otherFood.GetActiveMaterial(otherFood.FoodType, otherFood.OriginalFoodProperty).color;
+                    //レアエフェクト取得
+                    if (otherFood.rareSeasoningEffect != null)
+                    {
+                        rareSeasoningEffect = EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Stars).gameObject;
+                    }
+                    if (otherFood.GetActiveMaterial(otherFood.FoodType,otherFood.OriginalFoodProperty).color == StageSceneManager.Instance.FoodTextureList.seasoningMaterial.color)
+                    {
+                        GetActiveMaterial(foodType, food).color = otherFoodColor;
+                        otherFood.LostMaterial(otherFood.FoodType, otherFood.OriginalFoodProperty , _playerPoint);
+                    }
+                }
                 //==============================
                 //エフェクト
                 if (_isFryCollision && collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]) && collision.gameObject.tag != TagList.Wall.ToString())
@@ -1122,7 +1139,7 @@ namespace Cooking.Stage
                 {
                     _playerPoint.GetPoint(GetPointType.FirstWash);
                 }
-                ChangeMaterialByWashingFood(foodType, food);        
+                LostMaterial(foodType, food, _playerPoint);        
             }
             else if (other.tag == TagList.Seasoning.ToString())
             {
@@ -1132,12 +1149,12 @@ namespace Cooking.Stage
                     //調味料が同じものではないならば コライダーが複数ついているオブジェクトは一回の衝突で複数の判定が呼ばれる。この判定を一回にする
                     if (touchSeasoning != _gotSeasoning)
                     {
-                        GetSeasoning(touchSeasoning, textureList);
+                        GetSeasoning(touchSeasoning);
                     }
                 }
                 else
                 {
-                    GetSeasoning(touchSeasoning, textureList);
+                    GetSeasoning(touchSeasoning);
                 }
             }
             else if (other.tag == TagList.RareSeasoning.ToString())
@@ -1172,9 +1189,23 @@ namespace Cooking.Stage
                 //SetFoodLayer(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodLayerInStartArea]);
             }
         }
-        private void GetSeasoning(Seasoning seasoning , FoodTextureList textureList)
+        protected override void GetSeasoning(Seasoning seasoning)
         {
+            FoodTextureList textureList = StageSceneManager.Instance.FoodTextureList;
             _gotSeasoning = seasoning;
+            GetSeasoningPoint();
+            base.GetSeasoning(seasoning);
+            //レアエフェクトであるスターを付着
+            if (seasoning.RareEffect.activeInHierarchy)
+            {
+                rareSeasoningEffect.transform.position = new Vector3(FoodPositionNotRotate.position.x, FoodPositionNotRotate.position.y + 1.5f, FoodPositionNotRotate.position.z);
+                rareSeasoningEffect.transform.parent = FoodPositionNotRotate.transform;
+            }
+            ChangeMaterial(textureList.seasoningMaterial, foodType, food);
+        }
+
+        private void GetSeasoningPoint()
+        {
             switch (foodType)
             {
                 case FoodType.Shrimp:
@@ -1193,16 +1224,8 @@ namespace Cooking.Stage
                 default:
                     break;
             }
-            //レアエフェクトであるスターを付着
-            if (seasoning.RareEffect.activeInHierarchy)
-            {
-                EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Stars).parent = FoodPositionNotRotate.transform;
-            }
-            EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Seasoning_Hit);
-            //調味料パーティクルは付着しない
-            //EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Seasoning).parent = FoodPositionNotRotate.transform;
-            ChangeMaterial(textureList.seasoningMaterial, foodType, food);
         }
+
         /// <summary>
         /// あわに触れる処理 リストに登録 演出 ポイント獲得
         /// </summary>
