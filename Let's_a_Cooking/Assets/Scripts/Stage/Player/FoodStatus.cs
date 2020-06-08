@@ -315,7 +315,7 @@ namespace Cooking.Stage
         {
             if (_isGoal)
             {
-                _rigidbody.velocity = Vector3.zero;
+                //_rigidbody.velocity = Vector3.zero;
             }
             else
             {
@@ -1102,11 +1102,19 @@ namespace Cooking.Stage
                 _playerPoint.GetPoint(GetPointType.FirstTowelTouch);
                 _onTowel = true;
             }
-            if (other.tag == TagList.Finish.ToString())
+            if (other.tag == TagList.Finish.ToString() && !_isGoal)
             {
                 EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Splash);
                 _isGoal = true;
                 FreezeRotation();
+
+                var ranx = UnityEngine.Random.Range(-0.3f, 0.3f);
+                var ranz = UnityEngine.Random.Range(-0.3f, 0.3f);
+                var ranPos = new Vector3(ranx, 2, ranz);
+                var movePos = other.transform.position + ranPos;
+
+                _rigidbody.velocity = Vector3.zero;
+                transform.position = movePos;
             }
             else if (other.tag == TagList.Water.ToString())
             {
