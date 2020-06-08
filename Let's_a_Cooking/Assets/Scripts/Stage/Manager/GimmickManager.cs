@@ -206,10 +206,8 @@ namespace Cooking.Stage
         {
             foreach (var seasoning in _targetObjectsForAI[(int)AITargetObjectTags.Seasoning])
             {
-                seasoning.SetActive(true);
                 seasoning.GetComponent<Seasoning>().ManageRareSeasoning(true);
             }
-            //_rareSeasoningEffect.SetActive(true);
         }
         /// <summary>
         /// ターンが変わるときに水が出なくなる場所を制御

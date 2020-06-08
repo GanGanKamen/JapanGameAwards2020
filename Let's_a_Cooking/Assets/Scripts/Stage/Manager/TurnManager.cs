@@ -189,6 +189,8 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
+            //残りターン数if(>StageSceneManager.Instance.TurnNumberOnGameEnd なら StageSceneManager.Instance.TurnNumberOnGameEnd)
+            Debug.Log(StageSceneManager.Instance.TurnNumberOnGameEnd - _turnNumber + 1);
             if (Input.GetKeyDown(KeyCode.K))
             {
                 var playerNumber = GetPlayerNumberFromActivePlayerIndex(_activePlayerIndex) - 1;
@@ -239,6 +241,23 @@ namespace Cooking.Stage
                 _isAITurn = false;
             }
         }
+        /// <summary>
+        /// レア調味料の数だけ演出を繰り返す
+        /// </summary>
+        /// <param name="rareSeasoningNumber"></param>
+        /// <returns></returns>
+        IEnumerator TurnChangeAppearRareSeasoning(List<Seasoning> rareSeasonings)
+        {
+            float appearCameraTime = 2.5f;
+            for (int i = 0; i < rareSeasonings.Count; i++)
+            {
+                //カメラ演出の再生
+                Debug.Log("レア調味料出現");
+                yield return new WaitForSeconds(appearCameraTime);
+            }
+            ChangeTurnOrDisplayFallUI();
+        }
+
         /// <summary>
         /// 落下したプレイヤーのターンになった時の処理
         /// </summary>
@@ -294,7 +313,7 @@ namespace Cooking.Stage
                             StageSceneManager.Instance.AddPlayerPointToList(_activePlayerIndex);
                             //FoodStatusを取り除いて処理量を減らす
                             Destroy(_foodStatuses[_activePlayerIndex]);
-                            StageSceneManager.Instance.InitializePlayerData(_activePlayerIndex, _foodStatuses[_activePlayerIndex].FoodType, _isAITurn , StageSceneManager.Instance.AIShotRange[0]);//AIが複数いることは現状考えていない
+                            StageSceneManager.Instance.InitializePlayerData(_activePlayerIndex, _foodStatuses[_activePlayerIndex].FoodType, _isAITurn, StageSceneManager.Instance.AIShotRange[0]);//AIが複数いることは現状考えていない
                         }
                         //次のプレイヤーに順番を回す
                         _activePlayerIndex++;
@@ -315,21 +334,25 @@ namespace Cooking.Stage
                             default:
                                 break;
                         }
-                        if (_foodStatuses[_activePlayerIndex].IsFall)
+                        //残り3ターンかつ、最初のプレイヤーの時に演出再生してレア調味料発生
+                        if (_activePlayerIndex == 0 && StageSceneManager.Instance.TurnNumberOnGameEnd - _turnNumber == 2)//ラスト3ターン
                         {
-                            UIManager.Instance.ResetUIMode();
-                            SetObjectsPositionForNextPlayer(_activePlayerIndex);
-                            StartCoroutine(TurnChangeFallPlayer(1.2f));
+                            GimmickManager.Instance.AppearRareSeasoning();
+                            List<Seasoning> rareSeasonings = new List<Seasoning>();
+                            foreach (var seasoningObj in GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.Seasoning])
+                            {
+                                var seasoning = seasoningObj.GetComponent<Seasoning>();
+                                if (seasoning.RareEffect.activeInHierarchy)
+                                {
+                                    rareSeasonings.Add(seasoning);
+                                }
+                            }
+                            StartCoroutine(TurnChangeAppearRareSeasoning(rareSeasonings));
                         }
                         else
                         {
-                            InitializeOnTurnChange(_activePlayerIndex);
+                            ChangeTurnOrDisplayFallUI();
                         }
-                    }
-                    //レア調味料発生
-                    if (StageSceneManager.Instance.TurnNumberOnGameEnd - _turnNumber == 2)//ラスト3ターン
-                    {
-                        GimmickManager.Instance.AppearRareSeasoning();
                     }
                     break;
                 case StageGameState.Finish:
@@ -338,6 +361,21 @@ namespace Cooking.Stage
                     break;
             }
         }
+
+        private void ChangeTurnOrDisplayFallUI()
+        {
+            if (_foodStatuses[_activePlayerIndex].IsFall)
+            {
+                UIManager.Instance.ResetUIMode();
+                SetObjectsPositionForNextPlayer(_activePlayerIndex);
+                StartCoroutine(TurnChangeFallPlayer(1.2f));
+            }
+            else
+            {
+                InitializeOnTurnChange(_activePlayerIndex);
+            }
+        }
+
         /// <summary>
         /// ギミックの状態を更新
         /// </summary>

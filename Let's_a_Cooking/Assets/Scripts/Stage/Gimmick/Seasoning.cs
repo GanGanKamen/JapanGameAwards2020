@@ -39,6 +39,10 @@ namespace Cooking.Stage
             get { return _instantiateSeasoningArea; }
         }
         [SerializeField]private Transform _instantiateSeasoningArea = null;
+        /// <summary>
+        /// ターンが残り少なくなりレア調味料が出現する際にカメラが切り替わる
+        /// </summary>
+        [SerializeField] private GameObject _rareSeasoningCamera = null;
         // Start is called before the first frame update
         void Start()
         {
@@ -50,6 +54,14 @@ namespace Cooking.Stage
         //{
 
         //}
+        /// <summary>
+        /// ターンが残り少なくなりレア調味料が出現する際にカメラが切り替わる
+        /// </summary>
+        /// <param name="isActive"></param>
+        public void SetActiveRareSeasoningCamera(bool isActive)
+        {
+            _rareSeasoningCamera.SetActive(isActive);
+        }
         /// <summary>
         /// レア調味料エフェクトの出現・消滅を行う
         /// </summary>
@@ -82,6 +94,7 @@ namespace Cooking.Stage
                 _seasoningParticleSystem.Stop(false, ParticleSystemStopBehavior.StopEmitting);
                 if (_rareEffect.activeInHierarchy)
                 {
+                    _isRareSeasoning = false;
                     _rareEffect.GetComponent<ParticleSystem>().Stop(false, ParticleSystemStopBehavior.StopEmitting);
                 }
                 _isEmittingStopped = true;

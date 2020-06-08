@@ -29,6 +29,18 @@ namespace Cooking.Stage
         [SerializeField] protected Material foodNormalGraphic = null;
         [SerializeField] private Material _seasoningMaterial = null;
         FoodTextureList _foodTextureList = null;
+        /// <summary>
+        /// レア調味料を取得した際に入る nullかどうかで持っているかを判定
+        /// </summary>
+        public GameObject RareSeasoningEffect
+        {
+            get { return rareSeasoningEffect; }
+        }
+        /// <summary>
+        /// レア調味料を取得した際に入る nullかどうかで持っているかを判定
+        /// </summary>
+        protected GameObject rareSeasoningEffect;
+
         protected virtual void Start()
         {
             _foodTextureList = StageSceneManager.Instance.FoodTextureList;
@@ -36,10 +48,10 @@ namespace Cooking.Stage
         /// <summary>
         /// レア調味料を持っているか
         /// </summary>
-        public bool IsRareSeasoningMaterial
-        {
-            get { return _isRareSeasoningMaterial; }
-        }
+        //public bool IsRareSeasoningMaterial
+        //{
+        //    get { return _isRareSeasoningMaterial; }
+        //}
         private bool _isRareSeasoningMaterial;
         /// <summary>
         /// 調味料をもっているかどうか
@@ -97,8 +109,24 @@ namespace Cooking.Stage
                     return _foodMeshRenderer.material;
             }
         }
-        protected void ChangeMaterialByWashingFood(FoodType foodType, FoodStatus.Food food)
+        /// <summary>
+        /// 水に触れる・奪われるなどしてマテリアル・レア調味料を失う
+        /// </summary>
+        /// <param name="foodType"></param>
+        /// <param name="food"></param>
+        protected void LostMaterial(FoodType foodType, FoodStatus.Food food,PlayerPoint playerPoint)
         {
+            //レア調味料を失う→Destroy
+            if (rareSeasoningEffect != null)
+            {
+                rareSeasoningEffect.GetComponent<ParticleSystem>().Stop(false, ParticleSystemStopBehavior.StopEmitting);
+                Destroy(rareSeasoningEffect);
+                playerPoint.GetPoint(GetPointType.RareSeasoningWashAwayed);
+            }
+            else
+            {
+                playerPoint.GetPoint(GetPointType.SeasoningWashAwayed);
+            }
             switch (foodType)
             {
                 case FoodType.Shrimp:
@@ -146,6 +174,17 @@ namespace Cooking.Stage
                     break;
             }
         }
+        protected virtual void GetSeasoning(Seasoning seasoning)
+        {
+            //レアエフェクトであるスターを付着
+            if (seasoning.RareEffect.activeInHierarchy)
+            {
+                rareSeasoningEffect = EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Stars).gameObject;
+            }
+            EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Seasoning_Hit);
+            //調味料パーティクルは付着しない
+            //EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Seasoning).parent = FoodPositionNotRotate.transform;
+        }
         /// <summary>
         /// マテリアルを指定した共通のものに変更
         /// </summary>
@@ -186,12 +225,6 @@ namespace Cooking.Stage
                     {
                         return;
                     }
-                    //おそらく機能しない
-                    else if (material == GimmickManager.Instance.RareMaterial)
-                    {
-                        _isRareSeasoningMaterial = true;
-                        _foodMeshRenderer.material = material;
-                    }
                     else
                     {
                         _isSeasoningMaterial = true;
@@ -211,11 +244,6 @@ namespace Cooking.Stage
                     {
                         return;
                     }
-                    else if (material == GimmickManager.Instance.RareMaterial)
-                    {
-                        _isRareSeasoningMaterial = true;
-                        _foodMeshRenderer.material = material;
-                    }
                     else
                     {
                         if (food.chicken.IsCut)
@@ -233,11 +261,6 @@ namespace Cooking.Stage
                     if (_foodMeshRenderer.material == material)
                     {
                         return;
-                    }
-                    else if (material == GimmickManager.Instance.RareMaterial)
-                    {
-                        _isRareSeasoningMaterial = true;
-                        _foodMeshRenderer.material = material;
                     }
                     else
                     {
