@@ -134,11 +134,6 @@ namespace Cooking.Stage
                 _instantiateSeasoningPoint[i].parent = this.transform;
                 _instantiateSeasoningPoint[i].GetComponent<MeshRenderer>().enabled = false;//消し忘れ防止
             }
-            //検索後にオフ
-            foreach (var rareSeasoning in _targetObjectsForAI[(int)AITargetObjectTags.RareSeasoning])
-            {
-                rareSeasoning.SetActive(false);
-            }
         }
         /// <summary>
         /// 生成するために必要な情報 時間・座標を管理しながらあわを生成 プレイヤーが切り替わるタイミングで呼ばれる
@@ -209,10 +204,10 @@ namespace Cooking.Stage
         }
         public void AppearRareSeasoning()
         {
-            foreach (var rareSeasoning in _targetObjectsForAI[(int)AITargetObjectTags.RareSeasoning])
+            foreach (var seasoning in _targetObjectsForAI[(int)AITargetObjectTags.Seasoning])
             {
-                rareSeasoning.SetActive(true);
-                rareSeasoning.GetComponent<Seasoning>().ManageRareSeasoning(true);
+                seasoning.SetActive(true);
+                seasoning.GetComponent<Seasoning>().ManageRareSeasoning(true);
             }
             //_rareSeasoningEffect.SetActive(true);
         }

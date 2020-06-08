@@ -360,6 +360,7 @@ namespace Cooking.Stage
         /// <returns></returns>
         IEnumerator WaitOnDecideOrder()
         {
+            SoundManager.Instance.PlaySE(SoundEffectID.gamestart1);
             yield return new WaitForSeconds(1f);
             ///ターンの変更
             _turnManager.ChangeTurn();

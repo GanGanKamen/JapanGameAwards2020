@@ -38,7 +38,7 @@
         ShotEndMode///ショット終了
     }
     /// <summary>
-    /// 食材の種類 初期値はえびにする
+    /// 食材の種類 Shrimp,Egg,Chicken,Sausage 初期値はえびにする
     /// </summary>
     public enum FoodType
     {

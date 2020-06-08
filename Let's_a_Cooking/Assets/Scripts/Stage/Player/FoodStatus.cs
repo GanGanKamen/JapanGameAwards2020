@@ -628,17 +628,21 @@ namespace Cooking.Stage
                     break;
                 case FoodType.Egg:
                     yield return null;
-                    while (_rigidbody.velocity.magnitude > 0.001f)
+                    while (time < 1)
                     {
                         _rigidbody.AddForce(power, ForceMode.Impulse);//調整中
                         time += Time.deltaTime;
-                        if (time > 1)
-                        {
-                            FreezeRotation(RigidbodyConstraints.FreezeRotationX);
-                            FreezeRotation(RigidbodyConstraints.FreezeRotationY);
-                            FreezeRotation(RigidbodyConstraints.FreezeRotationZ);
-                        }
                         yield return null;
+                    }
+                    while (time < 2)
+                    {
+                        time += Time.deltaTime;
+                        yield return null;
+                    }
+                    {
+                        FreezeRotation(RigidbodyConstraints.FreezeRotationX);
+                        FreezeRotation(RigidbodyConstraints.FreezeRotationY);
+                        FreezeRotation(RigidbodyConstraints.FreezeRotationZ);
                     }
                     break;
                 case FoodType.Chicken:
@@ -1110,7 +1114,7 @@ namespace Cooking.Stage
                 {
                     _playerPoint.GetPoint(GetPointType.FirstWash);
                 }
-                ChangeMaterial(StageSceneManager.Instance.FoodTextureList.normalFoodMaterials[(int)foodType], foodType , food);
+                ChangeMaterialByWashingFood(foodType, food);        
             }
             else if (other.tag == TagList.Seasoning.ToString())
             {

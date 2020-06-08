@@ -143,6 +143,7 @@ MonoBehaviour:
   - {fileID: 2800000, guid: ada4ad5553481e54cafc3a87e0af6f86, type: 3}
   - {fileID: 2800000, guid: 6154bab6f3b6c0449a969dc4c02af01e, type: 3}
   - {fileID: 2800000, guid: 9acd06000c0fd634ab0d44b9eda75de6, type: 3}
+  - {fileID: 2800000, guid: e3796506152c5d54aa67c3c06e877fdd, type: 3}
   seasoningFoodTextures:
   - {fileID: 2800000, guid: f260634fb84def842aa6e887cb9f6aad, type: 3}
   - {fileID: 2800000, guid: f260634fb84def842aa6e887cb9f6aad, type: 3}
@@ -157,10 +158,11 @@ MonoBehaviour:
   - {fileID: 2800000, guid: f260634fb84def842aa6e887cb9f6aad, type: 3}
   normalFoodMaterials:
   - {fileID: 2100000, guid: 31fc6947eb54419438736801343adb64, type: 2}
-  - {fileID: 2100000, guid: c80338811e19af3469afda9c1c21a032, type: 2}
+  - {fileID: 2100000, guid: 668df4aacd03a194bb023e0a31a25d4c, type: 2}
   - {fileID: 2100000, guid: 33629dfd4a05354428803c5532c38dfd, type: 2}
   - {fileID: 2100000, guid: c76b1265bb82a6b4baa7520ceb0dd208, type: 2}
   - {fileID: 2100000, guid: e4e6277cc55c3ae4bb46a09b8f5547a8, type: 2}
+  - {fileID: 2100000, guid: c6ed38640616c69499a13ced75108178, type: 2}
   seasoningFoodMaterials:
   - {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
   - {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
