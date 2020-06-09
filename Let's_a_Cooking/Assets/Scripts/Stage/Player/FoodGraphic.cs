@@ -123,55 +123,55 @@ namespace Cooking.Stage
                 Destroy(rareSeasoningEffect);
                 playerPoint.GetPoint(GetPointType.RareSeasoningWashAwayed);
             }
-            else
+            else if(GetActiveMaterial(foodType,food).color == _foodTextureList.seasoningMaterial.color)
             {
                 playerPoint.GetPoint(GetPointType.SeasoningWashAwayed);
-            }
-            switch (foodType)
-            {
-                case FoodType.Shrimp:
-                    if (food.shrimp.IsHeadFallOff)
-                    {
-                        foodSkinnedMeshRenderer[(int)ShrimpParts.Tail].material = StageSceneManager.Instance.FoodTextureList.normalFoodMaterials[(int)foodType];
-                    }
-                    else
-                    {
-                        foodSkinnedMeshRenderer[(int)ShrimpParts.Tail].material = StageSceneManager.Instance.FoodTextureList.normalFoodMaterials[(int)foodType];
-                        foodSkinnedMeshRenderer[(int)ShrimpParts.Head].material = StageSceneManager.Instance.FoodTextureList.normalFoodMaterials[System.Enum.GetValues(typeof(FoodType)).Length];//4番目
-                    }
-                    break;
-                case FoodType.Egg:
-                    if (food.egg.HasBroken)
-                    {
-                        food.egg.InsideMeshRenderer.material = StageSceneManager.Instance.FoodTextureList.normalFoodMaterials[(int)foodType];
-                    }
-                    else
-                    {
-                        _foodMeshRenderer.material = StageSceneManager.Instance.FoodTextureList.normalFoodMaterials[System.Enum.GetValues(typeof(FoodType)).Length + 1];//5番目//ひびは考慮しない
-                    }
-                    break;
-                case FoodType.Chicken:
-                    if (food.chicken.IsCut)
-                    {
-                        food.chicken.CutMeshRenderer[0].material = StageSceneManager.Instance.FoodTextureList.cutFoodMaterials[(int)CutDifferentTextureFood.Chicken];
-                    }
-                    else
-                    {
-                        _foodMeshRenderer.material = StageSceneManager.Instance.FoodTextureList.normalFoodMaterials[(int)foodType];
-                    }
-                    break;
-                case FoodType.Sausage:
-                    if (food.sausage.IsCut)
-                    {
-                        food.sausage.CutMeshRenderer[0].material = StageSceneManager.Instance.FoodTextureList.cutFoodMaterials[(int)CutDifferentTextureFood.Sausage];
-                    }
-                    else
-                    {
-                        _foodMeshRenderer.material = StageSceneManager.Instance.FoodTextureList.normalFoodMaterials[(int)foodType];
-                    }
-                    break;
-                default:
-                    break;
+                switch (foodType)
+                {
+                    case FoodType.Shrimp:
+                        if (food.shrimp.IsHeadFallOff)
+                        {
+                            foodSkinnedMeshRenderer[(int)ShrimpParts.Tail].material = StageSceneManager.Instance.FoodTextureList.normalFoodMaterials[(int)foodType];
+                        }
+                        else
+                        {
+                            foodSkinnedMeshRenderer[(int)ShrimpParts.Tail].material = StageSceneManager.Instance.FoodTextureList.normalFoodMaterials[(int)foodType];
+                            foodSkinnedMeshRenderer[(int)ShrimpParts.Head].material = StageSceneManager.Instance.FoodTextureList.normalFoodMaterials[System.Enum.GetValues(typeof(FoodType)).Length];//4番目
+                        }
+                        break;
+                    case FoodType.Egg:
+                        if (food.egg.HasBroken)
+                        {
+                            food.egg.InsideMeshRenderer.material = StageSceneManager.Instance.FoodTextureList.normalFoodMaterials[(int)foodType];
+                        }
+                        else
+                        {
+                            _foodMeshRenderer.material = StageSceneManager.Instance.FoodTextureList.normalFoodMaterials[System.Enum.GetValues(typeof(FoodType)).Length + 1];//5番目//ひびは考慮しない
+                        }
+                        break;
+                    case FoodType.Chicken:
+                        if (food.chicken.IsCut)
+                        {
+                            food.chicken.CutMeshRenderer[0].material = StageSceneManager.Instance.FoodTextureList.cutFoodMaterials[(int)CutDifferentTextureFood.Chicken];
+                        }
+                        else
+                        {
+                            _foodMeshRenderer.material = StageSceneManager.Instance.FoodTextureList.normalFoodMaterials[(int)foodType];
+                        }
+                        break;
+                    case FoodType.Sausage:
+                        if (food.sausage.IsCut)
+                        {
+                            food.sausage.CutMeshRenderer[0].material = StageSceneManager.Instance.FoodTextureList.cutFoodMaterials[(int)CutDifferentTextureFood.Sausage];
+                        }
+                        else
+                        {
+                            _foodMeshRenderer.material = StageSceneManager.Instance.FoodTextureList.normalFoodMaterials[(int)foodType];
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
         }
         protected virtual void GetSeasoning(Seasoning seasoning)
