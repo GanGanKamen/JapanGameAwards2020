@@ -315,6 +315,7 @@ namespace Cooking.Stage
                             Destroy(_foodStatuses[_activePlayerIndex]);
                             StageSceneManager.Instance.InitializePlayerData(_activePlayerIndex, _foodStatuses[_activePlayerIndex].FoodType, _isAITurn, StageSceneManager.Instance.AIShotRange[0]);//AIが複数いることは現状考えていない
                         }
+                        _foodStatuses[_activePlayerIndex].ChangeFoodLayer(false);
                         //次のプレイヤーに順番を回す
                         _activePlayerIndex++;
                         UpdateGimmickObjects();
@@ -413,6 +414,8 @@ namespace Cooking.Stage
         {
             //順巡り処理(0へ初期化)が終わった後にチェック
             CheckNextPlayerAI();
+            if (!_foodStatuses[_activePlayerIndex].IsFoodInStartArea)
+                _foodStatuses[playerIndex].ChangeFoodLayer(true);
             _foodStatuses[playerIndex].ResetFallAndGoalFlag();
             _foodStatuses[playerIndex].ResetPlayerRotation();
             UIManager.Instance.ResetUIMode();

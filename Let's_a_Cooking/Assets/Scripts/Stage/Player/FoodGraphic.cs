@@ -65,7 +65,7 @@ namespace Cooking.Stage
         /// 現在有効なマテリアルを取得 カットなど各状態に対応
         /// </summary>
         /// <returns></returns>
-        protected Material GetActiveMaterial(FoodType foodType, FoodStatus.Food food)
+        public Material GetActiveMaterial(FoodType foodType, FoodStatus.Food food)
         {
             switch (foodType)
             {

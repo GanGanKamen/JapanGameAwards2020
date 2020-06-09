@@ -195,6 +195,21 @@ namespace Cooking.Stage
         }
         private bool _onTowel;
         /// <summary>
+        /// 自分のターン終了時、レイヤーを変更し他の食材のターゲット対象になる 自分のターン開始時デフォルトになることでレイの判定から外れる
+        /// </summary>
+        /// <param name="layerList"></param>
+        public void ChangeFoodLayer(bool isActive)
+        {
+            if (isActive)
+            {
+                SetFoodLayer(_foodDefaultLayer);
+            }
+            else
+            {
+                SetFoodLayer(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]);
+            }
+        }
+        /// <summary>
         /// ターンが変わるとき、プレイヤー全員で呼ばれる
         /// </summary>
         public void ResetAddedForced()
@@ -280,7 +295,6 @@ namespace Cooking.Stage
                 //_isGroundedArea.transform.parent = _foodPositionNotRotate;
             }
             _difineForwardRollDirectionValue = Mathf.Sin(_forwardAngle * Mathf.Deg2Rad);
-
         }
         protected override void Start()
         {
@@ -762,10 +776,15 @@ namespace Cooking.Stage
                     {
                         rareSeasoningEffect = EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Stars).gameObject;
                     }
-                    if (otherFood.GetActiveMaterial(otherFood.FoodType,otherFood.OriginalFoodProperty).color == StageSceneManager.Instance.FoodTextureList.seasoningMaterial.color)
+                    //自分が調味料を持っていないときに奪う
+                    if (GetActiveMaterial(otherFood.FoodType, otherFood.OriginalFoodProperty).color != StageSceneManager.Instance.FoodTextureList.seasoningMaterial.color)
                     {
-                        GetActiveMaterial(foodType, food).color = otherFoodColor;
-                        otherFood.LostMaterial(otherFood.FoodType, otherFood.OriginalFoodProperty , _playerPoint);
+                        if (otherFood.GetActiveMaterial(otherFood.FoodType, otherFood.OriginalFoodProperty).color == StageSceneManager.Instance.FoodTextureList.seasoningMaterial.color)
+                        {
+                            GetSeasoningPoint();
+                            GetActiveMaterial(foodType, food).color = otherFoodColor;
+                            otherFood.LostMaterial(otherFood.FoodType, otherFood.OriginalFoodProperty, _playerPoint);
+                        }
                     }
                 }
                 //==============================
@@ -1192,8 +1211,10 @@ namespace Cooking.Stage
         protected override void GetSeasoning(Seasoning seasoning)
         {
             FoodTextureList textureList = StageSceneManager.Instance.FoodTextureList;
-            _gotSeasoning = seasoning;
-            GetSeasoningPoint();
+            if (GetActiveMaterial(foodType,food).color != textureList.seasoningMaterial.color)
+            {
+                GetSeasoningPoint();
+            }
             base.GetSeasoning(seasoning);
             //レアエフェクトであるスターを付着
             if (seasoning.RareEffect.activeInHierarchy)
@@ -1202,6 +1223,7 @@ namespace Cooking.Stage
                 rareSeasoningEffect.transform.parent = FoodPositionNotRotate.transform;
             }
             ChangeMaterial(textureList.seasoningMaterial, foodType, food);
+            _gotSeasoning = seasoning;
         }
 
         private void GetSeasoningPoint()
@@ -1216,10 +1238,13 @@ namespace Cooking.Stage
                     }
                     break;
                 case FoodType.Egg:
+                    _playerPoint.GetPoint(GetPointType.TouchSeasoning);
                     break;
                 case FoodType.Chicken:
+                    _playerPoint.GetPoint(GetPointType.TouchSeasoning);
                     break;
                 case FoodType.Sausage:
+                    _playerPoint.GetPoint(GetPointType.TouchSeasoning);
                     break;
                 default:
                     break;

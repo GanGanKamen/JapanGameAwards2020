@@ -117,6 +117,10 @@ namespace Cooking.Stage
         {
             for (int i = 0; i < Enum.GetValues(typeof(AITargetObjectTags)).Length; i++)
             {
+                if (i == (int)AITargetObjectTags.Food)
+                {
+                    break;
+                }
                 _targetObjectsForAI[i] = new List<GameObject>();
                 //繰り返し変数i番目をenumへ変換し、その文字列を取得
                 string targetObjecString = ((AITargetObjectTags)Enum.ToObject(typeof(AITargetObjectTags), i)).ToString();

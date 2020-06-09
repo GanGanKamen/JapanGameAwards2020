@@ -11,7 +11,7 @@ namespace Cooking.Stage
     public enum AITargetObjectTags
     {
         Finish, Water, Seasoning, RareSeasoning, TowelAbovePoint, Knife, Bubble,
-        Floor,
+        Floor, Food
     }
     /// <summary>
     /// AIの強さ
@@ -147,7 +147,7 @@ namespace Cooking.Stage
         {
             if (speed > ShotManager.Instance.ShotParameter.MaxShotPower)
             {
-                Debug.Log(68799);
+                Debug.Log("想定以上のショットパワーです");
             }
             float aiShotPower = 0;
             //補正無し
@@ -517,7 +517,20 @@ namespace Cooking.Stage
                         break;
                 }
             }
-
+            //他の食材 自分が調味料を持っていないとき狙う
+            if (this.GetActiveMaterial(foodType, food).color != StageSceneManager.Instance.FoodTextureList.seasoningMaterial.color)
+            {
+                foreach (var otherFood in TurnManager.Instance.FoodStatuses)
+                {
+                    if (otherFood != this)
+                    {
+                        if (!otherFood.IsFoodInStartArea && otherFood.GetActiveMaterial(foodType, food).color == StageSceneManager.Instance.FoodTextureList.seasoningMaterial.color)
+                        {
+                            _targetObjectOptions.Add(otherFood.gameObject);
+                        }
+                    }
+                }
+            }
             if (_targetObjectOptions.Count > 0)
             {
                 foreach (var targetObjectOption in _targetObjectOptions)
@@ -670,6 +683,15 @@ namespace Cooking.Stage
                 if (_targetTagByTransform == AITargetObjectTags.TowelAbovePoint)
                 {
                     if (newTarget.tag == TagList.Towel.ToString())
+                    {
+                        _shotDirection = direction;
+                        return true;
+                    }
+                }
+                //食材の時はタグではなくコンポーネントクラスを持つかどうかで判定
+                else if (_targetTagByTransform == AITargetObjectTags.Food)
+                {
+                    if (newTarget.GetComponent<FoodStatus>() != null)
                     {
                         _shotDirection = direction;
                         return true;
