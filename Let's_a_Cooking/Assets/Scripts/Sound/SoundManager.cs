@@ -97,6 +97,7 @@ namespace Cooking
                 audioSource.clip = clip;
                 audioSource.loop = param.loop;
                 audioSource.volume = param.volume;
+                audioSource.playOnAwake = false;
                 audioSource.outputAudioMixerGroup = mixerGroup[0];
                 obj.transform.SetParent(audioSourceParent);
                 _sEAudioSourcesList.Add(audioSource);
