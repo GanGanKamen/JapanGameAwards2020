@@ -401,7 +401,9 @@ namespace Cooking.Stage
         public void SetShotManager(Rigidbody nextRigidbody)
         {
             _shotRigidbody = nextRigidbody;
-            transform.eulerAngles = Vector3.zero;
+            int initialAngle = 20;
+            var eulerX = 360 - initialAngle;
+            transform.eulerAngles = new Vector3(eulerX, 0,0);
         }
         /// <summary>
         /// AIによるショット

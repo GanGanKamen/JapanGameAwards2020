@@ -18,6 +18,25 @@ namespace Cooking.Stage
         }
         private int _turnNumber = 0;
         /// <summary>
+        /// 残りターン数
+        /// </summary>
+        public int RemainingTurns
+        {
+            get
+            {
+                var remainingTurns = StageSceneManager.Instance.TurnNumberOnGameEnd - _turnNumber + 1;
+                if (remainingTurns > StageSceneManager.Instance.TurnNumberOnGameEnd)
+                {
+                    return StageSceneManager.Instance.TurnNumberOnGameEnd;
+                }
+                else
+                {
+                    return remainingTurns;
+                }
+            }
+        }
+
+        /// <summary>
         /// AIのターンであることを表す
         /// </summary>
         public bool IsAITurn
@@ -189,8 +208,6 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
-            //残りターン数if(>StageSceneManager.Instance.TurnNumberOnGameEnd なら StageSceneManager.Instance.TurnNumberOnGameEnd)
-            Debug.Log(StageSceneManager.Instance.TurnNumberOnGameEnd - _turnNumber + 1);
             if (Input.GetKeyDown(KeyCode.K))
             {
                 var playerNumber = GetPlayerNumberFromActivePlayerIndex(_activePlayerIndex) - 1;
@@ -323,10 +340,26 @@ namespace Cooking.Stage
                         switch (IsChangeTurn())
                         {
                             case AfterChangeTurnState.NotChange:
+                                //吹っ飛ばされた結果ゴールの中にいる場合 ポイント加算
+                                //if (_foodStatuses[_activePlayerIndex].IsGoal)
+                                {
+                                    //StageSceneManager.Instance.AddPlayerPointToList(_activePlayerIndex);
+                                    //FoodStatusを取り除いて処理量を減らす
+                                    //Destroy(_foodStatuses[_activePlayerIndex]);
+                                    //StageSceneManager.Instance.InitializePlayerData(_activePlayerIndex, _foodStatuses[_activePlayerIndex].FoodType, _isAITurn, StageSceneManager.Instance.AIShotRange[0]);//AIが複数いることは現状考えていない
+                                }
                                 break;
                             case AfterChangeTurnState.Change:
                                 _activePlayerIndex = 0;
                                 _turnNumber++;
+                                //吹っ飛ばされた結果ゴールの中にいる場合 ポイント加算
+                                //if (_foodStatuses[_activePlayerIndex].IsGoal) indexのリセットは子の後ろなので、ここではエラー
+                                {
+                                    //StageSceneManager.Instance.AddPlayerPointToList(_activePlayerIndex);
+                                    //FoodStatusを取り除いて処理量を減らす
+                                    //Destroy(_foodStatuses[_activePlayerIndex]);
+                                    //StageSceneManager.Instance.InitializePlayerData(_activePlayerIndex, _foodStatuses[_activePlayerIndex].FoodType, _isAITurn, StageSceneManager.Instance.AIShotRange[0]);//AIが複数いることは現状考えていない
+                                }
                                 break;
                             case AfterChangeTurnState.GameEnd:
                                 _activePlayerIndex = 0;
@@ -393,6 +426,14 @@ namespace Cooking.Stage
             {
                 if (_turnNumber >= StageSceneManager.Instance.TurnNumberOnGameEnd)
                 {
+                    //吹っ飛ばされた結果ゴールの中にいる場合 ポイント加算
+                    //if (_foodStatuses[_activePlayerIndex].IsGoal) indexのリセットは子の後ろなので、ここではエラー
+                    {
+                        //StageSceneManager.Instance.AddPlayerPointToList(_activePlayerIndex);
+                        //FoodStatusを取り除いて処理量を減らす
+                        //Destroy(_foodStatuses[_activePlayerIndex]);
+                        //StageSceneManager.Instance.InitializePlayerData(_activePlayerIndex, _foodStatuses[_activePlayerIndex].FoodType, _isAITurn, StageSceneManager.Instance.AIShotRange[0]);//AIが複数いることは現状考えていない
+                    }
                     StageSceneManager.Instance.GameEnd();
                     return AfterChangeTurnState.GameEnd;
                 }

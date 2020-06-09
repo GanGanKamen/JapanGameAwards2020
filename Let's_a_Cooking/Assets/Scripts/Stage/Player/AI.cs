@@ -93,7 +93,7 @@ namespace Cooking.Stage
             GetTargetObjects();
             while (true)
             {
-                if (_targetObjectOptions.Count == 0)
+                if (TurnManager.Instance.RemainingTurns < 2 || _targetObjectOptions.Count == 0)
                 {
                     Debug.Log("ターゲット無し");
                     ChangeTargetForGoal();
@@ -106,7 +106,7 @@ namespace Cooking.Stage
                     var targetObject = _targetObjectOptions[0];
                     if (DetermineIfShotIsPossible(targetObject))
                     {
-                        Debug.LogFormat("{0}発見", targetObject.name);
+                        // Debug.LogFormat("{0}発見", targetObject.name);
                         _searchEnd = true;
                         break;
                     }
@@ -214,7 +214,7 @@ namespace Cooking.Stage
                 }
                 if (_isDebugMode)
                 {
-                //    return;
+                    //    return;
                 }
             }
             //ゴールに届かない場合、ゴールの標的をひとつにして、最も近い場所を目指す
@@ -272,7 +272,7 @@ namespace Cooking.Stage
             {
                 for (i = 0; horizontalAngle < goalAngle + halfLimitAngle; i++, horizontalAngle = goalAngle + i * incrementValue)
                 {
-                   GetFallPointObjectByRayCast(goal, horizontalAngle, fallPoint, goalDistanceFromFallPoints, shotSpeedVectorList, shotSpeedList, ref fallPointIndex, verticalAngle, shotDirectionY);
+                    GetFallPointObjectByRayCast(goal, horizontalAngle, fallPoint, goalDistanceFromFallPoints, shotSpeedVectorList, shotSpeedList, ref fallPointIndex, verticalAngle, shotDirectionY);
                 }
                 yield return null;
                 horizontalAngle = goalAngle - 1 * incrementValue;
@@ -316,7 +316,7 @@ namespace Cooking.Stage
         }
 
         //outで渡した落下地点(補正をかける前の落下予測地点をメソッドの中で最初に格納)を呼び出し側でListに入れる 戻り値が改善された速度の大きさ
-        private float ImproveShotPointAndShotSpeedVector(out GameObject fallPointGameObject, Vector3 shotDirectionVector, int verticalAngle ,out Vector3 fallPoint)
+        private float ImproveShotPointAndShotSpeedVector(out GameObject fallPointGameObject, Vector3 shotDirectionVector, int verticalAngle, out Vector3 fallPoint)
         {
             //最終チェックによる改善
             //AIが落下しそうな場所に飛ばないようにする
@@ -328,7 +328,7 @@ namespace Cooking.Stage
             //基本は最大パワーでうつ
             var checkSpeedByIncrease = maxShotSpeed;
             //補正無しの値
-            fallPoint = FindNewTargetByRayCast(verticalAngle, shotDirectionVector * maxShotSpeed , out fallPointGameObject);
+            fallPoint = FindNewTargetByRayCast(verticalAngle, shotDirectionVector * maxShotSpeed, out fallPointGameObject);
             var originFallPointObject = fallPointGameObject;
             var newFallPointPowerIncrease = Vector3.zero;
             //パワー増加
@@ -379,16 +379,16 @@ namespace Cooking.Stage
             return 0f;
         }
 
-        private void GetFallPointByRayCast(out GameObject fallPointGameObject, GameObject goal, int verticalAngle,Vector3 shotDirectionVector,int fallPointIndex,
-            List<Vector3> fallPoint, List<float> goalDistanceFromFallPoints,List<Vector3> shotSpeedVectorList ,List<float> shotSpeedList)
+        private void GetFallPointByRayCast(out GameObject fallPointGameObject, GameObject goal, int verticalAngle, Vector3 shotDirectionVector, int fallPointIndex,
+            List<Vector3> fallPoint, List<float> goalDistanceFromFallPoints, List<Vector3> shotSpeedVectorList, List<float> shotSpeedList)
         {
             float maxShotSpeed = ShotManager.Instance.ShotParameter.MaxShotPower;
             var maxShotSpeedVector = shotDirectionVector * maxShotSpeed;
             fallPointGameObject = null;
             var fallPosition = Vector3.zero;
             var shotSpeed = ImproveShotPointAndShotSpeedVector(out fallPointGameObject, shotDirectionVector, verticalAngle, out fallPosition);
-            if(fallPointGameObject.tag != TagList.NotBeAITarget.ToString())
-                AddVariablesToLists(verticalAngle , fallPointGameObject, goal, shotDirectionVector, fallPointIndex, fallPoint, goalDistanceFromFallPoints, shotSpeedVectorList, shotSpeedList, fallPosition, shotSpeed);
+            if (fallPointGameObject.tag != TagList.NotBeAITarget.ToString())
+                AddVariablesToLists(verticalAngle, fallPointGameObject, goal, shotDirectionVector, fallPointIndex, fallPoint, goalDistanceFromFallPoints, shotSpeedVectorList, shotSpeedList, fallPosition, shotSpeed);
         }
         private void AddVariablesToLists(int verticalAngle, GameObject fallPointGameObject, GameObject goal, Vector3 shotDirectionVector, int fallPointIndex, List<Vector3> fallPoint, List<float> goalDistanceFromFallPoints, List<Vector3> shotSpeedVectorList, List<float> shotSpeedList, Vector3 fallPosition, float shotSpeed)
         {
@@ -417,6 +417,22 @@ namespace Cooking.Stage
 
         private void GetTargetObjects()
         {
+            if (rareSeasoningEffect == null)
+            {
+                //現状同じレベル レア優先でそれ以外狙わない
+                if (StageSceneManager.Instance.AILevels[0] == AILevel.Hard)
+                {
+                    foreach (var seasoning in GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.Seasoning])
+                    {
+                        //調味料は無い可能性あり   
+                        if (seasoning.GetComponent<Seasoning>().RareEffect.activeInHierarchy)
+                        {
+                            _targetObjectOptions.Add(seasoning);
+                            return;
+                        }
+                    }
+                }
+            }
             //タオル
             if (GetComponent<PlayerPoint>().IsFirstTowel)
                 _targetObjectOptions.AddRange(GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.TowelAbovePoint]);
@@ -424,11 +440,11 @@ namespace Cooking.Stage
             switch (foodType)
             {
                 case FoodType.Shrimp:
-                    if (foodSkinnedMeshRenderer[(int)ShrimpParts.Tail].material.color != StageSceneManager.Instance.FoodTextureList.seasoningMaterial.color)
+                    if (!IsSeasoningMaterial)
                     {
                         foreach (var seasoning in GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.Seasoning])
                         {
-                            Debug.Log(seasoning.activeInHierarchy);
+                            //Debug.Log(seasoning.activeInHierarchy);
                             //調味料は無い可能性あり   
                             if (seasoning.activeInHierarchy)
                             {
@@ -490,25 +506,25 @@ namespace Cooking.Stage
                 switch (foodType)
                 {
                     case FoodType.Shrimp:
-                        if (foodSkinnedMeshRenderer[(int)ShrimpParts.Tail].material.color != StageSceneManager.Instance.FoodTextureList.seasoningMaterial.color)
+                        if (!IsSeasoningMaterial)
                         {
                             SearchWater();
                         }
                         break;
                     case FoodType.Egg:
-                        if (_foodMeshRenderer.material.color != StageSceneManager.Instance.FoodTextureList.seasoningMaterial.color)
+                        if (!IsSeasoningMaterial)
                         {
                             SearchWater();
                         }
                         break;
                     case FoodType.Chicken:
-                        if (_foodMeshRenderer.material.color != StageSceneManager.Instance.FoodTextureList.seasoningMaterial.color)
+                        if (!IsSeasoningMaterial)
                         {
                             SearchWater();
                         }
                         break;
                     case FoodType.Sausage:
-                        if (_foodMeshRenderer.material.color != StageSceneManager.Instance.FoodTextureList.seasoningMaterial.color)
+                        if (!IsSeasoningMaterial)
                         {
                             SearchWater();
                         }
@@ -518,13 +534,13 @@ namespace Cooking.Stage
                 }
             }
             //他の食材 自分が調味料を持っていないとき狙う
-            if (this.GetActiveMaterial(foodType, food).color != StageSceneManager.Instance.FoodTextureList.seasoningMaterial.color)
+            if (!IsSeasoningMaterial)
             {
                 foreach (var otherFood in TurnManager.Instance.FoodStatuses)
                 {
                     if (otherFood != this)
                     {
-                        if (!otherFood.IsFoodInStartArea && otherFood.GetActiveMaterial(foodType, food).color == StageSceneManager.Instance.FoodTextureList.seasoningMaterial.color)
+                        if (!otherFood.IsFoodInStartArea && otherFood.IsSeasoningMaterial)
                         {
                             _targetObjectOptions.Add(otherFood.gameObject);
                         }
@@ -572,7 +588,7 @@ namespace Cooking.Stage
 
         private void SearchSeasoning()
         {
-            if (_foodMeshRenderer.material.color != StageSceneManager.Instance.FoodTextureList.seasoningMaterial.color)
+            if (!IsSeasoningMaterial)
             {
                 foreach (var seasoning in GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.Seasoning])
                 {
@@ -624,24 +640,54 @@ namespace Cooking.Stage
             //ランダム要素
             //seedId = Random.Range(0, 33 - rate);
             Vector3 velocity, direction;
-            //射出角度 初期値45度 レイにより障害物判定で変える 加算していき85(=限界角度)でだめなら45度から減少
-            float throwingAngle = 45;
-            for (int i = 0; throwingAngle <= ShotManager.Instance.ShotParameter.LimitVerticalAngle; i++)
+            //射出角度
+            float throwingAngle = ShotManager.Instance.ShotParameter.LimitVerticalAngle;
+            //相対関係によって検索方向を変える
+            if (targetObject.transform.position.y > this.transform.position.y)
             {
-                //まずは角度を上昇
-                throwingAngle = 45 + i;//重いので1度刻み
-                direction = CalculateVelocity(groundPoint, targetPosition, throwingAngle);
-                //速度の大きさが許容範囲を超えていたらだめ
-                if (speed > ShotManager.Instance.ShotParameter.MaxShotPower)
+                //射出角度 初期値45度 レイにより障害物判定で変える
+                throwingAngle = ShotManager.Instance.ShotParameter.LimitVerticalAngle;
+                for (int i = 0; throwingAngle >= 45; i++)
                 {
-                    speed = ShotManager.Instance.ShotParameter.MaxShotPower;
-                    continue;
+                    //角度減少で検索
+                    throwingAngle = ShotManager.Instance.ShotParameter.LimitVerticalAngle - i;//重いので1度刻み
+                    direction = CalculateVelocity(groundPoint, targetPosition, throwingAngle);
+                    //速度の大きさが許容範囲を超えていたらだめ
+                    if (speed > ShotManager.Instance.ShotParameter.MaxShotPower)
+                    {
+                        speed = ShotManager.Instance.ShotParameter.MaxShotPower;
+                        continue;
+                    }
+                    // 射出速度を算出
+                    velocity = direction * speed;
+                    if (CastRayByChangingShotAngle(throwingAngle, velocity, direction))
+                    {
+                        return true;
+                    }
                 }
-                // 射出速度を算出
-                velocity = direction * speed;
-                if (CastRayByChangingShotAngle(throwingAngle, velocity, direction))
+
+            }
+            else
+            {
+                //射出角度 初期値45度 レイにより障害物判定で変える 加算していき85(=限界角度)でだめなら45度から減少
+                throwingAngle = 45;
+                for (int i = 0; throwingAngle <= ShotManager.Instance.ShotParameter.LimitVerticalAngle; i++)
                 {
-                    return true;
+                    //まずは角度を上昇
+                    throwingAngle = 45 + i;//重いので1度刻み
+                    direction = CalculateVelocity(groundPoint, targetPosition, throwingAngle);
+                    //速度の大きさが許容範囲を超えていたらだめ
+                    if (speed > ShotManager.Instance.ShotParameter.MaxShotPower)
+                    {
+                        speed = ShotManager.Instance.ShotParameter.MaxShotPower;
+                        continue;
+                    }
+                    // 射出速度を算出
+                    velocity = direction * speed;
+                    if (CastRayByChangingShotAngle(throwingAngle, velocity, direction))
+                    {
+                        return true;
+                    }
                 }
             }
             //角度のリセット
