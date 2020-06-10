@@ -28,6 +28,10 @@ namespace Cooking.Stage
             get { return _firstPoint + _getPoint; }
         }
         /// <summary>
+        /// ゲーム準備中のオプション画面用
+        /// </summary>
+        static public int firstPoint = 100;
+        /// <summary>
         /// 初期ポイント
         /// </summary>
         private int _firstPoint = 100;

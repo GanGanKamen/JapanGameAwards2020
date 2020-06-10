@@ -268,7 +268,7 @@ namespace Cooking.Stage
             int fallPointIndex = 0;
             var verticalAngle = 45;//45度は落下確率高い 落下地点のy座標が今いる座標よりそれなりに(仮:1m)低いなら角度を上げる 
             var shotDirectionY = Mathf.Sin(verticalAngle * Mathf.Deg2Rad); // 角度をラジアンへ
-            for (verticalAngle = 20; verticalAngle <= ShotManager.Instance.ShotParameter.LimitVerticalAngle; verticalAngle += 2)
+            for (verticalAngle = 20; verticalAngle <= ShotManager.Instance.ShotParameter.LimitVerticalMaxAngle; verticalAngle += 2)
             {
                 for (i = 0; horizontalAngle < goalAngle + halfLimitAngle; i++, horizontalAngle = goalAngle + i * incrementValue)
                 {
@@ -641,16 +641,16 @@ namespace Cooking.Stage
             //seedId = Random.Range(0, 33 - rate);
             Vector3 velocity, direction;
             //射出角度
-            float throwingAngle = ShotManager.Instance.ShotParameter.LimitVerticalAngle;
+            float throwingAngle = ShotManager.Instance.ShotParameter.LimitVerticalMaxAngle;
             //相対関係によって検索方向を変える
             if (targetObject.transform.position.y > this.transform.position.y)
             {
                 //射出角度 初期値45度 レイにより障害物判定で変える
-                throwingAngle = ShotManager.Instance.ShotParameter.LimitVerticalAngle;
+                throwingAngle = ShotManager.Instance.ShotParameter.LimitVerticalMaxAngle;
                 for (int i = 0; throwingAngle >= 45; i++)
                 {
                     //角度減少で検索
-                    throwingAngle = ShotManager.Instance.ShotParameter.LimitVerticalAngle - i;//重いので1度刻み
+                    throwingAngle = ShotManager.Instance.ShotParameter.LimitVerticalMaxAngle - i;//重いので1度刻み
                     direction = CalculateVelocity(groundPoint, targetPosition, throwingAngle);
                     //速度の大きさが許容範囲を超えていたらだめ
                     if (speed > ShotManager.Instance.ShotParameter.MaxShotPower)
@@ -671,7 +671,7 @@ namespace Cooking.Stage
             {
                 //射出角度 初期値45度 レイにより障害物判定で変える 加算していき85(=限界角度)でだめなら45度から減少
                 throwingAngle = 45;
-                for (int i = 0; throwingAngle <= ShotManager.Instance.ShotParameter.LimitVerticalAngle; i++)
+                for (int i = 0; throwingAngle <= ShotManager.Instance.ShotParameter.LimitVerticalMaxAngle; i++)
                 {
                     //まずは角度を上昇
                     throwingAngle = 45 + i;//重いので1度刻み
