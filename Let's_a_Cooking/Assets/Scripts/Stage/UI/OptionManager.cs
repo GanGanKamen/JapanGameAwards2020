@@ -115,7 +115,7 @@ namespace Cooking
         private void MenuOpen()
         {
             
-            if (isTitleScene == false) Stage.StageSceneManager.Instance.OpenOptionMenu();                      
+            //if (isTitleScene == false) Stage.StageSceneManager.Instance.OpenOptionMenu();                      
             menuWindow.SetActive(true);
             menuWindowCloseNutton.gameObject.SetActive(true);
             menubutton.gameObject.SetActive(false);
@@ -124,7 +124,7 @@ namespace Cooking
 
         private void MenuClose()
         {
-            if (isTitleScene == false) Stage.StageSceneManager.Instance.CloseOptionMenu();
+            //if (isTitleScene == false) Stage.StageSceneManager.Instance.CloseOptionMenu();
             menuWindow.SetActive(false);
             menuWindowCloseNutton.gameObject.SetActive(false);
             menubutton.gameObject.SetActive(true);

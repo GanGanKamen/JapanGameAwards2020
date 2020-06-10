@@ -82,14 +82,14 @@ namespace Cooking.Stage
             pointText.text = prePoint.ToString();
             yield return new WaitForSeconds(prePointTime);
             if (pointChangeTime <= 0) pointChangeTime = 1;
-            pointChangeDelta = pointDifference * Time.deltaTime / pointChangeTime;
+            pointChangeDelta = Mathf.Abs(pointDifference) * Time.deltaTime / pointChangeTime;
             animationPt = prePoint;
             goalPt = nowPoint;
             if (pointDifference > 0)
             {
                 pointChangeMode = 1;   
             }
-            else
+            else if(pointDifference < 0)
             {
                 pointChangeMode = 2;
             }
@@ -117,12 +117,12 @@ namespace Cooking.Stage
                 case 1:
                     animationPt = animationPt + pointChangeDelta;
                     pointText.text = ((int)animationPt).ToString();
-                    if (animationPt > goalPt) pointChangeMode = 0;
+                    if (animationPt >= goalPt) pointChangeMode = 0;
                     break;
                 case 2:
                     animationPt = animationPt - pointChangeDelta;
                     pointText.text = ((int)animationPt).ToString();
-                    if (animationPt < goalPt) pointChangeMode = 0;
+                    if (animationPt <= goalPt) pointChangeMode = 0;
                     break;
             }
         }
