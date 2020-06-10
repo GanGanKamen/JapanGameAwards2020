@@ -26,13 +26,13 @@ MonoBehaviour:
     pointValue: 2
     pointOperator: 2
   - getPointType: 4
-    pointValue: 10
+    pointValue: 50
     pointOperator: 0
   - getPointType: 5
-    pointValue: 50
+    pointValue: 200
     pointOperator: 0
   - getPointType: 6
-    pointValue: 50
+    pointValue: 100
     pointOperator: 0
   - getPointType: 7
     pointValue: 200
@@ -50,5 +50,5 @@ MonoBehaviour:
     pointValue: 2
     pointOperator: 3
   - getPointType: 12
-    pointValue: 50
+    pointValue: 100
     pointOperator: 1

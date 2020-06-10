@@ -21,9 +21,19 @@ namespace Cooking.Stage
         private Transform target;
         private float hight;
         private PlayerPoint player;
+        private int pointChangeMode = 0;
+        private float pointChangeDelta;
+        private float animationPt = 0;
+        private float goalPt = 0;
 
-        private void FixedUpdate()
+        private void Start()
         {
+            //PointChange(300, 900);
+        }
+
+        private void Update()
+        {
+            PointChangeAnimation();
             SetPosition();
         }
 
@@ -50,6 +60,7 @@ namespace Cooking.Stage
 
         private void SetPosition()
         {
+            if (target == null) return;
             transform.position = target.position + new Vector3(0, hight, 0);
         }
 
@@ -59,7 +70,7 @@ namespace Cooking.Stage
             Init();
             var pointDifference = nowPoint - prePoint;
             if (pointDifference == 0 || isPlayPointChange) yield break;
-            player.isPlayPointPanel = true;
+            if(player != null) player.isPlayPointPanel = true;
             isPlayPointChange = true;
             var differenceText = "";
             if (pointDifference > 0) differenceText = "+" + pointDifference.ToString();
@@ -71,35 +82,50 @@ namespace Cooking.Stage
             pointText.text = prePoint.ToString();
             yield return new WaitForSeconds(prePointTime);
             if (pointChangeTime <= 0) pointChangeTime = 1;
-            var pointChangeDelta = pointDifference * Time.deltaTime / pointChangeTime;
-            float pt = prePoint;
+            pointChangeDelta = pointDifference * Time.deltaTime / pointChangeTime;
+            animationPt = prePoint;
+            goalPt = nowPoint;
             if (pointDifference > 0)
             {
-
-                do
-                {
-                    pt = pt + pointChangeDelta;
-                    pointText.text = ((int)pt).ToString();
-                    yield return null;
-                } while (pt < nowPoint);
+                pointChangeMode = 1;   
             }
             else
             {
-                do
-                {
-                    pt = pt - pointChangeDelta;
-                    pointText.text = ((int)pt).ToString();
-                } while (pt > nowPoint);
+                pointChangeMode = 2;
             }
+
+            while(pointChangeMode != 0)
+            {
+                yield return null;
+            }
+
             pointText.text = nowPoint.ToString();
             yield return new WaitForSeconds(newPointTime);
             Init();
             isPlayPointChange = false;
-            player.isPlayPointPanel = false;
+            if (player != null) player.isPlayPointPanel = false;
             Destroy(gameObject);
             yield break;
         }
 
+        private void PointChangeAnimation()
+        {
+            switch (pointChangeMode)
+            {
+                case 0:
+                    break;
+                case 1:
+                    animationPt = animationPt + pointChangeDelta;
+                    pointText.text = ((int)animationPt).ToString();
+                    if (animationPt > goalPt) pointChangeMode = 0;
+                    break;
+                case 2:
+                    animationPt = animationPt - pointChangeDelta;
+                    pointText.text = ((int)animationPt).ToString();
+                    if (animationPt < goalPt) pointChangeMode = 0;
+                    break;
+            }
+        }
     }
 }
 

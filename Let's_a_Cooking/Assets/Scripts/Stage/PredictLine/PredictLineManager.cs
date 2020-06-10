@@ -84,7 +84,7 @@ namespace Cooking.Stage
             if (!TurnManager.Instance.IsAITurn )
             {
                 var shotManager = ShotManager.Instance;
-                var maxShotSpeedVector = shotManager.CalculateMaxSameVelocityMagnitudeShotPowerVector();
+                var maxShotSpeedVector = shotManager.CalculateMaxShotPowerVector();
                 //予測線を管理。
                 switch (UIManager.Instance.MainUIStateProperty)
                 {

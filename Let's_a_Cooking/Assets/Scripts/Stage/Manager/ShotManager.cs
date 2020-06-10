@@ -350,8 +350,8 @@ namespace Cooking.Stage
             EffectManager.Instance.InstantiateEffect(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].transform.position, EffectManager.EffectPrefabID.Food_Jump);
             CameraManager.Instance.SetCameraPositionNearPlayer();
             ChangeShotState(ShotState.ShottingMode);
-            //Shot(transform.forward);
-            SameVelocityMagnitudeShot(transform.forward);
+            Shot(transform.forward);
+            //SameVelocityMagnitudeShot(transform.forward);
         }
         /// <summary>
         /// 力の分解をした発射処理
@@ -360,13 +360,15 @@ namespace Cooking.Stage
         private void Shot(Vector3 direction)
         {
             var angle = transform.eulerAngles.x % 90f; //eulerAngleを0~90の範囲内にする
-            var horizontalPower = Mathf.Cos(Mathf.Deg2Rad * angle) * _shotPower; 
-            var verticalPower = Mathf.Sin(Mathf.Deg2Rad * angle) * _shotPower;
+            if (transform.eulerAngles.x < 10)
+            {
+                angle = 10;
+            }
+            Debug.Log(angle);
+            var horizontalPower = Mathf.Cos(Mathf.Deg2Rad * angle) * _shotPower;
+            var verticalPower = Mathf.Sin(Mathf.Deg2Rad * angle) * _shotPower + _shotPower / 2;
             var initialSpeedVector = new Vector3(direction.x * horizontalPower, direction.y * verticalPower, direction.z * horizontalPower);
-            initialSpeedVector = new Vector3(direction.x , 0 , direction.z) * horizontalPower + new Vector3(0, direction.y, 0) * verticalPower;
             _shotRigidbody.velocity = initialSpeedVector;
-            Debug.Log(initialSpeedVector.y);
-            Debug.Log(_shotRigidbody.velocity.y);
         }
         /// <summary>
         /// 速度ベクトルが均一な発射処理
@@ -385,8 +387,12 @@ namespace Cooking.Stage
         {
             var direction = transform.forward;
             var angle = transform.eulerAngles.x % 90f; //eulerAngleを0~90の範囲内にする
+            if (transform.eulerAngles.x < 10)
+            {
+                angle = 10;
+            }
             var horizontalPower = Mathf.Cos(Mathf.Deg2Rad * angle) * ShotParameter.MaxShotPower;
-            var verticalPower = Mathf.Sin(Mathf.Deg2Rad * angle) * ShotParameter.MaxShotPower;
+            var verticalPower = Mathf.Sin(Mathf.Deg2Rad * angle) * ShotParameter.MaxShotPower + ShotParameter.MaxShotPower / 2;
             var initialSpeedVector = new Vector3(direction.x * horizontalPower, direction.y * verticalPower, direction.z * horizontalPower);
             //Debug.Log(direction);
             return initialSpeedVector;

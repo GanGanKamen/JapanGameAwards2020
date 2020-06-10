@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _maxShotPower: 20
   _minShotPower: 5
-  _limitVerticalMaxAngle: 80
-  _limitVerticalMinAngle: 0
+  _limitVerticalMaxAngle: 85
+  _limitVerticalMinAngle: 10
