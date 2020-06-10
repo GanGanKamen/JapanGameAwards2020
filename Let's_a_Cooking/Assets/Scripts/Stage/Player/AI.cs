@@ -93,7 +93,7 @@ namespace Cooking.Stage
             GetTargetObjects();
             while (true)
             {
-                if (TurnManager.Instance.RemainingTurns < 2 || _targetObjectOptions.Count == 0)
+                if (TurnManager.Instance.RemainingTurns < 2 || _targetObjectOptions.Count == 0 || _distances.Count == 0)
                 {
                     Debug.Log("ターゲット無し");
                     ChangeTargetForGoal();
