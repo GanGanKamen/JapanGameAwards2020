@@ -16,7 +16,7 @@ namespace Cooking.Stage
     }
     public enum LayerList
     {
-        FoodLayerInStartArea, Kitchen
+        FoodLayerInStartArea, Kitchen , FoodCollision
     }
     public class StageSceneManager : MonoBehaviour
     {
@@ -303,6 +303,8 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
+            //Debug.Log(_foodTextureList.seasoningMaterial.color);
+            
             switch (_gameState)
             {
                 case StageGameState.Preparation:
@@ -422,7 +424,7 @@ namespace Cooking.Stage
                                 if (!foodStatus.IsGoal)
                                 {
                                     ///食材が止まるまで待機
-                                    if (foodStatus.Rigidbody.velocity.magnitude > 0.0001f)
+                                    if (foodStatus.Rigidbody.velocity.magnitude > 0.01f)
                                     {
                                         isTurnChange = false;
                                         break;

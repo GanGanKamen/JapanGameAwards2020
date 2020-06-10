@@ -63,6 +63,8 @@ MonoBehaviour:
     m_Bits: 1024
   - serializedVersion: 2
     m_Bits: 512
+  - serializedVersion: 2
+    m_Bits: 2048
   _foodTextureList: {fileID: 8505442559873105399}
 --- !u!1 &1904837132498659196
 GameObject:
@@ -166,7 +168,7 @@ MonoBehaviour:
   seasoningFoodMaterials:
   - {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
   - {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
-  - {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
+  - {fileID: 2100000, guid: bc202744e56868740b6d95de3dfca54a, type: 2}
   - {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
   - {fileID: 2100000, guid: 4181ab5cdc64ded4f8e8900be53c2b40, type: 2}
   cutFoodMaterials:
