@@ -9,8 +9,8 @@ namespace Cooking.Stage
         
         [SerializeField] private float pointDifferenceTime;
         [SerializeField] private float prePointTime;
-        [SerializeField] private float newPointTime;
         [SerializeField] private float pointChangeTime;
+        [SerializeField] private float newPointTime;
         [SerializeField] private GameObject panelObject;
         [SerializeField] private TMPro.TextMeshPro pointText;
 
