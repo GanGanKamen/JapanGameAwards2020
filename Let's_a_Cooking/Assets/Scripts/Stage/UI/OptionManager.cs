@@ -25,9 +25,12 @@ namespace Cooking
         [SerializeField] private AudioClip buttonAudio;
         [SerializeField] private AudioClip overAudio;
 
+        [SerializeField] private Text turnText;
+
         [SerializeField] private bool isTitleScene;
 
         private AudioSource audioSource;
+        [SerializeField] private Cooking.Stage.TurnManager turnManager;
         // Start is called before the first frame update
         void Start()
         {
@@ -40,6 +43,7 @@ namespace Cooking
         void Update()
         {
             SetSoundVolume(-30);
+            TurnText();
         }
 
         public void Setdefult()
@@ -179,6 +183,31 @@ namespace Cooking
                 OptionParamater.gameAudio.SetFloat("SEVol", seVol);
             }
             
+        }
+
+        private void TurnText()
+        {
+            if (turnManager == null) return;
+            var remainTurn = 10 - turnManager.TurnNumber;
+            switch (OptionParamater.language)
+            {
+                case Language.Japanese:
+                    turnText.text = "仕上がりは" + remainTurn.ToString() + "ターン後"; 
+                    break;
+                case Language.English:
+                    if(remainTurn > 1)
+                    {
+                        turnText.text = remainTurn.ToString() + "Turns Until The Finish";
+                    }
+                    else
+                    {
+                        turnText.text = remainTurn.ToString() + "Turn Until The Finish";
+                    }
+                    break;
+                case Language.Chinese:
+                    turnText.text = remainTurn.ToString() + "回合後結束";
+                    break;
+            }
         }
     }
 
