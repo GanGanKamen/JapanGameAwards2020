@@ -143,13 +143,13 @@ namespace Cooking.Stage
                         {
                             case FoodType.Shrimp:
                                 ///食材が止まった + 落下・ゴール待機時間が終わったら、ショット終了
-                                if (_shotRigidbody.velocity.magnitude < 0.0001f)
+                                if (_shotRigidbody.velocity.magnitude < 0.01f)
                                     ChangeShotState(ShotState.ShotEndMode);
                                 break;
                             case FoodType.Egg:
                                 {
                                     ///食材が止まった + 落下・ゴール待機時間が終わったら、ショット終了
-                                    if (_shotRigidbody.velocity.magnitude < 0.000001f && _rigidbodyConstraintsIndex >= 1)//衝突した瞬間0のことがある
+                                    if (_shotRigidbody.velocity.magnitude < 0.01f && _rigidbodyConstraintsIndex >= 1)//衝突した瞬間0のことがある
                                     {
                                         ChangeShotState(ShotState.ShotEndMode);
                                         //すべての回転を止める前に移動が止まる可能性もある
@@ -176,12 +176,12 @@ namespace Cooking.Stage
                                 break;
                             case FoodType.Chicken:
                                 ///食材が止まった + 落下・ゴール待機時間が終わったら、ショット終了
-                                if (_shotRigidbody.velocity.magnitude < 0.0001f)
+                                if (_shotRigidbody.velocity.magnitude < 0.01f)
                                     ChangeShotState(ShotState.ShotEndMode);
                                 break;
                             case FoodType.Sausage:
                                 ///食材が止まった + 落下・ゴール待機時間が終わったら、ショット終了
-                                if (_shotRigidbody.velocity.magnitude < 0.000001f && _rigidbodyConstraintsIndex >= 1)//衝突した瞬間0のことがある
+                                if (_shotRigidbody.velocity.magnitude < 0.01f && _rigidbodyConstraintsIndex >= 1)//衝突した瞬間0のことがある
                                 {
                                     ChangeShotState(ShotState.ShotEndMode);
                                     //すべての回転を止める前に移動が止まる可能性もある

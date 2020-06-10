@@ -196,7 +196,7 @@ namespace Cooking.Stage
             //EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Seasoning).parent = FoodPositionNotRotate.transform;
         }
         /// <summary>
-        /// マテリアルを指定した共通のものに変更
+        /// マテリアルを指定した共通のものに変更 変更後のマテリアルを指定する
         /// </summary>
         protected void ChangeMaterial(Material material, FoodType foodType, FoodStatus.Food food)
         {
@@ -235,9 +235,12 @@ namespace Cooking.Stage
                     break;
                 case FoodType.Egg:
                     //既に見た目が変化している場合、変化しない
-                    if (_foodMeshRenderer.material == material)
+                    if (_foodMeshRenderer != null)
                     {
-                        return;
+                        if (_foodMeshRenderer.material == material)
+                        {
+                            return;
+                        }
                     }
                     else
                     {
@@ -254,9 +257,12 @@ namespace Cooking.Stage
                     break;
                 case FoodType.Chicken:
                     //既に見た目が変化している場合、変化しない
-                    if (_foodMeshRenderer.material == material)
+                    if (_foodMeshRenderer != null)
                     {
-                        return;
+                        if (_foodMeshRenderer.material == material)
+                        {
+                            return;
+                        }
                     }
                     else
                     {
@@ -272,9 +278,12 @@ namespace Cooking.Stage
                     break;
                 case FoodType.Sausage:
                     //既に見た目が変化している場合、変化しない
-                    if (_foodMeshRenderer.material == material)
+                    if (_foodMeshRenderer != null)
                     {
-                        return;
+                        if (_foodMeshRenderer.material == material)
+                        {
+                            return;
+                        }
                     }
                     else
                     {
