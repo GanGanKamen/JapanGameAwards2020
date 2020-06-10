@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 103894d2de6102e4c94dfcfe7cef6aff, type: 3}
   m_Name: ShotParameter
   m_EditorClassIdentifier: 
-  _maxShotPower: 15
+  _maxShotPower: 20
   _minShotPower: 5
-  _limitVerticalAngle: 85
+  _limitVerticalAngle: 80

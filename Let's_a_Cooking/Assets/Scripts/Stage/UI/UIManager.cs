@@ -186,7 +186,9 @@ namespace Cooking.Stage
                                         _powerMeterValue = 100;
                                         _orderGagesOfInteger.sprite = ChoosePowerMeterUIOfInteger(_powerMeterValue / _orderMax);
                                         var orderPower = _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _powerMeterValue);
-                                        var orderPowerText = (int)(orderPower / 10) + 1; 
+                                        var orderPowerText = (int)(orderPower / 10) + 1;
+                                        if (orderPowerText > 10) orderPowerText = 10;
+                                        else if (orderPowerText < 1) orderPowerText = 1;
                                         _orderPowerTexts[_turnManager.ActivePlayerIndex].text = orderPowerText.ToString();
                                         StartCoroutine(WaitOnDecideOrder());
                                     }
@@ -354,6 +356,8 @@ namespace Cooking.Stage
             _isAIListOrderPower[playerNumber].SetActive(true);
             _turnManager.AIDecideOrderValue(playerNumber);
             var orderPowerText = (int)(_turnManager.OrderPower[playerNumber] / 10) + 1;
+            if (orderPowerText > 10) orderPowerText = 10;
+            else if (orderPowerText < 1) orderPowerText = 1;
             _orderPowerTexts[playerNumber].text = orderPowerText.ToString();
         }
         public int GetActivePlayerNumber()
