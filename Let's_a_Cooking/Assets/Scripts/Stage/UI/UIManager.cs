@@ -175,6 +175,8 @@ namespace Cooking.Stage
                                         //var orderPower = _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _orderGage.value);
                                         var orderPower = _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _powerMeterValue);
                                         var orderPowerText = (int)(orderPower / 10) + 1;
+                                        if (orderPowerText > 10) orderPowerText = 10;
+                                        else if (orderPowerText < 1) orderPowerText = 1;
                                         _orderPowerTexts[_turnManager.ActivePlayerIndex].text = orderPowerText.ToString();
                                         StartCoroutine(WaitOnDecideOrder());
                                     }
