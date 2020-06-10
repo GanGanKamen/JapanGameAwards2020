@@ -1181,30 +1181,6 @@ namespace Cooking.Stage
                     GetSeasoning(touchSeasoning);
                 }
             }
-            else if (other.tag == TagList.RareSeasoning.ToString())
-            {
-                if (_playerPoint.CanGetPointFlags[(int)GetPointOnTouch.RareSeasoning])
-                {
-                    _playerPoint.GetPoint(GetPointType.TouchRareSeasoning);
-                }
-                switch (foodType)
-                {
-                    case FoodType.Shrimp:
-                        ChangeMaterial(textureList.seasoningMaterial, foodType, food);
-                        break;
-                    case FoodType.Egg:
-                        ChangeMaterial(textureList.seasoningMaterial, foodType, food);
-                        break;
-                    case FoodType.Chicken:
-                        ChangeMaterial(textureList.seasoningFoodMaterials[(int)foodType], foodType, food);
-                        break;
-                    case FoodType.Sausage:
-                        ChangeMaterial(textureList.seasoningMaterial, foodType, food);
-                        break;
-                    default:
-                        break;
-                }
-            }
             else if (other.tag == TagList.Bubble.ToString())
             {
                 var bubble = other.GetComponent<Bubble>();
