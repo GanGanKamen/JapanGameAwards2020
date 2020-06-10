@@ -26,11 +26,12 @@ namespace Cooking
         [SerializeField] private AudioClip overAudio;
 
         [SerializeField] private Text turnText;
-
+        [SerializeField] private Text[] pointTexts;
         [SerializeField] private bool isTitleScene;
 
         private AudioSource audioSource;
         [SerializeField] private Cooking.Stage.TurnManager turnManager;
+        [SerializeField] private Cooking.Stage.StageSceneManager stageSceneManager;
         // Start is called before the first frame update
         void Start()
         {
@@ -44,6 +45,7 @@ namespace Cooking
         {
             SetSoundVolume(-30);
             TurnText();
+            PlayerPointText();
         }
 
         public void Setdefult()
@@ -207,6 +209,17 @@ namespace Cooking
                 case Language.Chinese:
                     turnText.text = remainTurn.ToString() + "回合後結束";
                     break;
+            }
+        }
+
+        private void PlayerPointText()
+        {
+            if (stageSceneManager == null) return;
+            var playersPoints = new int[4];
+            for(int i = 0; i < 4; i++)
+            {
+                playersPoints[i] = stageSceneManager.GetPlayerPoint(i);
+                pointTexts[i].text = playersPoints[i].ToString();
             }
         }
     }

@@ -139,8 +139,14 @@ MonoBehaviour:
   buttonAudio: {fileID: 8300000, guid: 0ad353ad8e0b5c04b967ab5d15d2d87b, type: 3}
   overAudio: {fileID: 8300000, guid: 0d8901b98b3706948b6c8b0e827d37eb, type: 3}
   turnText: {fileID: 5628427477618767696}
+  pointTexts:
+  - {fileID: 1762612684991968555}
+  - {fileID: 792211792919414698}
+  - {fileID: 5883667051985643803}
+  - {fileID: 218081404863299151}
   isTitleScene: 0
   turnManager: {fileID: 0}
+  stageSceneManager: {fileID: 0}
 --- !u!82 &5357532009632227023
 AudioSource:
   m_ObjectHideFlags: 0
