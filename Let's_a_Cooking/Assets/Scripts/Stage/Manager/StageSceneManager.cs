@@ -91,9 +91,13 @@ namespace Cooking.Stage
         }
         private GameObject[] _goals = null;
         /// <summary>
-        /// 終了時の各プレイヤーの合計ポイント
+        /// 各プレイヤーの合計ポイント 0番目:player1 1番目:player2 
         /// </summary>
-        int[] _pointsOnFinish;
+        //public int[] PlayerSumPoints
+        //{
+        //    get { return _playerSumPoints; }
+        //}
+        //private int[] _playerSumPoints;
         public int TurnNumberOnGameEnd
         {
             get { return _turnNumberOnGameEnd; }
@@ -298,13 +302,13 @@ namespace Cooking.Stage
             {
                 _chairPosition = GameObject.FindGameObjectWithTag(TagList.Chair.ToString()).transform.position.y;
             }
+            InitializePlayerPointList(GameManager.Instance.PlayerSumNumber);
         }
 
         // Update is called once per frame
         void Update()
         {
-            //Debug.Log(_foodTextureList.seasoningMaterial.color);
-            
+            Debug.Log(GetPlayerPoint(0));
             switch (_gameState)
             {
                 case StageGameState.Preparation:
@@ -318,6 +322,7 @@ namespace Cooking.Stage
                     break;
                 case StageGameState.Play:
                     {
+                        //Debug.Log(_turnManager.GetPlayerNumberFromActivePlayerIndex(_turnManager.ActivePlayerIndex));
                         foreach (var food in _turnManager.FoodStatuses)
                         {
                             if (food.FalledFoodStateOnStartProperty == FalledFoodStateOnStart.OnStart)
@@ -500,7 +505,6 @@ namespace Cooking.Stage
                     aiIndex++;
                 }
             }
-            InitializePlayerPointList(GameManager.Instance.PlayerSumNumber);
             //プレイヤーの並び替えが行われる _aiShotRangeは並び替えていないので注意 (05/24 現状全員同じ難易度)
             _gameState = StageGameState.FinishFoodInstantiateAndPlayerInOrder;
         }
@@ -609,7 +613,6 @@ namespace Cooking.Stage
         /// </summary>
         public void ComparePlayerPointOnFinish()
         {
-            InitializeFinishPointArray();
             InDescendingOrder();
             //降順に並び替えたことにより、最初の要素に最もポイントの高いプレイヤーが来る
             UIManager.Instance.UpdateWinnerPlayerNumber(_turnManager.GetPlayerNumberFromActivePlayerIndex(0));
@@ -619,28 +622,53 @@ namespace Cooking.Stage
         /// </summary>
         private void InDescendingOrder()
         {
-            for (int i = 0; i < _pointsOnFinish.Length - 1; i++)
+           // for (int i = 0; i < _playerSumPoints.Length - 1; i++)
             {
-                for (int j = 0; j < _pointsOnFinish.Length - 1 - i; j++)
+               // for (int j = 0; j < _playerSumPoints.Length - 1 - i; j++)
                 {
-                    if (_pointsOnFinish[j] < _pointsOnFinish[j + 1])
+                    //if (_playerSumPoints[j] < _playerSumPoints[j + 1])
                     {
-                        ArrayMethod.ChangeArrayValuesFromHighToLow(_pointsOnFinish, j);
+                        //ArrayMethod.ChangeArrayValuesFromHighToLow(_playerSumPoints, j);
                         //indexArray = プレイヤー番号 をポイントの高い順に並び替える
-                        ArrayMethod.ChangeArrayValuesFromHighToLow(_turnManager.PlayerIndexArray, j);
+                        //ArrayMethod.ChangeArrayValuesFromHighToLow(_turnManager.PlayerIndexArray, j);
                     }
                 }
             }
         }
         /// <summary>
-        /// 配列初期化・ポイント取得
+        /// プレイヤーインデックス(0,1,2,3)を受け取って、そのプレイヤーのポイントを返す
         /// </summary>
-        private void InitializeFinishPointArray()
+        /// <param name="playerIndex"></param>
+        /// <returns></returns>
+        public int GetPlayerPoint(int playerIndex)
         {
-            _pointsOnFinish = new int[_playerPointList.Length];
+            if (_gameState == StageGameState.Preparation)
+            {
+                return PlayerPoint.firstPoint;
+            }
+            else
+            {
+                if (playerIndex >= _turnManager.FoodStatuses.Length)
+                {
+                    Debug.LogFormat("{0}は0~3のインデックスの範囲ではありません。", playerIndex);
+                    return PlayerPoint.firstPoint;
+                }
+                //現在動いているプレイヤーの何番目の要素のポイントなのか検索
+                var foodStatusIndex = Array.IndexOf(_turnManager.PlayerIndexArray, playerIndex);
+                var activePlayerPoint = _turnManager.FoodStatuses[foodStatusIndex].PlayerPointProperty.Point;
+                return GetSumPlayerPoint(foodStatusIndex) + activePlayerPoint;
+            }
+        }
+        /// <summary>
+        /// 現在のプレイヤーの持つポイントを取得
+        /// </summary>
+        private void GetAllPlayerPoints()
+        {
             for (int i = 0; i < _turnManager.FoodStatuses.Length; i++)
             {
-                _pointsOnFinish[i] = GetSumPlayerPoint(i);
+                //iをプレイヤー番号に変換
+                var pointIndex = _turnManager.GetPlayerNumberFromActivePlayerIndex(i) - 1;//プレイヤー1の情報→0番目に配置 1引く必要あり
+                _playerPointList[pointIndex].Add(GetSumPlayerPoint(pointIndex));
             }
         }
         public void AddPlayerPointToList(int playerPointIndex)
@@ -649,7 +677,7 @@ namespace Cooking.Stage
         }
         public int GetSumPlayerPoint(int playerIndex)
         {
-            return PlayerPointList[playerIndex].Sum();
+            return _playerPointList[playerIndex].Sum();
         }
         private void ChangeGameState(StageGameState stageGameState)
         {

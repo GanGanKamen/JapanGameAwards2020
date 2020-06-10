@@ -249,13 +249,18 @@ namespace Cooking.Stage
                 eulerY = transform.eulerAngles.y + horizontalRot / _horizontallMouseSensitivity;
             }
             //発射方向の角度の制御 水平面から+y方向へ制限
-            if (eulerX > 0 && eulerX <= 20)
+            if (eulerX > 360 - _shotParameter.LimitVerticalMinAngle && eulerX <= 360)
             {
-                eulerX = 0;
+                eulerX = 360 - _shotParameter.LimitVerticalMinAngle;
             }
-            else if (eulerX < 360 - _shotParameter.LimitVerticalAngle && eulerX > 180)
+            //発射方向の角度の制御 水平面から+y方向へ制限 360を超えたとき用
+            if (eulerX > 0 && eulerX <= 180)
             {
-                eulerX = 360 - _shotParameter.LimitVerticalAngle;
+                eulerX = 360 - _shotParameter.LimitVerticalMinAngle;
+            }
+            else if (eulerX < 360 - _shotParameter.LimitVerticalMaxAngle && eulerX > 180)
+            {
+                eulerX = 360 - _shotParameter.LimitVerticalMaxAngle;
             }
             return new Vector2(eulerX, eulerY);
         }
