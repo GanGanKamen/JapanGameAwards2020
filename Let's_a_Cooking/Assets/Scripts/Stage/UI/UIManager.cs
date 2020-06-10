@@ -174,7 +174,8 @@ namespace Cooking.Stage
                                         //順番を決める数値を決定
                                         //var orderPower = _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _orderGage.value);
                                         var orderPower = _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _powerMeterValue);
-                                        _orderPowerTexts[_turnManager.ActivePlayerIndex].text = orderPower.ToString("00.00");
+                                        var orderPowerText = (int)(orderPower / 10) + 1;
+                                        _orderPowerTexts[_turnManager.ActivePlayerIndex].text = orderPowerText.ToString();
                                         StartCoroutine(WaitOnDecideOrder());
                                     }
                                     else if (Input.GetKeyDown(KeyCode.Space))
@@ -185,7 +186,10 @@ namespace Cooking.Stage
                                         _powerMeterValue = 100;
                                         _orderGagesOfInteger.sprite = ChoosePowerMeterUIOfInteger(_powerMeterValue / _orderMax);
                                         var orderPower = _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _powerMeterValue);
-                                        _orderPowerTexts[_turnManager.ActivePlayerIndex].text = orderPower.ToString("00.00");
+                                        var orderPowerText = (int)(orderPower / 10) + 1;
+                                        if (orderPowerText > 10) orderPowerText = 10;
+                                        else if (orderPowerText < 1) orderPowerText = 1;
+                                        _orderPowerTexts[_turnManager.ActivePlayerIndex].text = orderPowerText.ToString();
                                         StartCoroutine(WaitOnDecideOrder());
                                     }
                                 }
@@ -291,6 +295,9 @@ namespace Cooking.Stage
                     _initializeUis[(int)InitializeChoose.ChooseAILevel].SetActive(true);
                     break;
                 case ScreenState.DecideOrder:
+                    var powermaterAudio = GetComponent<AudioSource>();
+                    powermaterAudio.loop = true;
+                    powermaterAudio.Play();
                     var playerNumber = 0;
                     for (int i = 0; i < GameManager.Instance.PlayerNumber; i++)
                     {
@@ -348,7 +355,10 @@ namespace Cooking.Stage
             _playerListOrderPower[playerNumber].SetActive(true);
             _isAIListOrderPower[playerNumber].SetActive(true);
             _turnManager.AIDecideOrderValue(playerNumber);
-            _orderPowerTexts[playerNumber].text = _turnManager.OrderPower[playerNumber].ToString("00.00");
+            var orderPowerText = (int)(_turnManager.OrderPower[playerNumber] / 10) + 1;
+            if (orderPowerText > 10) orderPowerText = 10;
+            else if (orderPowerText < 1) orderPowerText = 1;
+            _orderPowerTexts[playerNumber].text = orderPowerText.ToString();
         }
         public int GetActivePlayerNumber()
         {
@@ -360,6 +370,9 @@ namespace Cooking.Stage
         /// <returns></returns>
         IEnumerator WaitOnDecideOrder()
         {
+            var powermaterAudio = GetComponent<AudioSource>();
+            powermaterAudio.Stop();
+            powermaterAudio.loop = false;
             SoundManager.Instance.PlaySE(SoundEffectID.gamestart1);
             yield return new WaitForSeconds(1f);
             ///ターンの変更
