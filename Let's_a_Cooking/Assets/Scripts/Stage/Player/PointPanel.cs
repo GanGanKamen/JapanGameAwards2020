@@ -18,6 +18,7 @@ namespace Cooking.Stage
 
         private bool isPlayPointChange = false;
 
+        private IEnumerator pointChangeCoroutine;
         private Transform target;
         private float hight;
         private PlayerPoint player;
@@ -55,7 +56,18 @@ namespace Cooking.Stage
 
         public void PointChange(int prePoint, int nowPoint)
         {
-            StartCoroutine(PointChangeCoroutine(prePoint, nowPoint));
+            pointChangeCoroutine = PointChangeCoroutine(prePoint, nowPoint);
+            StartCoroutine(pointChangeCoroutine);
+        }
+
+        public void Cancellation()
+        {
+            if(pointChangeCoroutine != null)
+            {
+                StopCoroutine(pointChangeCoroutine);
+                pointChangeCoroutine = null;
+            }
+            Destroy(gameObject);
         }
 
         private void SetPosition()
@@ -70,7 +82,7 @@ namespace Cooking.Stage
             Init();
             var pointDifference = nowPoint - prePoint;
             if (pointDifference == 0 || isPlayPointChange) yield break;
-            if(player != null) player.isPlayPointPanel = true;
+            if(player != null) player.nowPointPanel = this;
             isPlayPointChange = true;
             var differenceText = "";
             if (pointDifference > 0) differenceText = "+" + pointDifference.ToString();
@@ -103,7 +115,7 @@ namespace Cooking.Stage
             yield return new WaitForSeconds(newPointTime);
             Init();
             isPlayPointChange = false;
-            if (player != null) player.isPlayPointPanel = false;
+            if (player != null) player.nowPointPanel = null;
             Destroy(gameObject);
             yield break;
         }

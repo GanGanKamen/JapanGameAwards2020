@@ -69,7 +69,7 @@ namespace Cooking.Stage
         PointParameter _pointParameter = null;
 
         private GameObject pointPanelPrefab;
-        [HideInInspector] public bool isPlayPointPanel = false;
+        [HideInInspector] public PointPanel nowPointPanel = null;
         private void Awake()
         {
             _pointParameter = Resources.Load<PointParameter>("ScriptableObjects/PointParameter");
@@ -177,16 +177,22 @@ namespace Cooking.Stage
                     break;
             }
 
-            if (pointPanelPrefab == null || isPlayPointPanel) return;
+            if (pointPanelPrefab == null) return;
             var newPoint = Point;
             if (prePoint - newPoint == 0) return;
             if(GetComponent<FoodStatus>() == null) return;
             var foodStatus = GetComponent<FoodStatus>();
             if (foodStatus.IsGoal) return;
+            if(nowPointPanel != null)
+            {
+                nowPointPanel.Cancellation();
+                nowPointPanel = null;
+            }
+
             var pointPanelObj = Instantiate(pointPanelPrefab, transform.position, Quaternion.identity);
-            var pointPanel = pointPanelObj.GetComponent<PointPanel>();
-            pointPanel.Init(transform, 0.5f,this);
-            pointPanel.PointChange(prePoint,newPoint);
+            nowPointPanel = pointPanelObj.GetComponent<PointPanel>();
+            nowPointPanel.Init(transform, 0.5f,this);
+            nowPointPanel.PointChange(prePoint,newPoint);
         }
         /// <summary>
         /// ポイント演算の基本形 各食材が現在持つものに対して計算 現状(2020/05/23)レア調味料のみ全ポイントに対して掛け算
