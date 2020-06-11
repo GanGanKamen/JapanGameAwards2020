@@ -338,7 +338,7 @@ namespace Cooking.Stage
             else if (typeof(U) == typeof(Vector2))
             {
                 var capsuleColliderInformation = (Vector2)(object)ColliderSize;
-                Debug.Log(capsuleColliderInformation);
+                //Debug.Log(capsuleColliderInformation);
                 var distanceFromCapsuleCenterToSphereCenter = capsuleColliderInformation[(int)CapsuleColliderScaleData.Height] - capsuleColliderInformation[(int)CapsuleColliderScaleData.Radius];
                 var distanceVector = new Vector3(0, distanceFromCapsuleCenterToSphereCenter, 0);
                 //Kitchenレイヤーとレイ判定を行う

@@ -212,7 +212,6 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
-            Debug.Log(RemainingTurns);
             if (Input.GetKeyDown(KeyCode.K))
             {
                 var playerNumber = GetPlayerNumberFromActivePlayerIndex(_activePlayerIndex) - 1;

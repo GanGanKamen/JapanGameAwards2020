@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8472886374379912153}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: fridge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ PrefabInstance:
     - target: {fileID: 667504350452172210, guid: 6f391cc0ca9310643800217a8f4e5e1a,
         type: 3}
       propertyPath: m_Layer
-      value: 9
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1723260929783555624, guid: 6f391cc0ca9310643800217a8f4e5e1a,
         type: 3}
@@ -66,22 +66,22 @@ PrefabInstance:
     - target: {fileID: 5427314656985521148, guid: 6f391cc0ca9310643800217a8f4e5e1a,
         type: 3}
       propertyPath: m_Layer
-      value: 9
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6137438355017706936, guid: 6f391cc0ca9310643800217a8f4e5e1a,
         type: 3}
       propertyPath: m_Layer
-      value: 9
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6891930876635430207, guid: 6f391cc0ca9310643800217a8f4e5e1a,
         type: 3}
       propertyPath: m_Layer
-      value: 9
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7494661983445932813, guid: 6f391cc0ca9310643800217a8f4e5e1a,
         type: 3}
       propertyPath: m_Layer
-      value: 9
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7694789127210164881, guid: 6f391cc0ca9310643800217a8f4e5e1a,
         type: 3}
@@ -116,7 +116,7 @@ PrefabInstance:
     - target: {fileID: 8186139776885190099, guid: 6f391cc0ca9310643800217a8f4e5e1a,
         type: 3}
       propertyPath: m_Layer
-      value: 9
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9010269314719312367, guid: 6f391cc0ca9310643800217a8f4e5e1a,
         type: 3}

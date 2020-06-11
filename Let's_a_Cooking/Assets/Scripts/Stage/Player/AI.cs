@@ -190,10 +190,12 @@ namespace Cooking.Stage
                 Debug.Log("ゴールがない");
                 return;
             }
-            foreach (var goal in goalObject)
+            //for (int j = 0; j < goalObject.Length; j++)
             {
+                var goal = goalObject[0];
                 //ゴールが到達可能かどうかの判定 1自分からゴールまでの方向ベクトルを取得し xz成分を抜き出す 2 y成分 sin(角度→ラジアン変換)を入れて標準化しなおすことで方向ベクトルを取得 3 最大ショットパワーでレイを飛ばし垂直方向の角度を変化させる 10~ 85
                 //3 ゴールタグを持つオブジェクトをレイキャストにより取得できるかどうかで判定する。4パワーの変更
+                Debug.Log(goal.transform.position);
                 goalVector = (goal.transform.position - transform.position).normalized;
                 int i = 0;//インクリメント変数
                 Vector3 shotDirectionVector = Vector3.zero, maxShotSpeedVector = Vector3.zero;
@@ -298,6 +300,7 @@ namespace Cooking.Stage
             speed = shotSpeedList[minDistanceIndex];
             Debug.Log(shotSpeedList[minDistanceIndex]);
             Debug.Log(fallPoint[minDistanceIndex]);
+            Debug.Log(fallPoint.Count);
             Debug.Log(shotSpeedVectorList[minDistanceIndex]);
             _searchEnd = true;
         }
@@ -337,35 +340,35 @@ namespace Cooking.Stage
             var originFallPointObject = fallPointGameObject;
             var newFallPointPowerIncrease = Vector3.zero;
             //パワー増加
-            for (int i = 1; checkSpeedByIncrease <= maxShotSpeed + 3; i++)
-            {
-                //速度を大きくしていき、落ちたら最大パワーより小さくする処理
-                checkSpeedByIncrease = maxShotSpeed + i / 2;
-                newFallPointPowerIncrease = FindNewTargetByRayCast(verticalAngle, shotDirectionVector * checkSpeedByIncrease, out fallPointGameObject);//情報のずれ怖い
-                if (fallPointGameObject.tag == TagList.Floor.ToString() || fallPointGameObject.tag == TagList.NotBeAITarget.ToString())
-                {
-                    switch (foodType)
-                    {
-                        case FoodType.Shrimp:
-                            checkSpeedByIncrease = maxShotSpeed + (i / 2 - 4);
-                            break;
-                        case FoodType.Egg:
-                            checkSpeedByIncrease = maxShotSpeed + (i / 2 - 4.5f);
-                            break;
-                        case FoodType.Chicken:
-                            checkSpeedByIncrease = maxShotSpeed + (i / 2 - 4);
-                            break;
-                        case FoodType.Sausage:
-                            checkSpeedByIncrease = maxShotSpeed + (i / 2 - 4);
-                            break;
-                        default:
-                            break;
-                    }
-                    nearFallFloorPower = NearFallFloorPower.Strong;
-                    //パワーのチェック終了
-                    break;
-                }
-            }
+            //for (int i = 1; checkSpeedByIncrease <= maxShotSpeed + 3; i++)
+            //{
+            //    //速度を大きくしていき、落ちたら最大パワーより小さくする処理
+            //    checkSpeedByIncrease = maxShotSpeed + i / 2;
+            //    newFallPointPowerIncrease = FindNewTargetByRayCast(verticalAngle, shotDirectionVector * checkSpeedByIncrease, out fallPointGameObject);//情報のずれ怖い
+            //    if (fallPointGameObject.tag == TagList.Floor.ToString() || fallPointGameObject.tag == TagList.NotBeAITarget.ToString())
+            //    {
+            //        switch (foodType)
+            //        {
+            //            case FoodType.Shrimp:
+            //                checkSpeedByIncrease = maxShotSpeed + (i / 2 - 4);
+            //                break;
+            //            case FoodType.Egg:
+            //                checkSpeedByIncrease = maxShotSpeed + (i / 2 - 4.5f);
+            //                break;
+            //            case FoodType.Chicken:
+            //                checkSpeedByIncrease = maxShotSpeed + (i / 2 - 4);
+            //                break;
+            //            case FoodType.Sausage:
+            //                checkSpeedByIncrease = maxShotSpeed + (i / 2 - 4);
+            //                break;
+            //            default:
+            //                break;
+            //        }
+            //        nearFallFloorPower = NearFallFloorPower.Strong;
+            //        //パワーのチェック終了
+            //        break;
+            //    }
+            //}
             //パワー減少 →不要 最大パワーよりも大きくすることはできないため、小さくて落下してより強く打つことはできない
             switch (nearFallFloorPower)
             {
@@ -392,7 +395,7 @@ namespace Cooking.Stage
             fallPointGameObject = null;
             var fallPosition = Vector3.zero;
             var shotSpeed = ImproveShotPointAndShotSpeedVector(out fallPointGameObject, shotDirectionVector, verticalAngle, out fallPosition);
-            if (fallPointGameObject.tag != TagList.NotBeAITarget.ToString())
+            if (fallPointGameObject.tag != TagList.NotBeAITarget.ToString() && fallPointGameObject.tag != TagList.Floor.ToString())
                 AddVariablesToLists(verticalAngle, fallPointGameObject, goal, shotDirectionVector, fallPointIndex, fallPoint, goalDistanceFromFallPoints, shotSpeedVectorList, shotSpeedList, fallPosition, shotSpeed);
         }
         private void AddVariablesToLists(int verticalAngle, GameObject fallPointGameObject, GameObject goal, Vector3 shotDirectionVector, int fallPointIndex, List<Vector3> fallPoint, List<float> goalDistanceFromFallPoints, List<Vector3> shotSpeedVectorList, List<float> shotSpeedList, Vector3 fallPosition, float shotSpeed)
@@ -416,6 +419,7 @@ namespace Cooking.Stage
                         shotSpeedVectorList.Add(shotDirectionVector);
                         shotSpeedList.Add(shotSpeed);
                     }
+                    Debug.Log(fallPointGameObject.tag);
                 }
             }
         }
@@ -433,10 +437,10 @@ namespace Cooking.Stage
                         if (seasoning.GetComponent<Seasoning>().RareEffect.activeInHierarchy)
                         {
                             _targetObjectOptions.Add(seasoning);
+                            DistanceInOrder();
+                            return;
                         }
                     }
-                    DistanceInOrder();
-                    return;
                 }
             }
             //タオル
