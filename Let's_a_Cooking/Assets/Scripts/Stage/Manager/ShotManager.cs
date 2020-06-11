@@ -424,6 +424,7 @@ namespace Cooking.Stage
             EffectManager.Instance.InstantiateEffect(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].transform.position, EffectManager.EffectPrefabID.Food_Jump);
             ChangeShotState(ShotState.ShottingMode);
             UIManager.Instance.ChangeUI(ScreenState.ShottingMode);
+            //Shot(aIShotPower);
             SameVelocityMagnitudeShot(aIShotPower);
         }
         /// <summary>

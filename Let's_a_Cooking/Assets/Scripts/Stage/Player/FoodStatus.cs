@@ -1153,8 +1153,8 @@ namespace Cooking.Stage
                 _isGoal = true;
                 FreezeRotation();
 
-                var ranx = UnityEngine.Random.Range(-0.3f, 0.3f);
-                var ranz = UnityEngine.Random.Range(-0.3f, 0.3f);
+                var ranx = UnityEngine.Random.Range(-0.1f, 0.1f);
+                var ranz = UnityEngine.Random.Range(-0.1f, 0.1f);
                 var ranPos = new Vector3(ranx, 2, ranz);
                 var movePos = other.transform.position + ranPos;
 
