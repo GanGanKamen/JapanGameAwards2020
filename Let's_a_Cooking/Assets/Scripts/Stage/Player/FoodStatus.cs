@@ -623,7 +623,7 @@ namespace Cooking.Stage
         IEnumerator AddForce(Vector3 power)
         {
             addedForce = true;
-
+            SoundManager.Instance.PlaySE(SoundEffectID.food_jump1);
             float time = 0;
             SetFoodLayer(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodCollision]);
             ShotManager.Instance.SetShotVector(_rigidbody.velocity, ShotManager.Instance.ShotPower);
@@ -706,7 +706,7 @@ namespace Cooking.Stage
         private void OnCollisionEnter(Collision collision)
         {
             #region//食材が切られるなど見た目が変わる処理
-            switch (foodType)
+                switch (foodType)
             {
                 case FoodType.Shrimp:
                     if (collision.gameObject.tag == TagList.Wall.ToString() && !food.shrimp.IsHeadFallOff)
