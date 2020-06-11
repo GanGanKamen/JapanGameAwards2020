@@ -670,9 +670,10 @@ namespace Cooking.Stage
                 _playerPointList[pointIndex].Add(GetSumPlayerPoint(pointIndex));
             }
         }
-        public void AddPlayerPointToList(int playerPointIndex)
+        public void AddPlayerPointToList(int activePlayerIndex)
         {
-            _playerPointList[playerPointIndex].Add(_turnManager.FoodStatuses[playerPointIndex].PlayerPointProperty.Point);
+            var pointIndex = _turnManager.GetPlayerNumberFromActivePlayerIndex(activePlayerIndex) - 1;//プレイヤー1の情報→0番目に配置 1引く必要あり
+            _playerPointList[pointIndex].Add(_turnManager.FoodStatuses[activePlayerIndex].PlayerPointProperty.Point);
         }
         public int GetSumPlayerPoint(int playerIndex)
         {
@@ -687,8 +688,8 @@ namespace Cooking.Stage
         /// </summary>
         public void OpenOptionMenu()
         {
-            CameraManager.Instance.ChangeCameraState(CameraMode.Wait);
-            ShotManager.Instance.ChangeShotState(ShotState.WaitMode);
+            //CameraManager.Instance.ChangeCameraState(CameraMode.Wait);
+            //ShotManager.Instance.ChangeShotState(ShotState.WaitMode);
             UIManager.Instance.ChangeButtonsEnableOnActiveUI(false);
         }
         /// <summary>
@@ -696,8 +697,8 @@ namespace Cooking.Stage
         /// </summary>
         public void CloseOptionMenu()
         {
-            CameraManager.Instance.ReturnOptionMode();
-            ShotManager.Instance.ReturnOptionMode();
+            //CameraManager.Instance.ReturnOptionMode();
+            //ShotManager.Instance.ReturnOptionMode();
             UIManager.Instance.ChangeButtonsEnableOnActiveUI(true);
         }
     }

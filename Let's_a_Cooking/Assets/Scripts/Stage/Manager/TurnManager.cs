@@ -335,7 +335,7 @@ namespace Cooking.Stage
                             StageSceneManager.Instance.AddPlayerPointToList(_activePlayerIndex);
                             //FoodStatusを取り除いて処理量を減らす
                             Destroy(_foodStatuses[_activePlayerIndex]);
-                            StageSceneManager.Instance.InitializePlayerData(_activePlayerIndex, _foodStatuses[_activePlayerIndex].FoodType, _isAITurn, StageSceneManager.Instance.AIShotRange[0]);//AIが複数いることは現状考えていない
+                            StageSceneManager.Instance.InitializePlayerData(_activePlayerIndex, _foodStatuses[_activePlayerIndex].FoodType, _isAITurn, StageSceneManager.Instance.AIShotRange[0]);//AIが複数いて難易度が違うことは現状考えていない
                         }
                         _foodStatuses[_activePlayerIndex].ChangeFoodLayer(false);
                         //次のプレイヤーに順番を回す

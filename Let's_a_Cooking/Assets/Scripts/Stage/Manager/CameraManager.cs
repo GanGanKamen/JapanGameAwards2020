@@ -109,41 +109,44 @@ namespace Cooking.Stage
                     break;
                 case CameraMode.Top:
                     {
-                        topCam.Priority = 1;
-                        frontCam.Priority = 0;
-                        sideCam.Priority = 0;
-                        if (_isTouchOnGamePlay)
+                        if (!OptionManager.OptionManagerProperty.MenuWindow.activeInHierarchy)
                         {
-                            //左クリックされている間呼び出される
-                            var touchPosition = TouchInput.GetDeltaPosition();
-                            newTopCameraPos = topCam.transform.position;
-                            newTopCameraPos.x -= (touchPosition.x) / 100;   //x座標のマウスの移動量を計算
-                            newTopCameraPos.z -= (touchPosition.y) / 100;   //y座標のマウスの移動量を計算
-                            topCam.transform.position = newTopCameraPos;   //マウスの移動量/100を代入
-                        }
-                        //入力準備ができてからの入力であることを示す変数に代入 俯瞰から始まるのでupside限定の処理
-                        else if (TouchInput.GetTouchPhase() == TouchInfo.Down)
-                        {
-                            _isTouchOnGamePlay = true;
-                        }
-                        zoomScalingValue = CameraZoomScaling.GetCameraZoomScalingValue();   //マウスホイールの回転量を格納
-                        if (zoomScalingValue != 0)
-                        {
-                            var playerPosition = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].transform.position + new Vector3(0, 1, 0); //約プレイヤーの大きさ分加算
-                            newTopCameraPos = topCam.transform.position;  //現在のカメラの座標を代入
-                            newTopCameraPos.y = topCam.transform.position.y + zoomScalingValue;
-                            topCam.transform.position = newTopCameraPos;       //カメラの座標に代入
-                            //下限
-                            if (topCam.transform.position.y <= playerPosition.y)
+                            topCam.Priority = 1;
+                            frontCam.Priority = 0;
+                            sideCam.Priority = 0;
+                            if (_isTouchOnGamePlay)
                             {
-                                var topCameraPosition = topCam.transform.position;
-                                topCam.transform.position = new Vector3(topCameraPosition.x, playerPosition.y, topCameraPosition.z);
+                                //左クリックされている間呼び出される
+                                var touchPosition = TouchInput.GetDeltaPosition();
+                                newTopCameraPos = topCam.transform.position;
+                                newTopCameraPos.x -= (touchPosition.x) / 100;   //x座標のマウスの移動量を計算
+                                newTopCameraPos.z -= (touchPosition.y) / 100;   //y座標のマウスの移動量を計算
+                                topCam.transform.position = newTopCameraPos;   //マウスの移動量/100を代入
                             }
-                            //上限
-                            else if (topCam.transform.position.y >= playerPosition.y + _zoomLimitYPositionFromPlayerAbove)
+                            //入力準備ができてからの入力であることを示す変数に代入 俯瞰から始まるのでupside限定の処理
+                            else if (TouchInput.GetTouchPhase() == TouchInfo.Down)
                             {
-                                var topCameraPosition = topCam.transform.position;
-                                topCam.transform.position = new Vector3(topCameraPosition.x, playerPosition.y + _zoomLimitYPositionFromPlayerAbove, topCameraPosition.z);
+                                _isTouchOnGamePlay = true;
+                            }
+                            zoomScalingValue = CameraZoomScaling.GetCameraZoomScalingValue();   //マウスホイールの回転量を格納
+                            if (zoomScalingValue != 0)
+                            {
+                                var playerPosition = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].transform.position + new Vector3(0, 1, 0); //約プレイヤーの大きさ分加算
+                                newTopCameraPos = topCam.transform.position;  //現在のカメラの座標を代入
+                                newTopCameraPos.y = topCam.transform.position.y + zoomScalingValue;
+                                topCam.transform.position = newTopCameraPos;       //カメラの座標に代入
+                                                                                   //下限
+                                if (topCam.transform.position.y <= playerPosition.y)
+                                {
+                                    var topCameraPosition = topCam.transform.position;
+                                    topCam.transform.position = new Vector3(topCameraPosition.x, playerPosition.y, topCameraPosition.z);
+                                }
+                                //上限
+                                else if (topCam.transform.position.y >= playerPosition.y + _zoomLimitYPositionFromPlayerAbove)
+                                {
+                                    var topCameraPosition = topCam.transform.position;
+                                    topCam.transform.position = new Vector3(topCameraPosition.x, playerPosition.y + _zoomLimitYPositionFromPlayerAbove, topCameraPosition.z);
+                                }
                             }
                         }
                     }
@@ -157,45 +160,48 @@ namespace Cooking.Stage
                     break;
                 case CameraMode.Side:
                     {
-                        topCam.Priority = 0;
-                        frontCam.Priority = 0;
-                        sideCam.Priority = 1;
-                        if (_isTouchOnGamePlay)
+                        if (!OptionManager.OptionManagerProperty.MenuWindow.activeInHierarchy)
                         {
-                            //左クリックされている間呼び出される
-                            var touchPosition = TouchInput.GetDeltaPosition();
-                            newSideCameraPos = sideCam.transform.localPosition;
-                            newSideCameraPos.z -= (touchPosition.x) / 100;   //x座標のマウスの移動量を計算
-                            newSideCameraPos.y += (touchPosition.y) / 100;   //y座標のマウスの移動量を計算
-                            sideCam.transform.localPosition = newSideCameraPos;   //マウスの移動量/100を代入
-                        }
-                        zoomScalingValue = CameraZoomScaling.GetCameraZoomScalingValue();   //マウスホイールの回転量を格納
-                        var direction = _cameraRotateCenter.transform.right;
-                        //マウスホイールが入力されたら y z二つの値を加算
-                        if (zoomScalingValue != 0)
-                        {
-                            var playerPosition = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].CenterPoint.transform.position + new Vector3(0, 0, 0); //約プレイヤーの大きさ分加算
-                            var sideCamPosition = sideCam.transform.localPosition;      //マウスホイールの回転をカメラの前後方向に代入
-                            sideCamPosition.x += zoomScalingValue * -2;
-                            //sideCam.transform.localPosition = sideCamPosition;
-                            //下限
-                            //if (sideCam.transform.position.x <= playerPosition.x )
-                            //{
-                            //    var sideCameraPosition = sideCam.transform.position;
-                            //    sideCam.transform.position = new Vector3(sideCameraPosition.x, playerPosition.y, sideCameraPosition.z);
-                            //
+                            topCam.Priority = 0;
+                            frontCam.Priority = 0;
+                            sideCam.Priority = 1;
+                            if (_isTouchOnGamePlay)
                             {
-                                _beforePosition = sideCam.transform.localPosition;
-                                sideCam.transform.localPosition = sideCamPosition;
-                                if (sideCam.transform.localPosition.x < -15)
+                                //左クリックされている間呼び出される
+                                var touchPosition = TouchInput.GetDeltaPosition();
+                                newSideCameraPos = sideCam.transform.localPosition;
+                                newSideCameraPos.z -= (touchPosition.x) / 100;   //x座標のマウスの移動量を計算
+                                newSideCameraPos.y += (touchPosition.y) / 100;   //y座標のマウスの移動量を計算
+                                sideCam.transform.localPosition = newSideCameraPos;   //マウスの移動量/100を代入
+                            }
+                            zoomScalingValue = CameraZoomScaling.GetCameraZoomScalingValue();   //マウスホイールの回転量を格納
+                            var direction = _cameraRotateCenter.transform.right;
+                            //マウスホイールが入力されたら y z二つの値を加算
+                            if (zoomScalingValue != 0)
+                            {
+                                var playerPosition = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].CenterPoint.transform.position + new Vector3(0, 0, 0); //約プレイヤーの大きさ分加算
+                                var sideCamPosition = sideCam.transform.localPosition;      //マウスホイールの回転をカメラの前後方向に代入
+                                sideCamPosition.x += zoomScalingValue * -2;
+                                //sideCam.transform.localPosition = sideCamPosition;
+                                //下限
+                                //if (sideCam.transform.position.x <= playerPosition.x )
+                                //{
+                                //    var sideCameraPosition = sideCam.transform.position;
+                                //    sideCam.transform.position = new Vector3(sideCameraPosition.x, playerPosition.y, sideCameraPosition.z);
+                                //
                                 {
-                                    sideCam.transform.localPosition = _beforePosition;
-                                }
-                                else if (sideCam.transform.localPosition.x > -1.8f)
-                                {
-                                    sideCam.transform.localPosition = _beforePosition;
-                                }
+                                    _beforePosition = sideCam.transform.localPosition;
+                                    sideCam.transform.localPosition = sideCamPosition;
+                                    if (sideCam.transform.localPosition.x < -15)
+                                    {
+                                        sideCam.transform.localPosition = _beforePosition;
+                                    }
+                                    else if (sideCam.transform.localPosition.x > -1.8f)
+                                    {
+                                        sideCam.transform.localPosition = _beforePosition;
+                                    }
 
+                                }
                             }
                         }
                     }

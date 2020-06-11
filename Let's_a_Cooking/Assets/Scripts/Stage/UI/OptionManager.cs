@@ -15,6 +15,10 @@ namespace Cooking
         [SerializeField] private Text bgmText;
         [SerializeField] private Text seText;
         [SerializeField] private Slider seSlider;
+        public GameObject MenuWindow
+        {
+            get { return menuWindow; }
+        }
         [SerializeField] private GameObject menuWindow;
         [SerializeField] private Button jpnButton;
         [SerializeField] private Button engButton;
@@ -32,6 +36,12 @@ namespace Cooking
         private AudioSource audioSource;
         [SerializeField] private Cooking.Stage.TurnManager turnManager;
         [SerializeField] private Cooking.Stage.StageSceneManager stageSceneManager;
+        public static OptionManager OptionManagerProperty{ get { return _optionManager ; }  }
+        private static OptionManager _optionManager = null;
+        private void Awake()
+        {
+            _optionManager = this;
+        }
         // Start is called before the first frame update
         void Start()
         {
@@ -116,8 +126,7 @@ namespace Cooking
 
         private void MenuOpen()
         {
-            
-            //if (isTitleScene == false) Stage.StageSceneManager.Instance.OpenOptionMenu();                      
+            if (stageSceneManager != null) Stage.StageSceneManager.Instance.OpenOptionMenu();
             menuWindow.SetActive(true);
             menuWindowCloseNutton.gameObject.SetActive(true);
             menubutton.gameObject.SetActive(false);
@@ -126,7 +135,7 @@ namespace Cooking
 
         private void MenuClose()
         {
-            //if (isTitleScene == false) Stage.StageSceneManager.Instance.CloseOptionMenu();
+            if (stageSceneManager != null) Stage.StageSceneManager.Instance.CloseOptionMenu();
             menuWindow.SetActive(false);
             menuWindowCloseNutton.gameObject.SetActive(false);
             menubutton.gameObject.SetActive(true);

@@ -45,7 +45,7 @@ namespace Cooking.Stage
         /// </summary>
         enum ShotStrength
         {
-            Weak,Normal,Powerful
+            Weak, Normal, Powerful
         }
         /// <summary>
         /// ショットの強さで出る音が異なる
@@ -59,7 +59,7 @@ namespace Cooking.Stage
         /// <summary>
         /// 0番目から順に止める
         /// </summary>
-        private RigidbodyConstraints[] _rigidbodyConstraints = { RigidbodyConstraints.FreezeRotationX , RigidbodyConstraints.FreezeRotationY , RigidbodyConstraints.FreezeRotationZ };
+        private RigidbodyConstraints[] _rigidbodyConstraints = { RigidbodyConstraints.FreezeRotationX, RigidbodyConstraints.FreezeRotationY, RigidbodyConstraints.FreezeRotationZ };
         /// <summary>
         /// 時間経過で回転を止める
         /// </summary>
@@ -67,7 +67,7 @@ namespace Cooking.Stage
         /// <summary>
         /// 1つのRotationを止めるまでの時間 いくつめを止めるのかによって時間を分ける
         /// </summary>
-        private float[] _freezeOneOfRotationTime = { 1 , 0.5f ,0.25f };
+        private float[] _freezeOneOfRotationTime = { 1, 0.5f, 0.25f };
         private TurnManager _turnManager = null;
 
         #region インスタンスへのstaticなアクセスポイント
@@ -108,13 +108,13 @@ namespace Cooking.Stage
                 case ShotState.AngleMode:
                     if (!_turnManager.IsAITurn)
                     {
-                        if (TouchInput.GetTouchPhase() == TouchInfo.Moved)
+                        if (TouchInput.GetTouchPhase() == TouchInfo.Moved && !OptionManager.OptionManagerProperty.MenuWindow.activeInHierarchy)
                         {
                             var eulerAngle = DecisionAngle();
                             transform.eulerAngles = new Vector3(eulerAngle.x, eulerAngle.y, 0);
                         }
                         _shotPower = ChangeShotPower(_shotParameter.MinShotPower, _shotParameter.MaxShotPower, 2 * Mathf.Abs(_shotParameter.MaxShotPower - _shotParameter.MinShotPower), _shotPower);//速度ログ 5 20 (差15のとき)→ 30  差の倍速で算出   
-                        if (!_turnManager.IsAITurn)
+                        if (!_turnManager.IsAITurn && !OptionManager.OptionManagerProperty.MenuWindow.activeInHierarchy)
                         {
                             #region デバッグコード スペースを押すと最大パワーで飛ぶ
                             //#if UNITY_EDITOR
@@ -323,7 +323,7 @@ namespace Cooking.Stage
         /// </summary>
         /// <param name="shotDirection"></param>
         /// <param name="shotPower"></param>
-        public void SetShotVector(Vector3 shotDirection , float shotPower)
+        public void SetShotVector(Vector3 shotDirection, float shotPower)
         {
             _shotPower = shotPower;
             this.transform.forward = shotDirection.normalized;
@@ -384,7 +384,7 @@ namespace Cooking.Stage
             //Debug.Log(direction);
             return initialSpeedVector;
         }
-        public Vector3 AICalculateMaxShotPowerVector(float verticalAngle ,  Vector3 direction ,float shotPower)
+        public Vector3 AICalculateMaxShotPowerVector(float verticalAngle, Vector3 direction, float shotPower)
         {
             if (transform.eulerAngles.x < 10)
             {
@@ -412,7 +412,7 @@ namespace Cooking.Stage
             _shotRigidbody = nextRigidbody;
             int initialAngle = 20;
             var eulerX = 360 - initialAngle;
-            transform.eulerAngles = new Vector3(eulerX, 0,0);
+            transform.eulerAngles = new Vector3(eulerX, 0, 0);
         }
         /// <summary>
         /// AIによるショット
