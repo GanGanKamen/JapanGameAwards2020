@@ -424,7 +424,8 @@ namespace Cooking.Stage
             EffectManager.Instance.InstantiateEffect(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].transform.position, EffectManager.EffectPrefabID.Food_Jump);
             ChangeShotState(ShotState.ShottingMode);
             UIManager.Instance.ChangeUI(ScreenState.ShottingMode);
-            Shot(aIShotPower);
+            //Shot(aIShotPower);
+            SameVelocityMagnitudeShot(aIShotPower);
         }
         /// <summary>
         /// 一定時間経過で卵の回転を止めていく それまで待機 戻り値は保存しておくこと 数え終わると0を返す
