@@ -263,10 +263,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2078732f676e78c46965c8a9bbeb0731, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pointDifferenceTime: 0.5
-  prePointTime: 0.5
-  pointChangeTime: 0.5
-  newPointTime: 0.5
+  pointDifferenceTime: 0.2
+  prePointTime: 0.2
+  pointChangeTime: 0.2
+  newPointTime: 0.2
   panelObject: {fileID: 7978028242526297111}
   pointText: {fileID: 7978028241329558626}
 --- !u!1 &7978028242526297111
