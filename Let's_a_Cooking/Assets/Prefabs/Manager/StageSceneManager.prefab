@@ -162,7 +162,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: e4e6277cc55c3ae4bb46a09b8f5547a8, type: 2}
   - {fileID: 2100000, guid: 668df4aacd03a194bb023e0a31a25d4c, type: 2}
   - {fileID: 2100000, guid: 33629dfd4a05354428803c5532c38dfd, type: 2}
-  - {fileID: 2100000, guid: c76b1265bb82a6b4baa7520ceb0dd208, type: 2}
+  - {fileID: 2100000, guid: 308e160934eba754590bace925427f21, type: 2}
   - {fileID: 2100000, guid: 31fc6947eb54419438736801343adb64, type: 2}
   - {fileID: 2100000, guid: c6ed38640616c69499a13ced75108178, type: 2}
   seasoningFoodMaterials:

@@ -354,16 +354,20 @@ namespace Cooking.Stage
                     foodStatus.PlayerAnimatioManage(true);
                     break;
                 case FoodType.Egg:
+                    foodStatus.PlayerAnimatioManage(true);
                     break;
                 case FoodType.Chicken:
+                    foodStatus.PlayerAnimatioManage(true);
                     break;
                 case FoodType.Sausage:
+                    foodStatus.PlayerAnimatioManage(true);
                     break;
                 default:
                     break;
             }
-            frontCam.LookAt = foodStatus.FoodPositionNotRotate.transform;
-            frontCam.Follow = foodStatus.FoodPositionNotRotate.transform;
+            foodStatus.CenterPoint.transform.position = foodStatus.transform.position;
+            frontCam.LookAt = foodStatus.CenterPoint.transform;
+            frontCam.Follow = foodStatus.CenterPoint.transform;
             EffectManager.Instance.InstantiateEffect(foodStatus.transform.position + new Vector3(0,1.5f,0), EffectManager.EffectPrefabID.Stars);
         }
     }

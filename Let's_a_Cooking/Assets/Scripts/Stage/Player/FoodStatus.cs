@@ -194,6 +194,7 @@ namespace Cooking.Stage
             get { return _onTowel; }
         }
         private bool _onTowel;
+        [SerializeField] Animator winnerAnimation;
         /// <summary>
         /// 自分のターン終了時、レイヤーを変更し他の食材のターゲット対象になる 自分のターン開始時デフォルトになることでレイの判定から外れる
         /// </summary>
@@ -308,7 +309,12 @@ namespace Cooking.Stage
         {
             //Debug.Log(GetActiveMaterial(foodType,food).color);
             //Debug.Log(GetActiveMaterial(foodType,food).color == StageSceneManager.Instance.FoodTextureList.seasoningMaterial.color);
-            
+            //見た目かわらないことがある
+            //if (IsSeasoningMaterial && GetActiveMaterial(foodType,food).color == Color.white)
+            //{
+            //    Debug.Log(46578);
+            //    ChangeMaterial(StageSceneManager.Instance.FoodTextureList.seasoningMaterial, foodType, food);
+            //}
             _foodPositionNotRotate.transform.position = this.transform.position;
             //自分のターンかつショット中
             if(TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex] == this  && ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode)
@@ -626,7 +632,6 @@ namespace Cooking.Stage
             SoundManager.Instance.PlaySE(SoundEffectID.food_jump1);
             float time = 0;
             SetFoodLayer(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodCollision]);
-            ShotManager.Instance.SetShotVector(_rigidbody.velocity, ShotManager.Instance.ShotPower);
             switch (foodType)
             {
                 case FoodType.Shrimp:
@@ -788,7 +793,7 @@ namespace Cooking.Stage
                         if (otherFood.IsSeasoningMaterial)
                         {
                             GetSeasoningPoint();
-                            ChangeMaterial(otherFood.GetActiveMaterial(foodType, food), foodType, food);
+                            ChangeFoodMaterial(StageSceneManager.Instance.FoodTextureList);
                             otherFood.LostMaterial(otherFood.FoodType, otherFood.OriginalFoodProperty, otherFood.PlayerPointProperty);
                         }
                     }
@@ -1225,6 +1230,12 @@ namespace Cooking.Stage
                 rareSeasoningEffect.transform.position = new Vector3(FoodPositionNotRotate.position.x, FoodPositionNotRotate.position.y + 1.5f, FoodPositionNotRotate.position.z);
                 rareSeasoningEffect.transform.parent = FoodPositionNotRotate.transform;
             }
+            ChangeFoodMaterial(textureList);
+            _gotSeasoning = seasoning;
+        }
+
+        private void ChangeFoodMaterial(FoodTextureList textureList)
+        {
             switch (foodType)
             {
                 case FoodType.Shrimp:
@@ -1242,7 +1253,6 @@ namespace Cooking.Stage
                 default:
                     break;
             }
-            _gotSeasoning = seasoning;
         }
 
         private void GetSeasoningPoint()
@@ -1335,14 +1345,32 @@ namespace Cooking.Stage
             switch (foodType)
             {
                 case FoodType.Shrimp:
-                    if (!food.shrimp.IsHeadFallOff)
+                    if (!food.shrimp.IsHeadFallOff || StageSceneManager.Instance.GameState == StageGameState.Finish)
                         food.shrimp.AnimationManage(isEnable);
                     break;
                 case FoodType.Egg:
+                    transform.eulerAngles = Vector3.zero;
+                    FreezeRotation();
+                    if (StageSceneManager.Instance.GameState == StageGameState.Finish)
+                    {
+                        winnerAnimation.enabled = true;
+                    }
                     break;
                 case FoodType.Chicken:
+                    transform.eulerAngles = Vector3.zero;
+                    FreezeRotation();
+                    if (StageSceneManager.Instance.GameState == StageGameState.Finish)
+                    {
+                        winnerAnimation.enabled = true;
+                    }
                     break;
                 case FoodType.Sausage:
+                    transform.eulerAngles = Vector3.zero;
+                    FreezeRotation();
+                    if (StageSceneManager.Instance.GameState == StageGameState.Finish)
+                    {
+                        winnerAnimation.enabled = true;
+                    }
                     break;
                 default:
                     break;

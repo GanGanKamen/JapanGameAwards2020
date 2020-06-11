@@ -495,6 +495,7 @@ namespace Cooking.Stage
                 case FoodType.Chicken:
                     if (!food.chicken.IsCut)
                     {
+                        Debug.Log(7898);
                         foreach (var knife in GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.Knife])
                         {
                             _targetObjectOptions.Add(knife);
@@ -546,7 +547,7 @@ namespace Cooking.Stage
                         break;
                 }
             }
-            //他の食材 自分が調味料を持っていないとき狙う AI同士で狙い続けるのは面白くないので、食材ごとに乱数生成
+            //他の食材 自分が調味料を持っていないとき狙う AI同士で狙い続けるのは面白くないので、食材ごとに乱数生成 さらに、レアを持つプレイヤーは積極的に狙う
             if (!IsSeasoningMaterial)
             {
                 foreach (var otherFood in TurnManager.Instance.FoodStatuses)

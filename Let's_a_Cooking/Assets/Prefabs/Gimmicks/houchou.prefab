@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3510828507853032097}
-  - component: {fileID: 9150311927137846380}
+  - component: {fileID: 4425565773856414697}
   m_Layer: 9
   m_Name: houchou
-  m_TagString: Knife
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -28,27 +28,23 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 30, y: 30, z: 30}
   m_Children:
-  - {fileID: 1925347404334050225}
   - {fileID: 1896587530393854858}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
---- !u!54 &9150311927137846380
-Rigidbody:
+--- !u!65 &4425565773856414697
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1960159951590540338}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
   serializedVersion: 2
-  m_Mass: 100
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
+  m_Size: {x: 0.07350112, y: 0.012902722, z: 0.0047996254}
+  m_Center: {x: -0.044153016, y: 0.006472919, z: 0}
 --- !u!1 &6828497871206183834
 GameObject:
   m_ObjectHideFlags: 0
@@ -58,7 +54,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1925347404334050225}
-  - component: {fileID: 5481194466664334830}
   - component: {fileID: 5688375638627841994}
   - component: {fileID: 1918740641837845906}
   m_Layer: 9
@@ -76,25 +71,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6828497871206183834}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.0331, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 3510828507853032097}
+  m_Father: {fileID: 1896587530393854858}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &5481194466664334830
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6828497871206183834}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.07350112, y: 0.012902722, z: 0.0047996254}
-  m_Center: {x: -0.044153016, y: 0.006472919, z: 0}
 --- !u!33 &5688375638627841994
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -155,9 +137,10 @@ GameObject:
   - component: {fileID: 8477277116545185874}
   - component: {fileID: 2629038121988085991}
   - component: {fileID: 9025745369363496901}
+  - component: {fileID: 2868187462410370405}
   m_Layer: 9
   m_Name: Knife
-  m_TagString: Untagged
+  m_TagString: Knife
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -172,9 +155,10 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.0331, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1925347404334050225}
   m_Father: {fileID: 3510828507853032097}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!65 &683118053109475655
 BoxCollider:
@@ -228,3 +212,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.0030122101, y: 0.005103131, z: 0.0059291134}
   m_Center: {x: 0.04500439, y: -0.00295775, z: -0.00056474394}
+--- !u!54 &2868187462410370405
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7184111853877749680}
+  serializedVersion: 2
+  m_Mass: 100
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0

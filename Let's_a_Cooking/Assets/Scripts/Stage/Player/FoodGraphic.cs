@@ -200,7 +200,7 @@ namespace Cooking.Stage
         /// </summary>
         public void ChangeMaterial(Material material, FoodType foodType, FoodStatus.Food food)
         {
-            if (material.color != Color.white)
+            //if (material.color != Color.white)
             {
                 _isSeasoningMaterial = true;
             }
@@ -290,7 +290,6 @@ namespace Cooking.Stage
                     break;
                 case FoodType.Sausage:
                     //既に見た目が変化している場合、変化しない
-                    if (_foodMeshRenderer != null)
                     {
                         if (food.sausage.IsCut)
                         {
@@ -306,9 +305,6 @@ namespace Cooking.Stage
                                 return;
                             }
                         }
-                    }
-                    else
-                    {
                         if (food.sausage.IsCut)
                         {
                             food.sausage.CutMeshRenderer[0].material = material;
