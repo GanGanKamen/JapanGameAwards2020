@@ -24,7 +24,11 @@ namespace Cooking.Stage
         {
             get
             {
-                var remainingTurns = StageSceneManager.Instance.TurnNumberOnGameEnd - _turnNumber + 1;
+                if (StageSceneManager.Instance == null)
+                {
+                    return 10;
+                }
+                var remainingTurns = StageSceneManager.Instance.TurnNumberOnGameEnd - _turnNumber;
                 if (remainingTurns > StageSceneManager.Instance.TurnNumberOnGameEnd)
                 {
                     return StageSceneManager.Instance.TurnNumberOnGameEnd;
@@ -208,6 +212,7 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
+            Debug.Log(RemainingTurns);
             if (Input.GetKeyDown(KeyCode.K))
             {
                 var playerNumber = GetPlayerNumberFromActivePlayerIndex(_activePlayerIndex) - 1;
@@ -434,6 +439,7 @@ namespace Cooking.Stage
                         //Destroy(_foodStatuses[_activePlayerIndex]);
                         //StageSceneManager.Instance.InitializePlayerData(_activePlayerIndex, _foodStatuses[_activePlayerIndex].FoodType, _isAITurn, StageSceneManager.Instance.AIShotRange[0]);//AIが複数いることは現状考えていない
                     }
+                    SoundManager.Instance.PlaySE(SoundEffectID.timeout);
                     StageSceneManager.Instance.GameEnd();
                     return AfterChangeTurnState.GameEnd;
                 }

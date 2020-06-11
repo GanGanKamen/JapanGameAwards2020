@@ -211,6 +211,7 @@ namespace Cooking.Stage
         }
         IEnumerator ShotButtonWait(ScreenState afterScreenState ,Button button)
         {
+            SoundManager.Instance.PlaySE(SoundEffectID.battle_start1);
             _uIManager.PlayModeUI.SetLinesActive(true);
             yield return new WaitForSeconds(_shotButtonWaitTime);
             _uIManager.ChangeUI(afterScreenState);

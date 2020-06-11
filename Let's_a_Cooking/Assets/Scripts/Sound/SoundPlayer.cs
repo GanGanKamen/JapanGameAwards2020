@@ -111,9 +111,9 @@ namespace Cooking
         /// </summary>
         /// <param name="clip"></param>
         /// <param name="position"></param>
-        public static void Play3DSEOneTime(AudioClip clip , Vector3 position)
+        public static void Play3DSEOneTime(AudioClip clip , Vector3 position,float volume)
         {
-            AudioSource.PlayClipAtPoint(clip, position);
+            AudioSource.PlayClipAtPoint(clip, position,volume);
         }
     }
 }

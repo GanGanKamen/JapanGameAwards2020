@@ -72,7 +72,7 @@ namespace Cooking.SelectStage
         {
             if(sceneName == SceneName.PlayScene)
             {
-                Fader.FadeInAndOut(0.8f, 1.4f, 0.8f);
+                Fader.FadeInAndOutBlack(0.8f, 1.4f, 0.8f);
                 yield return new WaitForSeconds(1.5f);
                 SceneChanger.LoadSelectingScene(SceneName.PlayScene);
             }

@@ -436,34 +436,37 @@ namespace Cooking.Stage
             //タオル
             if (GetComponent<PlayerPoint>().IsFirstTowel)
                 _targetObjectOptions.AddRange(GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.TowelAbovePoint]);
-            //調味料
-            switch (foodType)
+            //調味料 倍になるのはポイントがあるときのみ
+            if (playerPoint.Point > 100)
             {
-                case FoodType.Shrimp:
-                    if (!IsSeasoningMaterial)
-                    {
-                        foreach (var seasoning in GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.Seasoning])
+                switch (foodType)
+                {
+                    case FoodType.Shrimp:
+                        if (!IsSeasoningMaterial)
                         {
-                            //Debug.Log(seasoning.activeInHierarchy);
-                            //調味料は無い可能性あり   
-                            if (seasoning.activeInHierarchy)
+                            foreach (var seasoning in GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.Seasoning])
                             {
-                                _targetObjectOptions.Add(seasoning);
+                                //Debug.Log(seasoning.activeInHierarchy);
+                                //調味料は無い可能性あり   
+                                if (seasoning.activeInHierarchy)
+                                {
+                                    _targetObjectOptions.Add(seasoning);
+                                }
                             }
                         }
-                    }
-                    break;
-                case FoodType.Egg:
-                    SearchSeasoning();
-                    break;
-                case FoodType.Chicken:
-                    SearchSeasoning();
-                    break;
-                case FoodType.Sausage:
-                    SearchSeasoning();
-                    break;
-                default:
-                    break;
+                        break;
+                    case FoodType.Egg:
+                        SearchSeasoning();
+                        break;
+                    case FoodType.Chicken:
+                        SearchSeasoning();
+                        break;
+                    case FoodType.Sausage:
+                        SearchSeasoning();
+                        break;
+                    default:
+                        break;
+                }
             }
             //ナイフ
             switch (foodType)
@@ -533,16 +536,36 @@ namespace Cooking.Stage
                         break;
                 }
             }
-            //他の食材 自分が調味料を持っていないとき狙う
+            //他の食材 自分が調味料を持っていないとき狙う AI同士で狙い続けるのは面白くないので、食材ごとに乱数生成
             if (!IsSeasoningMaterial)
             {
                 foreach (var otherFood in TurnManager.Instance.FoodStatuses)
                 {
                     if (otherFood != this)
                     {
-                        if (!otherFood.IsFoodInStartArea && otherFood.IsSeasoningMaterial)
+                        int seed = Cooking.Random.GetRandomIntFromZero(10);
+                        //自分のポイントが高い時は高確率で狙う
+                        if (playerPoint.Point > 300)
                         {
-                            _targetObjectOptions.Add(otherFood.gameObject);
+                            //80%で狙う
+                            if (seed < 8)
+                            {
+                                if (!otherFood.IsFoodInStartArea && otherFood.IsSeasoningMaterial)
+                                {
+                                    _targetObjectOptions.Add(otherFood.gameObject);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            //50%で狙う
+                            if (seed < 5)
+                            {
+                                if (!otherFood.IsFoodInStartArea && otherFood.IsSeasoningMaterial)
+                                {
+                                    _targetObjectOptions.Add(otherFood.gameObject);
+                                }
+                            }
                         }
                     }
                 }
@@ -789,7 +812,21 @@ namespace Cooking.Stage
             newTarget = null;
             return Vector3.zero;
         }
-
+        Vector3 CompareShotVectors(Vector3 startPosition ,Vector3 targetPosition)
+        {
+            for (int i = Mathf.CeilToInt(ShotManager.Instance.ShotParameter.MinShotPower); i <= ShotManager.Instance.ShotParameter.MaxShotPower; i++)
+            {
+                //結果速度がspeedに入る 方向はXZだけ必ず同じ
+                var firstVectorDirection = CalculateVelocity(startPosition, targetPosition, i);
+                float directionY = Mathf.Sin(i * Mathf.Deg2Rad);
+                var newFirstVectorDirection = new Vector3(firstVectorDirection.x, directionY, firstVectorDirection.z);
+                if (Mathf.Abs(ShotManager.Instance.AICalculateMaxShotPowerVector(i, newFirstVectorDirection, speed).y - firstVectorDirection.y )< 0.1f)
+                {
+                    return ShotManager.Instance.AICalculateMaxShotPowerVector(i, newFirstVectorDirection, speed);
+                }
+            }
+            return Vector3.zero;
+        }
         /// <summary>
         /// 方向取得・初速も計算
         /// </summary>

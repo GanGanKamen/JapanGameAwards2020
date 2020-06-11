@@ -98,7 +98,7 @@ namespace Cooking.Stage
         {
             Finish,
             Score,
-            Retry
+            Title
         }
         /// <summary>
         /// FInishUIの状態管理
@@ -227,10 +227,11 @@ namespace Cooking.Stage
                         case FinishUIMode.Score:
                             if (TouchInput.GetTouchPhase() == TouchInfo.Down)
                             {
-                                _finishUIMode = FinishUIMode.Retry;
+                                _finishUIMode = FinishUIMode.Title;
+                                StartCoroutine(BackTitle());
                             }
                             break;
-                        case FinishUIMode.Retry:
+                        case FinishUIMode.Title:
                             break;
                         default:
                             break;
@@ -241,6 +242,14 @@ namespace Cooking.Stage
                 default:
                     break;
             }
+        }
+        IEnumerator BackTitle()
+        {
+            float changeTime = 1.2f;
+            Fader.FadeInAndOut(0.8f, 0.7f, 0.2f);
+            yield return new WaitForSeconds(changeTime);
+            SceneChanger.LoadSelectingScene(SceneName.Title);
+
         }
         /// <summary>
         /// ゲーム終了時の勝者番号を表示 by controller
@@ -255,6 +264,7 @@ namespace Cooking.Stage
         /// <param name="afterChangefinishUIMode"></param>
         private void ChangeFinishUI(FinishUIMode afterChangefinishUIMode)
         {
+            SoundManager.Instance.PlaySE(SoundEffectID.winner);
             _finishBackGroundImages[(int)_finishUIMode].SetActive(false);
             _finishUIMode = afterChangefinishUIMode;
             _finishBackGroundImages[(int)_finishUIMode].SetActive(true);

@@ -351,8 +351,7 @@ namespace Cooking.Stage
                                 break;
                             case UIManager.FinishUIMode.Score:
                                 break;
-                            case UIManager.FinishUIMode.Retry:
-                                SceneChanger.LoadSelectingScene(SceneName.Title);
+                            case UIManager.FinishUIMode.Title:
                                 break;
                             default:
                                 break;

@@ -152,9 +152,11 @@ namespace Cooking.Stage
                     DefaultPointCalculate(pointInformation.pointOperator, pointInformation.pointValue);
                     break;
                 case GetPointType.FallOffShrimpHead:
+                    SoundManager.Instance.PlaySE(SoundEffectID.shrimp_head);
                     DefaultPointCalculate(pointInformation.pointOperator, pointInformation.pointValue);
                     break;
                 case GetPointType.CutFood:
+                    SoundManager.Instance.PlaySE(SoundEffectID.knife_slash);
                     _canGetPointFlags[(int)GetPointOnTouch.Cut] = false;
                     DefaultPointCalculate(pointInformation.pointOperator, pointInformation.pointValue);
                     break;

@@ -20,9 +20,9 @@ namespace Cooking.Stage
     {
         public PlayerPoint PlayerPointProperty
         {
-            get { return _playerPoint; }
+            get { return playerPoint; }
         }
-        private PlayerPoint _playerPoint;
+        protected PlayerPoint playerPoint;
         /// <summary>
         /// この食材の種類
         /// </summary>
@@ -285,7 +285,7 @@ namespace Cooking.Stage
         private void OnEnable()
         {
             if (_rigidbody == null) _rigidbody = GetComponentInChildren<Rigidbody>();
-            _playerPoint = GetComponent<PlayerPoint>();
+            playerPoint = GetComponent<PlayerPoint>();
             _foodDefaultLayer = LayerMask.GetMask(LayerMask.LayerToName(this.gameObject.layer));
             SetFoodLayer(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodLayerInStartArea]);
             if (_isGroundedArea != null)
@@ -299,7 +299,7 @@ namespace Cooking.Stage
         protected override void Start()
         {
             base.Start();
-            var seasoning = GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.Seasoning][0].GetComponent<Seasoning>();
+            var seasoning = GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.Seasoning][0]?.GetComponent<Seasoning>();
             #if !UNITY_EDITOR
             _isGroundedArea.gameObject.GetComponent<MeshRenderer>().enabled = false;
             #endif
@@ -712,12 +712,12 @@ namespace Cooking.Stage
                     if (collision.gameObject.tag == TagList.Wall.ToString() && !food.shrimp.IsHeadFallOff)
                     {
                         food.shrimp.FallOffShrimpHead();
-                        _playerPoint.GetPoint(GetPointType.FallOffShrimpHead);
+                        playerPoint.GetPoint(GetPointType.FallOffShrimpHead);
                     }
                     else if (collision.gameObject.tag == TagList.Knife.ToString() && !food.shrimp.IsHeadFallOff)
                     {
                         food.shrimp.FallOffShrimpHead();
-                        _playerPoint.GetPoint(GetPointType.FallOffShrimpHead);
+                        playerPoint.GetPoint(GetPointType.FallOffShrimpHead);
                     }
                     break;
                 case FoodType.Egg:
@@ -745,7 +745,7 @@ namespace Cooking.Stage
                     {
                         ChangeMeshRendererCutFood(food.chicken.CutMeshRenderer, foodType);
                         food.chicken.CutChicken();
-                        _playerPoint.GetPoint(GetPointType.CutFood);
+                        playerPoint.GetPoint(GetPointType.CutFood);
                     }
                     break;
                 case FoodType.Sausage:
@@ -753,7 +753,7 @@ namespace Cooking.Stage
                     {
                         ChangeMeshRendererCutFood(food.sausage.CutMeshRenderer, foodType);
                         food.sausage.CutSausage();
-                        _playerPoint.GetPoint(GetPointType.CutFood);
+                        playerPoint.GetPoint(GetPointType.CutFood);
                     }
                     break;
                 default:
@@ -764,9 +764,9 @@ namespace Cooking.Stage
             #region//食材共通処理
             //=================
             //減点は現在ターン中一回
-            if (collision.gameObject.tag == TagList.DirtDish.ToString() && _playerPoint.CanGetPointFlags[(int)GetPointOnTouch.DirtDish])
+            if (collision.gameObject.tag == TagList.DirtDish.ToString() && playerPoint.CanGetPointFlags[(int)GetPointOnTouch.DirtDish])
             {
-                _playerPoint.GetPoint(GetPointType.TouchDirtDish);
+                playerPoint.GetPoint(GetPointType.TouchDirtDish);
             }
             var otherFood = collision.gameObject.GetComponent<FoodStatus>(); //相手は食材
             //自分のターンのみ
@@ -895,6 +895,10 @@ namespace Cooking.Stage
                         default:
                             break;
                     }
+                }
+                if (otherFood.addedForce)
+                {
+                    _rigidbody.velocity = Vector3.zero;
                 }
             }
             //自分のターンのみ有効
@@ -1137,9 +1141,9 @@ namespace Cooking.Stage
         {
             var textureList = StageSceneManager.Instance.FoodTextureList;
             //ポイント加算
-            if (other.tag == TagList.Towel.ToString() && _playerPoint.IsFirstTowel)
+            if (other.tag == TagList.Towel.ToString() && playerPoint.IsFirstTowel)
             {
-                _playerPoint.GetPoint(GetPointType.FirstTowelTouch);
+                playerPoint.GetPoint(GetPointType.FirstTowelTouch);
                 _onTowel = true;
             }
             if (other.tag == TagList.Finish.ToString() && !_isGoal)
@@ -1159,11 +1163,11 @@ namespace Cooking.Stage
             }
             else if (other.tag == TagList.Water.ToString())
             {
-                if (_playerPoint.IsFirstWash)
+                if (playerPoint.IsFirstWash)
                 {
-                    _playerPoint.GetPoint(GetPointType.FirstWash);
+                    playerPoint.GetPoint(GetPointType.FirstWash);
                 }
-                LostMaterial(foodType, food, _playerPoint);        
+                LostMaterial(foodType, food, playerPoint);        
             }
             else if (other.tag == TagList.Seasoning.ToString())
             {
@@ -1247,17 +1251,17 @@ namespace Cooking.Stage
                     //マテリアルが変わる前にポイント判定
                     if (foodSkinnedMeshRenderer[(int)ShrimpParts.Tail].material.mainTexture == StageSceneManager.Instance.FoodTextureList.normalTextures[(int)FoodType.Shrimp])
                     {
-                        _playerPoint.GetPoint(GetPointType.TouchSeasoning);
+                        playerPoint.GetPoint(GetPointType.TouchSeasoning);
                     }
                     break;
                 case FoodType.Egg:
-                    _playerPoint.GetPoint(GetPointType.TouchSeasoning);
+                    playerPoint.GetPoint(GetPointType.TouchSeasoning);
                     break;
                 case FoodType.Chicken:
-                    _playerPoint.GetPoint(GetPointType.TouchSeasoning);
+                    playerPoint.GetPoint(GetPointType.TouchSeasoning);
                     break;
                 case FoodType.Sausage:
-                    _playerPoint.GetPoint(GetPointType.TouchSeasoning);
+                    playerPoint.GetPoint(GetPointType.TouchSeasoning);
                     break;
                 default:
                     break;
@@ -1271,7 +1275,7 @@ namespace Cooking.Stage
         private void GetBubble(Bubble bubble)
         {
             EffectManager.Instance.InstantiateEffect(bubble.transform.position, EffectManager.EffectPrefabID.Foam_Break);
-            _playerPoint.GetPoint(GetPointType.TouchBubble);
+            playerPoint.GetPoint(GetPointType.TouchBubble);
             _gotBubbles.Add(bubble);
         }
         private void OnTriggerExit(Collider other)

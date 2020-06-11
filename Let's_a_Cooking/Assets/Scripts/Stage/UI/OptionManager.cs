@@ -35,6 +35,8 @@ namespace Cooking
         // Start is called before the first frame update
         void Start()
         {
+            turnManager = Cooking.Stage.TurnManager.Instance;
+            stageSceneManager = Stage.StageSceneManager.Instance;
             MenuInit();
             Button_Init();
             Setdefult();           
@@ -190,7 +192,7 @@ namespace Cooking
         private void TurnText()
         {
             if (turnManager == null) return;
-            var remainTurn = 10 - turnManager.TurnNumber;
+            var remainTurn = turnManager.RemainingTurns; //10 - turnManager.TurnNumber;
             switch (OptionParamater.language)
             {
                 case Language.Japanese:

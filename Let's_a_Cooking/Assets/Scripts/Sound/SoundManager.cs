@@ -81,6 +81,8 @@ namespace Cooking
             #endregion
             #region SEオーディオの登録→SEの数だけ用意
             var audioSourceParent = this.transform;
+            //1つにすることでゲームオブジェクトの数が少なくなるメリットがある
+            var obj = new GameObject("Sounds");
             for (var i = 0; i < _sEParameter.soundInformations.Length; ++i)
             {
                 var param = _sEParameter.soundInformations[i];
@@ -92,7 +94,6 @@ namespace Cooking
                 }
                 var mixer = Resources.Load<AudioMixerGroup>("Sounds/Audio/GameAudio");
                 var mixerGroup = mixer.audioMixer.FindMatchingGroups("Master/SE");
-                var obj = new GameObject("Sound_" + param.soundEffect.ToString());
                 var audioSource = obj.AddComponent<AudioSource>();
                 audioSource.clip = clip;
                 audioSource.loop = param.loop;
@@ -160,7 +161,7 @@ namespace Cooking
             {
                 SoundPlayer.PlaySE(_sEAudioSourcesList[(int)soundEffectID], _sEParameter.soundInformations[(int)soundEffectID]);
             }
-            SoundPlayer.Play3DSEOneTime(_sEAudioSourcesList[(int)soundEffectID].clip, position);
+            SoundPlayer.Play3DSEOneTime(_sEAudioSourcesList[(int)soundEffectID].clip, position, _sEAudioSourcesList[(int)soundEffectID].volume);
         }
         /// <summary>
         /// BGMAudioSourceにサウンドクリップをセット
