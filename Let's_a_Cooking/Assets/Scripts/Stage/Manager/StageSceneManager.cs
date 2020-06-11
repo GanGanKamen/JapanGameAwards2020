@@ -528,8 +528,22 @@ namespace Cooking.Stage
             _turnManager.SetFoodStatusValue(foodStatusIndex, playerStatus);
             //食材の種類を食材に渡す
             playerStatus.SetFoodTypeOnInitialize(playerFoodType);
+            Vector3 startPoint = Vector3.zero;
+            switch (_gameState)
+            {
+                case StageGameState.Preparation:
+                    startPoint = GetPlayerStartPoint(foodStatusIndex);
+                    break;
+                case StageGameState.Play:
+                    startPoint = GetPlayerStartPoint(_turnManager.GetPlayerNumberFromActivePlayerIndex(foodStatusIndex) - 1);
+                    break;
+                case StageGameState.Finish:
+                    break;
+                default:
+                    break;
+            }
             //Position初期化 スタート地点へ配置
-            _turnManager.ResetPlayerOnStartPoint(GetPlayerStartPoint(foodStatusIndex), foodStatusIndex);
+            _turnManager.ResetPlayerOnStartPoint(startPoint, foodStatusIndex);
             //親子関係初期化
             playerStatus.SetParentObject(_foodPositionsParent);
         }

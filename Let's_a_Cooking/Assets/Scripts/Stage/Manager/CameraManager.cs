@@ -292,6 +292,7 @@ namespace Cooking.Stage
                 case CameraMode.Top:
                     break;
                 case CameraMode.Front:
+                    if(TurnManager.Instance.IsAITurn)
                     frontCam.LookAt = TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].CenterPoint;
                     break;
                 case CameraMode.Side:
