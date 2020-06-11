@@ -70,11 +70,15 @@ namespace Cooking.Stage
             _instance = this;
         }
         #endregion
-
+        public void SetActive(bool isActive)
+        {
+            _predictShotPoint.SetActive(isActive);
+        }
         // Start is called before the first frame update
         void Start()
         {
             _predictShotPoint = Instantiate(_predictShotPointPrefab);
+            _predictShotPoint.SetActive(false);
             //割り切れる数字である想定。
             _displayCountOfpredictLines = Mathf.RoundToInt(_destroyTime / _predictTimeInterval);
         }
@@ -84,7 +88,8 @@ namespace Cooking.Stage
             if (!TurnManager.Instance.IsAITurn )
             {
                 var shotManager = ShotManager.Instance;
-                var maxShotSpeedVector = shotManager.CalculateMaxShotPowerVector();
+                //var maxShotSpeedVector = shotManager.CalculateMaxShotPowerVector();
+                var maxShotSpeedVector = shotManager.CalculateMaxSameVelocityMagnitudeShotPowerVector();
                 //予測線を管理。
                 switch (UIManager.Instance.MainUIStateProperty)
                 {
@@ -298,6 +303,7 @@ namespace Cooking.Stage
         /// </summary>
         public void DestroyPredictLine()
         {
+            SetActive(false);
             //生成しすぎる不具合に対応 06/06
             var childCount = _predictLinesParent.transform.childCount;
             for (int i = 0; i < childCount; i++)

@@ -206,7 +206,6 @@ namespace Cooking.Stage
         }
         private void InstantiateStage(int stageNumber)
         {
-            // ステージプレハブを読み込
             var stage = Resources.Load<GameObject>("Stages/Stage" + stageNumber.ToString());
             Instantiate(stage);
         }

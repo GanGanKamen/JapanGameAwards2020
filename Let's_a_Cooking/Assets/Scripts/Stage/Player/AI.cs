@@ -185,6 +185,11 @@ namespace Cooking.Stage
             float shotDirectionY;
             GameObject[] goalObject = StageSceneManager.Instance.Goal;
             float maxShotSpeed = ShotManager.Instance.ShotParameter.MaxShotPower;
+            if (goalObject == null)
+            {
+                Debug.Log("ゴールがない");
+                return;
+            }
             foreach (var goal in goalObject)
             {
                 //ゴールが到達可能かどうかの判定 1自分からゴールまでの方向ベクトルを取得し xz成分を抜き出す 2 y成分 sin(角度→ラジアン変換)を入れて標準化しなおすことで方向ベクトルを取得 3 最大ショットパワーでレイを飛ばし垂直方向の角度を変化させる 10~ 85
@@ -401,7 +406,7 @@ namespace Cooking.Stage
                     {
                         fallPoint.Add(fallPointGameObject.transform.position);
                         goalDistanceFromFallPoints.Add(Vector3.Distance(goal.transform.position, fallPointGameObject.transform.position));
-                        shotSpeedVectorList.Add(CompareShotVectors(groundPoint, targetPosition));//CalculateVelocity(groundPoint, fallPointGameObject.transform.position, verticalAngle)); //CompareShotVectors(groundPoint, targetPosition);
+                        shotSpeedVectorList.Add(CalculateVelocity(groundPoint, fallPointGameObject.transform.position, verticalAngle)); //CompareShotVectors(groundPoint, targetPosition);
                         shotSpeedList.Add(shotSpeed);
                     }
                     else if (fallPosition.y >= StageSceneManager.Instance.ChairYPosition)
@@ -428,9 +433,10 @@ namespace Cooking.Stage
                         if (seasoning.GetComponent<Seasoning>().RareEffect.activeInHierarchy)
                         {
                             _targetObjectOptions.Add(seasoning);
-                            return;
                         }
                     }
+                    DistanceInOrder();
+                    return;
                 }
             }
             //タオル
@@ -570,6 +576,12 @@ namespace Cooking.Stage
                     }
                 }
             }
+            // Debug.Log(_distances.Count);
+            DistanceInOrder();
+        }
+
+        private void DistanceInOrder()
+        {
             if (_targetObjectOptions.Count > 0)
             {
                 foreach (var targetObjectOption in _targetObjectOptions)
@@ -577,8 +589,6 @@ namespace Cooking.Stage
                     _distances.Add(Vector3.Distance(targetObjectOption.transform.position, this.transform.position));
                 }
             }
-
-            // Debug.Log(_distances.Count);
             if (_distances.Count > 0)
             {
                 //並び替える
@@ -674,7 +684,7 @@ namespace Cooking.Stage
                 {
                     //角度減少で検索
                     throwingAngle = ShotManager.Instance.ShotParameter.LimitVerticalMaxAngle - i;//重いので1度刻み
-                    direction = CompareShotVectors(groundPoint, targetPosition);// CalculateVelocity(groundPoint, targetPosition, throwingAngle);//CompareShotVectors(groundPoint, targetPosition);
+                    direction = CalculateVelocity(groundPoint, targetPosition, throwingAngle);//CompareShotVectors(groundPoint, targetPosition);
                     //速度の大きさが許容範囲を超えていたらだめ
                     if (speed > ShotManager.Instance.ShotParameter.MaxShotPower)
                     {
@@ -698,7 +708,7 @@ namespace Cooking.Stage
                 {
                     //まずは角度を上昇
                     throwingAngle = 45 + i;//重いので1度刻み
-                    direction = CompareShotVectors(groundPoint, targetPosition);//CalculateVelocity(groundPoint, targetPosition, throwingAngle);//CompareShotVectors(groundPoint, targetPosition);
+                    direction = CalculateVelocity(groundPoint, targetPosition, throwingAngle);//CompareShotVectors(groundPoint, targetPosition);
                     //速度の大きさが許容範囲を超えていたらだめ
                     if (speed > ShotManager.Instance.ShotParameter.MaxShotPower)
                     {
@@ -719,7 +729,7 @@ namespace Cooking.Stage
             {
                 //次に減少
                 throwingAngle = 45 - i;
-                direction = CompareShotVectors(groundPoint, targetPosition);// CalculateVelocity(groundPoint, targetPosition, throwingAngle);//CompareShotVectors(groundPoint, targetPosition);
+                direction = CalculateVelocity(groundPoint, targetPosition, throwingAngle);//CompareShotVectors(groundPoint, targetPosition);
                 //速度の大きさが許容範囲を超えていたらだめ
                 if (speed > ShotManager.Instance.ShotParameter.MaxShotPower)
                 {
@@ -737,7 +747,7 @@ namespace Cooking.Stage
             Debug.Log("見つからない");
             //_ignoreObjects.Add(targetObject);
             //仮のショット決定                                                          //VerticalAngle
-            _shotDirection = CompareShotVectors(groundPoint, targetPosition); //CalculateVelocity(this.transform.position, targetPosition, 60);//CompareShotVectors(groundPoint, targetPosition);
+            _shotDirection = CalculateVelocity(this.transform.position, targetPosition, 60);//CompareShotVectors(groundPoint, targetPosition);
             return false;
         }
 
@@ -818,22 +828,22 @@ namespace Cooking.Stage
         /// <param name="startPosition"></param>
         /// <param name="targetPosition"></param>
         /// <returns></returns>
-        Vector3 CompareShotVectors(Vector3 startPosition ,Vector3 targetPosition)
-        {
-            for (int i = Mathf.CeilToInt(ShotManager.Instance.ShotParameter.MinShotPower); i <= ShotManager.Instance.ShotParameter.MaxShotPower; i++)
-            {
-                //計算結果の速度がspeedに入る 方向はXZだけ必ず同じ
-                var firstVectorDirection = CalculateVelocity(startPosition, targetPosition, i);
-                float directionY = Mathf.Sin(i * Mathf.Deg2Rad);
-                var newFirstVectorDirection = new Vector3(firstVectorDirection.x, directionY, firstVectorDirection.z);
-                //floatを考慮
-                if (Mathf.Abs(ShotManager.Instance.AICalculateMaxShotPowerVector(i, newFirstVectorDirection, speed).y - firstVectorDirection.y )< 0.1f)
-                {
-                    return ShotManager.Instance.AICalculateMaxShotPowerVector(i, newFirstVectorDirection, speed);
-                }
-            }
-            return Vector3.zero;
-        }
+        //Vector3 CompareShotVectors(Vector3 startPosition ,Vector3 targetPosition)
+        //{
+        //    for (int i = Mathf.CeilToInt(ShotManager.Instance.ShotParameter.MinShotPower); i <= ShotManager.Instance.ShotParameter.MaxShotPower; i++)
+        //    {
+        //        //計算結果の速度がspeedに入る 方向はXZだけ必ず同じ
+        //        var firstVectorDirection = CalculateVelocity(startPosition, targetPosition, i);
+        //        float directionY = Mathf.Sin(i * Mathf.Deg2Rad);
+        //        var newFirstVectorDirection = new Vector3(firstVectorDirection.x, directionY, firstVectorDirection.z);
+        //        //floatを考慮
+        //        if (Mathf.Abs(ShotManager.Instance.AICalculateMaxShotPowerVector(i, newFirstVectorDirection, speed).y - firstVectorDirection.y )< 0.1f)
+        //        {
+        //            return ShotManager.Instance.AICalculateMaxShotPowerVector(i, newFirstVectorDirection, speed);
+        //        }
+        //    }
+        //    return Vector3.zero;
+        //}
         /// <summary>
         /// 方向取得・初速も計算
         /// </summary>

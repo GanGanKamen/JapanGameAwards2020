@@ -541,6 +541,8 @@ namespace Cooking.Stage
             ShotManager.Instance.SetShotManager(_foodStatuses[activePlayerIndex].Rigidbody);
             CameraManager.Instance.SetCameraMoveCenterPosition(_foodStatuses[activePlayerIndex].transform.position);
             PredictLineManager.Instance.SetActivePredictShotPoint(!_isAITurn);
+            if(!_isAITurn)
+            PredictLineManager.Instance.SetActive(true);
         }
         /// <summary>
         /// 異常落下にも呼ばれる アニメーション再生中などショット前プレイヤー落下時にsceneManagerに呼ばれる + 初期化時

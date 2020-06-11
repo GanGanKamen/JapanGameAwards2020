@@ -203,29 +203,27 @@ namespace Cooking
             
         }
 
-        private void TurnText()
+        public string TurnText()
         {
-            if (turnManager == null) return;
+            if (turnManager == null) return "仕上がりは" + 10.ToString() + "ターン後";
             var remainTurn = turnManager.RemainingTurns; //10 - turnManager.TurnNumber;
             switch (OptionParamater.language)
             {
                 case Language.Japanese:
-                    turnText.text = "仕上がりは" + remainTurn.ToString() + "ターン後"; 
-                    break;
+                    return turnText.text = "仕上がりは" + remainTurn.ToString() + "ターン後"; 
                 case Language.English:
                     if(remainTurn > 1)
                     {
-                        turnText.text = remainTurn.ToString() + "Turns Until The Finish";
+                       return turnText.text = remainTurn.ToString() + "Turns Until The Finish";
                     }
                     else
                     {
-                        turnText.text = remainTurn.ToString() + "Turn Until The Finish";
+                       return turnText.text = remainTurn.ToString() + "Turn Until The Finish";
                     }
-                    break;
                 case Language.Chinese:
-                    turnText.text = remainTurn.ToString() + "回合後結束";
-                    break;
+                    return turnText.text = remainTurn.ToString() + "回合後結束";
             }
+            return "仕上がりは" + 10.ToString() + "ターン後";
         }
 
         private void PlayerPointText()

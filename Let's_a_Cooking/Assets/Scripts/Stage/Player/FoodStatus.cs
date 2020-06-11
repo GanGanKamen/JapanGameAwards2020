@@ -732,7 +732,7 @@ namespace Cooking.Stage
                                 food.egg.EggBreak();
                             }
                             //ひびが入る ショット中の最初の衝突 調味料がついていないとき
-                            else
+                            else if(!IsSeasoningMaterial)
                             {
                                 food.egg.EggCollide(IsSeasoningMaterial);
                                 ChangeNormalEggGraphic(food.egg.BreakMaterials[1]);
@@ -842,11 +842,12 @@ namespace Cooking.Stage
             if (otherFood != null)
             {
                 //自分がアクティブではないとき、相手が食材ならぶっ飛ばされる
-                if (TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex] != this && !_onTowel)
+                if (TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex] != this )
                 {
                     switch (foodType)
                     {
                         case FoodType.Shrimp:
+                            if (!_onTowel)
                             {
                                 var otherFoodVelocity = DecideAddForceAngle(otherFood);
                                 var collisionForceVector = new Vector3(otherFoodVelocity.x, 0, otherFoodVelocity.z).normalized;
@@ -864,12 +865,13 @@ namespace Cooking.Stage
                                 var collisionForceVector = new Vector3(otherFoodVelocity.x, 0, otherFoodVelocity.z).normalized;
                                 if (!addedForce)
                                 {
-                                    StartCoroutine(AddForce(collisionForceVector * ShotManager.Instance.ShotPower * 0.1f));//調整中
+                                    StartCoroutine(AddForce(collisionForceVector * ShotManager.Instance.ShotPower * 0.02f));//調整中
                                     Debug.Log("強くぶっとばす");
                                 }
                             }
                             break;
                         case FoodType.Chicken:
+                            if (!_onTowel)
                             {
                                 var otherFoodVelocity = DecideAddForceAngle(otherFood);
                                 var collisionForceVector = new Vector3(otherFoodVelocity.x, 0, otherFoodVelocity.z).normalized;

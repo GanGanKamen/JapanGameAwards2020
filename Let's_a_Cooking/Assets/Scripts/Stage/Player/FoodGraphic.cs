@@ -198,12 +198,13 @@ namespace Cooking.Stage
         /// <summary>
         /// マテリアルを指定した共通のものに変更 変更後のマテリアルを指定する
         /// </summary>
-        protected void ChangeMaterial(Material material, FoodType foodType, FoodStatus.Food food)
+        public void ChangeMaterial(Material material, FoodType foodType, FoodStatus.Food food)
         {
             if (material.color != Color.white)
             {
                 _isSeasoningMaterial = true;
             }
+
             switch (foodType)
             {
                 case FoodType.Shrimp:
@@ -235,16 +236,19 @@ namespace Cooking.Stage
                     break;
                 case FoodType.Egg:
                     //既に見た目が変化している場合、変化しない
-                    if (_foodMeshRenderer != null)
                     {
-                        if (_foodMeshRenderer.material == material)
+                        if (food.egg.HasBroken)
                         {
-                            return;
+                            if (food.egg.InsideMeshRenderer.material.mainTexture == material.mainTexture)
+                                return;
                         }
-                    }
-                    else
-                    {
-                        _isSeasoningMaterial = true;
+                        else
+                        {
+                            if (_foodMeshRenderer.material.mainTexture == material.mainTexture)
+                            {
+                                return;
+                            }
+                        }
                         if (food.egg.HasBroken)
                         {
                             food.egg.InsideMeshRenderer.material = material;
@@ -257,14 +261,22 @@ namespace Cooking.Stage
                     break;
                 case FoodType.Chicken:
                     //既に見た目が変化している場合、変化しない
-                    if (_foodMeshRenderer != null)
                     {
-                        if (_foodMeshRenderer.material == material)
+                        if (food.chicken.IsCut)
                         {
-                            return;
+                            if (food.chicken.CutMeshRenderer[0].material.mainTexture == material.mainTexture)
+                            {
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            if (_foodMeshRenderer.material.mainTexture == material.mainTexture)
+                            {
+                                return;
+                            }
                         }
                     }
-                    else
                     {
                         if (food.chicken.IsCut)
                         {
@@ -280,16 +292,26 @@ namespace Cooking.Stage
                     //既に見た目が変化している場合、変化しない
                     if (_foodMeshRenderer != null)
                     {
-                        if (_foodMeshRenderer.material == material)
+                        if (food.sausage.IsCut)
                         {
-                            return;
+                            if (food.sausage.CutMeshRenderer[0].material.mainTexture == material.mainTexture)
+                            {
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            if (_foodMeshRenderer.material.mainTexture == material.mainTexture)
+                            {
+                                return;
+                            }
                         }
                     }
                     else
                     {
                         if (food.sausage.IsCut)
                         {
-                            food.chicken.CutMeshRenderer[0].material = material;
+                            food.sausage.CutMeshRenderer[0].material = material;
                         }
                         else
                         {

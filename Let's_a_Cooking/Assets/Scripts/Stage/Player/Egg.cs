@@ -106,6 +106,12 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
+            var food = GetComponent<FoodStatus>();
+
+            //if (food.IsSeasoningMaterial)
+            //{
+            //    food.ChangeMaterial(StageSceneManager.Instance.FoodTextureList.seasoningMaterial, food.FoodType, food.OriginalFoodProperty);
+            //}
 
         }
     }

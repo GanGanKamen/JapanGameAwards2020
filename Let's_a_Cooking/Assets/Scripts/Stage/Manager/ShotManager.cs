@@ -337,8 +337,8 @@ namespace Cooking.Stage
             EffectManager.Instance.InstantiateEffect(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].transform.position, EffectManager.EffectPrefabID.Food_Jump);
             CameraManager.Instance.SetCameraPositionNearPlayer();
             ChangeShotState(ShotState.ShottingMode);
-            Shot(transform.forward);
-            //SameVelocityMagnitudeShot(transform.forward);
+            //Shot(transform.forward);
+            SameVelocityMagnitudeShot(transform.forward);
         }
         /// <summary>
         /// 力の分解をした発射処理
@@ -384,18 +384,18 @@ namespace Cooking.Stage
             //Debug.Log(direction);
             return initialSpeedVector;
         }
-        public Vector3 AICalculateMaxShotPowerVector(float verticalAngle, Vector3 direction, float shotPower)
-        {
-            if (transform.eulerAngles.x < 10)
-            {
-                verticalAngle = 10;
-            }
-            var horizontalPower = Mathf.Cos(Mathf.Deg2Rad * verticalAngle) * shotPower;
-            var verticalPower = Mathf.Sin(Mathf.Deg2Rad * verticalAngle) * shotPower + shotPower / 2;
-            var initialSpeedVector = new Vector3(direction.x * horizontalPower, direction.y * verticalPower, direction.z * horizontalPower);
-            //Debug.Log(direction);
-            return initialSpeedVector;
-        }
+        //public Vector3 AICalculateMaxShotPowerVector(float verticalAngle, Vector3 direction, float shotPower)
+        //{
+        //    if (transform.eulerAngles.x < 10)
+        //    {
+        //        verticalAngle = 10;
+        //    }
+        //    var horizontalPower = Mathf.Cos(Mathf.Deg2Rad * verticalAngle) * shotPower;
+        //    var verticalPower = Mathf.Sin(Mathf.Deg2Rad * verticalAngle) * shotPower + shotPower / 2;
+        //    var initialSpeedVector = new Vector3(direction.x * horizontalPower, direction.y * verticalPower, direction.z * horizontalPower);
+        //    //Debug.Log(direction);
+        //    return initialSpeedVector;
+        //}
         /// <summary>
         /// 最大パワーによる初速度ベクトルを算出 速度ベクトルが均一な発射処理
         /// </summary>

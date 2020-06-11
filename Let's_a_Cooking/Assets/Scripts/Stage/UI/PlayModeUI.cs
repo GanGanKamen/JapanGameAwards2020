@@ -245,9 +245,12 @@ namespace Cooking.Stage
         /// </summary>
         public void SetRemainingTurnsUIInformation(int remainingTurns)
         {
-            StartCoroutine(RemainingTurnBackGroundImage());
-            _remainingTurnsNumber.text = remainingTurns.ToString();
-            for (int playerIndex = 0; playerIndex < StageSceneManager.Instance.PlayerPointList.Length; playerIndex++)
+            if (remainingTurns < 2)
+            {
+                StartCoroutine(RemainingTurnBackGroundImage());
+            }
+            _remainingTurnsNumber.text = OptionManager.OptionManagerProperty.TurnText();
+            for (int playerIndex = 0; playerIndex < _playerPoints.Length; playerIndex++)
             {
                 _playerPoints[playerIndex].text = StageSceneManager.Instance.GetPlayerPoint(playerIndex).ToString();
             }
