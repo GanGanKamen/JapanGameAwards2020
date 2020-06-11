@@ -24,6 +24,9 @@ namespace Cooking
         [SerializeField] private Button engButton;
         [SerializeField] private Button chnButton;
 
+        [SerializeField] private Button staffButton;
+        [SerializeField] private Button staffWindow;
+
         [SerializeField] private AudioClip openAudio;
         [SerializeField] private AudioClip closeAudio;
         [SerializeField] private AudioClip buttonAudio;
@@ -109,6 +112,8 @@ namespace Cooking
             jpnButton.onClick.AddListener(() => LanguageSwitch(0));
             engButton.onClick.AddListener(() => LanguageSwitch(1));
             chnButton.onClick.AddListener(() => LanguageSwitch(2));
+            if (staffButton != null) staffButton.onClick.AddListener(() => StaffWindowOpen());
+            if (staffWindow != null) staffWindow.onClick.AddListener(() => StaffWindowClose());
         }
 
         private void BackToTitle()
@@ -232,6 +237,23 @@ namespace Cooking
                 playersPoints[i] = stageSceneManager.GetPlayerPoint(i);
                 pointTexts[i].text = playersPoints[i].ToString();
             }
+        }
+
+        private void StaffWindowOpen()
+        {
+            if (staffWindow == null) return;
+            staffWindow.gameObject.SetActive(true);
+            staffButton.gameObject.SetActive(false);
+            menuWindowCloseNutton.gameObject.SetActive(false);
+            audioSource.PlayOneShot(openAudio);
+        }
+
+        private void StaffWindowClose()
+        {
+            staffWindow.gameObject.SetActive(false);
+            staffButton.gameObject.SetActive(true);
+            menuWindowCloseNutton.gameObject.SetActive(true);
+            audioSource.PlayOneShot(closeAudio);
         }
     }
 
