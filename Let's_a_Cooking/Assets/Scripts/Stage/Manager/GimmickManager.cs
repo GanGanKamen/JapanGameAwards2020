@@ -208,9 +208,15 @@ namespace Cooking.Stage
         }
         public void AppearRareSeasoning()
         {
-            foreach (var seasoning in _targetObjectsForAI[(int)AITargetObjectTags.Seasoning])
+            foreach (var seasoningObject in _targetObjectsForAI[(int)AITargetObjectTags.Seasoning])
             {
-                seasoning.GetComponent<Seasoning>().ManageRareSeasoning(true);
+                var seasoning = seasoningObject.GetComponent<Seasoning>();
+                //オフになっていたらオンにする
+                if (seasoning.IsEmittingStopped)
+                {
+                    seasoning.ManageSeasoningActive(true);
+                }
+                seasoning.ManageRareSeasoning(true);
             }
         }
         /// <summary>

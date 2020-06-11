@@ -43,6 +43,7 @@ namespace Cooking.Stage
         /// ターンが残り少なくなりレア調味料が出現する際にカメラが切り替わる
         /// </summary>
         [SerializeField] private GameObject _rareSeasoningCamera = null;
+        [SerializeField] private Transform _cameraMovePoint = null;
         // Start is called before the first frame update
         void Start()
         {
@@ -61,6 +62,20 @@ namespace Cooking.Stage
         public void SetActiveRareSeasoningCamera(bool isActive)
         {
             _rareSeasoningCamera.SetActive(isActive);
+            if (isActive)
+            {
+                StartCoroutine(CameraTranslate());
+            }
+        }
+        IEnumerator CameraTranslate()
+        {
+            var vector = _cameraMovePoint.position - _rareSeasoningCamera.transform.position;
+            while (vector .magnitude >= 0.01f)
+            {
+                var delta = (vector) * Time.deltaTime;
+                _rareSeasoningCamera.transform.Translate(delta);
+                yield return null;
+            }
         }
         /// <summary>
         /// レア調味料エフェクトの出現・消滅を行う

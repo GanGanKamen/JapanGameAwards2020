@@ -270,12 +270,14 @@ namespace Cooking.Stage
         /// <returns></returns>
         IEnumerator TurnChangeAppearRareSeasoning(List<Seasoning> rareSeasonings)
         {
-            float appearCameraTime = 2.5f;
+            float appearCameraTime = 3f;
             for (int i = 0; i < rareSeasonings.Count; i++)
             {
                 //カメラ演出の再生
+                rareSeasonings[i].SetActiveRareSeasoningCamera(true);
                 Debug.Log("レア調味料出現");
                 yield return new WaitForSeconds(appearCameraTime);
+                rareSeasonings[i].SetActiveRareSeasoningCamera(false);
             }
             ChangeTurnOrDisplayFallUI();
         }
