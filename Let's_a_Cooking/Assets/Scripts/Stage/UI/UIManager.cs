@@ -246,7 +246,7 @@ namespace Cooking.Stage
         IEnumerator BackTitle()
         {
             float changeTime = 1.2f;
-            Fader.FadeInAndOut(0.8f, 0.7f, 0.2f);
+            Fader.FadeInAndOutBlack(0.8f, 0.7f, 0.2f);
             yield return new WaitForSeconds(changeTime);
             SceneChanger.LoadSelectingScene(SceneName.Title);
 
