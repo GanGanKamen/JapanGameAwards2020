@@ -281,6 +281,21 @@ namespace Cooking.Stage
             }
             ChangeTurnOrDisplayFallUI();
         }
+        /// <summary>
+        /// 残りターンを表示するUIの出現
+        /// </summary>
+        /// <returns></returns>
+        IEnumerator TurnChangeUI()
+        {
+            float turnChangeTime = 3f;
+            UIManager.Instance.PlayModeUI.SetRemainingTurnsUIInformation(RemainingTurns);
+            UIManager.Instance.DisplayChangeTurnUI(true);
+            StageSceneManager.Instance.GoalCameraSetActive(true);
+            yield return new WaitForSeconds(turnChangeTime);
+            UIManager.Instance.DisplayChangeTurnUI(false);
+            JudgeAppearRareSeasoning();
+            StageSceneManager.Instance.GoalCameraSetActive(false);
+        }
 
         /// <summary>
         /// 落下したプレイヤーのターンになった時の処理
@@ -334,12 +349,10 @@ namespace Cooking.Stage
                         }
                         else if (_foodStatuses[_activePlayerIndex].IsGoal)
                         {
-                            StageSceneManager.Instance.AddPlayerPointToList(_activePlayerIndex);
-                            //FoodStatusを取り除いて処理量を減らす
-                            Destroy(_foodStatuses[_activePlayerIndex]);
-                            StageSceneManager.Instance.InitializePlayerData(_activePlayerIndex, _foodStatuses[_activePlayerIndex].FoodType, _isAITurn, StageSceneManager.Instance.AIShotRange[0]);//AIが複数いて難易度が違うことは現状考えていない
+                            FoodGoal();
                         }
-                        _foodStatuses[_activePlayerIndex].ChangeFoodLayer(false);
+                        if (!_foodStatuses[_activePlayerIndex].IsStart)
+                            _foodStatuses[_activePlayerIndex].ChangeFoodLayer(false);
                         //次のプレイヤーに順番を回す
                         _activePlayerIndex++;
                         UpdateGimmickObjects();
@@ -348,51 +361,33 @@ namespace Cooking.Stage
                         {
                             case AfterChangeTurnState.NotChange:
                                 //吹っ飛ばされた結果ゴールの中にいる場合 ポイント加算
-                                //if (_foodStatuses[_activePlayerIndex].IsGoal)
+                                if (_foodStatuses[_activePlayerIndex].IsGoal)
                                 {
-                                    //StageSceneManager.Instance.AddPlayerPointToList(_activePlayerIndex);
-                                    //FoodStatusを取り除いて処理量を減らす
-                                    //Destroy(_foodStatuses[_activePlayerIndex]);
-                                    //StageSceneManager.Instance.InitializePlayerData(_activePlayerIndex, _foodStatuses[_activePlayerIndex].FoodType, _isAITurn, StageSceneManager.Instance.AIShotRange[0]);//AIが複数いることは現状考えていない
+                                    FoodGoal();
                                 }
+                                ChangeTurnOrDisplayFallUI();
                                 break;
                             case AfterChangeTurnState.Change:
                                 _activePlayerIndex = 0;
                                 _turnNumber++;
                                 //吹っ飛ばされた結果ゴールの中にいる場合 ポイント加算
-                                //if (_foodStatuses[_activePlayerIndex].IsGoal) indexのリセットは子の後ろなので、ここではエラー
+                                if (_foodStatuses[_activePlayerIndex].IsGoal) //indexのリセットは子の後ろなので、ここではエラー
                                 {
-                                    //StageSceneManager.Instance.AddPlayerPointToList(_activePlayerIndex);
-                                    //FoodStatusを取り除いて処理量を減らす
-                                    //Destroy(_foodStatuses[_activePlayerIndex]);
-                                    //StageSceneManager.Instance.InitializePlayerData(_activePlayerIndex, _foodStatuses[_activePlayerIndex].FoodType, _isAITurn, StageSceneManager.Instance.AIShotRange[0]);//AIが複数いることは現状考えていない
+                                    FoodGoal();
                                 }
+                                StartCoroutine(TurnChangeUI());
                                 break;
                             case AfterChangeTurnState.GameEnd:
+                                //吹っ飛ばされた結果ゴールの中にいる場合 ポイント加算
+                                if (_foodStatuses[_foodStatuses.Length - 1].IsGoal) //最後のプレイヤー
+                                {
+                                    FoodGoal();
+                                }
                                 _activePlayerIndex = 0;
                                 //処理終了
                                 return;
                             default:
                                 break;
-                        }
-                        //残り3ターンかつ、最初のプレイヤーの時に演出再生してレア調味料発生
-                        if (_activePlayerIndex == 0 && StageSceneManager.Instance.TurnNumberOnGameEnd - _turnNumber == 2)//ラスト3ターン
-                        {
-                            GimmickManager.Instance.AppearRareSeasoning();
-                            List<Seasoning> rareSeasonings = new List<Seasoning>();
-                            foreach (var seasoningObj in GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.Seasoning])
-                            {
-                                var seasoning = seasoningObj.GetComponent<Seasoning>();
-                                if (seasoning.RareEffect.activeInHierarchy)
-                                {
-                                    rareSeasonings.Add(seasoning);
-                                }
-                            }
-                            StartCoroutine(TurnChangeAppearRareSeasoning(rareSeasonings));
-                        }
-                        else
-                        {
-                            ChangeTurnOrDisplayFallUI();
                         }
                     }
                     break;
@@ -400,6 +395,40 @@ namespace Cooking.Stage
                     break;
                 default:
                     break;
+            }
+        }
+
+        private void FoodGoal()
+        {
+            StageSceneManager.Instance.AddPlayerPointToList(_activePlayerIndex);
+            //FoodStatusを取り除いて処理量を減らす
+            Destroy(_foodStatuses[_activePlayerIndex]);
+            StageSceneManager.Instance.InitializePlayerData(_activePlayerIndex, _foodStatuses[_activePlayerIndex].FoodType, _isAITurn, StageSceneManager.Instance.AIShotRange[0]);//AIが複数いて難易度が違うことは現状考えていない
+        }
+
+        /// <summary>
+        /// レア調味料出現をさせるか判断
+        /// </summary>
+        private void JudgeAppearRareSeasoning()
+        {
+            //残り3ターンかつ、最初のプレイヤーの時に演出再生してレア調味料発生
+            if (_activePlayerIndex == 0 && StageSceneManager.Instance.TurnNumberOnGameEnd - _turnNumber == 2)//ラスト3ターン
+            {
+                GimmickManager.Instance.AppearRareSeasoning();
+                List<Seasoning> rareSeasonings = new List<Seasoning>();
+                foreach (var seasoningObj in GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.Seasoning])
+                {
+                    var seasoning = seasoningObj.GetComponent<Seasoning>();
+                    if (seasoning.RareEffect.activeInHierarchy)
+                    {
+                        rareSeasonings.Add(seasoning);
+                    }
+                }
+                StartCoroutine(TurnChangeAppearRareSeasoning(rareSeasonings));
+            }
+            else
+            {
+                ChangeTurnOrDisplayFallUI();
             }
         }
 

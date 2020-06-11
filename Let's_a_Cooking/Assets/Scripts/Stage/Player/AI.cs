@@ -401,7 +401,7 @@ namespace Cooking.Stage
                     {
                         fallPoint.Add(fallPointGameObject.transform.position);
                         goalDistanceFromFallPoints.Add(Vector3.Distance(goal.transform.position, fallPointGameObject.transform.position));
-                        shotSpeedVectorList.Add(CalculateVelocity(groundPoint, fallPointGameObject.transform.position, verticalAngle)); //CompareShotVectors(groundPoint, targetPosition);
+                        shotSpeedVectorList.Add(CompareShotVectors(groundPoint, targetPosition));//CalculateVelocity(groundPoint, fallPointGameObject.transform.position, verticalAngle)); //CompareShotVectors(groundPoint, targetPosition);
                         shotSpeedList.Add(shotSpeed);
                     }
                     else if (fallPosition.y >= StageSceneManager.Instance.ChairYPosition)
@@ -674,7 +674,7 @@ namespace Cooking.Stage
                 {
                     //角度減少で検索
                     throwingAngle = ShotManager.Instance.ShotParameter.LimitVerticalMaxAngle - i;//重いので1度刻み
-                    direction = CalculateVelocity(groundPoint, targetPosition, throwingAngle);//CompareShotVectors(groundPoint, targetPosition);
+                    direction = CompareShotVectors(groundPoint, targetPosition);// CalculateVelocity(groundPoint, targetPosition, throwingAngle);//CompareShotVectors(groundPoint, targetPosition);
                     //速度の大きさが許容範囲を超えていたらだめ
                     if (speed > ShotManager.Instance.ShotParameter.MaxShotPower)
                     {
@@ -698,7 +698,7 @@ namespace Cooking.Stage
                 {
                     //まずは角度を上昇
                     throwingAngle = 45 + i;//重いので1度刻み
-                    direction = CalculateVelocity(groundPoint, targetPosition, throwingAngle);//CompareShotVectors(groundPoint, targetPosition);
+                    direction = CompareShotVectors(groundPoint, targetPosition);//CalculateVelocity(groundPoint, targetPosition, throwingAngle);//CompareShotVectors(groundPoint, targetPosition);
                     //速度の大きさが許容範囲を超えていたらだめ
                     if (speed > ShotManager.Instance.ShotParameter.MaxShotPower)
                     {
@@ -719,7 +719,7 @@ namespace Cooking.Stage
             {
                 //次に減少
                 throwingAngle = 45 - i;
-                direction = CalculateVelocity(groundPoint, targetPosition, throwingAngle);//CompareShotVectors(groundPoint, targetPosition);
+                direction = CompareShotVectors(groundPoint, targetPosition);// CalculateVelocity(groundPoint, targetPosition, throwingAngle);//CompareShotVectors(groundPoint, targetPosition);
                 //速度の大きさが許容範囲を超えていたらだめ
                 if (speed > ShotManager.Instance.ShotParameter.MaxShotPower)
                 {
@@ -737,7 +737,7 @@ namespace Cooking.Stage
             Debug.Log("見つからない");
             //_ignoreObjects.Add(targetObject);
             //仮のショット決定                                                          //VerticalAngle
-            _shotDirection = CalculateVelocity(this.transform.position, targetPosition, 60);//CompareShotVectors(groundPoint, targetPosition);
+            _shotDirection = CompareShotVectors(groundPoint, targetPosition); //CalculateVelocity(this.transform.position, targetPosition, 60);//CompareShotVectors(groundPoint, targetPosition);
             return false;
         }
 

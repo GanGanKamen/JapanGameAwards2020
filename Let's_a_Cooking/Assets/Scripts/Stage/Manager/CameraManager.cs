@@ -345,5 +345,26 @@ namespace Cooking.Stage
             frontCam.Follow = null;
             topCam.transform.eulerAngles = new Vector3(topCameraRotation, 0, 0);
         }
+        public void WinnerCamera(FoodStatus foodStatus)
+        {
+            _cameraMode = CameraMode.Front;
+            switch (foodStatus.FoodType)
+            {
+                case FoodType.Shrimp:
+                    foodStatus.PlayerAnimatioManage(true);
+                    break;
+                case FoodType.Egg:
+                    break;
+                case FoodType.Chicken:
+                    break;
+                case FoodType.Sausage:
+                    break;
+                default:
+                    break;
+            }
+            frontCam.LookAt = foodStatus.FoodPositionNotRotate.transform;
+            frontCam.Follow = foodStatus.FoodPositionNotRotate.transform;
+            EffectManager.Instance.InstantiateEffect(foodStatus.transform.position + new Vector3(0,1.5f,0), EffectManager.EffectPrefabID.Stars);
+        }
     }
 }

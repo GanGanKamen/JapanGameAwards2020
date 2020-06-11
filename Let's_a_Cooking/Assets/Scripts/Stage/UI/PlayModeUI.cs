@@ -51,6 +51,26 @@ namespace Cooking.Stage
         [SerializeField] private GameObject _shottingLines = null;
         [SerializeField] private GameObject _falledImage = null;
         [SerializeField] private GameObject _goalImage = null;
+        /// <summary>
+        /// 残りターン数を表示するUI
+        /// </summary>
+        public GameObject RemainingTurnsUICanvas
+        {
+            get { return _remainingTurnsUICanvas; }
+        }
+        [SerializeField] private GameObject _remainingTurnBackGroundImage;
+        /// <summary>
+        /// 残りターン数を表示するUI
+        /// </summary>
+        [SerializeField] private GameObject _remainingTurnsUICanvas = null;
+        /// <summary>
+        /// 残りターン数
+        /// </summary>
+        [SerializeField] private Text _remainingTurnsNumber;
+        /// <summary>
+        /// プレイヤーの現在の得点
+        /// </summary>
+        [SerializeField] private Text[] _playerPoints;
         #endregion
         /// <summary>
         /// よく使うため変数化
@@ -66,7 +86,6 @@ namespace Cooking.Stage
         {
             _turnManager = TurnManager.Instance;
         }
-
         // Update is called once per frame
         void Update()
         {
@@ -163,7 +182,6 @@ namespace Cooking.Stage
                 }
             }
         }
-
         /// <summary>
         /// アクティブプレイヤーのプレイヤーポイント取得のため、ターンマネージャーを経由してポイント取得
         /// </summary>
@@ -221,6 +239,28 @@ namespace Cooking.Stage
         public void SetLinesActive(bool isActive)
         {
             _shottingLines.SetActive(isActive);
+        }
+        /// <summary>
+        /// 残りターンUiの情報をセット
+        /// </summary>
+        public void SetRemainingTurnsUIInformation(int remainingTurns)
+        {
+            StartCoroutine(RemainingTurnBackGroundImage());
+            _remainingTurnsNumber.text = remainingTurns.ToString();
+            for (int playerIndex = 0; playerIndex < StageSceneManager.Instance.PlayerPointList.Length; playerIndex++)
+            {
+                _playerPoints[playerIndex].text = StageSceneManager.Instance.GetPlayerPoint(playerIndex).ToString();
+            }
+        }
+        IEnumerator RemainingTurnBackGroundImage()
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                _remainingTurnBackGroundImage.SetActive(false);
+                yield return new WaitForSeconds(0.1f);
+                _remainingTurnBackGroundImage.SetActive(true);
+                yield return new WaitForSeconds(0.1f);
+            }
         }
     }
 }

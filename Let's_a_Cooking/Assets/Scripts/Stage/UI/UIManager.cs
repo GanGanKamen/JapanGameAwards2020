@@ -15,6 +15,10 @@ namespace Cooking.Stage
     public class UIManager : ChangePowerMeter
     {
         /// <summary>
+        /// 残りターンを表示する際、UICanvasを切り替え
+        /// </summary>
+        [SerializeField] GameObject _stageUICanvas;
+        /// <summary>
         /// メインとなるUIの状態の数だけUIを用意
         /// </summary>
         [SerializeField] GameObject[] _stageSceneMainUIs = null;
@@ -215,6 +219,7 @@ namespace Cooking.Stage
                         case FinishUIMode.Finish:
                             if (_finishTimeCounter >= _finishWaitTIme)
                             {
+                                CameraManager.Instance.WinnerCamera(TurnManager.Instance.FoodStatuses[0]);
                                 ChangeFinishUI(FinishUIMode.Score);
                                 StageSceneManager.Instance.ComparePlayerPointOnFinish();
                                 _finishWaitTIme = 0;
@@ -416,6 +421,14 @@ namespace Cooking.Stage
                     button.enabled = isEnable;
                 }
             }
+        }
+        /// <summary>
+        /// ターンが変わるUIを表示
+        /// </summary>
+        public void DisplayChangeTurnUI(bool remainingTurnsUIIsActive)
+        {
+            _stageUICanvas.SetActive(!remainingTurnsUIIsActive);
+            _playModeUI.RemainingTurnsUICanvas.SetActive(remainingTurnsUIIsActive);
         }
     }
 }

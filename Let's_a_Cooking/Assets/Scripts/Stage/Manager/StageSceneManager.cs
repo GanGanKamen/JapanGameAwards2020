@@ -90,6 +90,8 @@ namespace Cooking.Stage
             get { return _goals[0] ? _goals : GameObject.FindGameObjectsWithTag(TagList.Finish.ToString()); }
         }
         private GameObject[] _goals = null;
+        private GameObject _goalCamera = null;
+        private Transform _cameraMovePoint = null;
         /// <summary>
         /// 各プレイヤーの合計ポイント 0番目:player1 1番目:player2 
         /// </summary>
@@ -98,6 +100,8 @@ namespace Cooking.Stage
         //    get { return _playerSumPoints; }
         //}
         //private int[] _playerSumPoints;
+
+        /// <summary>ターン終了までのターン数</summary>
         public int TurnNumberOnGameEnd
         {
             get { return _turnNumberOnGameEnd; }
@@ -292,7 +296,16 @@ namespace Cooking.Stage
             for (int i = 0; i < _goals.Length; i++)
             {
                 _goals[i] = goals[i];
+                var goalCamera = _goals[i].transform.root.GetComponentInChildren<Camera>();
+                if (goalCamera != null)
+                {
+                    _goalCamera = goalCamera.gameObject;
+                    _cameraMovePoint = _goalCamera.transform.GetChild(0);
+                    _cameraMovePoint.parent = goals[0].transform;
+                    break;
+                }
             }
+            _goalCamera.SetActive(false);
             for (int i = 0; i < _chooseFoodTypes.Length; i++)
             {
                 _chooseFoodTypes[i] = FoodType.Shrimp;
@@ -308,7 +321,6 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
-            Debug.Log(GetPlayerPoint(0));
             switch (_gameState)
             {
                 case StageGameState.Preparation:
@@ -692,6 +704,20 @@ namespace Cooking.Stage
         public int GetSumPlayerPoint(int playerIndex)
         {
             return _playerPointList[playerIndex].Sum();
+        }
+        public void GoalCameraSetActive(bool isActive)
+        {
+            _goalCamera.SetActive(isActive);
+        }
+        IEnumerator CameraTranslate()
+        {
+            var vector = _cameraMovePoint.position - _goalCamera.transform.position;
+            while (vector.magnitude >= 0.01f)
+            {
+                var delta = (vector) * Time.deltaTime;
+                _goalCamera.transform.Translate(delta);
+                yield return null;
+            }
         }
         private void ChangeGameState(StageGameState stageGameState)
         {
