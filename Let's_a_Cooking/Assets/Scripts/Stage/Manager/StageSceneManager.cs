@@ -284,6 +284,9 @@ namespace Cooking.Stage
         {
             _foodStateOnGame = FoodStateOnGame.Normal;
         }
+        private float _turnChangeTime = 3.5f;
+        private float _turnChangeTimeCounter = 0f;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -438,6 +441,19 @@ namespace Cooking.Stage
                             {
                                 if (!foodStatus.IsGoal)
                                 {
+                                    if (foodStatus == _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex])
+                                    {
+                                        //一定よりも速度が遅かった時間の累計がchangeTimeを超えたらターンが変わる
+                                        if (foodStatus.Rigidbody.velocity.magnitude < 0.05f)
+                                        {
+                                            _turnChangeTimeCounter += Time.deltaTime;
+                                        }
+                                        if (_turnChangeTimeCounter >= _turnChangeTime)
+                                        {
+                                            isTurnChange = true;
+                                            break;
+                                        }
+                                    }
                                     ///食材が止まるまで待機
                                     if (foodStatus.Rigidbody.velocity.magnitude > 0.01f)
                                     {

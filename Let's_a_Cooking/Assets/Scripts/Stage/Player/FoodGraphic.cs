@@ -330,7 +330,7 @@ namespace Cooking.Stage
             {
                 case FoodType.Chicken:
                     //調味料を持つとき、見た目を引き継ぐ
-                    if (_seasoningMaterial)
+                    if (_isSeasoningMaterial)
                     {
                         for (int i = 0; i < meshRenderers.Length; i++)
                         {
@@ -340,7 +340,7 @@ namespace Cooking.Stage
                     break;
                 case FoodType.Sausage:
                     //調味料を持つとき、見た目を引き継ぐ
-                    if (_seasoningMaterial)
+                    if (_isSeasoningMaterial)
                     {
                         for (int i = 0; i < meshRenderers.Length; i++)
                         {
