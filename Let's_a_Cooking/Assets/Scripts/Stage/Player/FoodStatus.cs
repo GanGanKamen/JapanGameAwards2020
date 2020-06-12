@@ -223,6 +223,8 @@ namespace Cooking.Stage
         /// </summary>
         public void FoodStatusReset()
         {
+            if (gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodLayerInStartArea]))
+            _isFoodInStartArea = true;
             _onTowel = false;
             _gotBubbles.Clear();
             _gotBubbleIndex = 0;
@@ -733,7 +735,8 @@ namespace Cooking.Stage
                     string collisionLayerName = LayerMask.LayerToName(collision.gameObject.layer);
                     if (collisionLayerName == StageSceneManager.Instance.GetStringLayerName(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]))
                     {
-                        if (_isFryCollision)
+                        //アクティブターン中のみひび割れ
+                        if (_isFryCollision && TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex] == this)
                         {
                             if (food.egg.BreakCount >= 2)
                             {
@@ -1338,8 +1341,8 @@ namespace Cooking.Stage
         {
             transform.position = startPoint;
             transform.eulerAngles = Vector3.zero;
+            FreezeRotation();
             falledFoodStateOnStart = FalledFoodStateOnStart.Falled;
-            _isFoodInStartArea = true;
             SetFoodLayer(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodLayerInStartArea]);
         }
         /// <summary>
