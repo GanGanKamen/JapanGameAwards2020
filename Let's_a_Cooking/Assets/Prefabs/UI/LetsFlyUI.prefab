@@ -3877,12 +3877,12 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 03720a68c080bb3409e81d9c58c55c79, type: 3}
-    m_FontSize: 60
+    m_FontSize: 50
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 5
     m_MaxSize: 60
-    m_Alignment: 4
+    m_Alignment: 3
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -5814,7 +5814,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2259073736573854873
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8411,8 +8411,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -640, y: 440}
-  m_SizeDelta: {x: 580, y: 128}
+  m_AnchoredPosition: {x: -600, y: 440}
+  m_SizeDelta: {x: 380, y: 128}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2259073736869269129
 CanvasRenderer:
@@ -16053,10 +16053,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 03720a68c080bb3409e81d9c58c55c79, type: 3}
-    m_FontSize: 110
+    m_FontSize: 90
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 5
+    m_MinSize: 0
     m_MaxSize: 150
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -18793,7 +18793,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -50}
-  m_SizeDelta: {x: 1250, y: 270}
+  m_SizeDelta: {x: 1324.6, y: 271.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1309274509707329384
 CanvasRenderer:
@@ -18821,7 +18821,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -5266902896671752195, guid: 94af3ef27f422694aa03a146e1e9ca45,
+  m_Sprite: {fileID: -3164809056393425246, guid: af238cf4b39f6fa44a2c418c8951a869,
     type: 3}
   m_Type: 0
   m_PreserveAspect: 0
@@ -18899,7 +18899,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 03720a68c080bb3409e81d9c58c55c79, type: 3}
-    m_FontSize: 90
+    m_FontSize: 70
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 5
@@ -18910,7 +18910,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u6B8B\u308A10\u30BF\u30FC\u30F3"
+  m_Text: "\u4ED5\u4E0A\u304C\u308A\u306F10\u30BF\u30FC\u30F3\u5F8C"
 --- !u!114 &2388531276641556796
 MonoBehaviour:
   m_ObjectHideFlags: 0

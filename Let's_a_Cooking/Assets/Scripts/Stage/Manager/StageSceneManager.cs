@@ -295,7 +295,7 @@ namespace Cooking.Stage
             for (int i = 0; i < _goals.Length; i++)
             {
                 _goals[i] = goals[i];
-                var goalCamera = _goals[i].transform.root.GetComponentInChildren<Camera>();
+                var goalCamera = _goals[i].transform.root.GetComponentInChildren<Cinemachine.CinemachineVirtualCamera>();
                 if (goalCamera != null)
                 {
                     _goalCamera = goalCamera.gameObject;
