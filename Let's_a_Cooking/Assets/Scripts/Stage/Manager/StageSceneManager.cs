@@ -702,7 +702,7 @@ namespace Cooking.Stage
             var pointIndex = _turnManager.GetPlayerNumberFromActivePlayerIndex(activePlayerIndex) - 1;//プレイヤー1の情報→0番目に配置 1引く必要あり
             if (_turnManager.FoodStatuses[activePlayerIndex].RareSeasoningEffect != null)
             {
-                for (int i = 0; i < _playerPointList.Length; i++)
+                for (int i = 0; i < _playerPointList[pointIndex].Count; i++)
                 {
                     _playerPointList[pointIndex][i] *= 2; 
                 }
