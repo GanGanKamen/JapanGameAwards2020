@@ -126,7 +126,6 @@ namespace Cooking.Stage
                 float timeCounter = 0;
                 while (!_searchEnd)
                 {
-                    Debug.Log(65);
                     //まれに無限ループ→5秒で抜ける
                     timeCounter += Time.deltaTime;
                     //if (timeCounter > 5)
@@ -195,7 +194,6 @@ namespace Cooking.Stage
                 var goal = goalObject[0];
                 //ゴールが到達可能かどうかの判定 1自分からゴールまでの方向ベクトルを取得し xz成分を抜き出す 2 y成分 sin(角度→ラジアン変換)を入れて標準化しなおすことで方向ベクトルを取得 3 最大ショットパワーでレイを飛ばし垂直方向の角度を変化させる 10~ 85
                 //3 ゴールタグを持つオブジェクトをレイキャストにより取得できるかどうかで判定する。4パワーの変更
-                Debug.Log(goal.transform.position);
                 goalVector = (goal.transform.position - transform.position).normalized;
                 int i = 0;//インクリメント変数
                 Vector3 shotDirectionVector = Vector3.zero, maxShotSpeedVector = Vector3.zero;
@@ -295,13 +293,11 @@ namespace Cooking.Stage
                 }
             }
             int minDistanceIndex = goalDistanceFromFallPoints.IndexOf(goalDistanceFromFallPoints.Min());
+            Debug.Log(fallPoint[minDistanceIndex]);
+            Debug.Log(goalDistanceFromFallPoints[minDistanceIndex]);
             //最小値に向かって飛ぶ レイ計算で使った値もリストに格納
             _shotDirection = shotSpeedVectorList[minDistanceIndex];// CalculateVelocity(this.transform.position, fallPoint[minDistanceIndex], 60);
             speed = shotSpeedList[minDistanceIndex];
-            Debug.Log(shotSpeedList[minDistanceIndex]);
-            Debug.Log(fallPoint[minDistanceIndex]);
-            Debug.Log(fallPoint.Count);
-            Debug.Log(shotSpeedVectorList[minDistanceIndex]);
             _searchEnd = true;
         }
 
@@ -310,7 +306,19 @@ namespace Cooking.Stage
             GameObject fallPointGameObject;
             var shotDirectionVector = GetShotDirectionVector(horizontalAngle, shotDirectionY);
             GetFallPointByRayCast(out fallPointGameObject, goal, verticalAngle, shotDirectionVector, fallPointIndex, fallPoint, goalDistanceFromFallPoints, shotSpeedVectorList, shotSpeed);//方向 速度の両方を格納 別々の変数
-            if (fallPointGameObject.tag != TagList.Floor.ToString() && fallPointGameObject.tag != TagList.NotBeAITarget.ToString())
+            if (fallPointGameObject.tag == TagList.Floor.ToString())
+            {
+                return;
+            }
+            if (fallPointGameObject.tag == TagList.NotBeAITarget.ToString())
+            {
+                return;
+            }
+            if (fallPoint[fallPoint.Count - 1].y < StageSceneManager.Instance.ChairYPosition)
+            {
+                return;
+            }
+            //if (fallPointGameObject.tag != TagList.Floor.ToString() && fallPointGameObject.tag != TagList.NotBeAITarget.ToString())
             {
                 fallPointIndex++;
             }
@@ -419,7 +427,6 @@ namespace Cooking.Stage
                         shotSpeedVectorList.Add(shotDirectionVector);
                         shotSpeedList.Add(shotSpeed);
                     }
-                    Debug.Log(fallPointGameObject.tag);
                 }
             }
         }
@@ -495,7 +502,6 @@ namespace Cooking.Stage
                 case FoodType.Chicken:
                     if (!food.chicken.IsCut)
                     {
-                        Debug.Log(7898);
                         foreach (var knife in GimmickManager.Instance.TargetObjectsForAI[(int)AITargetObjectTags.Knife])
                         {
                             _targetObjectOptions.Add(knife);
@@ -681,7 +687,7 @@ namespace Cooking.Stage
             //射出角度
             float throwingAngle = ShotManager.Instance.ShotParameter.LimitVerticalMaxAngle;
             //相対関係によって検索方向を変える
-            if (targetObject.transform.position.y > this.transform.position.y)
+            if (targetObject.transform.position.y > this.transform.position.y && targetObject.tag != AITargetObjectTags.Knife.ToString())
             {
                 //射出角度 初期値45度 レイにより障害物判定で変える
                 throwingAngle = ShotManager.Instance.ShotParameter.LimitVerticalMaxAngle;

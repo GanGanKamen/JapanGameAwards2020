@@ -252,7 +252,7 @@ namespace Cooking.Stage
             _remainingTurnsNumber.text = OptionManager.OptionManagerProperty.TurnText();
             for (int playerIndex = 0; playerIndex < _playerPoints.Length; playerIndex++)
             {
-                _playerPoints[playerIndex].text = StageSceneManager.Instance.GetPlayerPoint(playerIndex).ToString();
+                _playerPoints[playerIndex].text = StageSceneManager.Instance.GetPlayerPoint(playerIndex,true).ToString();
             }
         }
         IEnumerator RemainingTurnBackGroundImage()

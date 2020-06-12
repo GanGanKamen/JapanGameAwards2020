@@ -613,7 +613,6 @@ namespace Cooking.Stage
             }
             return _startPositionObject.position + new Vector3(0.5f * playerIndex, 0, 0); //プレイヤー番号依存で少しずらして配置
         }
-
         /// <summary>
         /// 食材の種類を選択して、次の食材を生成
         /// </summary>
@@ -637,9 +636,17 @@ namespace Cooking.Stage
         /// </summary>
         public void ComparePlayerPointOnFinish()
         {
-            InDescendingOrder();
+            //InDescendingOrder();
+            int[] SumPlayerPoints = new int[_playerPointList.Length];
+            for (int i = 0; i < SumPlayerPoints.Length; i++)
+            {
+                SumPlayerPoints[i] = GetSumPlayerPoint(i);
+            }
+            int max = SumPlayerPoints.Sum();
+            //最大ポイントのプレイヤーナンバーindex
+            int maxIndex = Array.IndexOf(SumPlayerPoints, max);
             //降順に並び替えたことにより、最初の要素に最もポイントの高いプレイヤーが来る
-            UIManager.Instance.UpdateWinnerPlayerNumber(_turnManager.GetPlayerNumberFromActivePlayerIndex(0));
+            UIManager.Instance.UpdateWinnerPlayerNumber(maxIndex + 1);
         }
         /// <summary>
         /// ポイントを降順に並び替え
@@ -664,11 +671,11 @@ namespace Cooking.Stage
         /// </summary>
         /// <param name="playerIndex"></param>
         /// <returns></returns>
-        public int GetPlayerPoint(int playerIndex)
+        public int GetPlayerPoint(int playerIndex , bool isActiveOnly)
         {
             if (_gameState == StageGameState.Preparation)
             {
-                return PlayerPoint.firstPoint;
+                return 0;
             }
             else
             {
@@ -680,25 +687,31 @@ namespace Cooking.Stage
                 //現在動いているプレイヤーの何番目の要素のポイントなのか検索
                 var foodStatusIndex = Array.IndexOf(_turnManager.PlayerIndexArray, playerIndex);
                 var activePlayerPoint = _turnManager.FoodStatuses[foodStatusIndex].PlayerPointProperty.Point;
-                return GetSumPlayerPoint(foodStatusIndex) + activePlayerPoint;
-            }
-        }
-        /// <summary>
-        /// 現在のプレイヤーの持つポイントを取得
-        /// </summary>
-        private void GetAllPlayerPoints()
-        {
-            for (int i = 0; i < _turnManager.FoodStatuses.Length; i++)
-            {
-                //iをプレイヤー番号に変換
-                var pointIndex = _turnManager.GetPlayerNumberFromActivePlayerIndex(i) - 1;//プレイヤー1の情報→0番目に配置 1引く必要あり
-                _playerPointList[pointIndex].Add(GetSumPlayerPoint(pointIndex));
+                if (isActiveOnly)
+                {
+                    return activePlayerPoint;
+                }
+                else
+                {
+                    return GetSumPlayerPoint(foodStatusIndex);
+                }
             }
         }
         public void AddPlayerPointToList(int activePlayerIndex)
         {
             var pointIndex = _turnManager.GetPlayerNumberFromActivePlayerIndex(activePlayerIndex) - 1;//プレイヤー1の情報→0番目に配置 1引く必要あり
-            _playerPointList[pointIndex].Add(_turnManager.FoodStatuses[activePlayerIndex].PlayerPointProperty.Point);
+            if (_turnManager.FoodStatuses[activePlayerIndex].RareSeasoningEffect != null)
+            {
+                for (int i = 0; i < _playerPointList.Length; i++)
+                {
+                    _playerPointList[pointIndex][i] *= 2; 
+                }
+                _playerPointList[pointIndex].Add(_turnManager.FoodStatuses[activePlayerIndex].PlayerPointProperty.Point *  2);
+            }
+            else
+            {
+                _playerPointList[pointIndex].Add(_turnManager.FoodStatuses[activePlayerIndex].PlayerPointProperty.Point);
+            }
         }
         public int GetSumPlayerPoint(int playerIndex)
         {

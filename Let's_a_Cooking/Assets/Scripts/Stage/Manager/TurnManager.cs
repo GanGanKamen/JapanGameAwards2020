@@ -212,13 +212,6 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.K))
-            {
-                var playerNumber = GetPlayerNumberFromActivePlayerIndex(_activePlayerIndex) - 1;
-                var startPoint = StageSceneManager.Instance.GetPlayerStartPoint(playerNumber);
-
-                ResetPlayerOnStartPoint(startPoint, _activePlayerIndex);
-            }
             if (StageSceneManager.Instance.GameState == StageGameState.FinishFoodInstantiateAndPlayerInOrder)
             {
                 InitializeTurn();
@@ -286,7 +279,7 @@ namespace Cooking.Stage
         /// <returns></returns>
         IEnumerator TurnChangeUI()
         {
-            float turnChangeTime = 3f;
+            float turnChangeTime = 5f;
             UIManager.Instance.PlayModeUI.SetRemainingTurnsUIInformation(RemainingTurns);
             UIManager.Instance.DisplayChangeTurnUI(true);
             StageSceneManager.Instance.GoalCameraSetActive(true);

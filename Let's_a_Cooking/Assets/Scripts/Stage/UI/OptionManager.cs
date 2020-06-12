@@ -232,7 +232,7 @@ namespace Cooking
             var playersPoints = new int[4];
             for(int i = 0; i < 4; i++)
             {
-                playersPoints[i] = stageSceneManager.GetPlayerPoint(i);
+                playersPoints[i] = stageSceneManager.GetPlayerPoint(i,false);
                 pointTexts[i].text = playersPoints[i].ToString();
             }
         }

@@ -352,7 +352,7 @@ namespace Cooking.Stage
                     _finishUIMode = FinishUIMode.Finish;
                     for (int i = 0; i < _turnManager.FoodStatuses.Length; i++)
                     {
-                        _finishScoreTexts[i].text = StageSceneManager.Instance.GetSumPlayerPoint(i).ToString();
+                        _finishScoreTexts[i].text = StageSceneManager.Instance.GetPlayerPoint(i,false).ToString();
                         _finishScoreImages[i].SetActive(true);
                     }
                     break;
