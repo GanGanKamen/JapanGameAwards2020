@@ -66,9 +66,9 @@ namespace Cooking.Stage
         /// </summary>
         public FalledFoodStateOnStart FalledFoodStateOnStartProperty
         {
-            get { return _falledFoodStateOnStart; }
+            get { return falledFoodStateOnStart; }
         }
-        FalledFoodStateOnStart _falledFoodStateOnStart = FalledFoodStateOnStart.Falled;
+        protected FalledFoodStateOnStart falledFoodStateOnStart = FalledFoodStateOnStart.Falled;
         /// <summary>
         /// 回転しない食材の座標 カメラ用
         /// </summary>
@@ -823,13 +823,13 @@ namespace Cooking.Stage
             {
                 _isFall = true;
             }
-            switch (_falledFoodStateOnStart)
+            switch (falledFoodStateOnStart)
             {
                 case FalledFoodStateOnStart.Falled:
                     if (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]))
                     {
                         //スタート地点に着地→初期化時
-                        _falledFoodStateOnStart = FalledFoodStateOnStart.OnStart;
+                        falledFoodStateOnStart = FalledFoodStateOnStart.OnStart;
                         //FreezePosition();
                     }
                     break;
@@ -1334,7 +1334,9 @@ namespace Cooking.Stage
         {
             transform.position = startPoint;
             transform.eulerAngles = Vector3.zero;
-            _falledFoodStateOnStart = FalledFoodStateOnStart.Falled;
+            falledFoodStateOnStart = FalledFoodStateOnStart.Falled;
+            _isFoodInStartArea = true;
+            SetFoodLayer(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodLayerInStartArea]);
         }
         /// <summary>
         /// ショット開始時アニメーション停止(空中で動きに影響を与える) ターン終了時アニメーション再生 仮
@@ -1414,7 +1416,7 @@ namespace Cooking.Stage
         }
         public void FinishStartProcessing()
         {
-            _falledFoodStateOnStart = FalledFoodStateOnStart.Other;
+            falledFoodStateOnStart = FalledFoodStateOnStart.Other;
         }
         private Vector3 GetGroundPointUnderCenter(Vector3 originPoint , Vector3 underCenterDirection)
         {

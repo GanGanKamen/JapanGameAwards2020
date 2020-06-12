@@ -90,6 +90,10 @@ namespace Cooking.Stage
             {
                 yield return null;
             }
+            while (falledFoodStateOnStart == FalledFoodStateOnStart.Falled)
+            {
+                yield return null;
+            }
             GetTargetObjects();
             while (true)
             {
