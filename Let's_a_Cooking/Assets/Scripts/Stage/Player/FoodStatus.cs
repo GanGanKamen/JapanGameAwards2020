@@ -983,7 +983,7 @@ namespace Cooking.Stage
                                     if (_flyTime > _firstBoundTime + 0.4f && collision.gameObject.tag == TagList.Chair.ToString())
                                         _physicsState = PhysicsState.ChairBound;
                                     //小さいジャンプでは代入しない 飛んでいる間時間を数える実効値形式へ
-                                    else if (_flyTime > _firstBoundTime + 0.4f && collision.gameObject.tag != TagList.Towel.ToString())
+                                    else if (_flyTime > _firstBoundTime + 0.05f && collision.gameObject.tag != TagList.Towel.ToString())
                                         _physicsState = PhysicsState.FirstBound;
                                 }
                                 //else if (_physicsState == PhysicsState.FirstBound)
@@ -1210,7 +1210,7 @@ namespace Cooking.Stage
                     }
                 }
             }
-            if (other.tag == TagList.Finish.ToString() && !_isGoal)
+            if (ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode && other.tag == TagList.Finish.ToString() && !_isGoal)
             {
                 SoundManager.Instance.PlaySE(SoundEffectID.pan_frying);
                 EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Splash);
@@ -1257,6 +1257,7 @@ namespace Cooking.Stage
                 {
                     GetSeasoning(touchSeasoning);
                 }
+                touchSeasoning.SeasoningParticle();
             }
             else if (TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex] == this && ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode && !IsGoal && other.tag == TagList.Bubble.ToString())
             {

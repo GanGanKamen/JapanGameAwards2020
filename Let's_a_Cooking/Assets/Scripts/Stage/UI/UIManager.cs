@@ -223,6 +223,7 @@ namespace Cooking.Stage
                             {
                                 var audioSource = gameObject.AddComponent<AudioSource>();
                                 audioSource.loop  = true;
+                                audioSource.clip = Resources.Load<AudioClip>("Sounds/SE/" + SoundEffectID.pan_frying.ToString());
                                 audioSource.Play();
                                 ChangeFinishUI(FinishUIMode.Score);
                                 StageSceneManager.Instance.ComparePlayerPointOnFinish();

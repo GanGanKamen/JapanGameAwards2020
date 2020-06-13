@@ -280,9 +280,15 @@ namespace Cooking.Stage
                 {
                     _lostedPoints[playerIndex].text = 0.ToString();
                 }
+                //else if (_turnManager.GetFoodStatusIndex(playerIndex) == 3)
+                //{
+                //    Debug.Log(StageSceneManager.Instance.GetPlayerPoint(playerIndex, false));
+                //    _lostedPoints[playerIndex].text = (StageSceneManager.Instance.GetPlayerPoint(playerIndex, false) + StageSceneManager.Instance.GetPlayerPoint(playerIndex, true) - 100).ToString();
+                //}
                 else
                 {
-                    _lostedPoints[playerIndex].text = (StageSceneManager.Instance.GetPlayerPoint(playerIndex, false) - StageSceneManager.Instance.GetPlayerPoint(playerIndex, true)).ToString();
+                    Debug.Log(876);
+                    _lostedPoints[playerIndex].text = (StageSceneManager.Instance.GetPlayerPoint(playerIndex, false) + StageSceneManager.Instance.GetPlayerPoint(playerIndex, true) - StageSceneManager.Instance.GetPlayerPoint(playerIndex, true)).ToString();
                 }
             }
         }
