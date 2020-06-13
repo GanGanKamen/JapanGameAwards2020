@@ -37,10 +37,10 @@ namespace Cooking
             activeSceneName = SceneManager.GetActiveScene().name;
             ///デバッグ用
 #if UNITY_EDITOR
-            if (Input.GetKeyDown(KeyCode.A))
-            {
-                LoadActiveScene();
-            }
+            //if (Input.GetKeyDown(KeyCode.A))
+            //{
+            //    LoadActiveScene();
+            //}
 #endif
         }
         /// <summary>

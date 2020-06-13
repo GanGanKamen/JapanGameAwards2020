@@ -229,10 +229,10 @@ namespace Cooking.Stage
             }
             ///デバッグ用 ゲーム終了
 //#if UNITY_EDITOR
-            if (Input.GetKeyDown(KeyCode.Return) && !_isAITurn)
-            {
-                _turnNumber = 11;
-            }
+            //if (Input.GetKeyDown(KeyCode.Return) && !_isAITurn)
+            //{
+            //    _turnNumber = 11;
+            //}
             //#endif
         }
         /// <summary>
@@ -354,7 +354,7 @@ namespace Cooking.Stage
                         {
                             FoodGoal(_activePlayerIndex);
                         }
-                        if (!_foodStatuses[_activePlayerIndex].IsStart)
+                        if (!_foodStatuses[_activePlayerIndex].IsFoodInStartArea)
                             _foodStatuses[_activePlayerIndex].ChangeFoodLayer(false);
                         //次のプレイヤーに順番を回す
                         _activePlayerIndex++;

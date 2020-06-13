@@ -117,7 +117,7 @@ namespace Cooking.Stage
                         if (!_turnManager.IsAITurn && !OptionManager.OptionManagerProperty.MenuWindow.activeInHierarchy)
                         {
                             #region デバッグコード スペースを押すと最大パワーで飛ぶ
-                            //#if UNITY_EDITOR
+#if UNITY_EDITOR
                             if (Input.GetKeyDown(KeyCode.Space))
                             {
                                 _shotPower = ShotParameter.MaxShotPower;
@@ -125,12 +125,12 @@ namespace Cooking.Stage
                             }
                             //#endif
                             //#if UNITY_EDITOR
-                            if (Input.GetKeyDown(KeyCode.M))
-                            {
-                                _shotPower = ShotParameter.MaxShotPower;
-                                UIManager.Instance.ChangeUI(ScreenState.ShottingMode);
-                            }
-                            //#endif
+                            //if (Input.GetKeyDown(KeyCode.M))
+                            //{
+                            //    _shotPower = ShotParameter.MaxShotPower;
+                            //    UIManager.Instance.ChangeUI(ScreenState.ShottingMode);
+                            //}
+#endif
                             #endregion
                         }
                     }

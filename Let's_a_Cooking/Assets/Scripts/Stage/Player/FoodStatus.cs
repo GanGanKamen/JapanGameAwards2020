@@ -113,11 +113,6 @@ namespace Cooking.Stage
             get { return _isGoal; }
         }
         private bool _isGoal;
-        public bool IsStart
-        {
-            get { return _isStart; }
-        }
-        private bool _isStart = true;
         public bool IsFirstCollision
         {
             get { return _isFryCollision; }
@@ -187,6 +182,7 @@ namespace Cooking.Stage
         /// 衝突した相手の食材 食材衝突時二重判定を防ぐ
         /// </summary>
         private FoodStatus _collidedFood;
+        protected Transform aIMoveTransform;
         public bool IsAddForced
         {
             get { return _isAddedForced; }
@@ -227,6 +223,7 @@ namespace Cooking.Stage
         /// </summary>
         public void FoodStatusReset()
         {
+            aIMoveTransform = null;
             if (gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodLayerInStartArea]))
             _isFoodInStartArea = true;
             _onTowel = false;
@@ -681,7 +678,7 @@ namespace Cooking.Stage
                     }
                     break;
                 case FoodType.Chicken:
-                    while (time < 0.1f)
+                    while (time < 0.05f)
                     {
                         _rigidbody.AddForce(power, ForceMode.Impulse);//調整中
                         time += Time.deltaTime;
@@ -721,7 +718,7 @@ namespace Cooking.Stage
         private void OnCollisionEnter(Collision collision)
         {
             #region//食材が切られるなど見た目が変わる処理
-                switch (foodType)
+            switch (foodType)
             {
                 case FoodType.Shrimp:
                     if (collision.gameObject.tag == TagList.Wall.ToString() && !food.shrimp.IsHeadFallOff)
@@ -759,8 +756,15 @@ namespace Cooking.Stage
                     if (collision.gameObject.tag == TagList.Knife.ToString() && !food.chicken.IsCut)
                     {
                         ChangeMeshRendererCutFood(food.chicken.CutMeshRenderer, foodType);
-                        food.chicken.CutChicken();
                         playerPoint.GetPoint(GetPointType.CutFood);
+                        var randX = Random.GetRandomFloat(-1, 1);
+                        var randY = Random.GetRandomFloat(-1, 1);
+                        var randZ = Random.GetRandomFloat(-1, 1);
+                        float cutPower = 2.5f;
+                        var shotAngle = ShotManager.Instance.transform.forward;
+                        var randVector = new Vector3(-shotAngle.x, randY, -shotAngle.z);
+                        _rigidbody.AddForce(randVector * cutPower, ForceMode.Impulse);
+                        food.chicken.CutChicken( -shotAngle, 1f);
                     }
                     break;
                 case FoodType.Sausage:
@@ -859,7 +863,7 @@ namespace Cooking.Stage
             //=================
             #region//物理挙動を制御 ステージとの衝突処理 wallは別
             //=================
-            if (!_isGoal && otherFood != null)
+            if (!_isGoal && otherFood != null && ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode)
             {
                 //自分がアクティブではないとき、相手が食材ならぶっ飛ばされる
                 if (TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex] != this )
@@ -897,7 +901,7 @@ namespace Cooking.Stage
                                 var collisionForceVector = new Vector3(otherFoodVelocity.x, 0, otherFoodVelocity.z).normalized;
                                 if (!_isAddedForced)
                                 {
-                                    StartCoroutine(AddForce(collisionForceVector * ShotManager.Instance.ShotPower * 0.1f));//調整中
+                                    StartCoroutine(AddForce(collisionForceVector * ShotManager.Instance.ShotPower * 0.15f));//調整中
                                     Debug.Log("強くぶっとばす");
                                 }
                             }
@@ -1033,8 +1037,9 @@ namespace Cooking.Stage
                                             _rigidbody.AddForce(transform.up * (_chickenFirstBoundPower) * (ShotManager.Instance.ShotPower / (ShotManager.Instance.ShotParameter.MaxShotPower * _boundCount * _boundCount)), ForceMode.Impulse);
                                         }
                                         else if (collision.gameObject.GetComponent<FoodStatus>() == null)
-                                        {
-                                            _rigidbody.AddForce(transform.up * _chickenFirstBoundPower * (ShotManager.Instance.ShotPower / (ShotManager.Instance.ShotParameter.MaxShotPower * _boundCount * _boundCount)), ForceMode.Impulse);
+                                        {                                            //方向を変えない
+                                            ShotManager.Instance.SetShotVector(ShotManager.Instance.transform.forward, ShotManager.Instance.ShotPower / (_boundCount + 1f));
+                                            _rigidbody.AddForce(transform.up * _chickenFirstBoundPower * (ShotManager.Instance.ShotPower / (ShotManager.Instance.ShotParameter.MaxShotPower * 0.5f * _boundCount)), ForceMode.Impulse);
                                         }
                                     }
                                     if (_flyTime > _firstBoundTime + 0.4f && collision.gameObject.tag == TagList.Chair.ToString())
@@ -1096,7 +1101,8 @@ namespace Cooking.Stage
             #region //衝突フラグ・変数初期化
             //=================
             //最初の衝突かつショット中かつ一定以上の滞空時間
-            if (!_isGoal && _isFryCollision && ( (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]) || collision.gameObject.GetComponent<FoodStatus>() != null))
+            if (!_isGoal && _isFryCollision && ( (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen])
+                || collision.gameObject.GetComponent<FoodStatus>() != null))
                 && ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode && _flyTime > 0.1f)
             {
                 switch (foodType)
@@ -1170,12 +1176,15 @@ namespace Cooking.Stage
             }
             if (other.tag == TagList.NotBeAITarget.ToString())
             {
-                var referencePoint = other.transform.GetChild(0);
-                var aI = GetComponent<AI>();
-                Debug.Log(referencePoint);
-                if (referencePoint != null && aI != null)
+                if(other.transform.childCount > 0)
                 {
+                    var referencePoint = other.transform.GetChild(0);
+                    var aI = GetComponent<AI>();
+                    Debug.Log(referencePoint);
+                    if (referencePoint != null && aI != null)
+                    {
 
+                    }
                 }
             }
             if (other.tag == TagList.Finish.ToString() && !_isGoal)
@@ -1364,6 +1373,7 @@ namespace Cooking.Stage
             transform.eulerAngles = Vector3.zero;
             FreezeRotation();
             falledFoodStateOnStart = FalledFoodStateOnStart.Falled;
+            if(StageSceneManager.Instance.GameState != StageGameState.Preparation)
             SetFoodLayer(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]);
         }
         /// <summary>

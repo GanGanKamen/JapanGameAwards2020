@@ -47,7 +47,7 @@ namespace Cooking.Stage
         /// <summary>
         /// ささみが切られる
         /// </summary>
-        public void CutChicken()
+        public void CutChicken(Vector3 cutDirection , float cutPower)
         {
             if (_isCut)
             {
@@ -60,7 +60,8 @@ namespace Cooking.Stage
             _chickenCut.SetActive(true);
             _chickenCutOffObject.transform.parent = null;
             var rigidbody = _chickenCutOffObject.AddComponent<Rigidbody>();
-            rigidbody.mass = 0.01f;
+            rigidbody.mass = 1f;
+            rigidbody.AddForce( -cutDirection * cutPower, ForceMode.Impulse);
             var isGroundedArea = GetComponent<FoodStatus>()?.IsGroundedArea;
             isGroundedArea.transform.localPosition = new Vector3(0.0079f, -0.156f, 0.1696f);
             isGroundedArea.transform.localScale = new Vector3(0.04076f, 0.12619f, 0.2873457f);
@@ -71,6 +72,7 @@ namespace Cooking.Stage
         public void SetTransparentMaterial()
         {
             _cutMeshRenderer[1].material = _cutMaterial;
+            _cutMeshRenderer[1].gameObject.layer = CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodCollision]);
         }
     }
 }

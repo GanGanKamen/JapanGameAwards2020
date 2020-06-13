@@ -13,7 +13,7 @@ namespace Cooking.Stage
     public enum TagList
     {
         Finish, Floor, Water, Seasoning, Towel, DirtDish, RareSeasoning, Wall, TowelAbovePoint, Knife, Bubble, BubbleZone, StartArea, Chair, CameraZone , NotBeAITarget,
-            Pot,FryingPan
+            Pot,FryingPan,
     }
     public enum LayerList
     {
