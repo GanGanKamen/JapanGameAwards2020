@@ -184,6 +184,7 @@ namespace Cooking.Stage
                                         _orderPowerTexts[_turnManager.ActivePlayerIndex].text = orderPowerText.ToString();
                                         StartCoroutine(WaitOnDecideOrder());
                                     }
+#if UNITY_EDITOR
                                     else if (Input.GetKeyDown(KeyCode.Space))
                                     {
                                         _invalidInputDecideOrder = true;
@@ -198,6 +199,7 @@ namespace Cooking.Stage
                                         _orderPowerTexts[_turnManager.ActivePlayerIndex].text = orderPowerText.ToString();
                                         StartCoroutine(WaitOnDecideOrder());
                                     }
+#endif
                                 }
                             }
                         }
@@ -405,6 +407,8 @@ namespace Cooking.Stage
             SoundManager.Instance.ChangeBGMOnSceneName(SceneName.PlayScene);
             yield return new WaitForSeconds(_startTime);
             _playModeUI.ChangeUIOnTurnStart();
+            if (!_turnManager.IsAITurn)
+                PredictLineManager.Instance.SetActive(true);
         }
         /// <summary>
         /// UI内にあるボタンを取得し、触れるかどうかの状態を変更 オプション中にUIの状態が変わることも考慮
