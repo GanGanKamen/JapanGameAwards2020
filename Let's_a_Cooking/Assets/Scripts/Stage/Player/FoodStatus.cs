@@ -134,6 +134,7 @@ namespace Cooking.Stage
             get { return _isGroundedArea ? _isGroundedArea : CenterPoint ; }
         }
         [SerializeField] Transform _isGroundedArea;
+        [SerializeField] Transform _cutGroundedArea;
         Vector3[] _isGroundedLimitPosition;
         /// <summary>
         /// 一回目のバウンドでy方向にAddForceする力の大きさ
@@ -182,6 +183,9 @@ namespace Cooking.Stage
         /// 衝突した相手の食材 食材衝突時二重判定を防ぐ
         /// </summary>
         private FoodStatus _collidedFood;
+        /// <summary>
+        /// AIが移動する場所(プレイヤーも共通) 子オブジェクトのreference座標が入る
+        /// </summary>
        [SerializeField] protected Transform aIMoveTransform;
         public bool IsAddForced
         {
@@ -228,19 +232,7 @@ namespace Cooking.Stage
         /// </summary>
         public void FoodStatusReset()
         {
-            if (aIMoveTransform != null)
-            {
-                var trans = aIMoveTransform.parent.GetComponent<AIMoveForGameOver>();
-                if (trans != null)
-                {
-                    this.transform.position = trans.Move().position;
-                }
-                else
-                {
-                    this.transform.position += aIMoveTransform.position;
-                }
-            }
-            aIMoveTransform = null;
+            breakCountable = true;
             if (gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodLayerInStartArea]))
             _isFoodInStartArea = true;
             _onTowel = false;
@@ -744,6 +736,7 @@ namespace Cooking.Stage
                     break;
             }
         }
+        bool breakCountable = true;
         private void OnCollisionEnter(Collision collision)
         {
             #region//食材が切られるなど見た目が変わる処理
@@ -768,13 +761,14 @@ namespace Cooking.Stage
                         //アクティブターン中のみひび割れ
                         if (_isFryCollision && TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex] == this)
                         {
-                            if (food.egg.BreakCount >= 2)
+                            if (food.egg.BreakCount >= 2 && breakCountable)
                             {
                                 food.egg.EggBreak();
                             }
                             //ひびが入る ショット中の最初の衝突 調味料がついていないとき
-                            else if(!IsSeasoningMaterial)
+                            else if(!IsSeasoningMaterial && breakCountable)
                             {
+                                breakCountable = false;
                                 food.egg.EggCollide(IsSeasoningMaterial);
                                 ChangeNormalEggGraphic(food.egg.BreakMaterials[1]);
                             }
@@ -1461,6 +1455,22 @@ namespace Cooking.Stage
                 }
                 _centerPoint.position = this.transform.position;
             }
+            if (aIMoveTransform != null)
+            {
+                var trans = aIMoveTransform.parent.GetComponent<AIMoveForGameOver>();
+                Debug.Log(trans);
+                if (trans != null)
+                {
+                    //ある場合reference座標に移動
+                    this.transform.position = trans.Move().position;
+                }
+                else
+                {
+                    //スクリプトがない場合reference分座標を移動 localPosition
+                    this.transform.position += aIMoveTransform.localPosition * 10;
+                }
+            }
+            aIMoveTransform = null;
             //接地点の算出 中心から真下にレイを飛ばして取得
             //groundPoint = GetGroundPointUnderCenter(_centerPoint.position, - _centerPoint.up);
             switch (FoodType)
@@ -1562,17 +1572,31 @@ namespace Cooking.Stage
         /// <returns>Vecto3 localScale Vector2 (カプセルの高さ,カプセルの半径)</returns>
         public T GetColliderSize<T>() where T : struct
         {
+            var size = Vector3.zero;
             if (typeof(T) == typeof(Vector3) || typeof(T) == typeof(Vector2))
             {
                 switch (foodType)
                 {
                     case FoodType.Shrimp:
-                        Vector3 shrimpBoxColliderSize = food.shrimp.shrimpBoxCollider.size * 1.5f;//エビのコライダーの親オブジェクトのlocalscaleを掛け算
-                        return (T)(object)shrimpBoxColliderSize;
+                        if (food.shrimp.IsHeadFallOff)
+                        {
+                            Vector3 shrimpBoxColliderSize = food.shrimp.shrimpTailBoxCollider.size * 1.5f;//エビのコライダーの親オブジェクトのlocalscaleを掛け算
+                            return (T)(object)shrimpBoxColliderSize;
+                        }
+                        else
+                        {
+                            Vector3 shrimpBoxColliderSize = food.shrimp.shrimpBoxCollider.size * 1.5f;//エビのコライダーの親オブジェクトのlocalscaleを掛け算
+                            return (T)(object)shrimpBoxColliderSize;
+                        }
                     case FoodType.Egg:
                         if (food.egg.HasBroken)
                         {
-                            return (T)(object)new Vector3(1 , 1 , 1);
+                            size = food.egg.insideBoxCollider.size;
+                            size.x *= transform.localScale.x;
+                            size.y *= transform.localScale.y;
+                            size.z *= transform.localScale.z;
+                            Vector3 eggInsidecolliderSize = size;
+                            return (T)(object)eggInsidecolliderSize;
                         }
                         else
                         {
@@ -1581,15 +1605,28 @@ namespace Cooking.Stage
                             return (T)(object)new Vector2(eggColliderHeight, eggColliderRadius);
                         }
                     case FoodType.Chicken:
-                        var size = food.chicken.chickenBoxCollider.size;
+                        if (food.chicken.IsCut)
+                        {
+                            size = food.chicken.chickenCutBoxCollider.size;
+                        }
+                        else
+                        {
+                            size = food.chicken.chickenBoxCollider.size;
+                        }
                         size.x *= transform.localScale.x;
                         size.y *= transform.localScale.y;
                         size.z *= transform.localScale.z;
                         Vector3 chickenBoxColliderSize = size;//エビのコライダーの親オブジェクトのlocalscaleを掛け算
                         return (T)(object)chickenBoxColliderSize;
                     case FoodType.Sausage:
-                        Vector3 sausageBoxColliderSize = food.sausage.SausageBoxCollider.size;//エビのコライダーの親オブジェクトのlocalscaleを掛け算
-                        return (T)(object)sausageBoxColliderSize;
+                        if(food.sausage.IsCut)
+                        {
+                            return (T)(object)food.sausage.cutSausageBoxCollider.size;
+                        }
+                        else
+                        {
+                            return (T)(object)food.sausage.SausageBoxCollider.size;
+                        }
                     default:
                         Debug.Log("_foodTypeがセットされていません");
                         return default(T);

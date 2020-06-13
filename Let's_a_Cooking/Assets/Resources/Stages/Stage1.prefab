@@ -2038,6 +2038,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Awa (11)
       objectReference: {fileID: 0}
+    - target: {fileID: 8509034300365856184, guid: dcb3cfb061bc5df44975ced65c75c1d1,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8509034300365856184, guid: dcb3cfb061bc5df44975ced65c75c1d1,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dcb3cfb061bc5df44975ced65c75c1d1, type: 3}
 --- !u!4 &8431412394228861157 stripped
@@ -2197,6 +2207,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Awa (12)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8509034300365856184, guid: dcb3cfb061bc5df44975ced65c75c1d1,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.433
+      objectReference: {fileID: 0}
+    - target: {fileID: 8509034300365856184, guid: dcb3cfb061bc5df44975ced65c75c1d1,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 5.036112
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dcb3cfb061bc5df44975ced65c75c1d1, type: 3}
@@ -2452,6 +2472,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Awa (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8509034300365856184, guid: dcb3cfb061bc5df44975ced65c75c1d1,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.855
+      objectReference: {fileID: 0}
+    - target: {fileID: 8509034300365856184, guid: dcb3cfb061bc5df44975ced65c75c1d1,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 4.1922708
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dcb3cfb061bc5df44975ced65c75c1d1, type: 3}
@@ -2957,6 +2987,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Awa (10)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8509034300365856184, guid: dcb3cfb061bc5df44975ced65c75c1d1,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.743
+      objectReference: {fileID: 0}
+    - target: {fileID: 8509034300365856184, guid: dcb3cfb061bc5df44975ced65c75c1d1,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 4.416192
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dcb3cfb061bc5df44975ced65c75c1d1, type: 3}

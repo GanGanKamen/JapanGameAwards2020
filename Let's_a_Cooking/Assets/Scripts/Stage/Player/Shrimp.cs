@@ -6,6 +6,7 @@ namespace Cooking.Stage
     public class Shrimp : MonoBehaviour
     {
         public BoxCollider shrimpBoxCollider = null;
+        public BoxCollider shrimpTailBoxCollider = null;
         [SerializeField] CapsuleCollider capsuleCollider = null;
         /// <summary>
         /// 頭が取れた後のコライダーの大きさをシーン上で確認しながら変更するため

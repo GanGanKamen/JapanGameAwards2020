@@ -209,6 +209,50 @@ CapsuleCollider:
   m_Height: 0.19098236
   m_Direction: 1
   m_Center: {x: 0.08030448, y: -0.14201577, z: -0.0000001862645}
+--- !u!1 &2537594308173893849
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2906623975669766414}
+  - component: {fileID: 325404654081576286}
+  m_Layer: 0
+  m_Name: CutCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &2906623975669766414
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2537594308173893849}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4689672585035630473}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &325404654081576286
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2537594308173893849}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Size: {x: 0.10895847, y: 0.077438556, z: 0.21329607}
+  m_Center: {x: -0.016787082, y: -0.0009486228, z: 0.105016656}
 --- !u!1 &3320682154916130645
 GameObject:
   m_ObjectHideFlags: 0
@@ -503,6 +547,7 @@ Transform:
   - {fileID: 774883345331057355}
   - {fileID: 3215929532779333832}
   - {fileID: 5812131580018110350}
+  - {fileID: 2906623975669766414}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -532,7 +577,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SausageBoxCollider: {fileID: 3287864538851767100}
-  cutSausageBoxCollider: {fileID: 0}
+  cutSausageBoxCollider: {fileID: 325404654081576286}
   _sausageNormal: {fileID: 3370789654296888654}
   _sausageCut: {fileID: 5089718982716691465}
   _sausageCutOffObject: {fileID: 7484323759390296833}
@@ -576,9 +621,11 @@ MonoBehaviour:
   _foodPositionNotRotate: {fileID: 1228091082403991902}
   _rigidbody: {fileID: 2016240340272796268}
   _isGroundedArea: {fileID: 8661180459902539460}
+  _cutGroundedArea: {fileID: 8887153111858049915}
   _shrimpFirstBoundPower: 3
   _chickenFirstBoundPower: 1.5
   _forwardAngle: 60
+  aIMoveTransform: {fileID: 0}
   winnerAnimation: {fileID: 6560880544457464421}
   _isDebugMode: 0
 --- !u!1 &5089718982716691465
