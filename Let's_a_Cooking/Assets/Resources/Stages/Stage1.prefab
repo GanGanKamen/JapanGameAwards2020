@@ -1378,6 +1378,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7732280787423336447}
     m_Modifications:
+    - target: {fileID: 590135906542359366, guid: f69685df7cd5f944c8ab522e9b303d24,
+        type: 3}
+      propertyPath: _isRareSeasoning
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3909755336038567605, guid: f69685df7cd5f944c8ab522e9b303d24,
         type: 3}
       propertyPath: _isRareSeasoning
