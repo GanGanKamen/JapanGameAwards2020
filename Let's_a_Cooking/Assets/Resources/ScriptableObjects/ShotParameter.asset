@@ -15,4 +15,4 @@ MonoBehaviour:
   _maxShotPower: 20
   _minShotPower: 5
   _limitVerticalMaxAngle: 85
-  _limitVerticalMinAngle: 10
+  _limitVerticalMinAngle: 5
