@@ -60,7 +60,7 @@ namespace Cooking.Stage
         /// <summary>
         /// 指定しないとPivotになる 予測線の開始位置
         /// </summary>
-        [SerializeField] private Transform _centerPoint = null;
+        [SerializeField] protected Transform _centerPoint = null;
         /// <summary>
         /// スタート地点初期化プレイヤーの状態
         /// </summary>
@@ -124,11 +124,11 @@ namespace Cooking.Stage
         /// <summary>
         /// 接地点 中心CenterPointの真下にレイを飛ばして取得
         /// </summary>
-        public Vector3 GroundPoint
-        {
-            get { return groundPoint; }
-        }
-        protected Vector3 groundPoint;
+        //public Vector3 GroundPoint
+        //{
+        //    get { return centerPoint; }
+        //}
+        //protected Vector3 centerPoint;
         public Transform IsGroundedArea
         {
             get { return _isGroundedArea ? _isGroundedArea : CenterPoint ; }
@@ -182,7 +182,7 @@ namespace Cooking.Stage
         /// 衝突した相手の食材 食材衝突時二重判定を防ぐ
         /// </summary>
         private FoodStatus _collidedFood;
-        protected Transform aIMoveTransform;
+       [SerializeField] protected Transform aIMoveTransform;
         public bool IsAddForced
         {
             get { return _isAddedForced; }
@@ -213,16 +213,33 @@ namespace Cooking.Stage
         /// <summary>
         /// ターンが変わるとき、プレイヤー全員で呼ばれる
         /// </summary>
-        public void ResetAddedForced()
+        public virtual void ResetAddedForced()
         {
             addedForceTime = 0;
             _isAddedForced = false;
+            var groundTag = GetGroundPointUnderCenter(_centerPoint.position, -_centerPoint.up).tag;
+            if (groundTag == TagList.Floor.ToString())
+            {
+                _isFall = true;
+            }
         }
         /// <summary>
         /// ショット開始時呼ばれる 衝突後跳ねる挙動を制御 卵は割れるようになる
         /// </summary>
         public void FoodStatusReset()
         {
+            if (aIMoveTransform != null)
+            {
+                var trans = aIMoveTransform.parent.GetComponent<AIMoveForGameOver>();
+                if (trans != null)
+                {
+                    this.transform.position = trans.Move().position;
+                }
+                else
+                {
+                    this.transform.position += aIMoveTransform.position;
+                }
+            }
             aIMoveTransform = null;
             if (gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodLayerInStartArea]))
             _isFoodInStartArea = true;
@@ -660,11 +677,23 @@ namespace Cooking.Stage
                     break;
                 case FoodType.Egg:
                     yield return null;
-                    while (time < 1)
+                    if (food.egg.HasBroken)
                     {
-                        _rigidbody.AddForce(power, ForceMode.Impulse);//調整中
-                        time += Time.deltaTime;
-                        yield return null;
+                        while (time < 0.08f)
+                        {
+                            _rigidbody.AddForce(power, ForceMode.Impulse);//調整中
+                            time += Time.deltaTime;
+                            yield return null;
+                        }
+                    }
+                    else
+                    {
+                        while (time < 0.2f)
+                        {
+                            _rigidbody.AddForce(power, ForceMode.Impulse);//調整中
+                            time += Time.deltaTime;
+                            yield return null;
+                        }
                     }
                     while (time < 2)
                     {
@@ -1181,9 +1210,9 @@ namespace Cooking.Stage
                     var referencePoint = other.transform.GetChild(0);
                     var aI = GetComponent<AI>();
                     Debug.Log(referencePoint);
-                    if (referencePoint != null && aI != null)
+                    if (referencePoint != null)
                     {
-
+                        aIMoveTransform = referencePoint;
                     }
                 }
             }
@@ -1200,7 +1229,7 @@ namespace Cooking.Stage
                 {
                     ranx = UnityEngine.Random.Range(-0.5f, 0.5f);
                     ranz = UnityEngine.Random.Range(-0.5f, 0.5f);
-                    ranPos = new Vector3(ranx, 0.4f, ranz);
+                    ranPos = new Vector3(ranx, 0.2f, ranz);
                 }
                 else
                 {
@@ -1433,7 +1462,7 @@ namespace Cooking.Stage
                 _centerPoint.position = this.transform.position;
             }
             //接地点の算出 中心から真下にレイを飛ばして取得
-            groundPoint = GetGroundPointUnderCenter(_centerPoint.position, - _centerPoint.up);
+            //groundPoint = GetGroundPointUnderCenter(_centerPoint.position, - _centerPoint.up);
             switch (FoodType)
             {
                 case FoodType.Shrimp:
@@ -1459,23 +1488,23 @@ namespace Cooking.Stage
         {
             falledFoodStateOnStart = FalledFoodStateOnStart.Other;
         }
-        private Vector3 GetGroundPointUnderCenter(Vector3 originPoint , Vector3 underCenterDirection)
+        private GameObject GetGroundPointUnderCenter(Vector3 originPoint , Vector3 underCenterDirection)
         {
-            //float rayLength = 10;
+            float rayLength = 10;
             //Rayが当たったオブジェクトの情報を入れる箱
-            //RaycastHit hit;    //原点        方向
-            //Ray ray = new Ray(originPoint, underCenterDirection);
-            //Debug.DrawRay(originPoint, underCenterDirection, Color.red, 100);
+            RaycastHit hit;    //原点        方向
+            Ray ray = new Ray(originPoint, underCenterDirection);
+            Debug.DrawRay(originPoint, underCenterDirection, Color.red, 100);
             //Kitchenレイヤーとレイ判定を行う
-            //if (Physics.Raycast(ray, out hit, rayLength, StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]))
+            if (Physics.Raycast(ray, out hit, rayLength, StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]))
             {
-                return transform.position;
+                return hit.transform.gameObject;
                 //return hit.point;
             }
-        //    else
-        //    {
-        //        return transform.position;
-        //    }
+            else
+            {
+                return this.gameObject;
+            }
         }
         public void SetParentObject(Transform transform)
         {

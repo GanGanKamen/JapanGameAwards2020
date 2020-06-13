@@ -372,7 +372,7 @@ namespace Cooking.Stage
                             }
                         }
                         //if (_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].FalledFoodStateOnStartProperty == FalledFoodStateOnStart.OnStart)
-                        PredictLineManager.Instance.SetPredictLineInstantiatePosition(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].GroundPoint);
+                        PredictLineManager.Instance.SetPredictLineInstantiatePosition(_turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].CenterPoint.position);
                     }
                     break;
                 case StageGameState.Finish:

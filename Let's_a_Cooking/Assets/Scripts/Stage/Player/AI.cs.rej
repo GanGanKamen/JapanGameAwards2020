@@ -1,0 +1,10 @@
+diff a/Let's_a_Cooking/Assets/Scripts/Stage/Player/AI.cs b/Let's_a_Cooking/Assets/Scripts/Stage/Player/AI.cs	(rejected hunks)
+@@ -214,7 +214,7 @@
+                 for (float shotSpeed = maxShotSpeed; shotSpeed > 0; i++)
+                 {
+                     shotSpeed = i / 2;
+-                    for (int shotAngleVertical = 10; shotAngleVertical <= 85; shotAngleVertical++)
++                    for (int shotAngleVertical = Mathf.FloorToInt(ShotManager.Instance.ShotParameter.LimitVerticalMaxAngle); shotAngleVertical >= Mathf.FloorToInt(ShotManager.Instance.ShotParameter.LimitVerticalMinAngle); shotAngleVertical--)
+                     {
+                         shotDirectionY = Mathf.Sin(shotAngleVertical * Mathf.Deg2Rad); // 角度をラジアンへ
+                         shotDirectionVector = new Vector3(goalVector.x, shotDirectionY, goalVector.z).normalized;

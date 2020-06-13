@@ -515,7 +515,7 @@ namespace Cooking.Stage
             //位置変更予定
             _foodStatuses[playerIndex].ResetFoodState();
             CheckPlayerAnimationPlay();
-            PredictLineManager.Instance.SetPredictLineInstantiatePosition(_foodStatuses[playerIndex].GroundPoint);
+            PredictLineManager.Instance.SetPredictLineInstantiatePosition(_foodStatuses[playerIndex].CenterPoint.position);
             if (_isAITurn)
             {
                 var aI = _foodStatuses[playerIndex].GetComponent<AI>();
@@ -554,9 +554,10 @@ namespace Cooking.Stage
         {
             ShotManager.Instance.SetShotManager(_foodStatuses[activePlayerIndex].Rigidbody);
             CameraManager.Instance.SetCameraMoveCenterPosition(_foodStatuses[activePlayerIndex].transform.position);
-            PredictLineManager.Instance.SetActivePredictShotPoint(!_isAITurn);
-            if(!_isAITurn)
-            PredictLineManager.Instance.SetActive(true);
+            if (UIManager.Instance.MainUIStateProperty != ScreenState.Start)
+            {
+                PredictLineManager.Instance.SetActivePredictShotPoint(!_isAITurn);
+            }
         }
         /// <summary>
         /// 異常落下にも呼ばれる アニメーション再生中などショット前プレイヤー落下時にsceneManagerに呼ばれる + 初期化時
