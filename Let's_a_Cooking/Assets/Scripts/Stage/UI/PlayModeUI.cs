@@ -139,6 +139,22 @@ namespace Cooking.Stage
                     switch (StageSceneManager.Instance.FoodStateOnGameProperty)
                     {
                         case StageSceneManager.FoodStateOnGame.Normal:
+                            foreach (var food in _turnManager.FoodStatuses)
+                            {
+                                if (food.IsAddForced)
+                                {
+                                    if (food.IsGoal)
+                                    {
+                                        _falledImage.SetActive(false);
+                                        _goalImage.SetActive(true);
+                                    }
+                                    else if (food.IsFall)
+                                    {
+                                        _falledImage.SetActive(true);
+                                        _goalImage.SetActive(false);
+                                    }
+                                }
+                            }
                             _falledImage.SetActive(false);
                             _goalImage.SetActive(false);
                             break;
@@ -259,9 +275,9 @@ namespace Cooking.Stage
         {
             for (int i = 0; i < 10; i++)
             {
-                _remainingTurnBackGroundImage.SetActive(false);
-                yield return new WaitForSeconds(0.1f);
                 _remainingTurnBackGroundImage.SetActive(true);
+                yield return new WaitForSeconds(0.1f);
+                _remainingTurnBackGroundImage.SetActive(false);
                 yield return new WaitForSeconds(0.1f);
             }
         }

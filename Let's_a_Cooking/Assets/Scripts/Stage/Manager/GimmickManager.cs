@@ -186,7 +186,6 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
-           Debug.Log( _targetObjectsForAI[(int)AITargetObjectTags.Knife].Count);
             //foreach (var bubble in _bubbles)
             //{
             //    if(bubble != null)

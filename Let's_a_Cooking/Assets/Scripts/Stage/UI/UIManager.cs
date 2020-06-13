@@ -219,7 +219,6 @@ namespace Cooking.Stage
                         case FinishUIMode.Finish:
                             if (_finishTimeCounter >= _finishWaitTIme)
                             {
-                                CameraManager.Instance.WinnerCamera(TurnManager.Instance.FoodStatuses[0]);
                                 ChangeFinishUI(FinishUIMode.Score);
                                 StageSceneManager.Instance.ComparePlayerPointOnFinish();
                                 _finishWaitTIme = 0;
@@ -230,7 +229,7 @@ namespace Cooking.Stage
                             }
                             break;
                         case FinishUIMode.Score:
-                            if (TouchInput.GetTouchPhase() == TouchInfo.Down)
+                            if (TouchInput.GetTouchPhase() == TouchInfo.Down && !_optionMenuWindow.activeInHierarchy && !PreventTouchInputCollision.Instance.TouchInvalid[(int)PreventTouchInputCollision.ButtonName.OptionButton])
                             {
                                 _finishUIMode = FinishUIMode.Title;
                                 StartCoroutine(BackTitle());

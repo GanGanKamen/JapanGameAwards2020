@@ -64,6 +64,10 @@ namespace Cooking.Stage
         {
             get { return _playerIndexArray; }
         }
+        /// <summary>
+        /// 要素番号配列(プレイヤー番号管理・プレイヤー番号へ変換用) 用途：ターンを回す・リザルトでプレイヤー番号(=要素番号 + 1)を取得
+        /// </summary>
+        /// <remarks> 1 3 2 0ならプレイヤー2 4 3 1の順にターンが回る 0番目 = 最初にショットをするプレイヤーの番号 最初のターンのプレイヤーは何番のプレイヤーなのか？を知ることができる</remarks>
         private int[] _playerIndexArray;
         /// <summary>
         /// プレイヤーの情報 ターンを回す際に必要
@@ -220,7 +224,7 @@ namespace Cooking.Stage
             {
                 if (_foodStatuses[_activePlayerIndex].IsGoal)
                 {
-                    Debug.Log("Goal");
+                    //Debug.Log("Goal");
                 }
             }
             ///デバッグ用 ゲーム終了
@@ -239,6 +243,10 @@ namespace Cooking.Stage
         public int GetPlayerNumberFromActivePlayerIndex(int activePlayerIndex)
         {
             return _playerIndexArray[activePlayerIndex] + 1;
+        }
+        public int GetFoodStatusIndex(int playerIndex)
+        {
+            return System.Array.IndexOf(_playerIndexArray, playerIndex);
         }
         /// <summary>
         /// 次のターンのプレイヤーがAIかどうかを確認する プレイヤー作成後とターン切り替え時に呼ばれる
@@ -283,10 +291,12 @@ namespace Cooking.Stage
             UIManager.Instance.PlayModeUI.SetRemainingTurnsUIInformation(RemainingTurns);
             UIManager.Instance.DisplayChangeTurnUI(true);
             StageSceneManager.Instance.GoalCameraSetActive(true);
+            StageSceneManager.Instance.ManageGoalPlayerAnimation(true);
             yield return new WaitForSeconds(turnChangeTime);
             UIManager.Instance.DisplayChangeTurnUI(false);
             JudgeAppearRareSeasoning();
             StageSceneManager.Instance.GoalCameraSetActive(false);
+            StageSceneManager.Instance.ManageGoalPlayerAnimation(false);
         }
 
         /// <summary>
@@ -334,6 +344,7 @@ namespace Cooking.Stage
                             food.UnlockConstraints();
                             food.PlayerPointProperty.ResetGetPointBool();
                         }
+                        _foodStatuses[_activePlayerIndex].SetTransparent();
                         if (_foodStatuses[_activePlayerIndex].IsFoodInStartArea)
                         {
                             InitializeOnTurnChange(_activePlayerIndex);
@@ -341,7 +352,7 @@ namespace Cooking.Stage
                         }
                         else if (_foodStatuses[_activePlayerIndex].IsGoal)
                         {
-                            FoodGoal();
+                            FoodGoal(_activePlayerIndex);
                         }
                         if (!_foodStatuses[_activePlayerIndex].IsStart)
                             _foodStatuses[_activePlayerIndex].ChangeFoodLayer(false);
@@ -355,7 +366,7 @@ namespace Cooking.Stage
                                 //吹っ飛ばされた結果ゴールの中にいる場合 ポイント加算
                                 if (_foodStatuses[_activePlayerIndex].IsGoal)
                                 {
-                                    FoodGoal();
+                                    FoodGoal(_activePlayerIndex);
                                 }
                                 ChangeTurnOrDisplayFallUI();
                                 break;
@@ -365,17 +376,21 @@ namespace Cooking.Stage
                                 //吹っ飛ばされた結果ゴールの中にいる場合 ポイント加算
                                 if (_foodStatuses[_activePlayerIndex].IsGoal) //indexのリセットは子の後ろなので、ここではエラー
                                 {
-                                    FoodGoal();
+                                    FoodGoal(_activePlayerIndex);
                                 }
                                 StartCoroutine(TurnChangeUI());
                                 break;
                             case AfterChangeTurnState.GameEnd:
-                                //吹っ飛ばされた結果ゴールの中にいる場合 ポイント加算
-                                if (_foodStatuses[_foodStatuses.Length - 1].IsGoal) //最後のプレイヤー
+                                _activePlayerIndex = _foodStatuses.Length - 1;
+                                //最後のプレイヤー以外で実行                              1引くことで最後の一人以外
+                                for (int foodIndex = 0; foodIndex < _foodStatuses.Length - 1; foodIndex++)
                                 {
-                                    FoodGoal();
+                                    //吹っ飛ばされた結果ゴールの中にいる場合 ポイント加算
+                                    if (_foodStatuses[foodIndex].IsGoal)
+                                    {
+                                        FoodGoal(foodIndex);
+                                    }
                                 }
-                                _activePlayerIndex = 0;
                                 //処理終了
                                 return;
                             default:
@@ -389,13 +404,20 @@ namespace Cooking.Stage
                     break;
             }
         }
-
-        private void FoodGoal()
+        /// <summary>
+        /// このメソッド(InitializePlayerData)実行までは、アクティブプレイヤー達はFoodStatus配列の中に含まれる
+        /// </summary>
+        private void FoodGoal(int playerIndex)
         {
-            StageSceneManager.Instance.AddPlayerPointToList(_activePlayerIndex);
+            FoodStatuses[playerIndex].SetFoodLayer(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodLayerInStartArea]);
+            FoodStatuses[playerIndex].Rigidbody.useGravity = false;
+            FoodStatuses[playerIndex].Rigidbody.isKinematic = true;
+            CheckNextPlayerAI();
+            StageSceneManager.Instance.AddPlayerPointToList(playerIndex);
             //FoodStatusを取り除いて処理量を減らす
-            Destroy(_foodStatuses[_activePlayerIndex]);
-            StageSceneManager.Instance.InitializePlayerData(_activePlayerIndex, _foodStatuses[_activePlayerIndex].FoodType, _isAITurn, StageSceneManager.Instance.AIShotRange[0]);//AIが複数いて難易度が違うことは現状考えていない
+            //Destroy(_foodStatuses[playerIndex]);
+            //FoodStatusの中身が入れ替わる
+            StageSceneManager.Instance.InitializePlayerData(playerIndex, _foodStatuses[playerIndex].FoodType, _isAITurn, StageSceneManager.Instance.AIShotRange[0]);//AIが複数いて難易度が違うことは現状考えていない
         }
 
         /// <summary>

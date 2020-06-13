@@ -17,7 +17,8 @@ namespace Cooking.Stage
             Foam_Break,
             Food_Grounded, Food_Jump,
             Point_Down, Point_UP,
-            Seasoning, Seasoning_Hit, Stars,
+            Seasoning, Seasoning_Hit,
+            Stars, Food_Stars,
             Splash, Slash
         }
 

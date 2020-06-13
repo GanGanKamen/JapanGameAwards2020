@@ -189,7 +189,9 @@ namespace Cooking.Stage
             //レアエフェクトであるスターを付着
             if (seasoning.RareEffect.activeInHierarchy)
             {
-                rareSeasoningEffect = EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Stars).gameObject;
+                rareSeasoningEffect = EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Food_Stars).gameObject;
+                rareSeasoningEffect.transform.position = transform.position;
+                rareSeasoningEffect.transform.parent = transform;
             }
             EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Seasoning_Hit);
             //調味料パーティクルは付着しない
@@ -357,7 +359,7 @@ namespace Cooking.Stage
         /// </summary>
         /// <param name="meshRenderers"></param>
         /// <param name="eggInsideRenderer"></param>
-        protected void ChangeEggMeshRenderers(GameObject[] shells, MeshRenderer eggInsideRenderer)
+        public void ChangeEggMeshRenderers(GameObject[] shells, MeshRenderer eggInsideRenderer)
         {
             if (_foodMeshRenderer.material.color == _foodTextureList.seasoningMaterial.color)
             {

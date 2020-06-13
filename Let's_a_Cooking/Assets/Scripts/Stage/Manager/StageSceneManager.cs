@@ -12,7 +12,8 @@ namespace Cooking.Stage
     /// </summary>
     public enum TagList
     {
-        Finish, Floor, Water, Seasoning, Towel, DirtDish, RareSeasoning, Wall, TowelAbovePoint, Knife, Bubble, BubbleZone, StartArea, Chair, CameraZone , NotBeAITarget
+        Finish, Floor, Water, Seasoning, Towel, DirtDish, RareSeasoning, Wall, TowelAbovePoint, Knife, Bubble, BubbleZone, StartArea, Chair, CameraZone , NotBeAITarget,
+            Pot,FryingPan
     }
     public enum LayerList
     {
@@ -164,6 +165,22 @@ namespace Cooking.Stage
         }
         private float _chairPosition = 4;
         [SerializeField] private FoodTextureList _foodTextureList;
+        enum GoalInfomation
+        {
+            Food,Index
+        }
+        struct GoalFoodsInformation
+        {
+            /// <summary>
+            /// ゴールした食材
+            /// </summary>
+            public FoodStatus goalFood;
+            /// <summary>
+            /// ゴールした食材のインデックス
+            /// </summary>
+            public int foodIndex;
+        }
+        List<GoalFoodsInformation> _goalFoodsInformation = new List<GoalFoodsInformation>();
         private void Awake()
         {
             _instance = this;
@@ -182,7 +199,6 @@ namespace Cooking.Stage
             PredictFoodPhysics.CreatePredictFoodGroundedGameObject();
 #endif
         }
-
         /// <summary>
         /// セットされているステージ番号が正しいかどうか確認
         /// </summary>
@@ -286,6 +302,7 @@ namespace Cooking.Stage
         }
         private float _turnChangeTime = 3.5f;
         private float _turnChangeTimeCounter = 0f;
+        private GameObject[] _goalUIObjects = new GameObject[2];
 
         // Start is called before the first frame update
         void Start()
@@ -298,13 +315,14 @@ namespace Cooking.Stage
             for (int i = 0; i < _goals.Length; i++)
             {
                 _goals[i] = goals[i];
-                var goalCamera = _goals[i].transform.root.GetComponentInChildren<Cinemachine.CinemachineVirtualCamera>();
+                var goal = _goals[i].transform.parent;
+                var goalCamera =  goal.GetComponentInChildren<Cinemachine.CinemachineVirtualCamera>();
+                _goalUIObjects[i] = goal.GetComponentInChildren<SpriteRenderer>().gameObject;
                 if (goalCamera != null)
                 {
                     _goalCamera = goalCamera.gameObject;
                     _cameraMovePoint = _goalCamera.transform.GetChild(0);
                     _cameraMovePoint.parent = goals[0].transform;
-                    break;
                 }
             }
             _goalCamera.SetActive(false);
@@ -450,6 +468,7 @@ namespace Cooking.Stage
                                         }
                                         if (_turnChangeTimeCounter >= _turnChangeTime)
                                         {
+                                            _turnChangeTimeCounter = 0;
                                             isTurnChange = true;
                                             break;
                                         }
@@ -481,7 +500,10 @@ namespace Cooking.Stage
                     break;
             }
         }
-
+        
+        /// <summary>
+        /// FinishStateに移動
+        /// </summary>
         public void GameEnd()
         {
             _gameState = StageGameState.Finish;
@@ -536,7 +558,7 @@ namespace Cooking.Stage
         }
 
         /// <summary>
-        /// プレイヤーの情報を初期化 TurnManagerとプレイヤー個人が持つ情報 生成時に呼ばれる 初期化時はこの後順番を並び替える
+        /// プレイヤーの生成 配列に登録 TurnManagerとプレイヤー個人が持つ情報 生成時に呼ばれる 初期化時はこの後順番を並び替える
         /// </summary>
         /// <param name="foodStatusIndex">FoodStatusにセットするプレイヤーのindex番号(単なる番号ではない)初期化時はまだ番号に順番の意味はない</param>
         /// <param name="playerFoodType">食材の種類</param>
@@ -652,17 +674,62 @@ namespace Cooking.Stage
         /// </summary>
         public void ComparePlayerPointOnFinish()
         {
+            foreach (var goalUI in _goalUIObjects)
+            {
+                goalUI.SetActive(false);
+            }
             //InDescendingOrder();
             int[] SumPlayerPoints = new int[_playerPointList.Length];
             for (int i = 0; i < SumPlayerPoints.Length; i++)
             {
                 SumPlayerPoints[i] = GetSumPlayerPoint(i);
             }
-            int max = SumPlayerPoints.Sum();
+            int max = SumPlayerPoints.Max();
             //最大ポイントのプレイヤーナンバーindex
             int maxIndex = Array.IndexOf(SumPlayerPoints, max);
-            //降順に並び替えたことにより、最初の要素に最もポイントの高いプレイヤーが来る
             UIManager.Instance.UpdateWinnerPlayerNumber(maxIndex + 1);
+            var foodStatusIndex = _turnManager.GetFoodStatusIndex(maxIndex);
+
+            //indexの要素だけを_goalFoodsInformationから取り出す
+            List<int> foodIndexes = new List<int>();
+            for (int i = 0; i < _goalFoodsInformation.Count; i++)
+            {
+                foodIndexes.Add(_goalFoodsInformation[i].foodIndex);
+            }
+            var indexes = new List<int>();
+            List<FoodStatus> winners = new List<FoodStatus>();
+            //最大ポイントだったプレイヤー番号indexを検索
+            for (int i = 0; i < _goalFoodsInformation.Count; i++)
+            {
+                if (_goalFoodsInformation[i].foodIndex == maxIndex)
+                {
+                    indexes.Add(i);
+                    winners.Add(_goalFoodsInformation[i].goalFood);
+                }
+            }
+            //foreach (var index in indexes)
+            //{
+            //    var goalInformationIndexes = foodIndexes.FindAll(n => n  == index);
+            //    foreach (var goalInfoIndex in goalInformationIndexes)
+            //    {
+            //        Debug.Log(goalInfoIndex);
+            //        winners.Add(_goalFoodsInformation[goalInfoIndex].goalFood);
+            //    }
+            //}
+            foreach (var winner in winners)
+            {
+                winner.PlayerAnimatioManage(true);
+                EffectManager.Instance.InstantiateEffect(winner.transform.position + new Vector3(0, 0, 0), EffectManager.EffectPrefabID.Food_Stars);
+            }
+            GoalCameraSetActive(true);
+            //CameraManager.Instance.WinnerCamera(TurnManager.Instance.FoodStatuses[foodStatusIndex]);
+        }
+        public void ManageGoalPlayerAnimation(bool isPlay)
+        {
+            for (int i = 0; i < _goalFoodsInformation.Count; i++)
+            {
+                _goalFoodsInformation[i].goalFood.PlayerAnimatioManage(isPlay);
+            }
         }
         /// <summary>
         /// ポイントを降順に並び替え
@@ -709,13 +776,14 @@ namespace Cooking.Stage
                 }
                 else
                 {
-                    return GetSumPlayerPoint(foodStatusIndex);
+                    return GetSumPlayerPoint(playerIndex);
                 }
             }
         }
         public void AddPlayerPointToList(int activePlayerIndex)
         {
             var pointIndex = _turnManager.GetPlayerNumberFromActivePlayerIndex(activePlayerIndex) - 1;//プレイヤー1の情報→0番目に配置 1引く必要あり
+            Debug.Log(pointIndex);
             if (_turnManager.FoodStatuses[activePlayerIndex].RareSeasoningEffect != null)
             {
                 for (int i = 0; i < _playerPointList[pointIndex].Count; i++)
@@ -728,6 +796,11 @@ namespace Cooking.Stage
             {
                 _playerPointList[pointIndex].Add(_turnManager.FoodStatuses[activePlayerIndex].PlayerPointProperty.Point);
             }
+            GoalFoodsInformation newGoalFoodsInformation;
+            newGoalFoodsInformation.goalFood = _turnManager.FoodStatuses[activePlayerIndex];
+            newGoalFoodsInformation.foodIndex = pointIndex;
+            //ゴールした食材を登録
+            _goalFoodsInformation.Add(newGoalFoodsInformation);
         }
         public int GetSumPlayerPoint(int playerIndex)
         {

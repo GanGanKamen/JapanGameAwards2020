@@ -33,6 +33,8 @@ namespace Cooking.Stage
             get { return _isHeadFallOff; }
         }
         private bool _isHeadFallOff;
+        [SerializeField] Material _cutMaterial;
+
         #endregion
 
         // Start is called before the first frame update
@@ -100,5 +102,10 @@ namespace Cooking.Stage
             yield return null;
             _foodAnimator.enabled = false;
         }
+        public void SetTransparentMaterial()
+        {
+            _shrimpHead.GetComponent<SkinnedMeshRenderer>().material = _cutMaterial;
+        }
+
     }
 }

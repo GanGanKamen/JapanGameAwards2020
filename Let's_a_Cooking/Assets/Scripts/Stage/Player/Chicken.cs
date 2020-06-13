@@ -43,6 +43,7 @@ namespace Cooking.Stage
             get { return _isCut; }
         }
         private bool _isCut;
+       [SerializeField] Material _cutMaterial;
         /// <summary>
         /// ささみが切られる
         /// </summary>
@@ -66,6 +67,10 @@ namespace Cooking.Stage
             EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Slash).parent = this.transform;
             //必要に応じて力を加える プレイヤーから見て邪魔かも？
             //rigidbody.AddForce(Vector3.right * 100);
+        }
+        public void SetTransparentMaterial()
+        {
+            _cutMeshRenderer[1].material = _cutMaterial;
         }
     }
 }

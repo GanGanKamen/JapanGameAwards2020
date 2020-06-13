@@ -94,6 +94,8 @@ namespace Cooking.Stage
             SoundManager.Instance.PlaySE(SoundEffectID.egg_app);
             var isGroundedArea = GetComponent<FoodStatus>()?.IsGroundedArea;
             isGroundedArea.transform.localPosition = new Vector3(isGroundedArea.transform.localPosition.x, -0.0064f, -isGroundedArea.transform.localPosition.z);
+            var foodStatus = GetComponent<FoodStatus>();
+                foodStatus.ChangeEggMeshRenderers(foodStatus.OriginalFoodProperty.egg.Shells, foodStatus.OriginalFoodProperty.egg.InsideMeshRenderer);
         }
 
         private IEnumerator ShellsCoroutine()

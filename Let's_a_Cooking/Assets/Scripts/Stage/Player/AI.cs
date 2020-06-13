@@ -99,7 +99,7 @@ namespace Cooking.Stage
             {
                 if (TurnManager.Instance.RemainingTurns < 2 || _targetObjectOptions.Count == 0 || _distances.Count == 0)
                 {
-                    Debug.Log("ターゲット無し");
+                    //Debug.Log("ターゲット無し");
                     ChangeTargetForGoal();
                     break;
                 }
@@ -201,10 +201,20 @@ namespace Cooking.Stage
                 goalVector = (goal.transform.position - transform.position).normalized;
                 int i = 0;//インクリメント変数
                 Vector3 shotDirectionVector = Vector3.zero, maxShotSpeedVector = Vector3.zero;
+                //ゴールが下でかつ、とても近い＝取っ手の上
+                if (goalVector.y < 0 && Vector3.Distance(goal.transform.position , transform.position) < 10)
+                {
+                    Debug.LogAssertion("ゴールがとても近い 取っ手の上");
+                    shotDirectionY = Mathf.Sin(ShotManager.Instance.ShotParameter.LimitVerticalMinAngle * 2 * Mathf.Deg2Rad); // 角度をラジアンへ
+                    _shotDirection = new Vector3(goalVector.x, shotDirectionY, goalVector.z).normalized;
+                    speed = ShotManager.Instance.ShotParameter.MaxShotPower;
+                    _searchEnd = true;
+                    return;
+                }
                 for (float shotSpeed = maxShotSpeed; shotSpeed > 0; i++)
                 {
                     shotSpeed = i / 2;
-                    for (int shotAngleVertical = 10; shotAngleVertical <= 85; shotAngleVertical++)
+                    for (int shotAngleVertical = Mathf.FloorToInt(ShotManager.Instance.ShotParameter.LimitVerticalMaxAngle); shotAngleVertical >= Mathf.FloorToInt(ShotManager.Instance.ShotParameter.LimitVerticalMinAngle); shotAngleVertical--)
                     {
                         shotDirectionY = Mathf.Sin(shotAngleVertical * Mathf.Deg2Rad); // 角度をラジアンへ
                         shotDirectionVector = new Vector3(goalVector.x, shotDirectionY, goalVector.z).normalized;
@@ -437,6 +447,51 @@ namespace Cooking.Stage
 
         private void GetTargetObjects()
         {
+            //他の食材 自分が調味料を持っていないとき狙う AI同士で狙い続けるのは面白くないので、食材ごとに乱数生成 さらに、レアを持つプレイヤーは積極的に狙う
+            if (!IsSeasoningMaterial)
+            {
+                foreach (var otherFood in TurnManager.Instance.FoodStatuses)
+                {
+                    if (otherFood != this)
+                    {
+                        int seed = Cooking.Random.GetRandomIntFromZero(10);
+                        if (StageSceneManager.Instance.AILevels[0] == AILevel.Hard)
+                        {
+                            if (otherFood.RareSeasoningEffect != null)
+                            {
+                                _targetObjectOptions.Clear();//最優先狙い
+                                _targetObjectOptions.Add(otherFood.gameObject);
+                                DistanceInOrder();
+                                return;
+                            }
+                        }
+                        //自分のポイントが高い時は高確率で狙う
+                        if (playerPoint.Point > 300)
+                        {
+                            //80%で狙う
+                            if (seed < 8)
+                            {
+                                if (!otherFood.IsFoodInStartArea && otherFood.IsSeasoningMaterial)
+                                {
+                                    _targetObjectOptions.Add(otherFood.gameObject);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            //50%で狙う
+                            if (seed < 5)
+                            {
+                                if (!otherFood.IsFoodInStartArea && otherFood.IsSeasoningMaterial)
+                                {
+                                    _targetObjectOptions.Add(otherFood.gameObject);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            //調味料
             if (rareSeasoningEffect == null)
             {
                 //現状同じレベル レア優先でそれ以外狙わない
@@ -555,40 +610,6 @@ namespace Cooking.Stage
                         break;
                     default:
                         break;
-                }
-            }
-            //他の食材 自分が調味料を持っていないとき狙う AI同士で狙い続けるのは面白くないので、食材ごとに乱数生成 さらに、レアを持つプレイヤーは積極的に狙う
-            if (!IsSeasoningMaterial)
-            {
-                foreach (var otherFood in TurnManager.Instance.FoodStatuses)
-                {
-                    if (otherFood != this)
-                    {
-                        int seed = Cooking.Random.GetRandomIntFromZero(10);
-                        //自分のポイントが高い時は高確率で狙う
-                        if (playerPoint.Point > 300)
-                        {
-                            //80%で狙う
-                            if (seed < 8)
-                            {
-                                if (!otherFood.IsFoodInStartArea && otherFood.IsSeasoningMaterial)
-                                {
-                                    _targetObjectOptions.Add(otherFood.gameObject);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            //50%で狙う
-                            if (seed < 5)
-                            {
-                                if (!otherFood.IsFoodInStartArea && otherFood.IsSeasoningMaterial)
-                                {
-                                    _targetObjectOptions.Add(otherFood.gameObject);
-                                }
-                            }
-                        }
-                    }
                 }
             }
             // Debug.Log(_distances.Count);

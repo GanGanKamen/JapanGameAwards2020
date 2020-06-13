@@ -1639,6 +1639,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: cabinet
       objectReference: {fileID: 0}
+    - target: {fileID: 501145692900820118, guid: 13767d908aa152041953e77318fdd424,
+        type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
     - target: {fileID: 558482353387343454, guid: 13767d908aa152041953e77318fdd424,
         type: 3}
       propertyPath: m_Enabled
@@ -2423,6 +2428,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.13
+      objectReference: {fileID: 0}
+    - target: {fileID: 2409754949050781080, guid: ec0e208f277a6fe47aca82f28fac976e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2623528990199172081, guid: ec0e208f277a6fe47aca82f28fac976e,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -9.27
       objectReference: {fileID: 0}
     - target: {fileID: 3385885862589871991, guid: ec0e208f277a6fe47aca82f28fac976e,
         type: 3}

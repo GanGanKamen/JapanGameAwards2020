@@ -30,7 +30,7 @@ Transform:
   m_LocalScale: {x: 0.7, y: 0.01, z: 0.7}
   m_Children: []
   m_Father: {fileID: 8825571493895655178}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &737239407
 MeshFilter:
@@ -322,7 +322,7 @@ GameObject:
   - component: {fileID: 6465261874999040030}
   m_Layer: 9
   m_Name: FryingPan002
-  m_TagString: Untagged
+  m_TagString: FryingPan
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -342,11 +342,11 @@ Transform:
   - {fileID: 1431873950911506501}
   - {fileID: 8623061950535763945}
   - {fileID: 3009943921216392777}
-  - {fileID: 5150246898643370626}
   - {fileID: 3686534846309277146}
   - {fileID: 737239405}
   - {fileID: 3907555502513213956}
   - {fileID: 1963176111446377111}
+  - {fileID: 7388934397105628707}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -472,12 +472,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6119886859513826243}
   m_LocalRotation: {x: 0.27059805, y: 0.6532815, z: -0.27059805, w: 0.6532815}
-  m_LocalPosition: {x: -1.12, y: 2.1, z: 1.63}
+  m_LocalPosition: {x: -1.7, y: 2.1, z: 1.29}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
   - {fileID: 1429760827237583982}
   m_Father: {fileID: 8825571493895655178}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 45, y: 90, z: 0}
 --- !u!114 &550926959827411714
 MonoBehaviour:
@@ -514,7 +514,7 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_ComponentOwner: {fileID: 1429760827237583982}
---- !u!1 &6319267065106254425
+--- !u!1 &7155758840074920605
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -522,8 +522,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5150246898643370626}
-  - component: {fileID: 2349815596521822109}
+  - component: {fileID: 7388934397105628707}
+  - component: {fileID: 656542288795179023}
   m_Layer: 9
   m_Name: Goal
   m_TagString: Finish
@@ -531,33 +531,33 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &5150246898643370626
+--- !u!4 &7388934397105628707
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6319267065106254425}
+  m_GameObject: {fileID: 7155758840074920605}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.145, y: 0.226, z: 0.394}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8825571493895655178}
-  m_RootOrder: 4
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &2349815596521822109
+--- !u!65 &656542288795179023
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6319267065106254425}
+  m_GameObject: {fileID: 7155758840074920605}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1.5, y: 0.6, z: 1.5}
-  m_Center: {x: 0.064596415, y: 0.3576703, z: 0.42057437}
+  m_Center: {x: -0.08040359, y: 0.1316703, z: 0.0265744}
 --- !u!1 &7444413179959023492
 GameObject:
   m_ObjectHideFlags: 0
@@ -589,7 +589,7 @@ Transform:
   m_LocalScale: {x: -0.05, y: 0.049999997, z: 0.049999997}
   m_Children: []
   m_Father: {fileID: 8825571493895655178}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &538669813345032075
 SpriteRenderer:
@@ -748,8 +748,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.1148727, y: 0.099384785, z: 1.1010494}
-  m_Center: {x: 0.06729138, y: 0.19874835, z: 0.3490168}
+  m_Size: {x: 1.1148727, y: 0.5288749, z: 1.1699362}
+  m_Center: {x: 0.06729138, y: -0.015996695, z: 0.38346025}
 --- !u!65 &4591998722883768936
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -847,7 +847,7 @@ PrefabInstance:
     - target: {fileID: 5941683987972544820, guid: c419dbc5da9e8954699e01a1b8d34de4,
         type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5941683987972544820, guid: c419dbc5da9e8954699e01a1b8d34de4,
         type: 3}

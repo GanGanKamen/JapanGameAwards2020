@@ -107,6 +107,14 @@ namespace Cooking.Stage
                     _touchInvalid[(int)ButtonName.OptionButton] = false;
                 }
                 #endregion
+                if (UIManager.Instance.MainUIStateProperty == ScreenState.Finish)
+                {
+                    _touchInvalid[(int)ButtonName.OptionButton] = PreventInputCollision(ButtonName.OptionButton);
+                }
+                else
+                {
+                    _touchInvalid[(int)ButtonName.OptionButton] = false;
+                }
             }
         }
         /// <summary>

@@ -36,6 +36,8 @@ namespace Cooking.Stage
             get { return _isCut; }
         }
         private bool _isCut;
+        [SerializeField] Material _cutMaterial;
+
         /// <summary>
         /// ソーセージが切られる
         /// </summary>
@@ -60,5 +62,10 @@ namespace Cooking.Stage
             //必要に応じて力を加える プレイヤーから見て邪魔かも？
             //rigidbody.AddForce(Vector3.right * 100);
         }
+        public void SetTransparentMaterial()
+        {
+            _cutMeshRenderer[1].material = _cutMaterial;
+        }
+
     }
 }

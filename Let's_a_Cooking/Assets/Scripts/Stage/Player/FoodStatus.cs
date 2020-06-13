@@ -187,7 +187,11 @@ namespace Cooking.Stage
         /// 衝突した相手の食材 食材衝突時二重判定を防ぐ
         /// </summary>
         private FoodStatus _collidedFood;
-        bool addedForce = false;
+        public bool IsAddForced
+        {
+            get { return _isAddedForced; }
+        }
+        private bool _isAddedForced = false;
         float addedForceTime = 0;
         public bool OnTowel
         {
@@ -216,7 +220,7 @@ namespace Cooking.Stage
         public void ResetAddedForced()
         {
             addedForceTime = 0;
-            addedForce = false;
+            _isAddedForced = false;
         }
         /// <summary>
         /// ショット開始時呼ばれる 衝突後跳ねる挙動を制御 卵は割れるようになる
@@ -327,7 +331,7 @@ namespace Cooking.Stage
             {
                 _flyTime += Time.deltaTime;
             }
-            if (addedForce && _rigidbody.velocity.magnitude < 0.1f)
+            if (_isAddedForced && _rigidbody.velocity.magnitude < 0.1f)
             {
                 FreezeRotation(RigidbodyConstraints.FreezeRotationX);
                 FreezeRotation(RigidbodyConstraints.FreezeRotationY);
@@ -344,7 +348,7 @@ namespace Cooking.Stage
         {
             if (_isGoal)
             {
-                //_rigidbody.velocity = Vector3.zero;
+                _rigidbody.velocity = Vector3.zero;
             }
             else
             {
@@ -634,7 +638,7 @@ namespace Cooking.Stage
         }
         IEnumerator AddForce(Vector3 power)
         {
-            addedForce = true;
+            _isAddedForced = true;
             SoundManager.Instance.PlaySE(SoundEffectID.food_jump1);
             float time = 0;
             SetFoodLayer(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodCollision]);
@@ -646,7 +650,7 @@ namespace Cooking.Stage
                         _rigidbody.AddForce(power, ForceMode.Impulse);//調整中
                         time += Time.deltaTime;
                         yield return null;
-                        addedForce = true;
+                        _isAddedForced = true;
                     }
                     while (time < 0.7f)
                     {
@@ -682,7 +686,7 @@ namespace Cooking.Stage
                         _rigidbody.AddForce(power, ForceMode.Impulse);//調整中
                         time += Time.deltaTime;
                         yield return null;
-                        addedForce = true;
+                        _isAddedForced = true;
                     }
                     while (time < 0.7f)
                     {
@@ -699,7 +703,7 @@ namespace Cooking.Stage
                         _rigidbody.AddForce(power, ForceMode.Impulse);//調整中
                         time += Time.deltaTime;
                         yield return null;
-                        addedForce = true;
+                        _isAddedForced = true;
                     }
                     while (time < 0.7f)
                     {
@@ -740,7 +744,6 @@ namespace Cooking.Stage
                         {
                             if (food.egg.BreakCount >= 2)
                             {
-                                ChangeEggMeshRenderers(food.egg.Shells, food.egg.InsideMeshRenderer);
                                 food.egg.EggBreak();
                             }
                             //ひびが入る ショット中の最初の衝突 調味料がついていないとき
@@ -782,26 +785,31 @@ namespace Cooking.Stage
             }
             var otherFood = collision.gameObject.GetComponent<FoodStatus>(); //相手は食材
             //自分のターンのみ
-            if (TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex] == this && ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode)
+            if (!_isGoal && TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex] == this && ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode)
             {
                 //相手の調味料を奪う
                 //=============================
                 if (otherFood != null && rareSeasoningEffect == null)//自分にレア調味料があるときは起きない
                 {
-                    var otherFoodColor = otherFood.GetActiveMaterial(otherFood.FoodType, otherFood.OriginalFoodProperty).color;
-                    //レアエフェクト取得
-                    if (otherFood.rareSeasoningEffect != null)
+                    if (!otherFood.IsGoal)
                     {
-                        rareSeasoningEffect = EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Stars).gameObject;
-                    }
-                    //自分が調味料を持っていないときに奪う
-                    if (!IsSeasoningMaterial)
-                    {
-                        if (otherFood.IsSeasoningMaterial)
+                        var otherFoodColor = otherFood.GetActiveMaterial(otherFood.FoodType, otherFood.OriginalFoodProperty).color;
+                        //レアエフェクト取得
+                        if (otherFood.rareSeasoningEffect != null)
                         {
-                            GetSeasoningPoint();
-                            ChangeFoodMaterial(StageSceneManager.Instance.FoodTextureList);
-                            otherFood.LostMaterial(otherFood.FoodType, otherFood.OriginalFoodProperty, otherFood.PlayerPointProperty);
+                            rareSeasoningEffect = EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Food_Stars).gameObject;
+                            rareSeasoningEffect.transform.position = transform.position;
+                            rareSeasoningEffect.transform.parent = transform;
+                        }
+                        //自分が調味料を持っていないときに奪う
+                        if (!IsSeasoningMaterial)
+                        {
+                            if (otherFood.IsSeasoningMaterial)
+                            {
+                                GetSeasoningPoint();
+                                ChangeFoodMaterial(StageSceneManager.Instance.FoodTextureList);
+                                otherFood.LostMaterial(otherFood.FoodType, otherFood.OriginalFoodProperty, otherFood.PlayerPointProperty);
+                            }
                         }
                     }
                 }
@@ -851,7 +859,7 @@ namespace Cooking.Stage
             //=================
             #region//物理挙動を制御 ステージとの衝突処理 wallは別
             //=================
-            if (otherFood != null)
+            if (!_isGoal && otherFood != null)
             {
                 //自分がアクティブではないとき、相手が食材ならぶっ飛ばされる
                 if (TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex] != this )
@@ -863,7 +871,7 @@ namespace Cooking.Stage
                             {
                                 var otherFoodVelocity = DecideAddForceAngle(otherFood);
                                 var collisionForceVector = new Vector3(otherFoodVelocity.x, 0, otherFoodVelocity.z).normalized;
-                                if (!addedForce)
+                                if (!_isAddedForced)
                                 {
                                     StartCoroutine(AddForce(collisionForceVector * ShotManager.Instance.ShotPower * 0.2f));//調整中
                                     Debug.Log("強くぶっとばす");
@@ -875,7 +883,7 @@ namespace Cooking.Stage
                                 var shotManager = ShotManager.Instance;
                                 var otherFoodVelocity = otherFood.Rigidbody.velocity.normalized;
                                 var collisionForceVector = new Vector3(otherFoodVelocity.x, 0, otherFoodVelocity.z).normalized;
-                                if (!addedForce)
+                                if (!_isAddedForced)
                                 {
                                     StartCoroutine(AddForce(collisionForceVector * ShotManager.Instance.ShotPower * 0.02f));//調整中
                                     Debug.Log("強くぶっとばす");
@@ -887,7 +895,7 @@ namespace Cooking.Stage
                             {
                                 var otherFoodVelocity = DecideAddForceAngle(otherFood);
                                 var collisionForceVector = new Vector3(otherFoodVelocity.x, 0, otherFoodVelocity.z).normalized;
-                                if (!addedForce)
+                                if (!_isAddedForced)
                                 {
                                     StartCoroutine(AddForce(collisionForceVector * ShotManager.Instance.ShotPower * 0.1f));//調整中
                                     Debug.Log("強くぶっとばす");
@@ -899,7 +907,7 @@ namespace Cooking.Stage
                                 var shotManager = ShotManager.Instance;
                                 var otherFoodVelocity = otherFood.Rigidbody.velocity.normalized;
                                 var collisionForceVector = new Vector3(otherFoodVelocity.x, 0, otherFoodVelocity.z).normalized;
-                                if (!addedForce)
+                                if (!_isAddedForced)
                                 {
                                     StartCoroutine(AddForce(collisionForceVector * ShotManager.Instance.ShotPower * 0.1f));//調整中
                                     Debug.Log("強くぶっとばす");
@@ -910,13 +918,13 @@ namespace Cooking.Stage
                             break;
                     }
                 }
-                if (otherFood.addedForce)
+                if (otherFood._isAddedForced)
                 {
                     _rigidbody.velocity = Vector3.zero;
                 }
             }
             //自分のターンのみ有効
-            if (TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex] == this)
+            if (!_isGoal && TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex] == this)
             {
                 switch (foodType)
                 {
@@ -1088,7 +1096,7 @@ namespace Cooking.Stage
             #region //衝突フラグ・変数初期化
             //=================
             //最初の衝突かつショット中かつ一定以上の滞空時間
-            if (_isFryCollision &&( (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]) || collision.gameObject.GetComponent<FoodStatus>() != null))
+            if (!_isGoal && _isFryCollision && ( (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]) || collision.gameObject.GetComponent<FoodStatus>() != null))
                 && ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode && _flyTime > 0.1f)
             {
                 switch (foodType)
@@ -1160,18 +1168,37 @@ namespace Cooking.Stage
                 playerPoint.GetPoint(GetPointType.FirstTowelTouch);
                 _onTowel = true;
             }
+            if (other.tag == TagList.NotBeAITarget.ToString())
+            {
+                var referencePoint = other.transform.GetChild(0);
+                var aI = GetComponent<AI>();
+                Debug.Log(referencePoint);
+                if (referencePoint != null && aI != null)
+                {
+
+                }
+            }
             if (other.tag == TagList.Finish.ToString() && !_isGoal)
             {
                 SoundManager.Instance.PlaySE(SoundEffectID.pan_frying);
                 EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Splash);
                 _isGoal = true;
                 FreezeRotation();
-
-                var ranx = UnityEngine.Random.Range(-0.1f, 0.1f);
-                var ranz = UnityEngine.Random.Range(-0.1f, 0.1f);
-                var ranPos = new Vector3(ranx, 2, ranz);
+                var ranx = UnityEngine.Random.Range(-0.7f, 0.7f);
+                var ranz = UnityEngine.Random.Range(-0.7f, 0.7f);
+                var ranPos = new Vector3(ranx, 1, ranz);
+                if (other.transform.parent.gameObject.tag == TagList.Pot.ToString())
+                {
+                    ranx = UnityEngine.Random.Range(-0.5f, 0.5f);
+                    ranz = UnityEngine.Random.Range(-0.5f, 0.5f);
+                    ranPos = new Vector3(ranx, 0.4f, ranz);
+                }
+                else
+                {
+                    ranPos = new Vector3(ranx, 0.2f, ranz);
+                }
                 var movePos = other.transform.position + ranPos;
-
+                SetFoodLayer(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodLayerInStartArea]);
                 _rigidbody.velocity = Vector3.zero;
                 transform.position = movePos;
             }
@@ -1231,12 +1258,6 @@ namespace Cooking.Stage
                 GetSeasoningPoint();
             }
             base.GetSeasoning(seasoning);
-            //レアエフェクトであるスターを付着
-            if (seasoning.RareEffect.activeInHierarchy)
-            {
-                rareSeasoningEffect.transform.position = new Vector3(FoodPositionNotRotate.position.x, FoodPositionNotRotate.position.y + 1.5f, FoodPositionNotRotate.position.z);
-                rareSeasoningEffect.transform.parent = FoodPositionNotRotate.transform;
-            }
             ChangeFoodMaterial(textureList);
             _gotSeasoning = seasoning;
         }
@@ -1324,7 +1345,7 @@ namespace Cooking.Stage
         /// 食材のレイヤー番号を指定 StartAreaとDefault
         /// </summary>
         /// <param name="layerMask"></param>
-        private void SetFoodLayer(LayerMask layerMask)
+        public void SetFoodLayer(LayerMask layerMask)
         {
             var layer = CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(layerMask);
             var foodChildObjects = this.transform.root.GetComponentsInChildren<Transform>();
@@ -1343,7 +1364,7 @@ namespace Cooking.Stage
             transform.eulerAngles = Vector3.zero;
             FreezeRotation();
             falledFoodStateOnStart = FalledFoodStateOnStart.Falled;
-            SetFoodLayer(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodLayerInStartArea]);
+            SetFoodLayer(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]);
         }
         /// <summary>
         /// ショット開始時アニメーション停止(空中で動きに影響を与える) ターン終了時アニメーション再生 仮
@@ -1359,26 +1380,29 @@ namespace Cooking.Stage
                     break;
                 case FoodType.Egg:
                     transform.eulerAngles = Vector3.zero;
+                    winnerAnimation.transform.localPosition = Vector3.zero;
                     FreezeRotation();
-                    if (StageSceneManager.Instance.GameState == StageGameState.Finish)
+                    //if (StageSceneManager.Instance.GameState == StageGameState.Finish)
                     {
-                        winnerAnimation.enabled = true;
+                        winnerAnimation.enabled = isEnable;
                     }
                     break;
                 case FoodType.Chicken:
                     transform.eulerAngles = Vector3.zero;
+                    winnerAnimation.transform.localPosition = Vector3.zero;
                     FreezeRotation();
-                    if (StageSceneManager.Instance.GameState == StageGameState.Finish)
+                    //if (StageSceneManager.Instance.GameState == StageGameState.Finish)
                     {
-                        winnerAnimation.enabled = true;
+                        winnerAnimation.enabled = isEnable;
                     }
                     break;
                 case FoodType.Sausage:
                     transform.eulerAngles = Vector3.zero;
+                    winnerAnimation.transform.localPosition = Vector3.zero;
                     FreezeRotation();
-                    if (StageSceneManager.Instance.GameState == StageGameState.Finish)
+                    //if (StageSceneManager.Instance.GameState == StageGameState.Finish)
                     {
-                        winnerAnimation.enabled = true;
+                        winnerAnimation.enabled = isEnable;
                     }
                     break;
                 default:
@@ -1536,6 +1560,34 @@ namespace Cooking.Stage
             {
                 Debug.Log("型はVector3 または Vector2のどちらかです");
                 return default(T);
+            }
+        }
+        public void SetTransparent()
+        {
+            switch (foodType)
+            {
+                case FoodType.Shrimp:
+                    //if (food.shrimp.IsHeadFallOff)
+                    //{
+                    //    food.shrimp.SetTransparentMaterial();
+                    //}
+                    break;
+                case FoodType.Egg:
+                    break;
+                case FoodType.Chicken:
+                    if (food.chicken.IsCut)
+                    {
+                        food.chicken.SetTransparentMaterial();
+                    }
+                    break;
+                case FoodType.Sausage:
+                    if (food.sausage.IsCut)
+                    {
+                        food.sausage.SetTransparentMaterial();
+                    }
+                    break;
+                default:
+                    break;
             }
         }
     }

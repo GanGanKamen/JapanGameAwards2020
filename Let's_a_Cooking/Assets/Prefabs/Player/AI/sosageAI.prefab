@@ -539,6 +539,7 @@ MonoBehaviour:
   _cutMeshRenderer:
   - {fileID: 7440426492847105618}
   - {fileID: 888988689574244617}
+  _cutMaterial: {fileID: 2100000, guid: 316832104e994a1479775f6ae01bf2dd, type: 2}
 --- !u!54 &2016240340272796268
 Rigidbody:
   m_ObjectHideFlags: 0
