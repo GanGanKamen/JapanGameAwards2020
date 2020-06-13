@@ -292,7 +292,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   foodSkinnedMeshRenderer:
   - {fileID: 2484488461429338661}
-  - {fileID: 0}
+  - {fileID: 9188503012660383571}
   _foodMeshRenderer: {fileID: 0}
   foodNormalGraphic: {fileID: 0}
   _seasoningMaterial: {fileID: 0}

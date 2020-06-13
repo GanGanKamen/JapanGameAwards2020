@@ -229,10 +229,10 @@ namespace Cooking.Stage
             }
             ///デバッグ用 ゲーム終了
 //#if UNITY_EDITOR
-            //if (Input.GetKeyDown(KeyCode.Return) && !_isAITurn)
-            //{
-            //    _turnNumber = 11;
-            //}
+            if (Input.GetKeyDown(KeyCode.Return) && !_isAITurn)
+            {
+                _turnNumber = 11;
+            }
             //#endif
         }
         /// <summary>
@@ -511,7 +511,6 @@ namespace Cooking.Stage
             _foodStatuses[playerIndex].ResetFallAndGoalFlag();
             _foodStatuses[playerIndex].ResetPlayerRotation();
             UIManager.Instance.ResetUIMode();
-            SetObjectsPositionForNextPlayer(playerIndex);
             //位置変更予定
             _foodStatuses[playerIndex].ResetFoodState();
             CheckPlayerAnimationPlay();
@@ -521,6 +520,7 @@ namespace Cooking.Stage
                 var aI = _foodStatuses[playerIndex].GetComponent<AI>();
                 aI.TurnAI();
             }
+            SetObjectsPositionForNextPlayer(playerIndex);
         }
         /// <summary>
         /// プレイヤーのアニメーションを再生するか判断

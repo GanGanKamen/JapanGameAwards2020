@@ -221,6 +221,9 @@ namespace Cooking.Stage
                         case FinishUIMode.Finish:
                             if (_finishTimeCounter >= _finishWaitTIme)
                             {
+                                var audioSource = gameObject.AddComponent<AudioSource>();
+                                audioSource.loop  = true;
+                                audioSource.Play();
                                 ChangeFinishUI(FinishUIMode.Score);
                                 StageSceneManager.Instance.ComparePlayerPointOnFinish();
                                 _finishWaitTIme = 0;
@@ -231,6 +234,11 @@ namespace Cooking.Stage
                             }
                             break;
                         case FinishUIMode.Score:
+                            for (int i = 0; i < _turnManager.FoodStatuses.Length; i++)
+                            {
+                                _finishScoreTexts[i].text = StageSceneManager.Instance.GetPlayerPoint(i, false).ToString();
+                                _finishScoreImages[i].SetActive(true);
+                            }
                             if (TouchInput.GetTouchPhase() == TouchInfo.Down && !_optionMenuWindow.activeInHierarchy && !PreventTouchInputCollision.Instance.TouchInvalid[(int)PreventTouchInputCollision.ButtonName.OptionButton])
                             {
                                 _finishUIMode = FinishUIMode.Title;

@@ -462,7 +462,7 @@ namespace Cooking.Stage
                                     if (foodStatus == _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex])
                                     {
                                         //一定よりも速度が遅かった時間の累計がchangeTimeを超えたらターンが変わる
-                                        if (foodStatus.Rigidbody.velocity.magnitude < 0.05f)
+                                        if (foodStatus.Rigidbody.velocity.magnitude < 1f)
                                         {
                                             _turnChangeTimeCounter += Time.deltaTime;
                                         }
@@ -474,7 +474,7 @@ namespace Cooking.Stage
                                         }
                                     }
                                     ///食材が止まるまで待機
-                                    if (foodStatus.Rigidbody.velocity.magnitude > 0.01f)
+                                    else if (foodStatus.Rigidbody.velocity.magnitude > 1f)
                                     {
                                         isTurnChange = false;
                                         break;

@@ -1068,7 +1068,7 @@ namespace Cooking.Stage
                                     if (_flyTime > _firstBoundTime + 0.4f && collision.gameObject.tag == TagList.Chair.ToString())
                                         _physicsState = PhysicsState.ChairBound;
                                     //小さいジャンプでは代入しない 飛んでいる間時間を数える実効値形式へ
-                                    else if (_flyTime > _firstBoundTime + 0.4f && collision.gameObject.tag != TagList.Towel.ToString())
+                                    else if (_flyTime > _firstBoundTime + 0f && collision.gameObject.tag != TagList.Towel.ToString())
                                         _physicsState = PhysicsState.FirstBound;
                                 }
                                 //else if (_physicsState == PhysicsState.FirstBound)
@@ -1258,7 +1258,7 @@ namespace Cooking.Stage
                     GetSeasoning(touchSeasoning);
                 }
             }
-            else if (other.tag == TagList.Bubble.ToString())
+            else if (TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex] == this && ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode && !IsGoal && other.tag == TagList.Bubble.ToString())
             {
                 var bubble = other.GetComponent<Bubble>();
                 if (_gotBubbles.Count > _gotBubbleIndex)
@@ -1447,14 +1447,6 @@ namespace Cooking.Stage
         /// </summary>
         public void ResetFoodState()
         {
-            if (_centerPoint != null)
-            {
-                if (_centerPoint.parent != StageSceneManager.Instance.FoodPositionsParent)
-                {
-                    _centerPoint.parent = StageSceneManager.Instance.FoodPositionsParent;
-                }
-                _centerPoint.position = this.transform.position;
-            }
             if (aIMoveTransform != null)
             {
                 var trans = aIMoveTransform.parent.GetComponent<AIMoveForGameOver>();
@@ -1470,6 +1462,15 @@ namespace Cooking.Stage
                     this.transform.position += aIMoveTransform.localPosition * 10;
                 }
             }
+            if (_centerPoint != null)
+            {
+                if (_centerPoint.parent != StageSceneManager.Instance.FoodPositionsParent)
+                {
+                    _centerPoint.parent = StageSceneManager.Instance.FoodPositionsParent;
+                }
+                _centerPoint.position = this.transform.position;
+            }
+
             aIMoveTransform = null;
             //接地点の算出 中心から真下にレイを飛ばして取得
             //groundPoint = GetGroundPointUnderCenter(_centerPoint.position, - _centerPoint.up);
