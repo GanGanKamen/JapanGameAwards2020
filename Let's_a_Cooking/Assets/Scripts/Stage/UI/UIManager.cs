@@ -221,6 +221,7 @@ namespace Cooking.Stage
                         case FinishUIMode.Finish:
                             if (_finishTimeCounter >= _finishWaitTIme)
                             {
+                                UICanvasSetActiveFalse();
                                 var audioSource = gameObject.AddComponent<AudioSource>();
                                 audioSource.loop  = true;
                                 audioSource.clip = Resources.Load<AudioClip>("Sounds/SE/" + SoundEffectID.pan_frying.ToString());
@@ -441,6 +442,10 @@ namespace Cooking.Stage
         {
             _stageUICanvas.SetActive(!remainingTurnsUIIsActive);
             _playModeUI.RemainingTurnsUICanvas.SetActive(remainingTurnsUIIsActive);
+        }
+        public void UICanvasSetActiveFalse()
+        {
+            _stageUICanvas.SetActive(false);
         }
     }
 }
