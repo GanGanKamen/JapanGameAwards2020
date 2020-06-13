@@ -285,6 +285,7 @@ namespace Cooking.Stage
             var goalVector = (goal.transform.position - transform.position).normalized;
             //重ければ減らす必要あり
             int i = 0;
+            bool isWaitFlame = false;
             int halfLimitAngle = 90;//全方向では処理が重い
             int fallPointCount = (int)((halfLimitAngle * 2) / incrementValue);
             int fallPointIndex = 0;
@@ -295,19 +296,33 @@ namespace Cooking.Stage
                 for (i = 0; horizontalAngle < goalAngle + halfLimitAngle; i++, horizontalAngle = goalAngle + i * incrementValue)
                 {
                     GetFallPointObjectByRayCast(goal, horizontalAngle, fallPoint, goalDistanceFromFallPoints, shotSpeedVectorList, shotSpeedList, ref fallPointIndex, verticalAngle, shotDirectionY);
+                    if (horizontalAngle > goalAngle + halfLimitAngle / 2 && !isWaitFlame)
+                    {
+                        Debug.Log(758);
+                        isWaitFlame = true;
+                        yield return null;
+                    }
                 }
                 yield return null;
+                isWaitFlame = false;
                 horizontalAngle = goalAngle - 1 * incrementValue;
                 //角度が偶数奇数でずれる可能性があるので上限条件は数
                 for (i = 1; fallPointIndex < fallPointCount; i++, horizontalAngle = goalAngle - i * incrementValue)
                 {
                     GetFallPointObjectByRayCast(goal, horizontalAngle, fallPoint, goalDistanceFromFallPoints, shotSpeedVectorList, shotSpeedList, ref fallPointIndex, verticalAngle, shotDirectionY);
-                    //Debug.Log(fallPoint[i]);
+                    if (horizontalAngle < goalAngle - halfLimitAngle / 2 && i % 80 == 0)
+                    {
+                        Debug.Log(765);
+
+                        yield return null;
+                    }
                 }
                 //if (verticalAngle % 5 == 0)
                 {
                     yield return null;
                 }
+                isWaitFlame = false;
+                //減少したhorizontalAngleを再利用する
             }
             int minDistanceIndex = goalDistanceFromFallPoints.IndexOf(goalDistanceFromFallPoints.Min());
             Debug.Log(fallPoint[minDistanceIndex]);

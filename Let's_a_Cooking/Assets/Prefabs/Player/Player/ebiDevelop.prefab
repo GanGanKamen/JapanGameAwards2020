@@ -126,6 +126,7 @@ Transform:
   - {fileID: 1140233157897976292}
   - {fileID: 5750675495307327563}
   - {fileID: 8018696917782765862}
+  - {fileID: 8601272293051334766}
   m_Father: {fileID: 3789123603381715181}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -299,9 +300,11 @@ MonoBehaviour:
   _foodPositionNotRotate: {fileID: 2145306625588699937}
   _rigidbody: {fileID: 4479837848373791946}
   _isGroundedArea: {fileID: 6192125350965717799}
+  _cutGroundedArea: {fileID: 8261808866118183648}
   _shrimpFirstBoundPower: 4
   _chickenFirstBoundPower: 1.5
   _forwardAngle: 60
+  aIMoveTransform: {fileID: 0}
   winnerAnimation: {fileID: 0}
 --- !u!114 &6626410273865131183
 MonoBehaviour:
@@ -316,6 +319,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shrimpBoxCollider: {fileID: 7167404278365877129}
+  shrimpTailBoxCollider: {fileID: 1723760251233733668}
   capsuleCollider: {fileID: 5670369316466324488}
   shrimpFallHeadBoxCollider: {fileID: 0}
   fallHeadCapsuleCollider: {fileID: 0}
@@ -367,6 +371,50 @@ Transform:
   m_Father: {fileID: 5445114826409596837}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -1.6016538}
+--- !u!1 &2491015834755825167
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8601272293051334766}
+  - component: {fileID: 1723760251233733668}
+  m_Layer: 0
+  m_Name: BoxColliderHeadFallOff
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &8601272293051334766
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2491015834755825167}
+  m_LocalRotation: {x: -0.08715578, y: 0, z: 0, w: 0.9961947}
+  m_LocalPosition: {x: 0, y: 0.021, z: 0.173}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4317075067360883751}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: -10, y: 0, z: 0}
+--- !u!65 &1723760251233733668
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2491015834755825167}
+  m_Material: {fileID: 13400000, guid: 5918af64a2913cc4ca1a5798de62b5e5, type: 2}
+  m_IsTrigger: 0
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Size: {x: 0.08083411, y: 0.06928827, z: 0.31237322}
+  m_Center: {x: 0.00034826994, y: -0.00011295679, z: -0.2598395}
 --- !u!1 &2823169578827961852
 GameObject:
   m_ObjectHideFlags: 0

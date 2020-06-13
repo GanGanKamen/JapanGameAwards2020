@@ -185,20 +185,20 @@ namespace Cooking.Stage
                                         StartCoroutine(WaitOnDecideOrder());
                                     }
 #if UNITY_EDITOR
-                                    else if (Input.GetKeyDown(KeyCode.Space))
-                                    {
-                                        _invalidInputDecideOrder = true;
-                                        //順番を決める数値を決定
-                                        //_orderGage.value = 100;
-                                        _powerMeterValue = 100;
-                                        _orderGagesOfInteger.sprite = ChoosePowerMeterUIOfInteger(_powerMeterValue / _orderMax);
-                                        var orderPower = _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _powerMeterValue);
-                                        var orderPowerText = Mathf.FloorToInt(orderPower / 10) + 1;
-                                        if (orderPowerText > 10) orderPowerText = 10;
-                                        else if (orderPowerText < 1) orderPowerText = 1;
-                                        _orderPowerTexts[_turnManager.ActivePlayerIndex].text = orderPowerText.ToString();
-                                        StartCoroutine(WaitOnDecideOrder());
-                                    }
+                                    //else if (Input.GetKeyDown(KeyCode.Space))
+                                    //{
+                                    //    _invalidInputDecideOrder = true;
+                                    //    //順番を決める数値を決定
+                                    //    //_orderGage.value = 100;
+                                    //    _powerMeterValue = 100;
+                                    //    _orderGagesOfInteger.sprite = ChoosePowerMeterUIOfInteger(_powerMeterValue / _orderMax);
+                                    //    var orderPower = _turnManager.PlayerDecideOrderValue(_turnManager.ActivePlayerIndex, _powerMeterValue);
+                                    //    var orderPowerText = Mathf.FloorToInt(orderPower / 10) + 1;
+                                    //    if (orderPowerText > 10) orderPowerText = 10;
+                                    //    else if (orderPowerText < 1) orderPowerText = 1;
+                                    //    _orderPowerTexts[_turnManager.ActivePlayerIndex].text = orderPowerText.ToString();
+                                    //    StartCoroutine(WaitOnDecideOrder());
+                                    //}
 #endif
                                 }
                             }

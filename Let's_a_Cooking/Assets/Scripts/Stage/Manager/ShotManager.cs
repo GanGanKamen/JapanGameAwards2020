@@ -118,11 +118,11 @@ namespace Cooking.Stage
                         {
                             #region デバッグコード スペースを押すと最大パワーで飛ぶ
 #if UNITY_EDITOR
-                            if (Input.GetKeyDown(KeyCode.Space))
-                            {
-                                _shotPower = ShotParameter.MaxShotPower;
-                                UIManager.Instance.ChangeUI(ScreenState.ShottingMode);
-                            }
+                            //if (Input.GetKeyDown(KeyCode.Space))
+                            //{
+                            //    _shotPower = ShotParameter.MaxShotPower;
+                            //    UIManager.Instance.ChangeUI(ScreenState.ShottingMode);
+                            //}
                             //#endif
                             //#if UNITY_EDITOR
                             //if (Input.GetKeyDown(KeyCode.M))

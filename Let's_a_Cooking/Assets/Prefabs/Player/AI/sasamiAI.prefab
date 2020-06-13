@@ -268,6 +268,50 @@ Transform:
   m_Father: {fileID: 1147572020009484434}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3793337282008325853
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8949901792394456114}
+  - component: {fileID: 7483244492256089575}
+  m_Layer: 0
+  m_Name: CutCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &8949901792394456114
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3793337282008325853}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4869369653726483128}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &7483244492256089575
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3793337282008325853}
+  m_Material: {fileID: 13400000, guid: 11ad10c39b278034fb8e13a818aa1e81, type: 2}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.08, y: 0.09462789, z: 0.03424423}
+  m_Center: {x: 0, y: 0.007646039, z: 0.017895916}
 --- !u!1 &4202136102917679168
 GameObject:
   m_ObjectHideFlags: 0
@@ -1036,6 +1080,7 @@ Transform:
   - {fileID: 2555253195319095105}
   - {fileID: 366060118552419790}
   - {fileID: 5538745183360423639}
+  - {fileID: 8949901792394456114}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1065,7 +1110,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chickenBoxCollider: {fileID: 4303170802765336131}
-  chickenCutBoxCollider: {fileID: 0}
+  chickenCutBoxCollider: {fileID: 7483244492256089575}
   _cutChickenBoxCollider: {fileID: 0}
   _chickenNormal: {fileID: 8131787930931259562}
   _chickenCut: {fileID: 7361692856419998054}
@@ -1110,8 +1155,10 @@ MonoBehaviour:
   _foodPositionNotRotate: {fileID: 6151370996122192627}
   _rigidbody: {fileID: 498154807235067579}
   _isGroundedArea: {fileID: 1147572020009484434}
+  _cutGroundedArea: {fileID: 2895248830952155720}
   _shrimpFirstBoundPower: 3
   _chickenFirstBoundPower: 1.5
   _forwardAngle: 60
+  aIMoveTransform: {fileID: 0}
   winnerAnimation: {fileID: 1074560575817006851}
   _isDebugMode: 0

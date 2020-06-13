@@ -671,6 +671,7 @@ Transform:
   - {fileID: 7897182859257682046}
   - {fileID: 2337156730463303535}
   - {fileID: 4908250495388187185}
+  - {fileID: 5146428366094081875}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -694,9 +695,11 @@ MonoBehaviour:
   _foodPositionNotRotate: {fileID: 5521851059872774494}
   _rigidbody: {fileID: 2016240340272796268}
   _isGroundedArea: {fileID: 5540966640315155867}
+  _cutGroundedArea: {fileID: 296322749915058765}
   _shrimpFirstBoundPower: 3
   _chickenFirstBoundPower: 1.5
   _forwardAngle: 60
+  aIMoveTransform: {fileID: 0}
   winnerAnimation: {fileID: 5550212875184227947}
 --- !u!114 &2945226828159695530
 MonoBehaviour:
@@ -724,7 +727,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SausageBoxCollider: {fileID: 9012111501895328192}
-  cutSausageBoxCollider: {fileID: 0}
+  cutSausageBoxCollider: {fileID: 3095903872243311432}
   _sausageNormal: {fileID: 3370789654296888654}
   _sausageCut: {fileID: 5089718982716691465}
   _sausageCutOffObject: {fileID: 7484323759390296833}
@@ -906,6 +909,50 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.05363846, y: 0.0043667466, z: 0.05739496}
   m_Center: {x: 0.04757309, y: -0.0021833715, z: 0.000111628324}
+--- !u!1 &5841317623663328265
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5146428366094081875}
+  - component: {fileID: 3095903872243311432}
+  m_Layer: 0
+  m_Name: CutCollider (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &5146428366094081875
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5841317623663328265}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4689672585035630473}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &3095903872243311432
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5841317623663328265}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Size: {x: 0.10895847, y: 0.077438556, z: 0.21329607}
+  m_Center: {x: -0.016787082, y: -0.0009486228, z: 0.105016656}
 --- !u!1 &6350246116417615356
 GameObject:
   m_ObjectHideFlags: 0
