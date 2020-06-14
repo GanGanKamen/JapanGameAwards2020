@@ -155,7 +155,7 @@ namespace Cooking.Stage
         {
             for (int i = 0; i < _turnManager.FoodStatuses.Length; i++)
             {
-                _finishScoreTexts[i].text = _playModeUI.LostedPoints[i].text;
+                _finishScoreTexts[i].text = StageSceneManager.Instance.GetSumPlayerPoint(i).ToString();//_playModeUI.LostedPoints[i].text;
             }
 
             switch (_mainUIState)

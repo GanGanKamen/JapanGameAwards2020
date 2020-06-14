@@ -221,12 +221,12 @@ namespace Cooking.Stage
         {
             addedForceTime = 0;
             _isAddedForced = false;
-            var groundTag = GetKitchenGroundPointUnderCenter(_centerPoint.position, -_centerPoint.up).tag;
+            //var groundTag = GetKitchenGroundPointUnderCenter(_centerPoint.position, -_centerPoint.up).tag;
 
-            if (groundTag == TagList.Floor.ToString())
-            {
-                _isFall = true;
-            }
+            //if (groundTag == TagList.Floor.ToString())
+            //{
+            //    _isFall = true;
+            //}
         }
         /// <summary>
         /// ショット開始時呼ばれる 衝突後跳ねる挙動を制御 卵は割れるようになる
@@ -672,7 +672,7 @@ namespace Cooking.Stage
                     yield return null;
                     if (food.egg.HasBroken)
                     {
-                        while (time < 0.08f)
+                        while (time < 0.1f)
                         {
                             _rigidbody.AddForce(power, ForceMode.Impulse);//調整中
                             time += Time.deltaTime;
@@ -681,7 +681,7 @@ namespace Cooking.Stage
                     }
                     else
                     {
-                        while (time < 0.2f)
+                        while (time < 0.25f)
                         {
                             _rigidbody.AddForce(power, ForceMode.Impulse);//調整中
                             time += Time.deltaTime;
@@ -717,7 +717,7 @@ namespace Cooking.Stage
                     }
                     break;
                 case FoodType.Sausage:
-                    while (time < 0.1f)
+                    while (time < 0.15f)
                     {
                         _rigidbody.AddForce(power, ForceMode.Impulse);//調整中
                         time += Time.deltaTime;

@@ -74,7 +74,7 @@ namespace Cooking.Stage
         /// <summary>
         /// シーン内に存在しうるあわの数の上限
         /// </summary>
-        [SerializeField] private int _bubbleLimitSumNumber = 50;
+        static public int bubbleLimitSumNumber = 50;
         /// <summary>
         /// あわが生成されるタイミング 2,8 → 3ターン以内に生成 偶数はターンが切り替わるとき 奇数は後攻のプレイヤーになった時 2で割るとターン数 8 /2 4 4ターン目は含まない
         /// </summary>
@@ -145,9 +145,9 @@ namespace Cooking.Stage
         public void InstantiateBubbles()
         {
             //シーン内に存在するあわの数に上限を設ける
-            if (_bubbles.Count > _bubbleLimitSumNumber)
+            if (_bubbles.Count > bubbleLimitSumNumber)
             {
-                Debug.LogFormat("あわが限界{0}個に達しました", _bubbleLimitSumNumber);
+                Debug.LogFormat("あわが限界{0}個に達しました", bubbleLimitSumNumber);
                 return;
             }
             for (int i = 0; i < _bubbleInstantiateInformation.Length; i++)

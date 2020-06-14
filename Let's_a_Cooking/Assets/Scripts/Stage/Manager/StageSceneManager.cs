@@ -300,7 +300,7 @@ namespace Cooking.Stage
         {
             _foodStateOnGame = FoodStateOnGame.Normal;
         }
-        private float _turnChangeTime = 3.5f;
+        private float _turnChangeTime = 3f;
         private float _turnChangeTimeCounter = 0f;
         private GameObject[] _goalUIObjects = new GameObject[2];
 
@@ -457,8 +457,11 @@ namespace Cooking.Stage
                             bool isTurnChange = true;
                             foreach (var foodStatus in _turnManager.FoodStatuses)
                             {
-                                if (!foodStatus.IsGoal)
                                 {
+                                    if (foodStatus.IsGoal)//倍速
+                                    {
+                                        _turnChangeTimeCounter += Time.deltaTime;
+                                    }
                                     if (foodStatus == _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex])
                                     {
                                         //一定よりも速度が遅かった時間の累計がchangeTimeを超えたらターンが変わる
@@ -474,7 +477,7 @@ namespace Cooking.Stage
                                         }
                                     }
                                     ///食材が止まるまで待機
-                                    else if (foodStatus.Rigidbody.velocity.magnitude > 1f)
+                                    else if (foodStatus.Rigidbody.velocity.magnitude > 1.5f)
                                     {
                                         isTurnChange = false;
                                         break;
@@ -719,7 +722,7 @@ namespace Cooking.Stage
             foreach (var winner in winners)
             {
                 winner.PlayerAnimatioManage(true);
-                EffectManager.Instance.InstantiateEffect(winner.transform.position + new Vector3(0, 0, 0), EffectManager.EffectPrefabID.Food_Stars).parent = winner.transform;
+                EffectManager.Instance.InstantiateEffect(winner.transform.position + new Vector3(0, 0, 0), EffectManager.EffectPrefabID.Food_Stars).parent = winner.GetComponentInChildren<Animator>().transform;
             }
             GoalCameraSetActive(true);
             //CameraManager.Instance.WinnerCamera(TurnManager.Instance.FoodStatuses[foodStatusIndex]);

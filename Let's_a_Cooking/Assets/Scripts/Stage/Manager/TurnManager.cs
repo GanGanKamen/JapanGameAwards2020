@@ -583,7 +583,7 @@ namespace Cooking.Stage
                     }
                     else
                     {
-                        CameraManager.Instance.SetCameraMoveCenterPosition(_foodStatuses[activePlayerIndex].transform.position);
+                        CameraManager.Instance.SetCameraMoveCenterPosition(_foodStatuses[activePlayerIndex].transform.position + -_foodStatuses[activePlayerIndex].transform.forward * 0.3f + new Vector3(0, 0.2f, 0));
                     }
                     break;
                 case FoodType.Sausage:
