@@ -58,7 +58,7 @@ namespace Cooking.Stage
             var isGroundedArea = GetComponent<FoodStatus>()?.IsGroundedArea;
             isGroundedArea.transform.localPosition = new Vector3(-0.016f, -0.07243f, -0.0979f);
             isGroundedArea.transform.localScale = new Vector3(0.04076f, 0.05391148f, 0.1718356f);
-            EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Slash).parent = this.transform;
+            EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Slash).parent = GetComponent<FoodStatus>().FoodPositionNotRotate;
             //必要に応じて力を加える プレイヤーから見て邪魔かも？
             //rigidbody.AddForce(Vector3.right * 100);
         }

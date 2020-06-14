@@ -101,19 +101,45 @@ namespace Cooking.Stage
                 _isEmittingStopped = true;
             }
         }
-        private void OnParticleCollision(GameObject other)
+        //private void OnParticleCollision(GameObject other)
+        //{
+        //    //プレイヤーに触れたとき
+        //    if (other.GetComponent<FoodStatus>() != null && !_isEmittingStopped)
+        //    {
+        //        _seasoningParticleSystem.Stop(false, ParticleSystemStopBehavior.StopEmitting);
+        //        if (_raseasreEffect.activeInHierarchy)
+        //        {
+        //            _isRareSeasoning = false;
+        //            _rareEffect.GetComponent<ParticleSystem>().Stop(false, ParticleSystemStopBehavior.StopEmitting);
+        //            Destroy(gameObject);
+        //        }
+        //        _isEmittingStopped = true;
+        //    }
+        //}
+        private void OnTriggerEnter(Collider other)
         {
-            //プレイヤーに触れたとき
             if (other.GetComponent<FoodStatus>() != null && !_isEmittingStopped)
             {
-                _seasoningParticleSystem.Stop(false, ParticleSystemStopBehavior.StopEmitting);
-                if (_rareEffect.activeInHierarchy)
-                {
-                    _isRareSeasoning = false;
-                    _rareEffect.GetComponent<ParticleSystem>().Stop(false, ParticleSystemStopBehavior.StopEmitting);
-                }
-                _isEmittingStopped = true;
+                Debug.Log(45);
+                SeasoningParticle();
             }
+        }
+
+        public void SeasoningParticle()
+        {
+            _seasoningParticleSystem.Stop(false, ParticleSystemStopBehavior.StopEmitting);
+            if (_rareEffect.activeInHierarchy)
+            {
+                _isRareSeasoning = false;
+                _rareEffect.GetComponent<ParticleSystem>().Stop(false, ParticleSystemStopBehavior.StopEmitting);
+                //Destroy(gameObject);
+            }
+            _isEmittingStopped = true;
+        }
+
+        private void Update()
+        {
+            Debug.Log(_isEmittingStopped);
         }
     }
 }

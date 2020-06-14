@@ -1388,6 +1388,16 @@ PrefabInstance:
       propertyPath: _isRareSeasoning
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3973280409458380256, guid: f69685df7cd5f944c8ab522e9b303d24,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.92
+      objectReference: {fileID: 0}
+    - target: {fileID: 3973280409458380256, guid: f69685df7cd5f944c8ab522e9b303d24,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 8995005209892001127, guid: f69685df7cd5f944c8ab522e9b303d24,
         type: 3}
       propertyPath: m_Name

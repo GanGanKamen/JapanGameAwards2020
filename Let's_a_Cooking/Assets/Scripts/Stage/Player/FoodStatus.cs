@@ -215,17 +215,18 @@ namespace Cooking.Stage
             }
         }
         /// <summary>
-        /// ターンが変わるとき、プレイヤー全員で呼ばれる
+        /// ターンが変わるとき、foodstatuses配列内のプレイヤー全員で呼ばれる
         /// </summary>
         public virtual void ResetAddedForced()
         {
             addedForceTime = 0;
             _isAddedForced = false;
-            var groundTag = GetGroundPointUnderCenter(_centerPoint.position, -_centerPoint.up).tag;
-            if (groundTag == TagList.Floor.ToString())
-            {
-                _isFall = true;
-            }
+            //var groundTag = GetKitchenGroundPointUnderCenter(_centerPoint.position, -_centerPoint.up).tag;
+
+            //if (groundTag == TagList.Floor.ToString())
+            //{
+            //    _isFall = true;
+            //}
         }
         /// <summary>
         /// ショット開始時呼ばれる 衝突後跳ねる挙動を制御 卵は割れるようになる
@@ -671,7 +672,7 @@ namespace Cooking.Stage
                     yield return null;
                     if (food.egg.HasBroken)
                     {
-                        while (time < 0.08f)
+                        while (time < 0.1f)
                         {
                             _rigidbody.AddForce(power, ForceMode.Impulse);//調整中
                             time += Time.deltaTime;
@@ -680,7 +681,7 @@ namespace Cooking.Stage
                     }
                     else
                     {
-                        while (time < 0.2f)
+                        while (time < 0.25f)
                         {
                             _rigidbody.AddForce(power, ForceMode.Impulse);//調整中
                             time += Time.deltaTime;
@@ -716,7 +717,7 @@ namespace Cooking.Stage
                     }
                     break;
                 case FoodType.Sausage:
-                    while (time < 0.1f)
+                    while (time < 0.15f)
                     {
                         _rigidbody.AddForce(power, ForceMode.Impulse);//調整中
                         time += Time.deltaTime;
@@ -743,12 +744,12 @@ namespace Cooking.Stage
             switch (foodType)
             {
                 case FoodType.Shrimp:
-                    if (collision.gameObject.tag == TagList.Wall.ToString() && !food.shrimp.IsHeadFallOff)
+                    if (collision.gameObject.GetComponent<Container>() == null && collision.gameObject.tag == TagList.Wall.ToString() && !food.shrimp.IsHeadFallOff)
                     {
                         food.shrimp.FallOffShrimpHead();
                         playerPoint.GetPoint(GetPointType.FallOffShrimpHead);
                     }
-                    else if (collision.gameObject.tag == TagList.Knife.ToString() && !food.shrimp.IsHeadFallOff)
+                    else if ( collision.gameObject.tag == TagList.Knife.ToString() && !food.shrimp.IsHeadFallOff)
                     {
                         food.shrimp.FallOffShrimpHead();
                         playerPoint.GetPoint(GetPointType.FallOffShrimpHead);
@@ -983,7 +984,7 @@ namespace Cooking.Stage
                                     if (_flyTime > _firstBoundTime + 0.4f && collision.gameObject.tag == TagList.Chair.ToString())
                                         _physicsState = PhysicsState.ChairBound;
                                     //小さいジャンプでは代入しない 飛んでいる間時間を数える実効値形式へ
-                                    else if (_flyTime > _firstBoundTime + 0.4f && collision.gameObject.tag != TagList.Towel.ToString())
+                                    else if (_flyTime > _firstBoundTime + 0.0f && collision.gameObject.tag != TagList.Towel.ToString())
                                         _physicsState = PhysicsState.FirstBound;
                                 }
                                 //else if (_physicsState == PhysicsState.FirstBound)
@@ -991,7 +992,7 @@ namespace Cooking.Stage
                                 //    _physicsState = PhysicsState.Other;
                                 //}
                             }
-                            else if (collision.gameObject.tag == TagList.Wall.ToString())
+                            else if (collision.gameObject.tag == TagList.Wall.ToString() && collision.gameObject.GetComponent<Container>() == null)
                             {
                                 //_isFirstCollision = false;
                                 if(_boundCount < 1)
@@ -999,6 +1000,10 @@ namespace Cooking.Stage
                                 //回転固定解除
                                 TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex].UnlockConstraints();
                                 ShotManager.Instance.SetShotVector(_rigidbody.velocity, _rigidbody.velocity.magnitude);
+                            }
+                            else if (collision.gameObject.GetComponent<Container>() != null)
+                            {
+                                _rigidbody.velocity = _rigidbody.velocity / 2;
                             }
                             if (collision.gameObject.GetComponent<FoodStatus>() == null && ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode && (collision.gameObject.layer == CalculateLayerNumber.ChangeSingleLayerNumberFromLayerMask(StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen])) && collision.gameObject.tag != TagList.Wall.ToString())
                             {
@@ -1068,7 +1073,7 @@ namespace Cooking.Stage
                                     if (_flyTime > _firstBoundTime + 0.4f && collision.gameObject.tag == TagList.Chair.ToString())
                                         _physicsState = PhysicsState.ChairBound;
                                     //小さいジャンプでは代入しない 飛んでいる間時間を数える実効値形式へ
-                                    else if (_flyTime > _firstBoundTime + 0.4f && collision.gameObject.tag != TagList.Towel.ToString())
+                                    else if (_flyTime > _firstBoundTime + 0f && collision.gameObject.tag != TagList.Towel.ToString())
                                         _physicsState = PhysicsState.FirstBound;
                                 }
                                 //else if (_physicsState == PhysicsState.FirstBound)
@@ -1210,29 +1215,13 @@ namespace Cooking.Stage
                     }
                 }
             }
-            if (other.tag == TagList.Finish.ToString() && !_isGoal)
+            if (ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode && other.tag == TagList.Finish.ToString() && !_isGoal)
             {
                 SoundManager.Instance.PlaySE(SoundEffectID.pan_frying);
                 EffectManager.Instance.InstantiateEffect(this.transform.position, EffectManager.EffectPrefabID.Splash);
                 _isGoal = true;
                 FreezeRotation();
-                var ranx = UnityEngine.Random.Range(-0.7f, 0.7f);
-                var ranz = UnityEngine.Random.Range(-0.7f, 0.7f);
-                var ranPos = new Vector3(ranx, 1, ranz);
-                if (other.transform.parent.gameObject.tag == TagList.Pot.ToString())
-                {
-                    ranx = UnityEngine.Random.Range(-0.5f, 0.5f);
-                    ranz = UnityEngine.Random.Range(-0.5f, 0.5f);
-                    ranPos = new Vector3(ranx, 0.2f, ranz);
-                }
-                else
-                {
-                    ranPos = new Vector3(ranx, 0.2f, ranz);
-                }
-                var movePos = other.transform.position + ranPos;
-                SetFoodLayer(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodLayerInStartArea]);
-                _rigidbody.velocity = Vector3.zero;
-                transform.position = movePos;
+                WarpGoalAbove(other.transform);
             }
             else if (other.tag == TagList.Water.ToString())
             {
@@ -1257,8 +1246,9 @@ namespace Cooking.Stage
                 {
                     GetSeasoning(touchSeasoning);
                 }
+                touchSeasoning.SeasoningParticle();
             }
-            else if (other.tag == TagList.Bubble.ToString())
+            else if (TurnManager.Instance.FoodStatuses[TurnManager.Instance.ActivePlayerIndex] == this && ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode && !IsGoal && other.tag == TagList.Bubble.ToString())
             {
                 var bubble = other.GetComponent<Bubble>();
                 if (_gotBubbles.Count > _gotBubbleIndex)
@@ -1282,6 +1272,28 @@ namespace Cooking.Stage
                 //SetFoodLayer(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodLayerInStartArea]);
             }
         }
+
+        private void WarpGoalAbove(Transform other)
+        {
+            var ranx = UnityEngine.Random.Range(-0.7f, 0.7f);
+            var ranz = UnityEngine.Random.Range(-0.7f, 0.7f);
+            var ranPos = new Vector3(ranx, 1, ranz);
+            if (other.transform.parent.gameObject.tag == TagList.Pot.ToString())
+            {
+                ranx = UnityEngine.Random.Range(-0.5f, 0.5f);
+                ranz = UnityEngine.Random.Range(-0.5f, 0.5f);
+                ranPos = new Vector3(ranx, 0.2f, ranz);
+            }
+            else
+            {
+                ranPos = new Vector3(ranx, 0.2f, ranz);
+            }
+            var movePos = other.transform.position + ranPos;
+            SetFoodLayer(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodLayerInStartArea]);
+            _rigidbody.velocity = Vector3.zero;
+            transform.position = movePos;
+        }
+
         protected override void GetSeasoning(Seasoning seasoning)
         {
             FoodTextureList textureList = StageSceneManager.Instance.FoodTextureList;
@@ -1447,15 +1459,7 @@ namespace Cooking.Stage
         /// </summary>
         public void ResetFoodState()
         {
-            if (_centerPoint != null)
-            {
-                if (_centerPoint.parent != StageSceneManager.Instance.FoodPositionsParent)
-                {
-                    _centerPoint.parent = StageSceneManager.Instance.FoodPositionsParent;
-                }
-                _centerPoint.position = this.transform.position;
-            }
-            if (aIMoveTransform != null)
+            if (aIMoveTransform != null && !_isFall && !_isGoal)
             {
                 var trans = aIMoveTransform.parent.GetComponent<AIMoveForGameOver>();
                 Debug.Log(trans);
@@ -1470,6 +1474,15 @@ namespace Cooking.Stage
                     this.transform.position += aIMoveTransform.localPosition * 10;
                 }
             }
+            if (_centerPoint != null)
+            {
+                if (_centerPoint.parent != StageSceneManager.Instance.FoodPositionsParent)
+                {
+                    _centerPoint.parent = StageSceneManager.Instance.FoodPositionsParent;
+                }
+                _centerPoint.position = this.transform.position;
+            }
+
             aIMoveTransform = null;
             //接地点の算出 中心から真下にレイを飛ばして取得
             //groundPoint = GetGroundPointUnderCenter(_centerPoint.position, - _centerPoint.up);
@@ -1498,7 +1511,7 @@ namespace Cooking.Stage
         {
             falledFoodStateOnStart = FalledFoodStateOnStart.Other;
         }
-        private GameObject GetGroundPointUnderCenter(Vector3 originPoint , Vector3 underCenterDirection)
+        private GameObject GetKitchenGroundPointUnderCenter(Vector3 originPoint , Vector3 underCenterDirection)
         {
             float rayLength = 10;
             //Rayが当たったオブジェクトの情報を入れる箱
@@ -1507,6 +1520,24 @@ namespace Cooking.Stage
             Debug.DrawRay(originPoint, underCenterDirection, Color.red, 100);
             //Kitchenレイヤーとレイ判定を行う
             if (Physics.Raycast(ray, out hit, rayLength, StageSceneManager.Instance.LayerListProperty[(int)LayerList.Kitchen]))
+            {
+                return hit.transform.gameObject;
+                //return hit.point;
+            }
+            else
+            {
+                return this.gameObject;
+            }
+        }
+        private GameObject GetGoalGroundPointUnderCenter(Vector3 originPoint , Vector3 underCenterDirection)
+        {
+            float rayLength = 10;
+            //Rayが当たったオブジェクトの情報を入れる箱
+            RaycastHit hit;    //原点        方向
+            Ray ray = new Ray(originPoint, underCenterDirection);
+            Debug.DrawRay(originPoint, underCenterDirection, Color.red, 100);
+            //Goalレイヤーとレイ判定を行う
+            if (Physics.Raycast(ray, out hit, rayLength, StageSceneManager.Instance.LayerListProperty[(int)LayerList.Goal]))
             {
                 return hit.transform.gameObject;
                 //return hit.point;

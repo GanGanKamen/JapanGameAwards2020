@@ -61,6 +61,10 @@ namespace Cooking.SelectStage
             }
             StartCoroutine(LoadSceneCoroutine(SceneName.PlayScene));
             Stage.StageSceneManager.SetLoadStageIndex(beSelectedNum);
+            if (beSelectedNum == 0)
+            {
+                Stage.GimmickManager.bubbleLimitSumNumber = 20;
+            }
         }
 
         public void OnReturnButton()

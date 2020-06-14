@@ -65,6 +65,8 @@ MonoBehaviour:
     m_Bits: 512
   - serializedVersion: 2
     m_Bits: 2048
+  - serializedVersion: 2
+    m_Bits: 8192
   _foodTextureList: {fileID: 8505442559873105399}
 --- !u!1 &1904837132498659196
 GameObject:

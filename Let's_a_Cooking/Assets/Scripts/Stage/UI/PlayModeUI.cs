@@ -44,7 +44,7 @@ namespace Cooking.Stage
         [SerializeField] private GameObject _defaultIsAIImage = null;
         [SerializeField] private Text _turnNumberText = null;
         [SerializeField] private Text _playerNumberTextOnPlay = null;
-        [SerializeField] private Text _pointNumberTextOnPlay = null;
+        [SerializeField] private Text[] _pointNumberTextOnPlay = null;
         /// <summary>
         /// 集中線
         /// </summary>
@@ -68,9 +68,17 @@ namespace Cooking.Stage
         /// </summary>
         [SerializeField] private Text _remainingTurnsNumber;
         /// <summary>
-        /// プレイヤーの現在の得点
+        /// プレイヤーの現在の合計得点
         /// </summary>
         [SerializeField] private Text[] _playerPoints;
+        public Text[] LostedPoints
+        {
+            get { return _lostedPoints; }
+        }
+        /// <summary>
+        /// 現在所有のポイントを失った後のポイント
+        /// </summary>
+        [SerializeField] private Text[] _lostedPoints;
         #endregion
         /// <summary>
         /// よく使うため変数化
@@ -203,7 +211,10 @@ namespace Cooking.Stage
         /// </summary>
         private void UpdatePointText()
         {
-            _pointNumberTextOnPlay.text = _turnManager.FoodStatuses[_turnManager.ActivePlayerIndex].PlayerPointProperty.Point.ToString();
+            for (int i = 0; i < _pointNumberTextOnPlay.Length; i++)
+            {
+                _pointNumberTextOnPlay[i].text = _turnManager.FoodStatuses[_turnManager.GetFoodStatusIndex(i)].PlayerPointProperty.Point.ToString();
+            }
         }
         /// <summary>
         /// ターン開始時にAIかどうかをチェックしてUIを切り替える
@@ -256,19 +267,32 @@ namespace Cooking.Stage
         {
             _shottingLines.SetActive(isActive);
         }
+        public void RemainingTurnBackGroundImageStart()
+        {
+            StartCoroutine(RemainingTurnBackGroundImage());
+        }
         /// <summary>
         /// 残りターンUiの情報をセット
         /// </summary>
         public void SetRemainingTurnsUIInformation(int remainingTurns)
         {
-            if (remainingTurns < 2)
-            {
-                StartCoroutine(RemainingTurnBackGroundImage());
-            }
             _remainingTurnsNumber.text = OptionManager.OptionManagerProperty.TurnText();
             for (int playerIndex = 0; playerIndex < _playerPoints.Length; playerIndex++)
             {
-                _playerPoints[playerIndex].text = StageSceneManager.Instance.GetPlayerPoint(playerIndex,true).ToString();
+                _playerPoints[playerIndex].text = (StageSceneManager.Instance.GetPlayerPoint(playerIndex,false) + StageSceneManager.Instance.GetPlayerPoint(playerIndex, true)).ToString();
+                if (StageSceneManager.Instance.GetPlayerPoint(playerIndex, false) == 0)
+                {
+                    _lostedPoints[playerIndex].text = 0.ToString();
+                }
+                //else if (_turnManager.GetFoodStatusIndex(playerIndex) == 3)
+                //{
+                //    Debug.Log(StageSceneManager.Instance.GetPlayerPoint(playerIndex, false));
+                //    _lostedPoints[playerIndex].text = (StageSceneManager.Instance.GetPlayerPoint(playerIndex, false) + StageSceneManager.Instance.GetPlayerPoint(playerIndex, true) - 100).ToString();
+                //}
+                else
+                {
+                    _lostedPoints[playerIndex].text = (StageSceneManager.Instance.GetPlayerPoint(playerIndex, false) + StageSceneManager.Instance.GetPlayerPoint(playerIndex, true) - StageSceneManager.Instance.GetPlayerPoint(playerIndex, true)).ToString();
+                }
             }
         }
         IEnumerator RemainingTurnBackGroundImage()

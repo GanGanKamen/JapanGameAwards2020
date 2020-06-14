@@ -286,17 +286,17 @@ namespace Cooking.Stage
             //重ければ減らす必要あり
             int i = 0;
             bool isWaitFlame = false;
-            int halfLimitAngle = 90;//全方向では処理が重い
+            int halfLimitAngle = 30;//全方向では処理が重い 50 だった
             int fallPointCount = (int)((halfLimitAngle * 2) / incrementValue);
             int fallPointIndex = 0;
             var verticalAngle = 45;//45度は落下確率高い 落下地点のy座標が今いる座標よりそれなりに(仮:1m)低いなら角度を上げる 
             var shotDirectionY = Mathf.Sin(verticalAngle * Mathf.Deg2Rad); // 角度をラジアンへ
-            for (verticalAngle = 20; verticalAngle <= ShotManager.Instance.ShotParameter.LimitVerticalMaxAngle; verticalAngle += 2)
+            for (verticalAngle = 25; verticalAngle <= ShotManager.Instance.ShotParameter.LimitVerticalMaxAngle; verticalAngle += 4)
             {
-                for (i = 0; horizontalAngle < goalAngle + halfLimitAngle; i++, horizontalAngle = goalAngle + i * incrementValue)
+                for (i = 0; horizontalAngle < goalAngle + halfLimitAngle; i+=4, horizontalAngle = goalAngle + i * incrementValue)
                 {
                     GetFallPointObjectByRayCast(goal, horizontalAngle, fallPoint, goalDistanceFromFallPoints, shotSpeedVectorList, shotSpeedList, ref fallPointIndex, verticalAngle, shotDirectionY);
-                    if (horizontalAngle > goalAngle + halfLimitAngle / 2 && !isWaitFlame)
+                    if (horizontalAngle > goalAngle + halfLimitAngle / 2 && !isWaitFlame && i % 15 == 0)
                     {
                         Debug.Log(758);
                         isWaitFlame = true;
@@ -307,10 +307,10 @@ namespace Cooking.Stage
                 isWaitFlame = false;
                 horizontalAngle = goalAngle - 1 * incrementValue;
                 //角度が偶数奇数でずれる可能性があるので上限条件は数
-                for (i = 1; fallPointIndex < fallPointCount; i++, horizontalAngle = goalAngle - i * incrementValue)
+                for (i = 1; fallPointIndex < fallPointCount; i+=4, horizontalAngle = goalAngle - i * incrementValue)
                 {
                     GetFallPointObjectByRayCast(goal, horizontalAngle, fallPoint, goalDistanceFromFallPoints, shotSpeedVectorList, shotSpeedList, ref fallPointIndex, verticalAngle, shotDirectionY);
-                    if (horizontalAngle < goalAngle - halfLimitAngle / 2 && i % 80 == 0)
+                    if (horizontalAngle < goalAngle - halfLimitAngle / 2 && i % 100 == 0)
                     {
                         Debug.Log(765);
 

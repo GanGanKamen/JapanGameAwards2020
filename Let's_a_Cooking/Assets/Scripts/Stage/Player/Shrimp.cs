@@ -59,7 +59,7 @@ namespace Cooking.Stage
                 return;
             }
             _isHeadFallOff = true;
-            EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Slash).parent = this.transform;
+            EffectManager.Instance.InstantiateEffect(transform.position, EffectManager.EffectPrefabID.Slash).parent = GetComponent<FoodStatus>().FoodPositionNotRotate;
             ChangeComponentInfoOnHeadFallOff();
         }
         /// <summary>

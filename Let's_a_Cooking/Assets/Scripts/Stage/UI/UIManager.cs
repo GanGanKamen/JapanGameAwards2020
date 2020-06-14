@@ -18,6 +18,7 @@ namespace Cooking.Stage
         /// 残りターンを表示する際、UICanvasを切り替え
         /// </summary>
         [SerializeField] GameObject _stageUICanvas;
+        [SerializeField] GameObject _defaultUI;
         /// <summary>
         /// メインとなるUIの状態の数だけUIを用意
         /// </summary>
@@ -152,6 +153,11 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
+            for (int i = 0; i < _turnManager.FoodStatuses.Length; i++)
+            {
+                _finishScoreTexts[i].text = StageSceneManager.Instance.GetSumPlayerPoint(i).ToString();//_playModeUI.LostedPoints[i].text;
+            }
+
             switch (_mainUIState)
             {
                 case ScreenState.InitializeChoose:
@@ -221,6 +227,11 @@ namespace Cooking.Stage
                         case FinishUIMode.Finish:
                             if (_finishTimeCounter >= _finishWaitTIme)
                             {
+                                UICanvasSetActiveFalse();
+                                var audioSource = gameObject.AddComponent<AudioSource>();
+                                audioSource.loop  = true;
+                                audioSource.clip = Resources.Load<AudioClip>("Sounds/SE/" + SoundEffectID.pot_boiling0.ToString());
+                                audioSource.Play();
                                 ChangeFinishUI(FinishUIMode.Score);
                                 StageSceneManager.Instance.ComparePlayerPointOnFinish();
                                 _finishWaitTIme = 0;
@@ -231,6 +242,11 @@ namespace Cooking.Stage
                             }
                             break;
                         case FinishUIMode.Score:
+                            for (int i = 0; i < _turnManager.FoodStatuses.Length; i++)
+                            {
+                                _finishScoreTexts[i].text = StageSceneManager.Instance.GetPlayerPoint(i, false).ToString();
+                                _finishScoreImages[i].SetActive(true);
+                            }
                             if (TouchInput.GetTouchPhase() == TouchInfo.Down && !_optionMenuWindow.activeInHierarchy && !PreventTouchInputCollision.Instance.TouchInvalid[(int)PreventTouchInputCollision.ButtonName.OptionButton])
                             {
                                 _finishUIMode = FinishUIMode.Title;
@@ -432,6 +448,10 @@ namespace Cooking.Stage
         {
             _stageUICanvas.SetActive(!remainingTurnsUIIsActive);
             _playModeUI.RemainingTurnsUICanvas.SetActive(remainingTurnsUIIsActive);
+        }
+        public void UICanvasSetActiveFalse()
+        {
+            _defaultUI.SetActive(false);
         }
     }
 }
