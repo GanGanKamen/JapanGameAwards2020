@@ -320,10 +320,6 @@ namespace Cooking.Stage
         }
         protected virtual void Update()
         {
-            if (Input.GetKeyDown(KeyCode.F) && GetComponent<AI>() == null)
-            {
-                transform.position = StageSceneManager.Instance.Goal[0].transform.position + new Vector3(0,2,0);
-            }
             //Debug.Log(GetActiveMaterial(foodType,food).color);
             //Debug.Log(GetActiveMaterial(foodType,food).color == StageSceneManager.Instance.FoodTextureList.seasoningMaterial.color);
             //見た目かわらないことがある
