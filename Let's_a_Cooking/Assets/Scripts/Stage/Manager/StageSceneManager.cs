@@ -17,7 +17,7 @@ namespace Cooking.Stage
     }
     public enum LayerList
     {
-        FoodLayerInStartArea, Kitchen , FoodCollision
+        FoodLayerInStartArea, Kitchen , FoodCollision , Goal
     }
     public class StageSceneManager : MonoBehaviour
     {
@@ -359,8 +359,8 @@ namespace Cooking.Stage
                         {
                             if (food.FalledFoodStateOnStartProperty == FalledFoodStateOnStart.OnStart)
                             {
-                                food.FinishStartProcessing();
                                 food.ResetFoodState();
+                                food.FinishStartProcessing();
                                 //PredictLineManager.Instance.SetPredictLineInstantiatePosition(food.CenterPoint.position);
                             }
                             if (ShotManager.Instance.ShotModeProperty == ShotState.ShottingMode)
@@ -719,7 +719,7 @@ namespace Cooking.Stage
             foreach (var winner in winners)
             {
                 winner.PlayerAnimatioManage(true);
-                EffectManager.Instance.InstantiateEffect(winner.transform.position + new Vector3(0, 0, 0), EffectManager.EffectPrefabID.Food_Stars);
+                EffectManager.Instance.InstantiateEffect(winner.transform.position + new Vector3(0, 0, 0), EffectManager.EffectPrefabID.Food_Stars).parent = winner.transform;
             }
             GoalCameraSetActive(true);
             //CameraManager.Instance.WinnerCamera(TurnManager.Instance.FoodStatuses[foodStatusIndex]);

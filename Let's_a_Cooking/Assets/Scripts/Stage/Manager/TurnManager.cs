@@ -227,6 +227,10 @@ namespace Cooking.Stage
                     //Debug.Log("Goal");
                 }
             }
+            //if (true)
+            {
+                UIManager.Instance.PlayModeUI.SetRemainingTurnsUIInformation(RemainingTurns);
+            }
             ///デバッグ用 ゲーム終了
 //#if UNITY_EDITOR
             if (Input.GetKeyDown(KeyCode.Return) && !_isAITurn)
@@ -288,7 +292,10 @@ namespace Cooking.Stage
         IEnumerator TurnChangeUI()
         {
             float turnChangeTime = 5f;
-            UIManager.Instance.PlayModeUI.SetRemainingTurnsUIInformation(RemainingTurns);
+            if (RemainingTurns < 2)
+            {
+                UIManager.Instance.PlayModeUI.RemainingTurnBackGroundImageStart();
+            }
             UIManager.Instance.DisplayChangeTurnUI(true);
             StageSceneManager.Instance.GoalCameraSetActive(true);
             StageSceneManager.Instance.ManageGoalPlayerAnimation(true);
@@ -350,6 +357,7 @@ namespace Cooking.Stage
                             InitializeOnTurnChange(_activePlayerIndex);
                             break;//次のプレイヤーに変えずに初期化 このメソッドの終了
                         }
+                        //正常ゴール
                         else if (_foodStatuses[_activePlayerIndex].IsGoal)
                         {
                             FoodGoal(_activePlayerIndex);
@@ -407,7 +415,7 @@ namespace Cooking.Stage
         /// <summary>
         /// このメソッド(InitializePlayerData)実行までは、アクティブプレイヤー達はFoodStatus配列の中に含まれる
         /// </summary>
-        private void FoodGoal(int playerIndex)
+        public void FoodGoal(int playerIndex)
         {
             FoodStatuses[playerIndex].SetFoodLayer(StageSceneManager.Instance.LayerListProperty[(int)LayerList.FoodLayerInStartArea]);
             FoodStatuses[playerIndex].Rigidbody.useGravity = false;
@@ -553,7 +561,45 @@ namespace Cooking.Stage
         private void SetObjectsPositionForNextPlayer(int activePlayerIndex)
         {
             ShotManager.Instance.SetShotManager(_foodStatuses[activePlayerIndex].Rigidbody);
-            CameraManager.Instance.SetCameraMoveCenterPosition(_foodStatuses[activePlayerIndex].transform.position);
+            switch (_foodStatuses[activePlayerIndex].FoodType)
+            {
+                case FoodType.Shrimp:
+                    CameraManager.Instance.SetCameraMoveCenterPosition(_foodStatuses[activePlayerIndex].transform.position);
+                    break;
+                case FoodType.Egg:
+                    if (_foodStatuses[activePlayerIndex].OriginalFoodProperty.egg.HasBroken)
+                    {
+                        CameraManager.Instance.SetCameraMoveCenterPosition(_foodStatuses[activePlayerIndex].transform.position + -_foodStatuses[activePlayerIndex].transform.forward * 0.3f + new Vector3(0, 0.2f, 0));
+                    }
+                    else
+                    {
+                        CameraManager.Instance.SetCameraMoveCenterPosition(_foodStatuses[activePlayerIndex].transform.position);
+                    }
+                    break;
+                case FoodType.Chicken:
+                    if (_foodStatuses[activePlayerIndex].OriginalFoodProperty.chicken.IsCut)
+                    {
+                        CameraManager.Instance.SetCameraMoveCenterPosition(_foodStatuses[activePlayerIndex].transform.position + -_foodStatuses[activePlayerIndex].transform.forward * 0.3f + new Vector3(0, 0.2f, 0));
+                    }
+                    else
+                    {
+                        CameraManager.Instance.SetCameraMoveCenterPosition(_foodStatuses[activePlayerIndex].transform.position);
+                    }
+                    break;
+                case FoodType.Sausage:
+                    if (_foodStatuses[activePlayerIndex].OriginalFoodProperty.sausage.IsCut)
+                    {
+                        CameraManager.Instance.SetCameraMoveCenterPosition(_foodStatuses[activePlayerIndex].transform.position + -_foodStatuses[activePlayerIndex].transform.forward * 0.3f + new Vector3(0,0.2f,0));
+                    }
+                    else
+                    {
+                        CameraManager.Instance.SetCameraMoveCenterPosition(_foodStatuses[activePlayerIndex].transform.position);
+                    }
+                    break;
+                default:
+                    break;
+            }
+
             if (UIManager.Instance.MainUIStateProperty != ScreenState.Start)
             {
                 PredictLineManager.Instance.SetActivePredictShotPoint(!_isAITurn);

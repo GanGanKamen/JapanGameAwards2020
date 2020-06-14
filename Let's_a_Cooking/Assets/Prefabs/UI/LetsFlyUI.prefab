@@ -4342,6 +4342,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _stageUICanvas: {fileID: 2259073736048063131}
+  _defaultUI: {fileID: 2259073737570057260}
   _stageSceneMainUIs:
   - {fileID: 2259073737997753092}
   - {fileID: 2259073737460388972}

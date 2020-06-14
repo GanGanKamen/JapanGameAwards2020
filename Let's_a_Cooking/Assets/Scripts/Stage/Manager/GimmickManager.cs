@@ -224,16 +224,16 @@ namespace Cooking.Stage
         /// </summary>
         public void WaterManager()
         {
-            var seedId = Cooking.Random.GetRandomIntFromZero(_targetObjectsForAI[(int)AITargetObjectTags.Water].Count + 1);//確率調整
+            var seedId = Cooking.Random.GetRandomIntFromZero(_targetObjectsForAI[(int)AITargetObjectTags.Water].Count + 3);//確率調整
             for (int i = 0; i < _targetObjectsForAI[(int)AITargetObjectTags.Water].Count; i++)
             {
                 if (seedId == i)
                 {
-                    _targetObjectsForAI[(int)AITargetObjectTags.Water][i].SetActive(false);
+                    _targetObjectsForAI[(int)AITargetObjectTags.Water][i].SetActive(true);
                 }
                 else
                 {
-                    _targetObjectsForAI[(int)AITargetObjectTags.Water][i].SetActive(true);
+                    _targetObjectsForAI[(int)AITargetObjectTags.Water][i].SetActive(false);
                 }
             }
         }

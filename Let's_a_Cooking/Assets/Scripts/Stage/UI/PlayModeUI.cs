@@ -71,6 +71,10 @@ namespace Cooking.Stage
         /// プレイヤーの現在の合計得点
         /// </summary>
         [SerializeField] private Text[] _playerPoints;
+        public Text[] LostedPoints
+        {
+            get { return _lostedPoints; }
+        }
         /// <summary>
         /// 現在所有のポイントを失った後のポイント
         /// </summary>
@@ -263,15 +267,15 @@ namespace Cooking.Stage
         {
             _shottingLines.SetActive(isActive);
         }
+        public void RemainingTurnBackGroundImageStart()
+        {
+            StartCoroutine(RemainingTurnBackGroundImage());
+        }
         /// <summary>
         /// 残りターンUiの情報をセット
         /// </summary>
         public void SetRemainingTurnsUIInformation(int remainingTurns)
         {
-            if (remainingTurns < 2)
-            {
-                StartCoroutine(RemainingTurnBackGroundImage());
-            }
             _remainingTurnsNumber.text = OptionManager.OptionManagerProperty.TurnText();
             for (int playerIndex = 0; playerIndex < _playerPoints.Length; playerIndex++)
             {
@@ -287,7 +291,6 @@ namespace Cooking.Stage
                 //}
                 else
                 {
-                    Debug.Log(876);
                     _lostedPoints[playerIndex].text = (StageSceneManager.Instance.GetPlayerPoint(playerIndex, false) + StageSceneManager.Instance.GetPlayerPoint(playerIndex, true) - StageSceneManager.Instance.GetPlayerPoint(playerIndex, true)).ToString();
                 }
             }

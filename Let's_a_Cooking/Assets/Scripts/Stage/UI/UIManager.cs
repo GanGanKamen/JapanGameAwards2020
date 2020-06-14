@@ -18,6 +18,7 @@ namespace Cooking.Stage
         /// 残りターンを表示する際、UICanvasを切り替え
         /// </summary>
         [SerializeField] GameObject _stageUICanvas;
+        [SerializeField] GameObject _defaultUI;
         /// <summary>
         /// メインとなるUIの状態の数だけUIを用意
         /// </summary>
@@ -152,6 +153,11 @@ namespace Cooking.Stage
         // Update is called once per frame
         void Update()
         {
+            for (int i = 0; i < _turnManager.FoodStatuses.Length; i++)
+            {
+                _finishScoreTexts[i].text = _playModeUI.LostedPoints[i].text;
+            }
+
             switch (_mainUIState)
             {
                 case ScreenState.InitializeChoose:
@@ -445,7 +451,7 @@ namespace Cooking.Stage
         }
         public void UICanvasSetActiveFalse()
         {
-            _stageUICanvas.SetActive(false);
+            _defaultUI.SetActive(false);
         }
     }
 }
