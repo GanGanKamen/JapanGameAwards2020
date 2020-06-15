@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -6804,7 +6804,7 @@ Transform:
   m_LocalScale: {x: 2.7519999, y: 0.19799997, z: 4.4578}
   m_Children: []
   m_Father: {fileID: 5505635192058350908}
-  m_RootOrder: 68
+  m_RootOrder: 61
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1508921605652277559
 PrefabInstance:
@@ -7118,7 +7118,7 @@ Transform:
   m_LocalScale: {x: 2.7519999, y: 0.19799997, z: 4.4578}
   m_Children: []
   m_Father: {fileID: 7732280788365421880}
-  m_RootOrder: 42
+  m_RootOrder: 38
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &1900142018572027345
 MeshFilter:
@@ -8498,6 +8498,11 @@ PrefabInstance:
       propertyPath: m_BoundingSphereOverride.w
       value: 2.7352766e-26
       objectReference: {fileID: 0}
+    - target: {fileID: 2247330877538279770, guid: 42ccf6bbd6e4af145bd7b8bbcbc17134,
+        type: 3}
+      propertyPath: m_RenderMode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6178317950504406442, guid: 42ccf6bbd6e4af145bd7b8bbcbc17134,
         type: 3}
       propertyPath: m_Name
@@ -9275,7 +9280,7 @@ Transform:
   m_LocalScale: {x: 2.7519999, y: 0.19799997, z: 4.4578}
   m_Children: []
   m_Father: {fileID: 5505635192058350908}
-  m_RootOrder: 57
+  m_RootOrder: 33
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4132710792002307559
 GameObject:
@@ -9874,6 +9879,11 @@ PrefabInstance:
       propertyPath: m_BoundingSphereOverride.w
       value: 2.7352766e-26
       objectReference: {fileID: 0}
+    - target: {fileID: 2247330877538279770, guid: 42ccf6bbd6e4af145bd7b8bbcbc17134,
+        type: 3}
+      propertyPath: m_RenderMode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6178317950504406442, guid: 42ccf6bbd6e4af145bd7b8bbcbc17134,
         type: 3}
       propertyPath: m_Name
@@ -9957,6 +9967,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Range
       value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 2247330877538279770, guid: 42ccf6bbd6e4af145bd7b8bbcbc17134,
+        type: 3}
+      propertyPath: m_RenderMode
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6178317950504406442, guid: 42ccf6bbd6e4af145bd7b8bbcbc17134,
         type: 3}
@@ -13489,6 +13504,7 @@ Transform:
   - {fileID: 316663490}
   - {fileID: 1819896482}
   - {fileID: 1789891026}
+  - {fileID: 4035593704735566036}
   - {fileID: 1341283984}
   - {fileID: 661823100}
   - {fileID: 1915921246}
@@ -13513,10 +13529,10 @@ Transform:
   - {fileID: 91110227}
   - {fileID: 1743421810}
   - {fileID: 1232938624}
-  - {fileID: 4035593704735566036}
   - {fileID: 1529057511}
   - {fileID: 1648094651}
   - {fileID: 635136833}
+  - {fileID: 1437371741639109206}
   - {fileID: 1867790891}
   - {fileID: 446253761}
   - {fileID: 841168335}
@@ -13524,7 +13540,6 @@ Transform:
   - {fileID: 89485428}
   - {fileID: 1142881338}
   - {fileID: 163899726}
-  - {fileID: 1437371741639109206}
   - {fileID: 1844997975}
   - {fileID: 329021314}
   - {fileID: 2051316424}
@@ -15128,7 +15143,7 @@ Transform:
   m_LocalScale: {x: 2.7519999, y: 0.19799997, z: 4.4578}
   m_Children: []
   m_Father: {fileID: 7732280788365421880}
-  m_RootOrder: 36
+  m_RootOrder: 29
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6994298326723813235
 GameObject:
@@ -16298,6 +16313,7 @@ Transform:
   - {fileID: 94116299}
   - {fileID: 630024297}
   - {fileID: 531547756}
+  - {fileID: 6925943487149019668}
   - {fileID: 38301219}
   - {fileID: 1736967146}
   - {fileID: 1934190983}
@@ -16305,13 +16321,12 @@ Transform:
   - {fileID: 2053346052}
   - {fileID: 67815060}
   - {fileID: 53629823}
-  - {fileID: 6925943487149019668}
   - {fileID: 949952278}
+  - {fileID: 1872198137860981596}
   - {fileID: 1772668289}
   - {fileID: 1904115064}
   - {fileID: 758541891}
   - {fileID: 1519657868}
-  - {fileID: 1872198137860981596}
   - {fileID: 1661732106}
   - {fileID: 1101506260}
   - {fileID: 1133012527}
