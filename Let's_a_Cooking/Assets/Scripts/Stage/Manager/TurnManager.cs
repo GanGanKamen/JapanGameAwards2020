@@ -231,12 +231,6 @@ namespace Cooking.Stage
             {
                 UIManager.Instance.PlayModeUI.SetRemainingTurnsUIInformation(RemainingTurns);
             }
-            ///デバッグ用 ゲーム終了
-//#if UNITY_EDITOR
-            if (Input.GetKeyDown(KeyCode.Return) && !_isAITurn)
-            {
-                _turnNumber = 11;
-            }
             //#endif
         }
         /// <summary>
